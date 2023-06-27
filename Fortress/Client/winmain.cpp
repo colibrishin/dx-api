@@ -3,6 +3,9 @@
 
 #include "framework.h"
 #include "Client.h"
+#include "application.h"
+
+static Fortress::Application application;
 
 #define MAX_LOADSTRING 100
 
@@ -149,6 +152,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    }
 
    ShowWindow(hWnd, nCmdShow);
+   application.initialize(hWnd, GetDC(hWnd));
    // ** remember the mfc class
    UpdateWindow(hWnd);
 
@@ -167,32 +171,10 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    static int test_x = 10;
-    static int test_y = 10;
+    application.run(message, wParam);
 
     switch (message)
     {
-    case WM_KEYDOWN:
-        // ** Maybe wrapping these into function looks great.
-        switch (wParam) 
-        {
-        case VK_LEFT:
-            test_x -= 10;
-            break;
-        case VK_RIGHT:
-            test_x += 10;
-            break;
-        case VK_UP:
-            test_y -= 10;
-            break;
-        case VK_DOWN:
-            test_y += 10;
-            break;
-        }
-        // ** Yes, Window should be invalidated before update.
-        // ** If third parameter is not set to be true, previous
-        // paint will be remained.
-        InvalidateRect(hWnd, nullptr, true);
     case WM_COMMAND:
         {
             int wmId = LOWORD(wParam);
@@ -214,10 +196,10 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            TextOut(hdc, test_x, test_y, L"A", 1);
-            Ellipse(hdc, test_x, test_y, test_x + 10, test_y + 10);
-            // TODO: 여기에 hdc를 사용하는 그리기 코드를 추가합니다...
-            // Update code goes here. maybe, our main entry code?
+
+            application.render();
+            application.update(true);
+
             EndPaint(hWnd, &ps);
         }
         break;

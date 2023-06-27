@@ -16,6 +16,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Engine">
+      <UniqueIdentifier>{d5413c51-5c9a-4503-a055-0983af252a52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Common">
+      <UniqueIdentifier>{b3552554-20ee-4876-9542-18a8a16e1dbf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -30,10 +36,25 @@
     <ClInclude Include="Client.h">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Engine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>Engine\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
       <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="math.cpp">
+      <Filter>Engine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="application.h">
+      <Filter>Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="application.cpp">
+      <Filter>Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
