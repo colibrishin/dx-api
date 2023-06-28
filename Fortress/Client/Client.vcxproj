@@ -127,17 +127,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="character.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="math.h" />
+    <ClInclude Include="object.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="tick.hpp" />
+    <ClInclude Include="vector2.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="application.h" />
-    <ClCompile Include="math.cpp" />
+    <ClCompile Include="object.hpp" />
+    <ClCompile Include="utility.h" />
+    <ClCompile Include="vector2.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>

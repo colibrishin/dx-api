@@ -1,21 +1,23 @@
 #include "application.h"
 
-Fortress::Application::~Application()
-{
-}
-
 void Fortress::Application::initialize(const HWND hwnd, const HDC hdc)
 {
 	m_hwnd = hwnd;
 	m_hdc = hdc;
 }
 
-void Fortress::Application::run(const UINT message, const WPARAM wparam)
+void Fortress::Application::run()
 {
-	switch (message) 
+}
+
+void Fortress::Application::update(const UINT message, const WPARAM wParam)
+{
+    switch (message) 
 	{
 	case WM_KEYDOWN:
-        switch (wparam)
+		m_update_tick.set_ticked();
+
+        switch (wParam)
         {
         case VK_LEFT:
             m_playerPos = m_playerPos.left();
@@ -31,14 +33,32 @@ void Fortress::Application::run(const UINT message, const WPARAM wparam)
             break;
         }
 	}
-}
 
-void Fortress::Application::update(bool erase) const
-{
-	InvalidateRect(m_hwnd, nullptr, erase);
+    // @todo: test with static push
+    m_render_queue.push([this]()
+    {
+        TextOut(m_hdc, m_playerPos.get_x(), m_playerPos.get_y(), L"@", 1);
+        });
+
+	if(m_update_tick.is_ticked())
+	{
+        InvalidateRect(m_hwnd, nullptr, true);
+		m_update_tick.unset_ticked();
+	}
 }
 
 void Fortress::Application::render()
 {
-    TextOut(m_hdc, static_cast<int>(m_playerPos.get_x()), static_cast<int>(m_playerPos.get_y()), L"A", 1);
+    if(!m_render_tick.is_ticked())
+    {
+        m_render_tick.set_ticked();
+
+	    while(!m_render_queue.empty())
+	    {
+		    m_render_queue.front()();
+			m_render_queue.pop();
+	    }
+
+        m_render_tick.unset_ticked();
+    }
 }
