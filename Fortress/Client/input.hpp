@@ -2,13 +2,12 @@
 #define INPUT_H
 #pragma once
 
-#include <map>
 #include <execution>
 #include "framework.h"
 
-namespace Fortress 
+namespace Fortress
 {
-	enum class eKeyCode 
+	enum class eKeyCode
 	{
 		Q,W,E,R,T,Y,U,I,O,P,
 		A,S,D,F,G,H,J,K,L,
@@ -17,7 +16,7 @@ namespace Fortress
 		UP,DOWN,LEFT,RIGHT,
 	};
 
-	enum class _eKeyState 
+	enum class _eKeyState
 	{
 		Down = 0,
 		Up,
@@ -36,7 +35,7 @@ namespace Fortress
 	class Input final
 	{
 	public:
-		struct Key 
+		struct Key
 		{
 			std::mutex _m_lock;
 			uint8_t m_native_code;
@@ -65,9 +64,10 @@ namespace Fortress
 
 		inline static void initialize();
 		inline static void update();
-		__forceinline static bool getKeyDown(const eKeyCode);
-		__forceinline static bool getKeyUp(const eKeyCode);
-		__forceinline static bool getKey(const eKeyCode);
+		__forceinline static bool getKeyDown(eKeyCode);
+		__forceinline static bool getKeyUp(eKeyCode);
+		__forceinline static bool getKey(eKeyCode);
+
 	private:
 		static Key m_keys[sizeof _KEY_TABLE];
 
@@ -79,27 +79,27 @@ namespace Fortress
 	// FORWARD DECLARATION SHOULD BE DONE BEFORE USED.
 	Input::Key Input::m_keys[sizeof _KEY_TABLE];
 
-	void Fortress::Input::initialize()
+	void Input::initialize()
 	{
 		// building initial key table
-		for(size_t i = 0; i < sizeof _KEY_TABLE; ++i) 
+		for (size_t i = 0; i < sizeof _KEY_TABLE; ++i)
 		{
 			m_keys[i] = Key(_KEY_TABLE[i]);
 		}
 	}
 
-	void Fortress::Input::checkKeyState()
+	void Input::checkKeyState()
 	{
 		std::for_each(
 			std::execution::par,
-			std::begin(m_keys), 
-			std::end(m_keys), 
+			std::begin(m_keys),
+			std::end(m_keys),
 			[](Key& key)
 			{
 				std::lock_guard lock_guard(key._m_lock);
 				USHORT winapi_state = GetAsyncKeyState(key.m_native_code);
 
-				switch(winapi_state) 
+				switch (winapi_state)
 				{
 				case 0x0000:
 					key.m_state = _eKeyState::None;
@@ -116,25 +116,25 @@ namespace Fortress
 				default:
 					throw std::exception("winapi error : unknown GetASyncKeyState return");
 				}
-		});
+			});
 	}
 
-	void Fortress::Input::update()
+	void Input::update()
 	{
 		checkKeyState();
 	}
 
-	bool Fortress::Input::getKeyDown(const eKeyCode code)
+	bool Input::getKeyDown(const eKeyCode code)
 	{
 		return m_keys[static_cast<size_t>(code)].m_state == _eKeyState::Down;
 	}
 
-	bool Fortress::Input::getKeyUp(const eKeyCode code)
+	bool Input::getKeyUp(const eKeyCode code)
 	{
 		return m_keys[static_cast<size_t>(code)].m_state == _eKeyState::Up;
 	}
 
-	bool Fortress::Input::getKey(const eKeyCode code)
+	bool Input::getKey(const eKeyCode code)
 	{
 		return m_keys[static_cast<size_t>(code)].m_state == _eKeyState::Pressing;
 	}

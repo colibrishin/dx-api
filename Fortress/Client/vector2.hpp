@@ -38,7 +38,7 @@ namespace MathInternal
 	};
 
 	// High-level data structure for vector2
-	struct vector2 final : MathInternal::_vector2
+	struct vector2 final : _vector2
 	{
 	public:
 		vector2(const float x, const float y) : _vector2(x, y) {}

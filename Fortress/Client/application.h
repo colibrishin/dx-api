@@ -6,15 +6,16 @@
 
 #include "common.h"
 
-namespace Fortress 
+namespace Fortress
 {
 	using namespace Math;
 	using namespace Utility;
 
-	class Application 
+	class Application
 	{
 	public:
 		Application() : m_hwnd(nullptr), m_hdc(nullptr), m_playerPos(0.0f, 0.0f) {}
+
 		~Application() = default;
 		Application& operator=(const Application&) = delete;
 

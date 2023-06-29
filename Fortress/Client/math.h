@@ -3,6 +3,8 @@
 #ifndef MATH_H
 #define MATH_H
 
+#include "vector2.hpp"
+
 namespace MathInternal
 {
 	static constexpr float epsilon = 0.0001f;
@@ -15,7 +17,6 @@ namespace MathInternal
 
 // redirection for actual vector2
 
-#include "vector2.hpp"
 
 namespace Math 
 {
