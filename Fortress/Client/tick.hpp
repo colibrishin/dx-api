@@ -11,16 +11,16 @@ namespace Utility
 	public:
 		Tick() : m_ticked(false) {}
 
-		inline bool is_ticked();
-		inline void set_ticked();
-		inline void unset_ticked();
+		__forceinline bool is_ticked();
+		__forceinline void set_ticked();
+		__forceinline void unset_ticked();
 
 	private:
 		std::mutex _mutex;
 		bool m_ticked;
 	};
 
-	inline bool Tick::is_ticked()
+	bool Tick::is_ticked()
 	{
 		_mutex.lock();
 		const bool ret = m_ticked;
@@ -28,14 +28,14 @@ namespace Utility
 		return ret;
 	}
 
-	inline void Tick::set_ticked()
+	void Tick::set_ticked()
 	{
 		_mutex.lock();
 		m_ticked = true;
 		_mutex.unlock();
 	}
 
-	inline void Tick::unset_ticked()
+	void Tick::unset_ticked()
 	{
 		_mutex.lock();
 		m_ticked = false;
