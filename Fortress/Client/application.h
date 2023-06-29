@@ -20,10 +20,12 @@ namespace Fortress
 
 		void initialize(HWND, HDC);
 		void run();
-		void update(UINT, WPARAM);
+		void update();
 		void render();
 
 	private:
+		__forceinline void checkKeyUpdate();
+
 		HWND m_hwnd;
 		HDC m_hdc;
 		Vector2 m_playerPos;

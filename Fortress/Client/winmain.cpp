@@ -171,7 +171,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    application.update(message, wParam);
+    application.update();
 
     switch (message)
     {

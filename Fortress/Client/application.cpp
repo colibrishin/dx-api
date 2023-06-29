@@ -1,44 +1,53 @@
 #include "application.h"
+#include "input.hpp"
 
 void Fortress::Application::initialize(const HWND hwnd, const HDC hdc)
 {
 	m_hwnd = hwnd;
 	m_hdc = hdc;
+    Input::initialize();
 }
 
 void Fortress::Application::run()
 {
 }
 
-void Fortress::Application::update(const UINT message, const WPARAM wParam)
+void Fortress::Application::checkKeyUpdate() 
 {
-    switch (message) 
-	{
-	case WM_KEYDOWN:
-		m_update_tick.set_ticked();
+    Input::update();
 
-        switch (wParam)
-        {
-        case VK_LEFT:
-            m_playerPos = m_playerPos.left();
-            break;
-        case VK_RIGHT:
-            m_playerPos = m_playerPos.right();
-            break;
-        case VK_UP:
-            m_playerPos = m_playerPos.bottom();
-            break;
-        case VK_DOWN:
-            m_playerPos = m_playerPos.top();
-            break;
-        }
-	}
+    if(Input::getKey(eKeyCode::A)) 
+    {
+        m_playerPos = m_playerPos.left();
+        m_update_tick.set_ticked();
+    }
+    if(Input::getKey(eKeyCode::D)) 
+    {
+        m_playerPos = m_playerPos.right();
+        m_update_tick.set_ticked();
+    }
+    if(Input::getKey(eKeyCode::W)) 
+    {
+        // This is not a bug, value changing is in reverse.
+        m_playerPos = m_playerPos.bottom();
+        m_update_tick.set_ticked();
+    }
+    if(Input::getKey(eKeyCode::S)) 
+    {
+        m_playerPos = m_playerPos.top();
+        m_update_tick.set_ticked();
+    }
+}
+
+void Fortress::Application::update()
+{
+    checkKeyUpdate();
 
     // @todo: test with static push
     m_render_queue.push([this]()
     {
         TextOut(m_hdc, m_playerPos.get_x(), m_playerPos.get_y(), L"@", 1);
-        });
+    });
 
 	if(m_update_tick.is_ticked())
 	{

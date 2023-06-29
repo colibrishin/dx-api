@@ -5,7 +5,7 @@
 
 namespace Object
 {
-	enum CharacterType
+	enum class CharacterType
 	{
 		CANNON = 0,
 	};

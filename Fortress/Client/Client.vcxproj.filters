@@ -60,6 +60,9 @@
     <ClInclude Include="character.h">
       <Filter>Engine\Object</Filter>
     </ClInclude>
+    <ClInclude Include="input.hpp">
+      <Filter>Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
