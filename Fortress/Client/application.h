@@ -26,6 +26,7 @@ namespace Fortress
 
 	private:
 		__forceinline void checkKeyUpdate();
+		void moveRandomly();
 
 		HWND m_hwnd;
 		HDC m_hdc;

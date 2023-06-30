@@ -13,7 +13,12 @@ namespace Math
 	public:
 		vector2(const float x, const float y) : m_x(x), m_y(y) {}
 
-		virtual vector2& operator=(const vector2& other) = default;
+		virtual vector2& operator=(const vector2& other)
+		{
+			m_x = other.m_x;
+			m_y = other.m_y;
+			return *this;
+		}
 
 		virtual vector2& operator+=(const vector2& other)
 		{

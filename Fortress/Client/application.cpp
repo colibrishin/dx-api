@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "application.h"
 #include "input.hpp"
 #include "deltatime.hpp"
@@ -16,6 +18,10 @@ namespace Fortress
 	{
 	}
 
+	void Application::moveRandomly()
+	{
+	}
+
 	void Application::checkKeyUpdate()
 	{
 		Input::update();
@@ -27,7 +33,7 @@ namespace Fortress
 		}
 		if (Input::getKey(eKeyCode::D))
 		{
-			m_playerPos = m_playerPos.right() + Vector2{DeltaTime::get_deltaTime(), 0};;
+			m_playerPos = m_playerPos.right() + Vector2{DeltaTime::get_deltaTime(), 0};
 			m_update_tick.set_ticked();
 		}
 		if (Input::getKey(eKeyCode::W))

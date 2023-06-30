@@ -26,7 +26,7 @@ namespace Fortress
 
 	void DeltaTime::update() 
 	{
-		QueryPerformanceFrequency(&m_curr_frequency);
+		QueryPerformanceCounter(&m_curr_frequency);
 
 		float delta = static_cast<float>(m_curr_frequency.QuadPart - m_prev_frequency.QuadPart);
 		m_deltaTime = delta / static_cast<float>(m_cpu_frequency.QuadPart);
