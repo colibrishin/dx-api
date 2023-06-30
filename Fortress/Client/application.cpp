@@ -1,5 +1,6 @@
 #include "application.h"
 #include "input.hpp"
+#include "deltatime.hpp"
 
 namespace Fortress
 {
@@ -8,6 +9,7 @@ namespace Fortress
 		m_hwnd = hwnd;
 		m_hdc = hdc;
 		Input::initialize();
+		DeltaTime::initialize();
 	}
 
 	void Application::run()
@@ -20,30 +22,32 @@ namespace Fortress
 
 		if (Input::getKey(eKeyCode::A))
 		{
-			m_playerPos = m_playerPos.left();
+			m_playerPos = m_playerPos.left() + Vector2{-DeltaTime::get_deltaTime(), 0};
 			m_update_tick.set_ticked();
 		}
 		if (Input::getKey(eKeyCode::D))
 		{
-			m_playerPos = m_playerPos.right();
+			m_playerPos = m_playerPos.right() + Vector2{DeltaTime::get_deltaTime(), 0};;
 			m_update_tick.set_ticked();
 		}
 		if (Input::getKey(eKeyCode::W))
 		{
 			// This is not a bug, value changing is in reverse.
-			m_playerPos = m_playerPos.bottom();
+			m_playerPos = m_playerPos.bottom() + Vector2{0, -DeltaTime::get_deltaTime()};
 			m_update_tick.set_ticked();
 		}
 		if (Input::getKey(eKeyCode::S))
 		{
-			m_playerPos = m_playerPos.top();
+			m_playerPos = m_playerPos.top() + Vector2{0, DeltaTime::get_deltaTime()};
 			m_update_tick.set_ticked();
 		}
 	}
 
 	void Application::update()
 	{
+		DeltaTime::update();
 		checkKeyUpdate();
+		DeltaTime::render(m_hdc);
 
 		// @todo: test with static push
 		m_render_queue.push([this]()

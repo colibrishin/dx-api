@@ -61,7 +61,7 @@
       <Filter>Engine\Object</Filter>
     </ClInclude>
     <ClInclude Include="input.hpp">
-      <Filter>Engine</Filter>
+      <Filter>Engine\Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -82,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="object.hpp">
       <Filter>Engine\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="deltatime.hpp">
+      <Filter>Engine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="deltatime.cpp">
+      <Filter>Engine\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
