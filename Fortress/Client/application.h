@@ -2,14 +2,15 @@
 #define APPLICATION_H
 #pragma once
 
-#include <queue>
-
 #include "common.h"
+
+constexpr static int OBJECT_COUNT = 10;
 
 namespace Fortress
 {
 	using namespace Math;
 	using namespace Utility;
+	using namespace Object;
 
 	class Application
 	{
@@ -27,11 +28,12 @@ namespace Fortress
 	private:
 		__forceinline void checkKeyUpdate();
 		void moveRandomly();
-		void reflectiveMove();
+		void reflectiveMove(Character& target);
 
 		HWND m_hwnd;
 		HDC m_hdc;
 		Vector2 m_playerPos;
+		Character m_objects[OBJECT_COUNT];
 		Tick m_update_tick;
 	};
 }
