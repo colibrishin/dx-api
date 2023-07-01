@@ -2,16 +2,17 @@
 #define OBJECT_H
 #pragma once
 
+#include "character.h"
+#include "object.hpp"
+
 namespace ObjectInternal
 {
 	class _baseObject;
 }
 
-#include "object.hpp"
-
 namespace Object
 {
-	class Character;
+	using Character = character;
 }
 
 #endif
