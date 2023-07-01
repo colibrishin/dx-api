@@ -37,7 +37,6 @@ namespace Fortress
 	public:
 		struct Key
 		{
-			std::mutex _m_lock;
 			uint8_t m_native_code;
 			_eKeyState m_state;
 
@@ -96,7 +95,6 @@ namespace Fortress
 			std::end(m_keys),
 			[](Key& key)
 			{
-				std::lock_guard lock_guard(key._m_lock);
 				USHORT winapi_state = GetAsyncKeyState(key.m_native_code);
 
 				switch (winapi_state)

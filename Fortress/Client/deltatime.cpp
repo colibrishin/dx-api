@@ -28,7 +28,7 @@ namespace Fortress
 			wchar_t szFloat[50]{};
 			float fps = 1.0f / m_deltaTime;
 
-			swprintf(szFloat, 50, L"DeltaTime: %5f fps", fps);
+			swprintf(szFloat, 50, L"DeltaTime: %5f", fps);
 			int strlen = wcsnlen_s(szFloat, 50);
 
 			TextOut(hdc, 10, 10, szFloat, strlen);

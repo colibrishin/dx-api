@@ -27,14 +27,12 @@ namespace Fortress
 	private:
 		__forceinline void checkKeyUpdate();
 		void moveRandomly();
+		void reflectiveMove();
 
 		HWND m_hwnd;
 		HDC m_hdc;
 		Vector2 m_playerPos;
 		Tick m_update_tick;
-
-		Tick m_render_tick;
-		std::queue<std::function<void()>> m_render_queue;
 	};
 }
 

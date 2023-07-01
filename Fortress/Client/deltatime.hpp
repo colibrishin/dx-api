@@ -28,7 +28,7 @@ namespace Fortress
 	{
 		QueryPerformanceCounter(&m_curr_frequency);
 
-		float delta = static_cast<float>(m_curr_frequency.QuadPart - m_prev_frequency.QuadPart);
+		const float delta = static_cast<float>(m_curr_frequency.QuadPart - m_prev_frequency.QuadPart);
 		m_deltaTime = delta / static_cast<float>(m_cpu_frequency.QuadPart);
 		
 		m_prev_frequency = m_curr_frequency;
