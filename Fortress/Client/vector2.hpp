@@ -11,31 +11,32 @@ namespace Math
 	struct vector2 final
 	{
 	public:
+		vector2() = default;
 		vector2(const float x, const float y) : m_x(x), m_y(y) {}
 
-		virtual vector2& operator=(const vector2& other)
+		vector2& operator=(const vector2& other)
 		{
 			m_x = other.m_x;
 			m_y = other.m_y;
 			return *this;
 		}
 
-		virtual vector2& operator+=(const vector2& other)
+		vector2& operator+=(const vector2& other)
 		{
 			m_x += other.m_x;
 			m_y += other.m_y;
 			return *this;
 		}
 
-		virtual vector2 operator+(const vector2& right) const
+		vector2 operator+(const vector2& right) const
 		{
 			return vector2{ m_x + right.m_x, m_y + right.m_y };
 		}
-		virtual vector2 operator-(const vector2& right) const
+		vector2 operator-(const vector2& right) const
 		{
 			return vector2{ m_x - right.m_x, m_y - right.m_y };
 		}
-		virtual bool operator==(const vector2& other) const
+		bool operator==(const vector2& other) const
 		{
 			// rather safe comparison for float.
 			return fabs(m_x - other.m_x) < Math::epsilon &&
