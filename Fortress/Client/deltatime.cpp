@@ -14,8 +14,8 @@ namespace Fortress
 			throw std::exception("Deltatime error : QueryPerformanceFrequency, Deltatime unsupported cpu");
 		}
 
-		m_prev_frequency = m_cpu_frequency;
-		m_curr_frequency = m_cpu_frequency;
+		QueryPerformanceCounter(&m_curr_frequency);
+		QueryPerformanceCounter(&m_prev_frequency);
 	}
 
 	void DeltaTime::render(HDC hdc)
