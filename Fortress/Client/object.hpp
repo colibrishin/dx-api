@@ -15,25 +15,42 @@ namespace ObjectInternal
 
 		virtual void move_left()
 		{
-			position = position.left();
+			m_position = m_position.left();
 		}
 		virtual void move_right()
 		{
-			position = position.right();
+			m_position = m_position.right();
 		}
 		virtual void move_down()
 		{
-			position = position.top();
+			m_position = m_position.top();
 		}
 		virtual void move_up()
 		{
-			position = position.bottom();
+			m_position = m_position.bottom();
+		}
+		float get_x() const
+		{
+			return m_position.get_x();
+		}
+		float get_y() const
+		{
+			return m_position.get_y();
+		}
+		virtual Math::Vector2 operator+(const Math::Vector2& vector) const
+		{
+			return {m_position + vector};
+		}
+		virtual _baseObject& operator+=(const Math::Vector2& vector)
+		{
+			m_position += vector;
+			return *this;
 		}
 
 	protected:
-		Math::Vector2 position;
-		_baseObject(const float x, const float y)
-		: position(x, y) {}
+		Math::Vector2 m_position;
+		_baseObject(const Math::Vector2& position)
+		: m_position(position) {}
 	};
 }
 #endif // OBJECT_HPP
