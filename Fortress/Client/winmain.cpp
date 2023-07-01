@@ -44,7 +44,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
 
-    MSG msg;
+    MSG msg = {};
 
     // 기본 메시지 루프입니다:
 
@@ -61,21 +61,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         }
     }*/
 
-    while (true) 
+    while (WM_QUIT != msg.message) 
     {
         if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) 
         {
-            if (msg.message == WM_QUIT) 
-            {
-                break;
-            }
-
             if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
             {
                 TranslateMessage(&msg);
                 DispatchMessage(&msg);
             }
         }
+
+        application.update();
+        application.render();
     }
 
     if (msg.message == WM_QUIT)
@@ -171,8 +169,6 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 //
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    application.update();
-
     switch (message)
     {
     case WM_COMMAND:
@@ -196,8 +192,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
         {
             PAINTSTRUCT ps;
             HDC hdc = BeginPaint(hWnd, &ps);
-            application.render();
-
             EndPaint(hWnd, &ps);
         }
         break;
