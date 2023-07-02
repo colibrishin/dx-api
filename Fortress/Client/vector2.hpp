@@ -22,7 +22,16 @@ namespace Math
 			m_y += other.m_y;
 			return *this;
 		}
-
+		vector2& operator*(const vector2& other)
+		{
+			m_x *= other.m_x;
+			m_y *= other.m_y;
+			return *this;
+		}
+		vector2 operator*(const float& scalar) const
+		{
+			return {m_x * scalar, m_y * scalar};
+		}
 		vector2 operator+(const vector2& right) const
 		{
 			return vector2{ m_x + right.m_x, m_y + right.m_y };
