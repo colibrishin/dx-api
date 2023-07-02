@@ -23,7 +23,7 @@ namespace Fortress
 		static float interval = 0.0f;
 
 		interval += m_deltaTime;
-		if (interval >= 1.0f)
+		if (interval >= 0.01f)
 		{
 			wchar_t szFloat[50]{};
 			float fps = 1.0f / m_deltaTime;

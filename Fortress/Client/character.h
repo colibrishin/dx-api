@@ -39,8 +39,8 @@ namespace Object
 		CollisionCode is_collision(const character& object) const;
 
 		Math::Vector2 m_velocity;
-	private:
 		Math::Vector2 m_hitbox;
+	private:
 		int m_hp;
 		int m_mp;
 		CharacterType m_type;

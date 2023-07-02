@@ -4,10 +4,11 @@
 
 #include "common.h"
 
-constexpr static int OBJECT_COUNT = 100;
-
 namespace Fortress
 {
+	constexpr static int OBJECT_COUNT = 100;
+	constexpr static float speed = 2000.0f;
+
 	using namespace Math;
 	using namespace Utility;
 	using namespace Object;
