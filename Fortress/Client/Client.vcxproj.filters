@@ -89,6 +89,9 @@
     <ClCompile Include="deltatime.cpp">
       <Filter>Engine\Common</Filter>
     </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>Windows\소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">

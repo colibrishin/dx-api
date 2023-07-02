@@ -37,6 +37,10 @@ namespace ObjectInternal
 		{
 			return m_position.get_y();
 		}
+		Math::Vector2 get_position() const
+		{
+			return m_position;
+		}
 		virtual Math::Vector2 operator+(const Math::Vector2& vector) const
 		{
 			return {m_position + vector};

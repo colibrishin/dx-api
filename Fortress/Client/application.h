@@ -4,7 +4,7 @@
 
 #include "common.h"
 
-constexpr static int OBJECT_COUNT = 10;
+constexpr static int OBJECT_COUNT = 100;
 
 namespace Fortress
 {
@@ -28,6 +28,7 @@ namespace Fortress
 	private:
 		__forceinline void checkKeyUpdate();
 		void moveRandomly();
+		bool updateCharacterCollision(Character& target);
 		void reflectiveMove(Character& target);
 
 		HWND m_hwnd;

@@ -14,12 +14,7 @@ namespace Math
 		vector2() = default;
 		vector2(const float x, const float y) : m_x(x), m_y(y) {}
 
-		vector2& operator=(const vector2& other)
-		{
-			m_x = other.m_x;
-			m_y = other.m_y;
-			return *this;
-		}
+		vector2& operator=(const vector2& other) = default;
 
 		vector2& operator+=(const vector2& other)
 		{
@@ -31,6 +26,10 @@ namespace Math
 		vector2 operator+(const vector2& right) const
 		{
 			return vector2{ m_x + right.m_x, m_y + right.m_y };
+		}
+		vector2 operator-() const
+		{
+			return {-m_x, -m_y};
 		}
 		vector2 operator-(const vector2& right) const
 		{

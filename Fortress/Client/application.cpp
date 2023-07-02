@@ -26,7 +26,7 @@ namespace Fortress
 				std:: uniform_int_distribution w_distribution(0, width);
 
 				Vector2 random_pos = {static_cast<float>(w_distribution(generator)), static_cast<float>(h_distribution(generator))};
-				m_object = {random_pos, {2.0f,2.0f}, 0, 0, CharacterType::CANNON};
+				m_object = {random_pos, {2.0f,2.0f}, {40, 40}, 0, 0, CharacterType::CANNON};
 			}
 		}
 	}
@@ -81,6 +81,47 @@ namespace Fortress
 		
 	}
 
+	bool Application::updateCharacterCollision(Character& target)
+	{
+		Character updated = target;
+		updated += target.m_velocity;
+		bool collision = false;
+
+		for(auto& object : m_objects)
+		{
+			if(&object == &target)
+			{
+				continue;
+			}
+
+			switch(target.is_collision(object))
+			{
+			case CollisionCode::Identical:
+				target.m_velocity = -target.m_velocity;
+				object.m_velocity = -object.m_velocity;
+				collision = true;
+				break;
+			case CollisionCode::XHitInside:
+			case CollisionCode::XHitBoundary:
+				target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
+				object.m_velocity += {object.m_velocity.get_x() * -2.0f, 0};
+				collision = true;
+				break;
+			case CollisionCode::YHitBoundary:
+			case CollisionCode::YHitInside:
+				target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
+				object.m_velocity +=  {0, object.m_velocity.get_y() * -2.0f};
+				collision = true;
+				break;
+			case CollisionCode::None:
+			default:
+				collision = false;
+				break;
+			}
+		}
+		return collision;
+	}
+
 	void Application::reflectiveMove(Character& target)
 	{
 		RECT rect;
@@ -91,16 +132,20 @@ namespace Fortress
 			const float height = rect.bottom - rect.top;
 			const float width = rect.right - rect.left;
 
-			const auto newPos = target + target.m_velocity;
-			// Reflection vector
-			// R = P + 2n(-P * n), where n = identity (= 1)
-			if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
+			if(!updateCharacterCollision(target))
 			{
-				target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
-			}
-			else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
-			{
-				target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
+				const auto newPos = target + target.m_velocity;
+
+				// Reflection vector
+				// R = P + 2n(-P * n), where n = identity (= 1)
+				if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
+				{
+					target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
+				}
+				else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
+				{
+					target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
+				}
 			}
 
 			target += target.m_velocity + Vector2(DeltaTime::get_deltaTime(), DeltaTime::get_deltaTime());
@@ -177,7 +222,7 @@ namespace Fortress
 		DeltaTime::render(m_hdc);
 		for(auto & m_object : m_objects)
 		{
-			Ellipse(m_hdc, m_object.get_x(), m_object.get_y(), m_object.get_x() + 6 ,m_object.get_y() + 6);
+			Ellipse(m_hdc, m_object.get_x(), m_object.get_y(), m_object.get_x() + 20 ,m_object.get_y() + 20);
 		}
 	}
 }

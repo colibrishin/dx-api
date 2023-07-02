@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="application.h" />
+    <ClCompile Include="character.cpp" />
     <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
