@@ -5,7 +5,7 @@
 Object::CollisionCode Object::character::is_collision(const character& object) const
 {
     const auto diff = object.get_position() - m_position;
-    const auto dist = std::powf(diff.get_x(), 2) + std::powf(diff.get_y(), 2);
+    const auto dist = std::sqrtf(std::powf(diff.get_x(), 2) + std::powf(diff.get_y(), 2));
 
     // @todo: bug, if two object is intersects, their collisions are done indefinitely.
     // identical

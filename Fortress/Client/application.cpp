@@ -26,7 +26,7 @@ namespace Fortress
 				std:: uniform_int_distribution w_distribution(0, width);
 
 				Vector2 random_pos = {static_cast<float>(w_distribution(generator)), static_cast<float>(h_distribution(generator))};
-				m_object = {random_pos, {2.0f,2.0f}, {40, 40}, 0, 0, CharacterType::CANNON};
+				m_object = {random_pos, {2.0f,2.0f}, {10, 10}, 0, 0, CharacterType::CANNON};
 			}
 		}
 	}
@@ -128,7 +128,7 @@ namespace Fortress
 		if(GetWindowRect(m_hwnd, &rect))
 		{
 			const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
-			constexpr float r2 = 2 * 6.0f;
+			constexpr float r2 = 20.0f;
 			const float height = rect.bottom - rect.top;
 			const float width = rect.right - rect.left;
 
