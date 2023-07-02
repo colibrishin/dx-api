@@ -22,11 +22,9 @@ namespace Math
 			m_y += other.m_y;
 			return *this;
 		}
-		vector2& operator*(const vector2& other)
+		vector2 operator*(const vector2& other) const
 		{
-			m_x *= other.m_x;
-			m_y *= other.m_y;
-			return *this;
+			return {m_x * other.m_x, m_y * other.m_y};
 		}
 		vector2 operator*(const float& scalar) const
 		{
