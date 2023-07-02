@@ -83,37 +83,28 @@ namespace Fortress
 
 	void Application::reflectiveMove(Character& target)
 	{
-		// @todo: moving like snail because they are sharing this interval value.
-		static float interval = 0.0f;
-
-		interval += DeltaTime::get_deltaTime();
-
-		if(interval >= 0.05f)
+		RECT rect;
+		if(GetWindowRect(m_hwnd, &rect))
 		{
-			RECT rect;
-			if(GetWindowRect(m_hwnd, &rect))
+			const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
+			constexpr float r2 = 2 * 6.0f;
+			const float height = rect.bottom - rect.top;
+			const float width = rect.right - rect.left;
+
+			const auto newPos = target + target.m_velocity;
+			// Reflection vector
+			// R = P + 2n(-P * n), where n = identity (= 1)
+			if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
 			{
-				const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
-				constexpr float r2 = 2 * 6.0f;
-				const float height = rect.bottom - rect.top;
-				const float width = rect.right - rect.left;
-
-				const auto newPos = target + target.m_velocity;
-				// Reflection vector
-				// R = P + 2n(-P * n), where n = identity (= 1)
-				if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
-				{
-					target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
-				}
-				else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
-				{
-					target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
-				}
-
-				target += target.m_velocity + Vector2(DeltaTime::get_deltaTime(), DeltaTime::get_deltaTime());
-				m_update_tick.set_ticked();
-				interval = 0.0f;
+				target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
 			}
+			else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
+			{
+				target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
+			}
+
+			target += target.m_velocity + Vector2(DeltaTime::get_deltaTime(), DeltaTime::get_deltaTime());
+			m_update_tick.set_ticked();
 		}
 	}
 
@@ -159,9 +150,17 @@ namespace Fortress
 		DeltaTime::update();
 
 		//moveRandomly();
-		for(auto& c : m_objects)
+
+		static float interval = 0.0f;
+		interval += DeltaTime::get_deltaTime();
+
+		if(interval >= 0.01f)
 		{
-			reflectiveMove(c);
+			for(auto& c : m_objects)
+			{
+				reflectiveMove(c);
+			}
+			interval = 0;
 		}
 
 		checkKeyUpdate();
