@@ -37,6 +37,7 @@ namespace Fortress
 
 	bool Application::updateCharacterCollision(Character& target)
 	{
+		// simulating next movement
 		Character updated = target;
 		updated += target.m_velocity * speed * DeltaTime::get_deltaTime();
 		bool collision = false;
@@ -79,12 +80,13 @@ namespace Fortress
 		if(GetWindowRect(m_hwnd, &rect))
 		{
 			const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
-			const float r2 = 2 * target.m_hitbox.get_x();
+			const float r2 = target.m_hitbox.get_x();
 			const float height = rect.bottom - rect.top;
 			const float width = rect.right - rect.left;
 
 			updateCharacterCollision(target);
 
+			// hitting windows and character can happen individually.
 			const auto newPos = target + target.m_velocity * speed * DeltaTime::get_deltaTime();
 
 			// Reflection vector

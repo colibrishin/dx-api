@@ -15,7 +15,9 @@ Object::CollisionCode Object::character::is_collision(const character& object) c
     }
 
     const auto hitbox_diff = m_hitbox - object.m_hitbox;
-    const auto hitbox_sum = m_hitbox + object.m_hitbox;
+    // @note: using one hitbox size due to winapi middle point is actually top left.
+    //const auto hitbox_sum = m_hitbox + object.m_hitbox;
+    const auto hitbox_sum = m_hitbox;
 
     // Too far
     if(hitbox_diff.get_x() > dist || hitbox_sum.get_x() < dist ||
@@ -24,11 +26,12 @@ Object::CollisionCode Object::character::is_collision(const character& object) c
 	    return CollisionCode::None;
     }
 
-    // Collision, met each other in radius.
+    // X Collision, meet each other in radius.
     if(hitbox_diff.get_x() - dist < Math::epsilon || hitbox_sum.get_x() - dist < Math::epsilon)
     {
 	    return CollisionCode::XHitBoundary;
     }
+    // X Collision, meet each other their inside.
     if (hitbox_diff.get_x() < dist && dist < hitbox_sum.get_x())
     {
         return CollisionCode::XHitInside;
