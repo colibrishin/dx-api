@@ -35,52 +35,6 @@ namespace Fortress
 	{
 	}
 
-	void Application::moveRandomly()
-	{
-		static float interval = 0.0f;
-
-		interval += DeltaTime::get_deltaTime();
-		if (interval >= 0.01f)
-		{
-			constexpr float offset[8][2] = 
-			{
-				{-1.0f, 0.0f},
-				{1.0f, 0.0f},
-				{0.0f, -1.0f},
-				{0.0f, 1.0f},
-				{-1.0f, -1.0f},
-				{-1.0f, 1.0f},
-				{1.0f, -1.0f},
-				{1.0f, 1.0f}
-			};
-
-			constexpr int offset_length = sizeof offset / sizeof(int) / 2;
-			static thread_local std::mt19937 generator(static_cast<unsigned int>(time(nullptr)));
-			std:: uniform_int_distribution distribution(0, offset_length);
-
-			const int random_offset_idx = distribution(generator);
-
-			const float x = offset[random_offset_idx][0] * 2.0f + (offset[random_offset_idx][0] > 0.0f ? DeltaTime::get_deltaTime() : 0.0f);
-			const float y = offset[random_offset_idx][1] * 2.0f + (offset[random_offset_idx][1] > 0.0f ? DeltaTime::get_deltaTime() : 0.0f);
-
-			RECT rect;
-			if(GetWindowRect(m_hwnd, &rect))
-			{
-				const float height = rect.bottom - rect.top;
-				const float width = rect.right - rect.left;
-
-				const Vector2 newPos = m_playerPos + Vector2{x, y};
-				if(newPos.get_x() >= 0 && newPos.get_x() <= width && newPos.get_y() <= height && newPos.get_y() >= 0)
-				{
-					m_playerPos = newPos;
-					m_update_tick.set_ticked();
-				}
-				interval = 0.0f;
-			}
-		}
-		
-	}
-
 	bool Application::updateCharacterCollision(Character& target)
 	{
 		Character updated = target;
