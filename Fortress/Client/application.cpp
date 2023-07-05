@@ -38,7 +38,7 @@ namespace Fortress
 				random_pos,
 				{1.0f, 1.0f},
 				{20.0f, 20.0f},
-				2000.0f,
+				500.0f,
 				0.0f,
 				0,
 				0,
@@ -113,9 +113,6 @@ namespace Fortress
 			for(auto& c : m_objects)
 			{
 				checkWindowFrame(c);
-
-				// @todo: _rigidbody.move() should have do this trick.
-				c += c.m_velocity * speed * DeltaTime::get_deltaTime();
 			}
 			interval = 0;
 		}
