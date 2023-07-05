@@ -16,5 +16,4 @@
 // ## CUSTOM
 
 #include "math.h"
-#include "utility.h"
 #include "object.h"

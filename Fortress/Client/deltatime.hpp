@@ -40,4 +40,4 @@ namespace Fortress
 	}
 }
 
-#endif DELTATIME_H
+#endif //DELTATIME_H

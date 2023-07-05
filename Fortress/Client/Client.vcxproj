@@ -136,18 +136,16 @@
     <ClInclude Include="math.h" />
     <ClInclude Include="object.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="rigidbody.hpp" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="tick.hpp" />
     <ClInclude Include="vector2.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="application.h" />
-    <ClCompile Include="character.cpp" />
     <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
-    <ClCompile Include="utility.h" />
     <ClCompile Include="vector2.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>

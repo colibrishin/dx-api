@@ -13,21 +13,27 @@ namespace Fortress
 		Input::initialize();
 		DeltaTime::initialize();
 
-		RECT rect;
-		if(GetWindowRect(m_hwnd, &rect))
+		AdjustWindowRect(&m_window_size, WS_OVERLAPPEDWINDOW, false);
+		SetWindowPos(m_hwnd, nullptr, 0, 0, get_window_width(),
+		             get_window_height(), 0);
+		ShowWindow(m_hwnd, true);
+
+		m_buffer_bitmap = CreateCompatibleBitmap(m_hdc, get_window_width(), get_window_height());
+		m_buffer_hdc = CreateCompatibleDC(hdc);
+
+		// m_buffer_hdc selects the buffer bitmap.
+		const auto defaultBitmap = SelectObject(m_buffer_hdc, m_buffer_bitmap);
+		// free the temporary handle.
+		DeleteObject(defaultBitmap);
+
+		for(auto& m_object : m_objects)
 		{
-			const int height = rect.bottom - rect.top;
-			const int width = rect.right - rect.left;
+			static thread_local std::mt19937 generator(static_cast<unsigned int>(time(nullptr)));
+			std:: uniform_int_distribution h_distribution(0, get_window_width());
+			std:: uniform_int_distribution w_distribution(0, get_window_height());
 
-			for(auto& m_object : m_objects)
-			{
-				static thread_local std::mt19937 generator(static_cast<unsigned int>(time(nullptr)));
-				std:: uniform_int_distribution h_distribution(0, height);
-				std:: uniform_int_distribution w_distribution(0, width);
-
-				Vector2 random_pos = {static_cast<float>(w_distribution(generator)), static_cast<float>(h_distribution(generator))};
-				m_object = {random_pos, {1.0f, 1.0f}, {20.0f, 20.0f}, 0, 0, CharacterType::CANNON};
-			}
+			Vector2 random_pos = {static_cast<float>(w_distribution(generator)), static_cast<float>(h_distribution(generator))};
+			m_object = {random_pos, {1.0f, 1.0f}, {20.0f, 20.0f}, 0, 0, CharacterType::CANNON};
 		}
 	}
 
@@ -35,73 +41,25 @@ namespace Fortress
 	{
 	}
 
-	bool Application::updateCharacterCollision(Character& target)
+	void Application::checkWindowFrame(Character& target)
 	{
-		// simulating next movement
-		Character updated = target;
-		updated += target.m_velocity * speed * DeltaTime::get_deltaTime();
-		bool collision = false;
+		const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
+		const float r2 = target.m_hitbox.get_x();
+		const float height = static_cast<float>(get_window_height());
+		const float width = static_cast<float>(get_window_width());
 
-		for(auto& object : m_objects)
+		// hitting windows and character can happen individually.
+		const auto newPos = target + target.m_velocity * speed * DeltaTime::get_deltaTime();
+
+		// Reflection vector
+		// R = P + 2n(-P * n), where n = identity (= 1)
+		if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
 		{
-			if(&object == &target)
-			{
-				continue;
-			}
-
-			switch(updated.is_collision(object))
-			{
-			case CollisionCode::Identical:
-				target.m_velocity = -target.m_velocity;
-				collision = true;
-				break;
-			case CollisionCode::XHitInside:
-			case CollisionCode::XHitBoundary:
-				target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
-				collision = true;
-				break;
-			case CollisionCode::YHitBoundary:
-			case CollisionCode::YHitInside:
-				target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
-				collision = true;
-				break;
-			case CollisionCode::None:
-			default:
-				collision = false;
-				break;
-			}
+			target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
 		}
-		return collision;
-	}
-
-	void Application::reflectiveMove(Character& target)
-	{
-		RECT rect;
-		if(GetWindowRect(m_hwnd, &rect))
+		else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
 		{
-			const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
-			const float r2 = target.m_hitbox.get_x();
-			const float height = rect.bottom - rect.top;
-			const float width = rect.right - rect.left;
-
-			updateCharacterCollision(target);
-
-			// hitting windows and character can happen individually.
-			const auto newPos = target + target.m_velocity * speed * DeltaTime::get_deltaTime();
-
-			// Reflection vector
-			// R = P + 2n(-P * n), where n = identity (= 1)
-			if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
-			{
-				target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
-			}
-			else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
-			{
-				target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
-			}
-
-			target += target.m_velocity * speed * DeltaTime::get_deltaTime();
-			m_update_tick.set_ticked();
+			target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
 		}
 	}
 
@@ -112,23 +70,19 @@ namespace Fortress
 		if (Input::getKey(eKeyCode::A))
 		{
 			m_playerPos = m_playerPos.left() * speed * DeltaTime::get_deltaTime();
-			m_update_tick.set_ticked();
 		}
 		if (Input::getKey(eKeyCode::D))
 		{
 			m_playerPos = m_playerPos.right() * speed * DeltaTime::get_deltaTime();
-			m_update_tick.set_ticked();
 		}
 		if (Input::getKey(eKeyCode::W))
 		{
 			// This is not a bug, value changing is in reverse.
 			m_playerPos = m_playerPos.bottom() * speed * DeltaTime::get_deltaTime();
-			m_update_tick.set_ticked();
 		}
 		if (Input::getKey(eKeyCode::S))
 		{
 			m_playerPos = m_playerPos.top() * speed * DeltaTime::get_deltaTime();
-			m_update_tick.set_ticked();
 		}
 	}
 
@@ -145,6 +99,7 @@ namespace Fortress
 		}
 
 		DeltaTime::update();
+		Character::update();
 
 		static float interval = 0.0f;
 		interval += DeltaTime::get_deltaTime();
@@ -153,31 +108,31 @@ namespace Fortress
 		{
 			for(auto& c : m_objects)
 			{
-				reflectiveMove(c);
+				checkWindowFrame(c);
+
+				// @todo: _rigidbody.move() should have do this trick.
+				c += c.m_velocity * speed * DeltaTime::get_deltaTime();
 			}
 			interval = 0;
 		}
 
 		checkKeyUpdate();
-
-		if (m_update_tick.is_ticked())
-		{
-			InvalidateRect(m_hwnd, nullptr, true);
-			m_update_tick.unset_ticked();
-		}
 	}
 
 	void Application::render()
 	{
-		DeltaTime::render(m_hdc);
+		DeltaTime::render(m_buffer_hdc);
 		for(auto & m_object : m_objects)
 		{
 			Ellipse(
-				m_hdc, 
+				m_buffer_hdc, 
 				m_object.get_x(), 
 				m_object.get_y(), 
 				m_object.get_x() + m_object.m_hitbox.get_x(),
 				m_object.get_y() + m_object.m_hitbox.get_y());
 		}
+
+		// @todo: clear previous paint
+		BitBlt(m_hdc, 0 , 0, get_window_width(), get_window_height(), m_buffer_hdc, 0, 0, SRCCOPY);
 	}
 }

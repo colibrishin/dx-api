@@ -9,6 +9,8 @@ namespace ObjectInternal
 	class _baseObject
 	{
 	public:
+		Math::Vector2 m_hitbox;
+
 		_baseObject() = delete;
 		virtual ~_baseObject() = default;
 		_baseObject& operator=(const _baseObject& other) = default;
@@ -53,8 +55,9 @@ namespace ObjectInternal
 
 	protected:
 		Math::Vector2 m_position;
-		_baseObject(const Math::Vector2& position)
-		: m_position(position) {}
+
+		_baseObject(const Math::Vector2 position, const Math::Vector2 hitbox)
+		: m_position(position), m_hitbox(hitbox) {}
 	};
 }
 #endif // OBJECT_HPP

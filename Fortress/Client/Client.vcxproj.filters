@@ -45,9 +45,6 @@
     <ClInclude Include="common.h">
       <Filter>Engine\Common</Filter>
     </ClInclude>
-    <ClInclude Include="tick.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClInclude>
     <ClInclude Include="math.h">
       <Filter>Engine\Math</Filter>
     </ClInclude>
@@ -63,6 +60,9 @@
     <ClInclude Include="input.hpp">
       <Filter>Engine\Common</Filter>
     </ClInclude>
+    <ClInclude Include="rigidbody.hpp">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -73,9 +73,6 @@
     </ClCompile>
     <ClCompile Include="application.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="utility.h">
-      <Filter>Engine\Common</Filter>
     </ClCompile>
     <ClCompile Include="vector2.cpp">
       <Filter>Engine\Math</Filter>
@@ -88,9 +85,6 @@
     </ClCompile>
     <ClCompile Include="deltatime.cpp">
       <Filter>Engine\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="character.cpp">
-      <Filter>Windows\소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

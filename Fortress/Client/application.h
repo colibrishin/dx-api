@@ -10,13 +10,18 @@ namespace Fortress
 	constexpr static float speed = 2000.0f;
 
 	using namespace Math;
-	using namespace Utility;
 	using namespace Object;
 
 	class Application
 	{
 	public:
-		Application() : m_hwnd(nullptr), m_hdc(nullptr), m_playerPos(0.0f, 0.0f) {}
+		Application() :
+		m_window_size{0, 0, 800, 600},
+		m_hwnd(nullptr),
+		m_hdc(nullptr),
+		m_buffer_bitmap(nullptr),
+		m_buffer_hdc(nullptr),
+		m_playerPos(0.0f, 0.0f) {}
 
 		~Application() = default;
 		Application& operator=(const Application&) = delete;
@@ -28,15 +33,25 @@ namespace Fortress
 
 	private:
 		__forceinline void checkKeyUpdate();
-		void moveRandomly();
-		bool updateCharacterCollision(Character& target);
-		void reflectiveMove(Character& target);
+		void checkWindowFrame(Character& target);
+		__forceinline int get_window_width() const
+		{
+			return m_window_size.right - m_window_size.left;
+		}
+		__forceinline int get_window_height() const
+		{
+			return m_window_size.bottom - m_window_size.top;
+		}
 
+		RECT m_window_size;
 		HWND m_hwnd;
 		HDC m_hdc;
+
+		HBITMAP m_buffer_bitmap;
+		HDC m_buffer_hdc;
+
 		Vector2 m_playerPos;
 		Character m_objects[OBJECT_COUNT];
-		Tick m_update_tick;
 	};
 }
 
