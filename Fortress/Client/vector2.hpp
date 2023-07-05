@@ -58,6 +58,8 @@ namespace Math
 		float global_angle() const noexcept;
 		__forceinline float get_x() const noexcept;
 		__forceinline float get_y() const noexcept;
+		__forceinline vector2 reflect_x() const noexcept;
+		__forceinline vector2 reflect_y() const noexcept;
 	private:
 		float m_x;
 		float m_y;
@@ -91,6 +93,14 @@ namespace Math
 	float vector2::get_y() const noexcept
 	{
 		return m_y;
+	}
+	__forceinline vector2 vector2::reflect_x() const noexcept
+	{
+		return *this + vector2{m_x * -2.0f, 0};
+	}
+	__forceinline vector2 vector2::reflect_y() const noexcept
+	{
+		return *this + vector2{0, m_y * -2.0f};
 	}
 }
 
