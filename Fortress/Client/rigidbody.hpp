@@ -13,17 +13,23 @@ namespace ObjectInternal
 	enum class CollisionCode
 	{
 		None = 0,
-		Identical,
-		XHitBoundary,
-		XHitInside,
-		YHitBoundary,
-		YHitInside
+		Identical = 1,
+		Top = 2,
+		Bottom = 4,
+		Left = 8,
+		Right = 16,
+		TopLeft = 10,
+		TopRight = 18,
+		BottomLeft = 12,
+		BottomRight = 20,
 	};
 
 	class _rigidBody : public _baseObject
 	{
 	public:
 		Math::Vector2 m_velocity;
+		float m_speed;
+		float m_acceleration;
 
 		_rigidBody() = delete;
 		_rigidBody& operator=(const _rigidBody& other);
@@ -32,12 +38,13 @@ namespace ObjectInternal
 		virtual ~_rigidBody() override;
 
 	private:
+		float m_curr_speed;
 		__forceinline static void update_collision(_rigidBody* left, const _rigidBody* right) noexcept;
 		__forceinline static CollisionCode is_collision(const _rigidBody* left, const _rigidBody* right) noexcept;
-		__forceinline static void move(_rigidBody& object);
+		__forceinline static void move(_rigidBody* object);
 		inline static std::vector<_rigidBody*> _known_rigid_bodies = {};
 	protected:
-		_rigidBody(const Math::Vector2 position, const Math::Vector2 hitbox, const Math::Vector2 velocity);
+		_rigidBody(Math::Vector2 position, Math::Vector2 hitbox, Math::Vector2 velocity, float speed, float acceleration);
 	};
 
 	inline _rigidBody& _rigidBody::operator=(const _rigidBody& other)
@@ -49,8 +56,8 @@ namespace ObjectInternal
 	}
 
 	inline _rigidBody::_rigidBody(const Math::Vector2 position, const Math::Vector2 hitbox,
-		const Math::Vector2 velocity) :
-		_baseObject(position, hitbox), m_velocity(velocity)
+		const Math::Vector2 velocity, const float speed, const float acceleration) :
+		_baseObject(position, hitbox), m_velocity(velocity), m_speed(speed), m_acceleration(acceleration), m_curr_speed(0.0f)
 	{
 		initialize();
 	}
@@ -74,6 +81,11 @@ namespace ObjectInternal
 				update_collision(left_r, right_r);
 			}
 		}
+
+		for(const auto& r : _known_rigid_bodies)
+		{
+			move(r);
+		}
 	}
 
 	inline _rigidBody::~_rigidBody()
@@ -91,22 +103,29 @@ namespace ObjectInternal
 
 	__forceinline void _rigidBody::update_collision(_rigidBody* left, const _rigidBody* right) noexcept
 	{
-		switch(is_collision(left, right))
+		CollisionCode code = is_collision(left, right);
+
+		if(code == CollisionCode::None)
 		{
-		case CollisionCode::Identical:
+			return;
+		}
+
+		if(code == CollisionCode::Identical)
+		{
 			left->m_velocity = -left->m_velocity;
-			break;
-		case CollisionCode::XHitInside:
-		case CollisionCode::XHitBoundary:
+			return;
+		}
+
+		if((unsigned char)code & (unsigned char)CollisionCode::Left ||
+			(unsigned char)code & (unsigned char)CollisionCode::Right)
+		{
 			left->m_velocity = left->m_velocity.reflect_x();
-			break;
-		case CollisionCode::YHitBoundary:
-		case CollisionCode::YHitInside:
+		}
+
+		if((unsigned char)code & (unsigned char)CollisionCode::Top ||
+			(unsigned char)code & (unsigned char)CollisionCode::Bottom)
+		{
 			left->m_velocity = left->m_velocity.reflect_y();
-			break;
-		case CollisionCode::None:
-		default:
-			break;
 		}
 	}
 
@@ -117,15 +136,14 @@ namespace ObjectInternal
 	    const auto diff = left->get_position() - right->get_position();
 	    const auto dist = std::sqrtf(std::powf(diff.get_x(), 2) + std::powf(diff.get_y(), 2));
 
-	    // @todo: bug, if two object intersect, their collisions are done indefinitely.
+	    // @todo: if two objects intersect, their collisions are done indefinitely.
 	    // identical
 	    if(left->m_position == right->get_position())
 	    {
 		    return CollisionCode::Identical;
 	    }
 
-		// @todo: case for negative value is needed.
-	    const auto hitbox_diff = left->m_hitbox - right->m_hitbox;
+	    const auto hitbox_diff = (left->m_hitbox - right->m_hitbox).abs();
 	    // @note: using one hitbox size due to winapi middle point is actually top left.
 	    //const auto hitbox_sum = m_hitbox + object.m_hitbox;
 	    const auto& hitbox_sum = left->m_hitbox;
@@ -137,32 +155,87 @@ namespace ObjectInternal
 		    return CollisionCode::None;
 	    }
 
-	    // X Collision, meet each other in radius.
-	    if(hitbox_diff.get_x() - dist < Math::epsilon || hitbox_sum.get_x() - dist < Math::epsilon)
+		int x = 0;
+		int y = 0;
+
+	    // X Collision, meet each other in radius or meet each other their inside.
+	    if(hitbox_diff.get_x() - dist < Math::epsilon || hitbox_sum.get_x() - dist < Math::epsilon || 
+			hitbox_diff.get_x() < dist && dist < hitbox_sum.get_x())
 	    {
-		    return CollisionCode::XHitBoundary;
-	    }
-	    // X Collision, meet each other their inside.
-	    if (hitbox_diff.get_x() < dist && dist < hitbox_sum.get_x())
-	    {
-	        return CollisionCode::XHitInside;
+			x = static_cast<int>(diff.unit_vector().get_x());
 	    }
 
-	    if (hitbox_diff.get_y() - dist < Math::epsilon || hitbox_sum.get_y() - dist < Math::epsilon)
+	    if (hitbox_diff.get_y() - dist < Math::epsilon || hitbox_sum.get_y() - dist < Math::epsilon || 
+			hitbox_diff.get_y() < dist && dist < hitbox_sum.get_y())
 	    {
-			return CollisionCode::YHitBoundary;   
+			y = static_cast<int>(diff.unit_vector().get_y());
 	    }
-	    if (hitbox_diff.get_y() < dist && dist < hitbox_sum.get_y())
-	    {
-		    return CollisionCode::YHitInside;
-	    }
+
+		if(!x && !y)
+		{
+			return CollisionCode::None;
+		}
+
+		if(x < 0 && !y)
+		{
+			return CollisionCode::Left;
+		}
+		if(x > 0 && !y)
+		{
+			return CollisionCode::Right;
+		}
+		if(!x && y < 0)
+		{
+			return CollisionCode::Bottom;
+		}
+		if(!x && y > 0)
+		{
+			return CollisionCode::Top;
+		}
+		if(x < 0 && y < 0)
+		{
+			return CollisionCode::BottomLeft;
+		}
+		if(x > 0 && y > 0)
+		{
+			return CollisionCode::TopRight;
+		}
+		if(x > 0 && y < 0)
+		{
+			return CollisionCode::BottomRight;
+		}
+		if(x < 0 && y > 0)
+		{
+			return CollisionCode::TopLeft;
+		}
+		
 
 	    return CollisionCode::None;
 	}
 
-	inline void _rigidBody::move(_rigidBody& object)
+	inline void _rigidBody::move(_rigidBody* object)
 	{
-		object += object.m_velocity * Fortress::DeltaTime::get_deltaTime();
+		if(object->m_curr_speed == 0.0f)
+		{
+			object->m_curr_speed = object->m_speed;
+		}
+
+		if(object->m_velocity == Math::Vector2{0.0f, 0.0f})
+		{
+			if(object->m_curr_speed > Math::epsilon)
+			{
+				object->m_curr_speed /= 4.0f;
+			}
+			else if(object->m_curr_speed < Math::epsilon)
+			{
+				object->m_curr_speed = 0;
+				return;
+			}
+		}
+
+		object->m_curr_speed += object->m_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
+		*object += object->m_velocity * object->m_curr_speed * Fortress::DeltaTime::get_deltaTime();
+		object->m_curr_speed += object->m_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
 	}
 }
 #endif // RIGIDBODY_HPP

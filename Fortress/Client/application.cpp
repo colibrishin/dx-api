@@ -34,7 +34,15 @@ namespace Fortress
 			std:: uniform_int_distribution w_distribution(0, get_window_height());
 
 			Vector2 random_pos = {static_cast<float>(w_distribution(generator)), static_cast<float>(h_distribution(generator))};
-			m_object = {random_pos, {1.0f, 1.0f}, {20.0f, 20.0f}, 0, 0, CharacterType::CANNON};
+			m_object = {
+				random_pos,
+				{1.0f, 1.0f},
+				{20.0f, 20.0f},
+				2000.0f,
+				0.0f,
+				0,
+				0,
+				CharacterType::CANNON};
 		}
 	}
 
@@ -56,11 +64,11 @@ namespace Fortress
 		// R = P + 2n(-P * n), where n = identity (= 1)
 		if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
 		{
-			target.m_velocity += {target.m_velocity.get_x() * -2.0f, 0};
+			target.m_velocity = target.m_velocity.reflect_x();
 		}
 		else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
 		{
-			target.m_velocity += {0, target.m_velocity.get_y() * -2.0f};
+			target.m_velocity = target.m_velocity.reflect_y();
 		}
 	}
 
