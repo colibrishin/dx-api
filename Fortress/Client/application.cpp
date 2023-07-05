@@ -17,9 +17,10 @@ namespace Fortress
 		SetWindowPos(m_hwnd, nullptr, 0, 0, get_window_width(),
 		             get_window_height(), 0);
 		ShowWindow(m_hwnd, true);
+		UpdateWindow(m_hwnd);
 
 		m_buffer_bitmap = CreateCompatibleBitmap(m_hdc, get_window_width(), get_window_height());
-		m_buffer_hdc = CreateCompatibleDC(hdc);
+		m_buffer_hdc = CreateCompatibleDC(m_hdc);
 
 		// m_buffer_hdc selects the buffer bitmap.
 		const auto defaultBitmap = SelectObject(m_buffer_hdc, m_buffer_bitmap);
@@ -88,12 +89,7 @@ namespace Fortress
 
 	void Application::update()
 	{
-		if(!m_hdc)
-		{
-			return;
-		}
-
-		if(!m_hwnd)
+		if(!m_hdc || !m_hwnd || !m_buffer_hdc || !m_buffer_bitmap)
 		{
 			return;
 		}
@@ -121,6 +117,10 @@ namespace Fortress
 
 	void Application::render()
 	{
+		const auto hbrBkGnd = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
+	    FillRect(m_buffer_hdc, &m_window_size, hbrBkGnd);
+	    DeleteObject(hbrBkGnd);
+
 		DeltaTime::render(m_buffer_hdc);
 		for(auto & m_object : m_objects)
 		{
@@ -132,7 +132,6 @@ namespace Fortress
 				m_object.get_y() + m_object.m_hitbox.get_y());
 		}
 
-		// @todo: clear previous paint
 		BitBlt(m_hdc, 0 , 0, get_window_width(), get_window_height(), m_buffer_hdc, 0, 0, SRCCOPY);
 	}
 }
