@@ -23,7 +23,12 @@ namespace Fortress
 		m_buffer_hdc(nullptr),
 		m_playerPos(0.0f, 0.0f) {}
 
-		~Application() = default;
+		~Application()
+		{
+			DeleteObject(m_buffer_bitmap);
+			ReleaseDC(m_hwnd, m_buffer_hdc);
+			DeleteDC(m_buffer_hdc);
+		}
 		Application& operator=(const Application&) = delete;
 
 		void initialize(HWND, HDC);
