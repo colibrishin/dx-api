@@ -52,6 +52,8 @@ namespace ObjectInternal
 		m_position = other.m_position;
 		m_velocity = other.m_velocity;
 		m_hitbox = other.m_hitbox;
+		m_speed = other.m_speed;
+		m_acceleration = other.m_acceleration;
 		return *this;
 	}
 
