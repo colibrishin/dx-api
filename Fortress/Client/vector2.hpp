@@ -60,6 +60,9 @@ namespace Math
 		__forceinline float get_y() const noexcept;
 		__forceinline vector2 reflect_x() const noexcept;
 		__forceinline vector2 reflect_y() const noexcept;
+		__forceinline vector2 abs() const noexcept;
+		__forceinline vector2 unit_vector() const noexcept;
+
 	private:
 		float m_x;
 		float m_y;
@@ -101,6 +104,14 @@ namespace Math
 	__forceinline vector2 vector2::reflect_y() const noexcept
 	{
 		return *this + vector2{0, m_y * -2.0f};
+	}
+	__forceinline vector2 vector2::abs() const noexcept
+	{
+		return {std::fabs(m_x), std::fabs(m_y)};
+	}
+	__forceinline vector2 vector2::unit_vector() const noexcept
+	{
+		return {m_x / m_x, m_y / m_y};
 	}
 }
 
