@@ -30,9 +30,9 @@ namespace Scene
 		SceneManager() = default;
 		~SceneManager() 
 		{
-			for (auto& s : m_scenes) 
+			for (const auto& [_, ptr] : m_scenes) 
 			{
-				delete &s;
+				delete ptr;
 			}
 		}
 		static void initialize(HWND hwnd, HDC hdc) 

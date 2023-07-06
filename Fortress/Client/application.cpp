@@ -39,8 +39,9 @@ namespace Fortress
 
 	void Application::checkWindowFrame(Character& target)
 	{
-		const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) * 2 + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
-		const float r2 = target.m_hitbox.get_x();
+		const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
+		const float x = target.m_hitbox.get_x() * 2;
+		const float y = target.m_hitbox.get_y() * 2;
 		const float height = static_cast<float>(get_window_height());
 		const float width = static_cast<float>(get_window_width());
 
@@ -52,22 +53,22 @@ namespace Fortress
 		if(target.get_x() <= 0)
 		{
 			target.m_velocity = target.m_velocity.reflect_x();
-			target.m_position += {2.0f, 0.0f};
+			target.m_position += {1.0f, 0.0f};
 		}
-		else if(target.get_x() >= width - r2)
+		else if(target.get_x() >= width - x)
 		{
 			target.m_velocity = target.m_velocity.reflect_x();
-			target.m_position -= {2.0f, 0.0f};
+			target.m_position -= {1.0f, 0.0f};
 		}
 		if(target.get_y() <= 0)
 		{
 			target.m_velocity = target.m_velocity.reflect_y();
-			target.m_position += {0.0f, 2.0f};
+			target.m_position += {0.0f, 1.0f};
 		}
-		else if (target.get_y() >= height - topmenu_size - r2)
+		else if (target.get_y() >= height - topmenu_size - y)
 		{
 			target.m_velocity = target.m_velocity.reflect_y();
-			target.m_position -= {0.0f, 2.0f};
+			target.m_position -= {0.0f, 1.0f};
 		}
 	}
 
