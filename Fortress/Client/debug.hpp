@@ -21,7 +21,7 @@ namespace Fortress
 			m_render_queue.push([str]()
 			{
 				TextOut(m_hdc, x, y, str.c_str(), str.length());
-				y += 100;
+				y += 15;
 				y %= WinAPIHandles::get_actual_max_y();
 			});
 		}
@@ -32,10 +32,12 @@ namespace Fortress
 				m_render_queue.front()();
 				m_render_queue.pop();
 			}
+
+			y = 15;
 		}
 	private:
 		inline static int x = 100;
-		inline static int y = 100;
+		inline static int y = 15;
 		inline static HDC m_hdc;
 		inline static std::queue<std::function<void()>> m_render_queue;
 	};
