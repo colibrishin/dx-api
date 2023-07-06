@@ -16,10 +16,6 @@ namespace Fortress
 		m_hdc = hdc;
 		Input::initialize();
 		DeltaTime::initialize();
-		Scene::SceneManager::initialize(hwnd, hdc);
-		Scene::SceneManager::CreateScene<Scene::TitleScene>();
-		Scene::SceneManager::CreateScene<Scene::CharacterScene>();
-		Scene::SceneManager::SetActive(L"Title Scene");
 
 		AdjustWindowRect(&m_window_size, WS_OVERLAPPEDWINDOW, false);
 		SetWindowPos(m_hwnd, nullptr, 0, 0, get_window_width(),
@@ -34,6 +30,11 @@ namespace Fortress
 		const auto defaultBitmap = SelectObject(m_buffer_hdc, m_buffer_bitmap);
 		// free the temporary handle.
 		DeleteObject(defaultBitmap);
+
+		Scene::SceneManager::initialize(hwnd, m_buffer_hdc);
+		Scene::SceneManager::CreateScene<Scene::TitleScene>();
+		Scene::SceneManager::CreateScene<Scene::CharacterScene>();
+		Scene::SceneManager::SetActive(L"Title Scene");
 	}
 
 	void Application::checkWindowFrame(Character& target)
