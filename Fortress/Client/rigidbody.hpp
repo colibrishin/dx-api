@@ -201,20 +201,20 @@ namespace ObjectInternal
 			return CollisionCode::None;
 		}
 
-		int x = 0;
-		int y = 0;
+		float x = 0;
+		float y = 0;
 
 		// X Collision, meet each other in radius or meet each other their inside.
 		if (hitbox_diff.get_x() - dist < Math::epsilon || hitbox_sum.get_x() - dist < Math::epsilon ||
 			hitbox_diff.get_x() < dist && dist < hitbox_sum.get_x())
 		{
-			x = static_cast<int>(diff.unit_vector().get_x());
+			x = diff.unit_vector().get_x();
 		}
 
 		if (hitbox_diff.get_y() - dist < Math::epsilon || hitbox_sum.get_y() - dist < Math::epsilon ||
 			hitbox_diff.get_y() < dist && dist < hitbox_sum.get_y())
 		{
-			y = static_cast<int>(diff.unit_vector().get_y());
+			y = diff.unit_vector().get_y();
 		}
 
 		if (!x && !y)

@@ -17,7 +17,12 @@ namespace Math
 		{
 		}
 
-		vector2& operator=(const vector2& other) = default;
+		vector2& operator=(const vector2& other)
+		{
+			m_x = other.m_x;
+			m_y = other.m_y;
+			return *this;
+		}
 
 		vector2& operator+=(const vector2& other)
 		{
@@ -61,8 +66,15 @@ namespace Math
 		bool operator==(const vector2& other) const
 		{
 			// rather safe comparison for float.
-			return fabs(m_x - other.m_x) < epsilon &&
-				fabs(m_y - other.m_y) < epsilon;
+			return fabs(m_x - other.m_x) <= epsilon &&
+				fabs(m_y - other.m_y) <= epsilon;
+		}
+
+		bool operator!=(const vector2& other) const
+		{
+			// rather safe comparison for float.
+			return fabs(m_x - other.m_x) > epsilon &&
+				fabs(m_y - other.m_y) > epsilon;
 		}
 
 		virtual ~vector2() = default;
@@ -131,7 +143,7 @@ namespace Math
 
 	__forceinline vector2 vector2::unit_vector() const noexcept
 	{
-		return {m_x / m_x, m_y / m_y};
+		return {1 / m_x, 1 / m_y};
 	}
 }
 
