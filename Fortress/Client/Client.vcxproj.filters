@@ -28,6 +28,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Engine\Scene">
+      <UniqueIdentifier>{b4d67fe7-c618-4c1d-b389-f0f443130bbf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -63,6 +66,15 @@
     <ClInclude Include="rigidbody.hpp">
       <Filter>Engine\Object</Filter>
     </ClInclude>
+    <ClInclude Include="manager.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="titleScene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="characterScene.h">
+      <Filter>Engine\Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -85,6 +97,18 @@
     </ClCompile>
     <ClCompile Include="deltatime.cpp">
       <Filter>Engine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneManager.hpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="baseEntity.hpp">
+      <Filter>Engine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="characterScene.cpp">
+      <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="titleScene.cpp">
+      <Filter>Engine\Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
