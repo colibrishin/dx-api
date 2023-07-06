@@ -36,7 +36,7 @@ void Scene::TitleScene::update()
 	_scene::update();
 	for(auto& obj : m_objects)
 	{
-		WinAPIHandles::block_window_frame(obj);
+		Object::Character::block_window_frame(obj);
 	}
 
 	if(Fortress::Input::getKey(Fortress::eKeyCode::SPACE))

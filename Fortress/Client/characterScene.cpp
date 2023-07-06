@@ -48,7 +48,7 @@ void Scene::CharacterScene::update()
 		m_object.stop();
 	}
 
-	WinAPIHandles::block_window_frame(m_object);
+	Object::Character::block_window_frame(m_object);
 }
 
 void Scene::CharacterScene::render()

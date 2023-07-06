@@ -6,8 +6,9 @@
 #include <string>
 #include "deltatime.hpp"
 #include "math.h"
-#include "object.hpp"
 #include "debug.hpp"
+#include "object.hpp"
+#include "winapihandles.hpp"
 
 namespace ObjectInternal
 {
@@ -32,11 +33,13 @@ namespace ObjectInternal
 		float m_speed;
 		float m_acceleration;
 		bool m_bActive;
+		bool m_bGrounded;
 
 		_rigidBody() = delete;
 		_rigidBody& operator=(const _rigidBody& other);
 		__forceinline void initialize();
 		__forceinline static void update();
+		__forceinline static void block_window_frame(_rigidBody& target);
 		~_rigidBody() override;
 		void move_down() override;
 		void move_left() override;
@@ -45,10 +48,11 @@ namespace ObjectInternal
 		void stop();
 
 	private:
-		Math::Vector2 m_previous_position;
 		float m_curr_speed;
 		float m_gravity_speed;
 		float m_gravity_acceleration;
+
+		static void apply_gravity(_rigidBody* obj);
 		__forceinline static void update_collision(_rigidBody* left, const _rigidBody* right) noexcept;
 		__forceinline static CollisionCode is_collision(const _rigidBody* left, const _rigidBody* right) noexcept;
 		__forceinline static void move(_rigidBody* object);
@@ -67,10 +71,10 @@ namespace ObjectInternal
 		m_hitbox = other.m_hitbox;
 		m_speed = other.m_speed;
 		m_acceleration = other.m_acceleration;
-		m_previous_position = other.m_previous_position;
 		m_bActive = other.m_bActive;
 		m_gravity_speed = other.m_gravity_speed;
 		m_gravity_acceleration = other.m_gravity_acceleration;
+		m_bGrounded = other.m_bGrounded;
 		return *this;
 	}
 
@@ -82,9 +86,9 @@ namespace ObjectInternal
 		m_acceleration(acceleration),
 		m_curr_speed(0.0f),
 		m_bActive(true),
-		m_previous_position(m_position),
 		m_gravity_speed(0.0f),
-		m_gravity_acceleration(Math::G_ACC)
+		m_gravity_acceleration(Math::G_ACC),
+		m_bGrounded(false)
 	{
 		initialize();
 	}
@@ -117,6 +121,43 @@ namespace ObjectInternal
 			}
 
 			move(r);
+			apply_gravity(r);
+		}
+	}
+
+	inline void _rigidBody::block_window_frame(_rigidBody& target)
+	{
+		const float x = target.m_hitbox.get_x() * 2;
+		const float y = target.m_hitbox.get_y();
+
+		if(target.get_x() > WinAPIHandles::get_window_width() || 
+			target.get_y() > WinAPIHandles::get_actual_max_y())
+		{
+			// OOB
+			target.m_position = {1.0f, 1.0f};
+			return;
+		}
+
+		if(target.get_x() <= 0)
+		{
+			target.m_velocity = target.m_velocity.reflect_x();
+			target.m_position += {1.0f, 0.0f};
+		}
+		else if(target.get_x() - (WinAPIHandles::get_window_width() - x) > Math::epsilon)
+		{
+			target.m_velocity = target.m_velocity.reflect_x();
+			target.m_position -= {1.0f, 0.0f};
+		}
+
+		if(target.get_y() <= 0)
+		{
+			target.m_velocity = target.m_velocity.reflect_y();
+			target.m_position += {0.0f, 1.0f};
+		}
+		else if (target.get_y() - (WinAPIHandles::get_actual_max_y() - y) > Math::epsilon)
+		{
+			target.m_velocity = target.m_velocity.reflect_y();
+			target.m_position -= {0.0f, 1.0f};
 		}
 	}
 
@@ -156,6 +197,28 @@ namespace ObjectInternal
 	inline void _rigidBody::stop()
 	{
 		m_velocity = {0, 0};
+	}
+	
+	inline void _rigidBody::apply_gravity(_rigidBody* obj)
+	{
+		// @todo: set ground position dynamically
+		const auto diff = obj->m_position - Math::Vector2{0.0f, static_cast<float>(WinAPIHandles::get_actual_max_y())};
+
+		if(std::floorf(diff.abs().get_y() - obj->m_hitbox.get_y()) == 0)
+		{
+			obj->m_bGrounded = true;
+		}
+		else
+		{
+			obj->m_bGrounded = false;
+		}
+
+		if(!obj->m_bGrounded)
+		{
+			obj->m_gravity_speed += obj->m_gravity_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
+			*obj += {0.0f, obj->m_gravity_speed * Fortress::DeltaTime::get_deltaTime()};
+			obj->m_gravity_speed += obj->m_gravity_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
+		}
 	}
 
 	__forceinline void _rigidBody::update_collision(_rigidBody* left, const _rigidBody* right) noexcept
