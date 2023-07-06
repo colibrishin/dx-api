@@ -52,20 +52,23 @@ void Scene::TitleScene::update()
 
 void Scene::TitleScene::render()
 {
+	m_render_queue.emplace(0, [this](){
+		for(auto & m_object : m_objects)
+		{
+			Ellipse(
+				m_hdc,
+				m_object.get_x(), 
+				m_object.get_y(), 
+				m_object.get_x() + m_object.m_hitbox.get_x(),
+				m_object.get_y() + m_object.m_hitbox.get_y());
+		}});
+
+	m_render_queue.emplace(1, [this](){
+		wchar_t notice[100] = {};
+		swprintf_s(notice, 100,  L"Press SPACE to continue...");
+		const size_t strlen = wcsnlen_s(notice, 100);
+		TextOut(m_hdc, 300, 300, notice, strlen);
+	});
+
 	_scene::render();
-
-	for(auto & m_object : m_objects)
-	{
-		Ellipse(
-			m_hdc,
-			m_object.get_x(), 
-			m_object.get_y(), 
-			m_object.get_x() + m_object.m_hitbox.get_x(),
-			m_object.get_y() + m_object.m_hitbox.get_y());
-	}
-
-	wchar_t notice[100] = {};
-	swprintf_s(notice, 100,  L"Press SPACE to continue...");
-	const size_t strlen = wcsnlen_s(notice, 100);
-	TextOut(m_hdc, 300, 300, notice, strlen);
 }

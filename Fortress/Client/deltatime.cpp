@@ -1,5 +1,7 @@
 #include "deltatime.hpp"
 
+#include "winapihandles.hpp"
+
 namespace Fortress
 {
 	LARGE_INTEGER DeltaTime::m_cpu_frequency = {};
@@ -18,7 +20,7 @@ namespace Fortress
 		QueryPerformanceCounter(&m_prev_frequency);
 	}
 
-	void DeltaTime::render(HDC hdc)
+	void DeltaTime::render()
 	{
 		static float interval = 0.0f;
 
@@ -31,7 +33,7 @@ namespace Fortress
 			swprintf(szFloat, 50, L"DeltaTime: %5f", fps);
 			int strlen = wcsnlen_s(szFloat, 50);
 
-			TextOut(hdc, 10, 10, szFloat, strlen);
+			TextOut(WinAPIHandles::get_buffer_dc(), 10, 10, szFloat, strlen);
 			interval = 0.0f;
 		}
 	}

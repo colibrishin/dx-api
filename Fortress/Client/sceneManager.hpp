@@ -5,6 +5,8 @@
 #include <map>
 #include <string>
 #include <memory>
+#include <functional>
+#include <queue>
 #include "framework.h"
 #include "baseEntity.hpp"
 
@@ -20,12 +22,36 @@ namespace Scene
 			{
 			}
 
-			virtual void initialize() {}
+			virtual void initialize()
+			{
+				m_render_queue = {};
+			}
 			virtual void update() {}
-			virtual void render() {}
+			virtual void render()
+			{
+				while(!m_render_queue.empty())
+				{
+					m_render_queue.top().second();
+					m_render_queue.pop();
+				}
+			}
+		private:
+			struct PriorityCompare
+			{
+				bool operator()(
+					const std::pair<int, std::function<void()>>& left, 
+					const std::pair<int, std::function<void()>>& right) const
+				{
+					return left.first < right.first;
+				}
+			};
 		protected:
-			HWND m_hwnd = nullptr;
-			HDC m_hdc = nullptr;
+			std::priority_queue<
+				std::pair<int, std::function<void()>>,
+				std::vector<std::pair<int, std::function<void()>>>,
+				PriorityCompare> m_render_queue;
+			HWND m_hwnd;
+			HDC m_hdc;
 		};
 
 		SceneManager() = default;

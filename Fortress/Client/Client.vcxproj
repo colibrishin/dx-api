@@ -152,6 +152,7 @@
     <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
     <ClCompile Include="baseEntity.hpp" />
+    <ClCompile Include="renderQueue.hpp" />
     <ClCompile Include="sceneManager.hpp" />
     <ClCompile Include="titleScene.cpp" />
     <ClCompile Include="vector2.cpp" />

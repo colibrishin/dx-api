@@ -53,17 +53,23 @@ void Scene::CharacterScene::update()
 
 void Scene::CharacterScene::render()
 {
-	_scene::render();
-
-	Ellipse(
+	m_render_queue.emplace(0, [this]() 
+	{
+		Ellipse(
 			m_hdc,
 			m_object.get_x(), 
 			m_object.get_y(), 
 			m_object.get_x() + m_object.m_hitbox.get_x(),
 			m_object.get_y() + m_object.m_hitbox.get_y());
+	});
 
-	wchar_t notice[100] = {};
-	swprintf_s(notice, 100,  L"Use WASD to move...");
-	const size_t strlen = wcsnlen_s(notice, 100);
-	TextOut(m_hdc, 300, 300, notice, strlen);
+	m_render_queue.emplace(1, [this]()
+	{
+		wchar_t notice[100] = {};
+		swprintf_s(notice, 100,  L"Use WASD to move...");
+		const size_t strlen = wcsnlen_s(notice, 100);
+		TextOut(m_hdc, 300, 300, notice, strlen);
+	});
+
+	_scene::render();
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "common.h"
+#include "renderQueue.hpp"
 
 namespace Fortress
 {
@@ -28,10 +29,11 @@ namespace Fortress
 		Application& operator=(const Application&) = delete;
 
 		void initialize(HWND, HDC);
-		void update() const;
-		void render() const;
-
+		void update();
+		void render();
 	private:
+		RenderQueue m_render_queue;
+
 		inline static RECT m_window_size = {0, 0, 800, 600};
 		HWND m_hwnd;
 		HDC m_hdc;

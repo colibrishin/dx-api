@@ -14,7 +14,7 @@ namespace Fortress
 	public:
 		static void initialize();
 		__forceinline static void update();
-		static void render(HDC);
+		static void render();
 		__forceinline static float get_deltaTime();
 
 	private:

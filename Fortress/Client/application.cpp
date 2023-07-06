@@ -27,7 +27,7 @@ namespace Fortress
 		Scene::SceneManager::SetActive(L"Title Scene");
 	}
 
-	void Application::update() const
+	void Application::update()
 	{
 		if(!m_hdc || !m_hwnd || !m_buffer_hdc)
 		{
@@ -39,17 +39,22 @@ namespace Fortress
 		Input::update();
 		Character::update();
 		Scene::SceneManager::update();
+
+		m_render_queue.push(0, DeltaTime::render);
+		m_render_queue.push(0, Debug::render);
+		m_render_queue.push(1, Scene::SceneManager::render);
 	}
 
-	void Application::render() const
+	void Application::render()
 	{
 		const auto hbrBkGnd = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
 	    FillRect(m_buffer_hdc, &m_window_size, hbrBkGnd);
 	    DeleteObject(hbrBkGnd);
 
-		Scene::SceneManager::render();
-		DeltaTime::render(m_buffer_hdc);
-		Debug::render();
+		while(!m_render_queue.empty())
+		{
+			m_render_queue.get_next()();
+		}
 
 		BitBlt(m_hdc, 0 , 0, WinAPIHandles::get_window_width(), WinAPIHandles::get_window_height(), m_buffer_hdc, 0, 0, SRCCOPY);
 	}
