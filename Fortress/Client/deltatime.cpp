@@ -1,6 +1,6 @@
 #include "deltatime.hpp"
 
-namespace Fortress 
+namespace Fortress
 {
 	LARGE_INTEGER DeltaTime::m_cpu_frequency = {};
 	LARGE_INTEGER DeltaTime::m_prev_frequency = {};
