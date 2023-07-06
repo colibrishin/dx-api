@@ -13,6 +13,7 @@ namespace Math
 	using Vector2 = struct vector2;
 	constexpr float PI = M_PI;
 	constexpr float G = 6.6742E-11;
+	constexpr float G_ACC = 9.80f;
 
 }
 
