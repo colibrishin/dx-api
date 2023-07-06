@@ -30,17 +30,6 @@ namespace Fortress
 		void initialize(HWND, HDC);
 		void update() const;
 		void render() const;
-		__forceinline static int get_window_width()
-		{
-			return m_window_size.right - m_window_size.left;
-		}
-
-		__forceinline static int get_window_height()
-		{
-			return m_window_size.bottom - m_window_size.top;
-		}
-
-		static void checkWindowFrame(Character& target);
 
 	private:
 		inline static RECT m_window_size = {0, 0, 800, 600};

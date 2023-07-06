@@ -5,6 +5,7 @@
 #include "application.h"
 #include "input.hpp"
 #include "sceneManager.hpp"
+#include "winapihandles.hpp"
 
 void Scene::TitleScene::initialize()
 {
@@ -13,8 +14,8 @@ void Scene::TitleScene::initialize()
 	for(auto& m_object : m_objects)
 	{
 		static thread_local std::mt19937 generator(static_cast<unsigned int>(time(nullptr)));
-		std:: uniform_int_distribution h_distribution(0, Fortress::Application::get_window_width());
-		std:: uniform_int_distribution w_distribution(0, Fortress::Application::get_window_height());
+		std:: uniform_int_distribution h_distribution(0, WinAPIHandles::get_window_width());
+		std:: uniform_int_distribution w_distribution(0, WinAPIHandles::get_window_height());
 
 		Math::Vector2 random_pos = {static_cast<float>(w_distribution(generator)), static_cast<float>(h_distribution(generator))};
 		m_object = {
@@ -35,7 +36,7 @@ void Scene::TitleScene::update()
 	_scene::update();
 	for(auto& obj : m_objects)
 	{
-		Fortress::Application::checkWindowFrame(obj);
+		WinAPIHandles::block_window_frame(obj);
 	}
 
 	if(Fortress::Input::getKey(Fortress::eKeyCode::SPACE))

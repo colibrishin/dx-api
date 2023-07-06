@@ -1,12 +1,12 @@
 #include <random>
 
 #include "application.h"
-
 #include "characterScene.h"
 #include "input.hpp"
 #include "deltatime.hpp"
 #include "sceneManager.hpp"
 #include "titleScene.h"
+#include "winapihandles.hpp"
 
 namespace Fortress
 {
@@ -17,19 +17,9 @@ namespace Fortress
 		Input::initialize();
 		DeltaTime::initialize();
 
-		AdjustWindowRect(&m_window_size, WS_OVERLAPPEDWINDOW, false);
-		SetWindowPos(m_hwnd, nullptr, 0, 0, get_window_width(),
-		             get_window_height(), 0);
-		ShowWindow(m_hwnd, true);
-		UpdateWindow(m_hwnd);
-
-		m_buffer_bitmap = CreateCompatibleBitmap(m_hdc, get_window_width(), get_window_height());
-		m_buffer_hdc = CreateCompatibleDC(m_hdc);
-
-		// m_buffer_hdc selects the buffer bitmap.
-		const auto defaultBitmap = SelectObject(m_buffer_hdc, m_buffer_bitmap);
-		// free the temporary handle.
-		DeleteObject(defaultBitmap);
+		WinAPIHandles::initialize(hwnd, hdc);
+		m_buffer_hdc = WinAPIHandles::get_buffer_dc();
+		Debug::initialize(m_buffer_hdc);
 
 		Scene::SceneManager::initialize(hwnd, m_buffer_hdc);
 		Scene::SceneManager::CreateScene<Scene::TitleScene>();
@@ -37,44 +27,9 @@ namespace Fortress
 		Scene::SceneManager::SetActive(L"Title Scene");
 	}
 
-	void Application::checkWindowFrame(Character& target)
-	{
-		const float topmenu_size = GetSystemMetrics(SM_CXFIXEDFRAME) + GetSystemMetrics(SM_CYMENU) + GetSystemMetrics(SM_CYCAPTION);
-		const float x = target.m_hitbox.get_x() * 2;
-		const float y = target.m_hitbox.get_y() * 2;
-		const float height = static_cast<float>(get_window_height());
-		const float width = static_cast<float>(get_window_width());
-
-		// hitting windows and character can happen individually.
-		const auto newPos = target + target.m_velocity * DeltaTime::get_deltaTime();
-
-		// Reflection vector
-		// R = P + 2n(-P * n), where n = identity (= 1)
-		if(target.get_x() <= 0)
-		{
-			target.m_velocity = target.m_velocity.reflect_x();
-			target.m_position += {1.0f, 0.0f};
-		}
-		else if(target.get_x() >= width - x)
-		{
-			target.m_velocity = target.m_velocity.reflect_x();
-			target.m_position -= {1.0f, 0.0f};
-		}
-		if(target.get_y() <= 0)
-		{
-			target.m_velocity = target.m_velocity.reflect_y();
-			target.m_position += {0.0f, 1.0f};
-		}
-		else if (target.get_y() >= height - topmenu_size - y)
-		{
-			target.m_velocity = target.m_velocity.reflect_y();
-			target.m_position -= {0.0f, 1.0f};
-		}
-	}
-
 	void Application::update() const
 	{
-		if(!m_hdc || !m_hwnd || !m_buffer_hdc || !m_buffer_bitmap)
+		if(!m_hdc || !m_hwnd || !m_buffer_hdc)
 		{
 			return;
 		}
@@ -94,7 +49,8 @@ namespace Fortress
 
 		Scene::SceneManager::render();
 		DeltaTime::render(m_buffer_hdc);
+		Debug::render();
 
-		BitBlt(m_hdc, 0 , 0, get_window_width(), get_window_height(), m_buffer_hdc, 0, 0, SRCCOPY);
+		BitBlt(m_hdc, 0 , 0, WinAPIHandles::get_window_width(), WinAPIHandles::get_window_height(), m_buffer_hdc, 0, 0, SRCCOPY);
 	}
 }

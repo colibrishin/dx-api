@@ -132,6 +132,7 @@
     <ClInclude Include="characterScene.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="common.h" />
+    <ClInclude Include="debug.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="input.hpp" />
     <ClInclude Include="manager.hpp" />
@@ -154,6 +155,7 @@
     <ClCompile Include="sceneManager.hpp" />
     <ClCompile Include="titleScene.cpp" />
     <ClCompile Include="vector2.cpp" />
+    <ClCompile Include="winapihandles.hpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -2,6 +2,7 @@
 
 #include "application.h"
 #include "input.hpp"
+#include "winapihandles.hpp"
 
 void Scene::CharacterScene::initialize()
 {
@@ -47,7 +48,7 @@ void Scene::CharacterScene::update()
 		m_object.stop();
 	}
 
-	Fortress::Application::checkWindowFrame(m_object);
+	WinAPIHandles::block_window_frame(m_object);
 }
 
 void Scene::CharacterScene::render()
