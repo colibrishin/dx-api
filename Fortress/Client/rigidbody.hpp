@@ -44,7 +44,9 @@ namespace ObjectInternal
 		__forceinline static void move(_rigidBody* object);
 		inline static std::vector<_rigidBody*> _known_rigid_bodies = {};
 	protected:
-		_rigidBody(std::wstring& name, Math::Vector2 position, Math::Vector2 hitbox, Math::Vector2 velocity, float speed, float acceleration);
+		_rigidBody(const std::wstring& name, Math::Vector2 position, Math::Vector2 hitbox, Math::Vector2 velocity,
+		           float speed,
+		           float acceleration);
 	};
 
 	inline _rigidBody& _rigidBody::operator=(const _rigidBody& other)

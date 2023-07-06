@@ -68,15 +68,10 @@ namespace Fortress
 		__forceinline static bool getKey(eKeyCode);
 
 	private:
-		static Key m_keys[sizeof _KEY_TABLE];
+		inline static Key m_keys[sizeof _KEY_TABLE];
 
 		inline static void checkKeyState();
 	};
-
-
-	// ** LINK2001 ERROR WARNING **
-	// FORWARD DECLARATION SHOULD BE DONE BEFORE USED.
-	Input::Key Input::m_keys[sizeof _KEY_TABLE];
 
 	void Input::initialize()
 	{
