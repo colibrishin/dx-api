@@ -228,27 +228,28 @@ namespace ObjectInternal
 			y = diff.unit_vector().get_y();
 		}
 
-		if (!x && !y)
+		if (std::fabs(x) < Math::epsilon && std::fabs(y) < Math::epsilon)
 		{
 			return CollisionCode::None;
 		}
 
-		if (x < 0 && !y)
+		// using epsilon instead of zero.
+		if (x < 0 && std::fabs(y) < Math::epsilon)
 		{
 			Fortress::Debug::Log(L"Left");
 			return CollisionCode::Left;
 		}
-		if (x > 0 && !y)
+		if (x > 0 && std::fabs(y) < Math::epsilon)
 		{
 			Fortress::Debug::Log(L"Right");
 			return CollisionCode::Right;
 		}
-		if (!x && y < 0)
+		if (std::fabs(x) < Math::epsilon && y < 0)
 		{
 			Fortress::Debug::Log(L"Bottom");
 			return CollisionCode::Bottom;
 		}
-		if (!x && y > 0)
+		if (std::fabs(x) < Math::epsilon && y > 0)
 		{
 			Fortress::Debug::Log(L"Top");
 			return CollisionCode::Top;
