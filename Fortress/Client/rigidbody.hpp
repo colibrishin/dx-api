@@ -207,6 +207,7 @@ namespace ObjectInternal
 		if(std::floorf(diff.abs().get_y() - obj->m_hitbox.get_y()) == 0)
 		{
 			obj->m_bGrounded = true;
+			obj->m_gravity_speed = 0.0f;
 		}
 		else
 		{
