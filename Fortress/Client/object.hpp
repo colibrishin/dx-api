@@ -19,34 +19,42 @@ namespace ObjectInternal
 		{
 			m_position = m_position.left();
 		}
+
 		virtual void move_right()
 		{
 			m_position = m_position.right();
 		}
+
 		virtual void move_down()
 		{
 			m_position = m_position.top();
 		}
+
 		virtual void move_up()
 		{
 			m_position = m_position.bottom();
 		}
+
 		float get_x() const
 		{
 			return m_position.get_x();
 		}
+
 		float get_y() const
 		{
 			return m_position.get_y();
 		}
+
 		Math::Vector2 get_position() const
 		{
 			return m_position;
 		}
+
 		virtual Math::Vector2 operator+(const Math::Vector2& vector) const
 		{
 			return {m_position + vector};
 		}
+
 		virtual _baseObject& operator+=(const Math::Vector2& vector)
 		{
 			m_position += vector;
@@ -57,7 +65,9 @@ namespace ObjectInternal
 		Math::Vector2 m_position;
 
 		_baseObject(const Math::Vector2 position, const Math::Vector2 hitbox)
-		: m_position(position), m_hitbox(hitbox) {}
+			: m_hitbox(hitbox), m_position(position)
+		{
+		}
 	};
 }
 #endif // OBJECT_HPP

@@ -16,22 +16,26 @@ namespace Object
 	{
 	public:
 		character() :
-		_rigidBody({0, 0}, {0, 0}, {0, 0}, 0, 0),
-		m_hp(0),
-		m_mp(0),
-		m_type(CharacterType::CANNON) {}
+			_rigidBody({0, 0}, {0, 0}, {0, 0}, 0, 0),
+			m_hp(0),
+			m_mp(0),
+			m_type(CharacterType::CANNON)
+		{
+		}
 
 		// copying is intended for preventing nullptr (use-after-free).
 		character(
-			const Math::Vector2 position, 
+			const Math::Vector2 position,
 			const Math::Vector2 velocity,
 			const Math::Vector2 WH,
 			const float speed,
 			const float acceleration,
-			const int hp, 
+			const int hp,
 			const int mp,
 			const CharacterType type)
-		: _rigidBody(position, WH, velocity, speed, acceleration), m_hp(hp), m_mp(mp), m_type(type) {}
+			: _rigidBody(position, WH, velocity, speed, acceleration), m_hp(hp), m_mp(mp), m_type(type)
+		{
+		}
 
 		static void update();
 

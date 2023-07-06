@@ -24,7 +24,7 @@ namespace Fortress
 		None,
 	};
 
-	constexpr static uint8_t _KEY_TABLE[]
+	constexpr static uint8_t KEY_TABLE[]
 	{
 		'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
 		'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L',
@@ -68,7 +68,7 @@ namespace Fortress
 		__forceinline static bool getKey(eKeyCode);
 
 	private:
-		static Key m_keys[sizeof _KEY_TABLE];
+		static std::vector<Key> m_keys;
 
 		inline static void checkKeyState();
 	};
@@ -76,14 +76,14 @@ namespace Fortress
 
 	// ** LINK2001 ERROR WARNING **
 	// FORWARD DECLARATION SHOULD BE DONE BEFORE USED.
-	Input::Key Input::m_keys[sizeof _KEY_TABLE];
+	std::vector<Input::Key> Input::m_keys = {};
 
 	void Input::initialize()
 	{
 		// building initial key table
-		for (size_t i = 0; i < sizeof _KEY_TABLE; ++i)
+		for (unsigned char i : KEY_TABLE)
 		{
-			m_keys[i] = Key(_KEY_TABLE[i]);
+			m_keys.emplace_back(i);
 		}
 	}
 
@@ -91,8 +91,8 @@ namespace Fortress
 	{
 		std::for_each(
 			std::execution::par,
-			std::begin(m_keys),
-			std::end(m_keys),
+			m_keys.begin(),
+			m_keys.end(),
 			[](Key& key)
 			{
 				USHORT winapi_state = GetAsyncKeyState(key.m_native_code);
