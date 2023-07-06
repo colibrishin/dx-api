@@ -5,6 +5,8 @@
 #include <functional>
 #include <queue>
 
+#include "winapihandles.hpp"
+
 namespace Fortress
 {
 	class Debug final
@@ -18,7 +20,9 @@ namespace Fortress
 		{
 			m_render_queue.push([str]()
 			{
-				TextOut(m_hdc, 100, 100, str.c_str(), str.length());
+				TextOut(m_hdc, x, y, str.c_str(), str.length());
+				y += 100;
+				y %= WinAPIHandles::get_actual_max_y();
 			});
 		}
 		static void render()
@@ -30,7 +34,9 @@ namespace Fortress
 			}
 		}
 	private:
-		inline static HDC m_hdc = nullptr;
+		inline static int x = 100;
+		inline static int y = 100;
+		inline static HDC m_hdc;
 		inline static std::queue<std::function<void()>> m_render_queue;
 	};
 }
