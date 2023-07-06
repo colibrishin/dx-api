@@ -40,6 +40,11 @@ void Scene::TitleScene::update()
 
 	if(Fortress::Input::getKey(Fortress::eKeyCode::SPACE))
 	{
+		for(auto& ch : m_objects)
+		{
+			ch.m_bActive = false;
+		}
+
 		SceneManager::SetActive(L"Character Scene");
 	}
 }

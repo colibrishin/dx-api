@@ -30,6 +30,7 @@ namespace ObjectInternal
 		Math::Vector2 m_velocity;
 		float m_speed;
 		float m_acceleration;
+		bool m_bActive;
 
 		_rigidBody() = delete;
 		_rigidBody& operator=(const _rigidBody& other);
@@ -67,7 +68,12 @@ namespace ObjectInternal
 
 	inline _rigidBody::_rigidBody(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox,
 		const Math::Vector2 velocity, const float speed, const float acceleration) :
-		_baseObject(name, position, hitbox), m_velocity(velocity), m_speed(speed), m_acceleration(acceleration), m_curr_speed(0.0f)
+		_baseObject(name, position, hitbox),
+	m_velocity(velocity),
+	m_speed(speed),
+	m_acceleration(acceleration),
+	m_curr_speed(0.0f),
+	m_bActive(true)
 	{
 		initialize();
 	}
@@ -83,7 +89,7 @@ namespace ObjectInternal
 		{
 			for (const auto right_r : _known_rigid_bodies)
 			{
-				if (left_r == right_r)
+				if (left_r == right_r || !left_r->m_bActive || !right_r->m_bActive)
 				{
 					continue;
 				}
@@ -94,6 +100,11 @@ namespace ObjectInternal
 
 		for (const auto& r : _known_rigid_bodies)
 		{
+			if(!r->m_bActive)
+			{
+				continue;
+			}
+
 			move(r);
 		}
 	}
