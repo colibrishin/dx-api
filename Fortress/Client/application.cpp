@@ -48,13 +48,25 @@ namespace Fortress
 
 		// Reflection vector
 		// R = P + 2n(-P * n), where n = identity (= 1)
-		if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
+		if(target.get_x() <= 0)
 		{
 			target.m_velocity = target.m_velocity.reflect_x();
+			target.m_position += {2.0f, 0.0f};
 		}
-		else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
+		else if(target.get_x() >= width - r2)
+		{
+			target.m_velocity = target.m_velocity.reflect_x();
+			target.m_position -= {2.0f, 0.0f};
+		}
+		if(target.get_y() <= 0)
 		{
 			target.m_velocity = target.m_velocity.reflect_y();
+			target.m_position += {0.0f, 2.0f};
+		}
+		else if (target.get_y() >= height - topmenu_size - r2)
+		{
+			target.m_velocity = target.m_velocity.reflect_y();
+			target.m_position -= {0.0f, 2.0f};
 		}
 	}
 

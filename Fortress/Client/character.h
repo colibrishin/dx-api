@@ -29,7 +29,7 @@ namespace Object
 			const Math::Vector2 WH,
 			const float speed,
 			const float acceleration,
-			const int hp, 
+			const int hp,
 			const int mp,
 			const CharacterType type)
 		: _rigidBody(name, position, WH, velocity, speed, acceleration), m_hp(hp), m_mp(mp), m_type(type) {}
