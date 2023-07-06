@@ -4,6 +4,7 @@
 
 #include <map>
 #include <string>
+#include <memory>
 #include "framework.h"
 #include "baseEntity.hpp"
 
@@ -30,9 +31,9 @@ namespace Scene
 		SceneManager() = default;
 		~SceneManager() 
 		{
-			for (const auto& [_, ptr] : m_scenes) 
+			for (auto& [_, ptr] : m_scenes) 
 			{
-				delete ptr;
+				ptr.reset();
 			}
 		}
 		static void initialize(HWND hwnd, HDC hdc) 
@@ -52,15 +53,15 @@ namespace Scene
 		template <typename T>
 		static T* CreateScene()
 		{
-			T* scene = new T();
+			std::shared_ptr<T> scene = std::make_shared<T>();
 			m_scenes.emplace(scene->getName(), scene);
 			scene->initialize();
-			return scene;
+			return scene.get();
 		}
 
 		static void SetActive(const std::wstring& name)
 		{
-			auto scene = m_scenes.find(name);
+			const auto scene = m_scenes.find(name);
 
 			if (scene != m_scenes.end()) 
 			{
@@ -72,8 +73,8 @@ namespace Scene
 		// @todo: name can be different with scene
 		inline static HWND m_hwnd = nullptr;
 		inline static HDC m_hdc = nullptr;
-		inline static std::map<std::wstring, _scene*> m_scenes = {};
-		inline static _scene* m_current_scene;
+		inline static std::map<std::wstring, std::shared_ptr<_scene>> m_scenes = {};
+		inline static std::shared_ptr<_scene> m_current_scene;
 	};
 }
 
