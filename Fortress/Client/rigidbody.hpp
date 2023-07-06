@@ -206,11 +206,13 @@ namespace ObjectInternal
 
 		if(std::floorf(diff.abs().get_y() - obj->m_hitbox.get_y()) == 0)
 		{
+			Fortress::Debug::Log(L"Object grounded");
 			obj->m_bGrounded = true;
 			obj->m_gravity_speed = 0.0f;
 		}
 		else
 		{
+			Fortress::Debug::Log(L"Object is floating");
 			obj->m_bGrounded = false;
 		}
 
