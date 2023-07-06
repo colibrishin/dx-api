@@ -3,10 +3,11 @@
 #pragma once
 
 #include "math.h"
+#include "baseEntity.hpp"
 
 namespace ObjectInternal
 {
-	class _baseObject
+	class _baseObject : public Fortress::_baseEntity
 	{
 	public:
 		Math::Vector2 m_hitbox;
@@ -64,10 +65,8 @@ namespace ObjectInternal
 
 	protected:
 
-		_baseObject(const Math::Vector2 position, const Math::Vector2 hitbox)
-			: m_hitbox(hitbox), m_position(position)
-		{
-		}
+		_baseObject(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox)
+		: _baseEntity(name), m_position(position), m_hitbox(hitbox) {}
 	};
 }
 #endif // OBJECT_HPP

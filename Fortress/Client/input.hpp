@@ -99,15 +99,10 @@ namespace Fortress
 		__forceinline static bool getKey(eKeyCode);
 
 	private:
-		static std::vector<Key> m_keys;
+		inline static std::vector<Key> m_keys;
 
 		inline static void checkKeyState();
 	};
-
-
-	// ** LINK2001 ERROR WARNING **
-	// FORWARD DECLARATION SHOULD BE DONE BEFORE USED.
-	std::vector<Input::Key> Input::m_keys = {};
 
 	void Input::initialize()
 	{

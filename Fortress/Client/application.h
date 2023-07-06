@@ -13,7 +13,6 @@ namespace Fortress
 	{
 	public:
 		Application() :
-		m_window_size{0, 0, 800, 600},
 		m_hwnd(nullptr),
 		m_hdc(nullptr),
 		m_buffer_bitmap(nullptr),
@@ -29,23 +28,22 @@ namespace Fortress
 		Application& operator=(const Application&) = delete;
 
 		void initialize(HWND, HDC);
-		void run();
-		void update();
-		void render();
-
-	private:
-		__forceinline void checkKeyUpdate();
-		void checkWindowFrame(Character& target);
-		__forceinline int get_window_width() const
+		void update() const;
+		void render() const;
+		__forceinline static int get_window_width()
 		{
 			return m_window_size.right - m_window_size.left;
 		}
-		__forceinline int get_window_height() const
+
+		__forceinline static int get_window_height()
 		{
 			return m_window_size.bottom - m_window_size.top;
 		}
 
-		RECT m_window_size;
+		static void checkWindowFrame(Character& target);
+
+	private:
+		inline static RECT m_window_size = {0, 0, 800, 600};
 		HWND m_hwnd;
 		HDC m_hdc;
 
@@ -53,7 +51,6 @@ namespace Fortress
 		HDC m_buffer_hdc;
 
 		Vector2 m_playerPos;
-		std::vector<Character> m_objects;
 	};
 }
 

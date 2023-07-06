@@ -16,4 +16,5 @@
 // ## CUSTOM
 
 #include "math.h"
+#include "baseEntity.hpp"
 #include "object.h"
