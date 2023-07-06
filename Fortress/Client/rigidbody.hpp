@@ -272,7 +272,7 @@ namespace ObjectInternal
 			return;
 		}
 
-		//@todo: gravity, fraction.
+		//@todo: gravity, friction.
 
 		object->m_curr_speed += object->m_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
 		*object += object->m_velocity * object->m_curr_speed * Fortress::DeltaTime::get_deltaTime();
