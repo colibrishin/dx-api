@@ -3,6 +3,7 @@
 #include "application.h"
 #include "input.hpp"
 #include "deltatime.hpp"
+#include "sceneManager.hpp"
 
 namespace Fortress
 {
@@ -104,6 +105,7 @@ namespace Fortress
 
 		DeltaTime::update();
 		Character::update();
+		SceneManager::update();
 
 		static float interval = 0.0f;
 		interval += DeltaTime::get_deltaTime();
@@ -126,7 +128,9 @@ namespace Fortress
 	    FillRect(m_buffer_hdc, &m_window_size, hbrBkGnd);
 	    DeleteObject(hbrBkGnd);
 
+		SceneManager::render();
 		DeltaTime::render(m_buffer_hdc);
+
 		for(auto & m_object : m_objects)
 		{
 			Ellipse(

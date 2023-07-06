@@ -3,7 +3,7 @@
 #define RIGIDBODY_HPP
 
 #include <vector>
-
+#include <string>
 #include "deltatime.hpp"
 #include "math.h"
 #include "object.hpp"
@@ -44,7 +44,7 @@ namespace ObjectInternal
 		__forceinline static void move(_rigidBody* object);
 		inline static std::vector<_rigidBody*> _known_rigid_bodies = {};
 	protected:
-		_rigidBody(Math::Vector2 position, Math::Vector2 hitbox, Math::Vector2 velocity, float speed, float acceleration);
+		_rigidBody(std::wstring& name, Math::Vector2 position, Math::Vector2 hitbox, Math::Vector2 velocity, float speed, float acceleration);
 	};
 
 	inline _rigidBody& _rigidBody::operator=(const _rigidBody& other)
@@ -57,9 +57,9 @@ namespace ObjectInternal
 		return *this;
 	}
 
-	inline _rigidBody::_rigidBody(const Math::Vector2 position, const Math::Vector2 hitbox,
+	inline _rigidBody::_rigidBody(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox,
 		const Math::Vector2 velocity, const float speed, const float acceleration) :
-		_baseObject(position, hitbox), m_velocity(velocity), m_speed(speed), m_acceleration(acceleration), m_curr_speed(0.0f)
+		_baseObject(name, position, hitbox), m_velocity(velocity), m_speed(speed), m_acceleration(acceleration), m_curr_speed(0.0f)
 	{
 		initialize();
 	}
