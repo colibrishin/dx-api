@@ -36,6 +36,11 @@ namespace ObjectInternal
 		__forceinline void initialize();
 		__forceinline static void update();
 		~_rigidBody() override;
+		void move_down() override;
+		void move_left() override;
+		void move_right() override;
+		void move_up() override;
+		void stop();
 
 	private:
 		float m_curr_speed;
@@ -104,6 +109,31 @@ namespace ObjectInternal
 					return r == this;
 				}),
 			_known_rigid_bodies.end());
+	}
+
+	inline void _rigidBody::move_down()
+	{
+		m_velocity = {0, 1.0f};
+	}
+
+	inline void _rigidBody::move_left()
+	{
+		m_velocity = {-1.0f, 0};
+	}
+
+	inline void _rigidBody::move_right()
+	{
+		m_velocity = {1.0f, 0};
+	}
+
+	inline void _rigidBody::move_up()
+	{
+		m_velocity = {0, -1.0f};
+	}
+
+	inline void _rigidBody::stop()
+	{
+		m_velocity = {0, 0};
 	}
 
 	__forceinline void _rigidBody::update_collision(_rigidBody* left, const _rigidBody* right) noexcept
@@ -220,23 +250,18 @@ namespace ObjectInternal
 
 	inline void _rigidBody::move(_rigidBody* object)
 	{
-		if (object->m_curr_speed == 0.0f)
+		if (object->m_curr_speed < Math::epsilon)
 		{
 			object->m_curr_speed = object->m_speed;
 		}
 
 		if (object->m_velocity == Math::Vector2{0.0f, 0.0f})
 		{
-			if (object->m_curr_speed > Math::epsilon)
-			{
-				object->m_curr_speed /= 4.0f;
-			}
-			else if (object->m_curr_speed < Math::epsilon)
-			{
-				object->m_curr_speed = 0;
-				return;
-			}
+			object->m_curr_speed = 0;
+			return;
 		}
+
+		//@todo: gravity, fraction.
 
 		object->m_curr_speed += object->m_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
 		*object += object->m_velocity * object->m_curr_speed * Fortress::DeltaTime::get_deltaTime();

@@ -10,6 +10,7 @@ namespace ObjectInternal
 	{
 	public:
 		Math::Vector2 m_hitbox;
+		Math::Vector2 m_position;
 
 		_baseObject() = delete;
 		virtual ~_baseObject() = default;
@@ -62,7 +63,6 @@ namespace ObjectInternal
 		}
 
 	protected:
-		Math::Vector2 m_position;
 
 		_baseObject(const Math::Vector2 position, const Math::Vector2 hitbox)
 			: m_hitbox(hitbox), m_position(position)

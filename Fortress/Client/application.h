@@ -6,9 +6,6 @@
 
 namespace Fortress
 {
-	constexpr static int OBJECT_COUNT = 100;
-	constexpr static float speed = 2000.0f;
-
 	using namespace Math;
 	using namespace Object;
 
@@ -56,7 +53,7 @@ namespace Fortress
 		HDC m_buffer_hdc;
 
 		Vector2 m_playerPos;
-		Character m_objects[OBJECT_COUNT];
+		std::vector<Character> m_objects;
 	};
 }
 

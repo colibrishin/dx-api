@@ -27,23 +27,16 @@ namespace Fortress
 		// free the temporary handle.
 		DeleteObject(defaultBitmap);
 
-		for(auto& m_object : m_objects)
-		{
-			static thread_local std::mt19937 generator(static_cast<unsigned int>(time(nullptr)));
-			std:: uniform_int_distribution h_distribution(0, get_window_width());
-			std:: uniform_int_distribution w_distribution(0, get_window_height());
-
-			Vector2 random_pos = {static_cast<float>(w_distribution(generator)), static_cast<float>(h_distribution(generator))};
-			m_object = {
-				random_pos,
-				{1.0f, 1.0f},
-				{20.0f, 20.0f},
-				500.0f,
-				0.0f,
-				0,
-				0,
-				CharacterType::CANNON};
-		}
+		m_objects.resize(1);
+		m_objects[0] = Character(
+			{1.0f, 1.0f},
+			{0.0f, 0.0f},
+			{20.0f, 20.0f},
+			500.0f,
+			0.0f,
+			0,
+			0,
+			CharacterType::CANNON);
 	}
 
 	void Application::run()
@@ -57,18 +50,27 @@ namespace Fortress
 		const float height = static_cast<float>(get_window_height());
 		const float width = static_cast<float>(get_window_width());
 
-		// hitting windows and character can happen individually.
-		const auto newPos = target + target.m_velocity * speed * DeltaTime::get_deltaTime();
-
 		// Reflection vector
 		// R = P + 2n(-P * n), where n = identity (= 1)
-		if(newPos.get_x() <= 0 || newPos.get_x() >= width - r2)
+		if(target.get_x() <= 0)
 		{
 			target.m_velocity = target.m_velocity.reflect_x();
+			target.m_position += {2.0f, 0.0f};
 		}
-		else if(newPos.get_y() <= 0 || newPos.get_y() >= height - topmenu_size - r2)
+		else if(target.get_x() >= width - r2)
+		{
+			target.m_velocity = target.m_velocity.reflect_x();
+			target.m_position -= {2.0f, 0.0f};
+		}
+		if(target.get_y() <= 0)
 		{
 			target.m_velocity = target.m_velocity.reflect_y();
+			target.m_position += {0.0f, 2.0f};
+		}
+		else if (target.get_y() >= height - topmenu_size - r2)
+		{
+			target.m_velocity = target.m_velocity.reflect_y();
+			target.m_position -= {0.0f, 2.0f};
 		}
 	}
 
@@ -76,22 +78,30 @@ namespace Fortress
 	{
 		Input::update();
 
+		// @todo: diagonal move is janky.
 		if (Input::getKey(eKeyCode::A))
 		{
-			m_playerPos = m_playerPos.left() * speed * DeltaTime::get_deltaTime();
+			m_objects[0].move_left();
 		}
 		if (Input::getKey(eKeyCode::D))
 		{
-			m_playerPos = m_playerPos.right() * speed * DeltaTime::get_deltaTime();
+			m_objects[0].move_right();
 		}
 		if (Input::getKey(eKeyCode::W))
 		{
-			// This is not a bug, value changing is in reverse.
-			m_playerPos = m_playerPos.bottom() * speed * DeltaTime::get_deltaTime();
+			m_objects[0].move_up();
 		}
 		if (Input::getKey(eKeyCode::S))
 		{
-			m_playerPos = m_playerPos.top() * speed * DeltaTime::get_deltaTime();
+			m_objects[0].move_down();
+		}
+
+		if(Input::getKeyUp(eKeyCode::A) || 
+			Input::getKeyUp(eKeyCode::D) || 
+			Input::getKeyUp(eKeyCode::W) || 
+			Input::getKeyUp(eKeyCode::S))
+		{
+			m_objects[0].stop();
 		}
 	}
 
@@ -103,21 +113,11 @@ namespace Fortress
 		}
 
 		DeltaTime::update();
-		Character::update();
-
-		static float interval = 0.0f;
-		interval += DeltaTime::get_deltaTime();
-
-		if(interval >= 0.01f)
-		{
-			for(auto& c : m_objects)
-			{
-				checkWindowFrame(c);
-			}
-			interval = 0;
-		}
 
 		checkKeyUpdate();
+
+		checkWindowFrame(m_objects[0]);
+		Character::update();
 	}
 
 	void Application::render()

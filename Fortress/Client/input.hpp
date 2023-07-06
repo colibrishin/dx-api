@@ -9,11 +9,38 @@ namespace Fortress
 {
 	enum class eKeyCode
 	{
-		Q,W,E,R,T,Y,U,I,O,P,
-		A,S,D,F,G,H,J,K,L,
-		Z,X,C,V,B,N,M,
-		SPACE,ENTER,
-		UP,DOWN,LEFT,RIGHT,
+		Q,
+		W,
+		E,
+		R,
+		T,
+		Y,
+		U,
+		I,
+		O,
+		P,
+		A,
+		S,
+		D,
+		F,
+		G,
+		H,
+		J,
+		K,
+		L,
+		Z,
+		X,
+		C,
+		V,
+		B,
+		N,
+		M,
+		SPACE,
+		ENTER,
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT,
 	};
 
 	enum class _eKeyState
@@ -39,23 +66,27 @@ namespace Fortress
 		{
 			uint8_t m_native_code;
 			_eKeyState m_state;
+			bool m_pressed;
 
 			Key()
 			{
 				m_native_code = 0;
 				m_state = _eKeyState::None;
+				m_pressed = false;
 			}
 
 			explicit Key(const uint8_t native_code)
 			{
 				m_native_code = native_code;
 				m_state = _eKeyState::None;
+				m_pressed = false;
 			}
 
 			Key& operator=(const Key& other)
 			{
 				m_native_code = other.m_native_code;
 				m_state = other.m_state;
+				m_pressed = other.m_pressed;
 
 				return *this;
 			}
@@ -97,22 +128,29 @@ namespace Fortress
 			{
 				USHORT winapi_state = GetAsyncKeyState(key.m_native_code);
 
-				switch (winapi_state)
+				if(winapi_state & 0x8001)
 				{
-				case 0x0000:
-					key.m_state = _eKeyState::None;
-					break;
-				case 0x0001:
-					key.m_state = _eKeyState::Up;
-					break;
-				case 0x8000:
-					key.m_state = _eKeyState::Down;
-					break;
-				case 0x8001:
-					key.m_state = _eKeyState::Pressing;
-					break;
-				default:
-					throw std::exception("winapi error : unknown GetASyncKeyState return");
+					if(key.m_pressed)
+					{
+						key.m_state = _eKeyState::Pressing;
+					}
+					else
+					{
+						key.m_state = _eKeyState::Down;
+						key.m_pressed = true;
+					}
+				}
+				else
+				{
+					if(key.m_pressed)
+					{
+						key.m_state = _eKeyState::Up;
+						key.m_pressed = false;
+					}
+					else
+					{
+						key.m_state = _eKeyState::None;
+					}
 				}
 			});
 	}
