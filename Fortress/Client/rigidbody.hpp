@@ -7,6 +7,7 @@
 #include "deltatime.hpp"
 #include "math.h"
 #include "object.hpp"
+#include "debug.hpp"
 
 namespace ObjectInternal
 {
@@ -44,7 +45,10 @@ namespace ObjectInternal
 		void stop();
 
 	private:
+		Math::Vector2 m_previous_position;
 		float m_curr_speed;
+		float m_gravity_speed;
+		float m_gravity_acceleration;
 		__forceinline static void update_collision(_rigidBody* left, const _rigidBody* right) noexcept;
 		__forceinline static CollisionCode is_collision(const _rigidBody* left, const _rigidBody* right) noexcept;
 		__forceinline static void move(_rigidBody* object);
@@ -63,17 +67,24 @@ namespace ObjectInternal
 		m_hitbox = other.m_hitbox;
 		m_speed = other.m_speed;
 		m_acceleration = other.m_acceleration;
+		m_previous_position = other.m_previous_position;
+		m_bActive = other.m_bActive;
+		m_gravity_speed = other.m_gravity_speed;
+		m_gravity_acceleration = other.m_gravity_acceleration;
 		return *this;
 	}
 
 	inline _rigidBody::_rigidBody(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox,
 		const Math::Vector2 velocity, const float speed, const float acceleration) :
 		_baseObject(name, position, hitbox),
-	m_velocity(velocity),
-	m_speed(speed),
-	m_acceleration(acceleration),
-	m_curr_speed(0.0f),
-	m_bActive(true)
+		m_velocity(velocity),
+		m_speed(speed),
+		m_acceleration(acceleration),
+		m_curr_speed(0.0f),
+		m_bActive(true),
+		m_previous_position(m_position),
+		m_gravity_speed(0.0f),
+		m_gravity_acceleration(Math::G_ACC)
 	{
 		initialize();
 	}
@@ -224,37 +235,44 @@ namespace ObjectInternal
 
 		if (x < 0 && !y)
 		{
+			Fortress::Debug::Log(L"Left");
 			return CollisionCode::Left;
 		}
 		if (x > 0 && !y)
 		{
+			Fortress::Debug::Log(L"Right");
 			return CollisionCode::Right;
 		}
 		if (!x && y < 0)
 		{
+			Fortress::Debug::Log(L"Bottom");
 			return CollisionCode::Bottom;
 		}
 		if (!x && y > 0)
 		{
+			Fortress::Debug::Log(L"Top");
 			return CollisionCode::Top;
 		}
 		if (x < 0 && y < 0)
 		{
+			Fortress::Debug::Log(L"BottomLeft");
 			return CollisionCode::BottomLeft;
 		}
 		if (x > 0 && y > 0)
 		{
+			Fortress::Debug::Log(L"TopRight");
 			return CollisionCode::TopRight;
 		}
 		if (x > 0 && y < 0)
 		{
+			Fortress::Debug::Log(L"BottomRight");
 			return CollisionCode::BottomRight;
 		}
 		if (x < 0 && y > 0)
 		{
+			Fortress::Debug::Log(L"TopLeft");
 			return CollisionCode::TopLeft;
 		}
-
 
 		return CollisionCode::None;
 	}
@@ -273,7 +291,6 @@ namespace ObjectInternal
 		}
 
 		//@todo: gravity, friction.
-
 		object->m_curr_speed += object->m_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
 		*object += object->m_velocity * object->m_curr_speed * Fortress::DeltaTime::get_deltaTime();
 		object->m_curr_speed += object->m_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
