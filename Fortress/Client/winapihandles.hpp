@@ -56,6 +56,11 @@ public:
 		return m_native_size.bottom - m_native_size.top;
 	}
 
+	__forceinline static RECT& get_window_size()
+	{
+		return m_window_size;
+	}
+
 private:
 	inline static RECT m_window_size = {0, 0, 800, 600};
 	inline static RECT m_native_size = {0, 0, 0, 0};

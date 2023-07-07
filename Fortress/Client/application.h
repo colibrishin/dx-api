@@ -16,16 +16,9 @@ namespace Fortress
 		Application() :
 		m_hwnd(nullptr),
 		m_hdc(nullptr),
-		m_buffer_bitmap(nullptr),
-		m_buffer_hdc(nullptr),
-		m_playerPos(0.0f, 0.0f) {}
+		m_buffer_hdc(nullptr) {}
 
-		~Application()
-		{
-			DeleteObject(m_buffer_bitmap);
-			ReleaseDC(m_hwnd, m_buffer_hdc);
-			DeleteDC(m_buffer_hdc);
-		}
+		~Application() = default;
 		Application& operator=(const Application&) = delete;
 
 		void initialize(HWND, HDC);
@@ -33,15 +26,9 @@ namespace Fortress
 		void render();
 	private:
 		RenderQueue m_render_queue;
-
-		inline static RECT m_window_size = {0, 0, 800, 600};
 		HWND m_hwnd;
 		HDC m_hdc;
-
-		HBITMAP m_buffer_bitmap;
 		HDC m_buffer_hdc;
-
-		Vector2 m_playerPos;
 	};
 }
 
