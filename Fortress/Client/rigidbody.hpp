@@ -297,6 +297,7 @@ namespace ObjectInternal
 
 		if(object->m_bGrounded && object->m_velocity.get_y() > Math::epsilon)
 		{
+			Fortress::Debug::Log(L"Object has tried to go under ground.");
 			return;
 		}
 
