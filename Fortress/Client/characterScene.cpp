@@ -14,11 +14,12 @@ void Scene::CharacterScene::initialize()
 		{20.0f, 20.0f},
 		500.0f,
 		0.0f,
-		0,
-		0,
+		100,
+		100,
 		Object::CharacterType::CANNON};
 
 	m_object.m_bActive = false;
+	m_ground.m_bActive = false;
 }
 
 void Scene::CharacterScene::update()
@@ -57,6 +58,16 @@ void Scene::CharacterScene::render()
 {
 	m_render_queue.emplace(0, [this]() 
 	{
+		Rectangle(
+			m_hdc,
+			m_ground.get_x(), 
+			m_ground.get_y(), 
+			m_ground.get_x() + m_ground.m_hitbox.get_x(),
+			m_ground.get_y() + m_ground.m_hitbox.get_y());
+	});
+
+	m_render_queue.emplace(0, [this]() 
+	{
 		Ellipse(
 			m_hdc,
 			m_object.get_x(), 
@@ -81,10 +92,12 @@ void Scene::CharacterScene::deactivate()
 	_scene::deactivate();
 
 	m_object.m_bActive = false;
+	m_ground.m_bActive = false;
 }
 
 void Scene::CharacterScene::activate()
 {
 	m_object.m_bActive = true;
+	m_ground.m_bActive = true;
 }
 

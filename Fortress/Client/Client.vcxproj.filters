@@ -75,6 +75,12 @@
     <ClInclude Include="characterScene.h">
       <Filter>Engine\Scene</Filter>
     </ClInclude>
+    <ClInclude Include="debug.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="ground.hpp">
+      <Filter>Engine\Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -109,6 +115,12 @@
     </ClCompile>
     <ClCompile Include="titleScene.cpp">
       <Filter>Engine\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="renderQueue.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="winapihandles.hpp">
+      <Filter>Windows\헤더 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

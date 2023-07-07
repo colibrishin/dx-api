@@ -3,6 +3,7 @@
 #pragma once
 
 #include "character.h"
+#include "ground.hpp"
 #include "object.hpp"
 #include "rigidbody.hpp"
 
@@ -16,6 +17,7 @@ namespace ObjectInternal
 namespace Object
 {
 	using Character = character;
+	using Ground = ground;
 }
 
 #endif

@@ -21,6 +21,7 @@ namespace Scene
 
 	private:
 		Object::Character m_object;
+		Object::Ground m_ground;
 	};
 }
 

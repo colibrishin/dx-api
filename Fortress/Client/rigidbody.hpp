@@ -7,6 +7,7 @@
 #include "deltatime.hpp"
 #include "math.h"
 #include "debug.hpp"
+#include "ground.hpp"
 #include "object.hpp"
 #include "winapihandles.hpp"
 
@@ -40,6 +41,7 @@ namespace ObjectInternal
 		__forceinline void initialize();
 		__forceinline static void update();
 		__forceinline static void block_window_frame(_rigidBody& target);
+
 		~_rigidBody() override;
 		void move_down() override;
 		void move_left() override;
@@ -134,6 +136,8 @@ namespace ObjectInternal
 			target.get_y() > WinAPIHandles::get_actual_max_y())
 		{
 			// OOB
+			// @todo: if the scene moves like "camera" then oob definition can be different with assumption.
+			// @todo: if the character is oob in y-axis wise, then consider it as dead.
 			target.m_position = {1.0f, 1.0f};
 			return;
 		}
@@ -201,8 +205,32 @@ namespace ObjectInternal
 	
 	inline void _rigidBody::apply_gravity(_rigidBody* obj)
 	{
-		// @todo: set ground position dynamically
-		const auto diff = obj->m_position - Math::Vector2{0.0f, static_cast<float>(WinAPIHandles::get_actual_max_y())};
+		// ground check
+		for(const auto ground : Object::ground::_known_grounds)
+		{
+			if(!ground->m_bActive)
+			{
+				continue;
+			}
+
+			const Math::Vector2 diff = Math::Vector2{0.0f, ground->get_y()} - obj->m_position;
+
+			// @todo: fix, ground-to-rigidbody conversion creates a dummy rigid body in static list.
+			// @todo: collision does not work as intended?
+			//CollisionCode code = is_collision(obj, &ground_rigidbody);
+
+			const float y_diff = std::floorf(diff.get_y() - obj->m_hitbox.get_y());
+			if(y_diff < 1.0f && 0 <= y_diff)
+			{
+				Fortress::Debug::Log(L"Object hit ground");
+				obj->m_bGrounded = true;
+				obj->m_gravity_speed = 0.0f;
+				return;
+			}
+		}
+
+		// free-falling
+		const Math::Vector2 diff = obj->m_position - Math::Vector2{0.0f, static_cast<float>(WinAPIHandles::get_actual_max_y())};
 
 		if(std::floorf(diff.abs().get_y() - obj->m_hitbox.get_y()) == 0)
 		{
@@ -269,7 +297,7 @@ namespace ObjectInternal
 		const auto hitbox_diff = (left->m_hitbox - right->m_hitbox).abs();
 		// @note: using one hitbox size due to winapi middle point is actually top left.
 		//const auto hitbox_sum = m_hitbox + object.m_hitbox;
-		const auto& hitbox_sum = left->m_hitbox;
+		const auto& hitbox_sum = (left->m_hitbox + right->m_hitbox) / 2;
 
 		// Too far
 		if (hitbox_diff.get_x() > dist || hitbox_sum.get_x() < dist ||
@@ -357,7 +385,7 @@ namespace ObjectInternal
 			return;
 		}
 
-		//@todo: gravity, friction.
+		//@todo: friction.
 		object->m_curr_speed += object->m_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;
 		*object += object->m_velocity * object->m_curr_speed * Fortress::DeltaTime::get_deltaTime();
 		object->m_curr_speed += object->m_acceleration * Fortress::DeltaTime::get_deltaTime() * 0.5f;

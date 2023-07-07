@@ -43,6 +43,11 @@ namespace Math
 			return {m_x * other.m_x, m_y * other.m_y};
 		}
 
+		vector2 operator/(const float& scalar) const
+		{
+			return {m_x / scalar, m_y / scalar};
+		}
+
 		vector2 operator*(const float& scalar) const
 		{
 			return {m_x * scalar, m_y * scalar};
