@@ -35,6 +35,8 @@ namespace Scene
 					m_render_queue.pop();
 				}
 			}
+			virtual void deactivate() {}
+			virtual void activate() {}
 		private:
 			struct PriorityCompare
 			{
@@ -91,7 +93,13 @@ namespace Scene
 
 			if (scene != m_scenes.end()) 
 			{
+				if(m_current_scene)
+				{
+					m_current_scene->deactivate();
+				}
+
 				m_current_scene = (*scene).second;
+				m_current_scene->activate();
 			}
 		}
 	private:

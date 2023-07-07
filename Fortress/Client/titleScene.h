@@ -16,6 +16,8 @@ namespace Scene
 		void initialize() override;
 		void update() override;
 		void render() override;
+		void deactivate() override;
+		void activate() override;
 
 	private:
 		Object::Character m_objects[100];

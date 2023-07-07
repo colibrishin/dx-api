@@ -28,6 +28,8 @@ void Scene::TitleScene::initialize()
 			0,
 			0,
 			Object::CharacterType::CANNON};
+
+		m_object.m_bActive = false;
 	}
 }
 
@@ -41,11 +43,6 @@ void Scene::TitleScene::update()
 
 	if(Fortress::Input::getKey(Fortress::eKeyCode::SPACE))
 	{
-		for(auto& ch : m_objects)
-		{
-			ch.m_bActive = false;
-		}
-
 		SceneManager::SetActive(L"Character Scene");
 	}
 }
@@ -71,4 +68,20 @@ void Scene::TitleScene::render()
 	});
 
 	_scene::render();
+}
+
+void Scene::TitleScene::deactivate()
+{
+	for(auto& ch : m_objects)
+	{
+		ch.m_bActive = false;
+	}
+}
+
+void Scene::TitleScene::activate()
+{
+	for(auto& ch : m_objects)
+	{
+		ch.m_bActive = true;
+	}
 }

@@ -17,6 +17,8 @@ void Scene::CharacterScene::initialize()
 		0,
 		0,
 		Object::CharacterType::CANNON};
+
+	m_object.m_bActive = false;
 }
 
 void Scene::CharacterScene::update()
@@ -73,3 +75,16 @@ void Scene::CharacterScene::render()
 
 	_scene::render();
 }
+
+void Scene::CharacterScene::deactivate()
+{
+	_scene::deactivate();
+
+	m_object.m_bActive = false;
+}
+
+void Scene::CharacterScene::activate()
+{
+	m_object.m_bActive = true;
+}
+
