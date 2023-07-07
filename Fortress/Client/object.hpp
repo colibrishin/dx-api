@@ -77,7 +77,9 @@ namespace ObjectInternal
 			BottomLeft = 12,
 			BottomRight = 20,
 		};
-
+	protected:
+		_baseObject(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox)
+		: _baseEntity(name), m_position(position), m_hitbox(hitbox) {}
 		__forceinline static CollisionCode is_collision(const _baseObject* left, const _baseObject* right) noexcept
 		{
 			// See also: https://www.acmicpc.net/problem/1002
@@ -169,11 +171,6 @@ namespace ObjectInternal
 
 			return CollisionCode::None;
 		}
-
-	protected:
-
-		_baseObject(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox)
-		: _baseEntity(name), m_position(position), m_hitbox(hitbox) {}
 	};
 }
 #endif // OBJECT_HPP
