@@ -56,6 +56,62 @@ void Scene::CharacterScene::update()
 
 void Scene::CharacterScene::render()
 {
+	// @todo: Text and bar can be made in class
+	// HP bar
+	m_render_queue.emplace(0, [this]() 
+	{
+		const int x = 30;
+		const int y = 500;
+
+		// hp text
+		wchar_t hp_notice[100] = {};
+		swprintf_s(hp_notice, 100,  L"HP : ");
+		const size_t strlen = wcsnlen_s(hp_notice, 100);
+		TextOut(m_hdc, x, y + 5, hp_notice, strlen);
+
+		// bar outline
+		Rectangle(
+			m_hdc,
+			x + 20,
+			y,
+			x + 20 + 250,
+			y + 25);
+
+		// bar inside
+		const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
+		const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_object.get_hp_percentage() * 250), y + 25};
+		FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+		DeleteObject(brush);
+	});
+
+	// MP bar
+	m_render_queue.emplace(0, [this]() 
+	{
+		const int x = 30;
+		const int y = 530;
+
+		// hp text
+		wchar_t hp_notice[100] = {};
+		swprintf_s(hp_notice, 100,  L"MP : ");
+		const size_t strlen = wcsnlen_s(hp_notice, 100);
+		TextOut(m_hdc, x, y + 5, hp_notice, strlen);
+
+		// bar outline
+		Rectangle(
+			m_hdc,
+			x + 20,
+			y,
+			x + 20 + 250,
+			y + 25);
+
+		// bar inside
+		const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
+		const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_object.get_mp_percentage() * 250), y + 25};
+		FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+		DeleteObject(brush);
+	});
+
+	// Ground
 	m_render_queue.emplace(0, [this]() 
 	{
 		Rectangle(
@@ -66,6 +122,7 @@ void Scene::CharacterScene::render()
 			m_ground.get_y() + m_ground.m_hitbox.get_y());
 	});
 
+	// Player
 	m_render_queue.emplace(0, [this]() 
 	{
 		Ellipse(

@@ -12,6 +12,9 @@ namespace Object
 		CANNON = 0,
 	};
 
+	constexpr int character_full_hp = 100;
+	constexpr int character_full_mp = 100;
+
 	class character final : public ObjectInternal::_rigidBody
 	{
 	public:
@@ -35,11 +38,20 @@ namespace Object
 		: _rigidBody(name, position, WH, velocity, speed, acceleration), m_hp(hp), m_mp(mp), m_type(type) {}
 
 		static void update();
+		__forceinline float get_hp_percentage() const
+		{
+			return m_hp / character_full_hp;
+		}
+		__forceinline float get_mp_percentage() const
+		{
+			return m_mp / character_full_mp;
+		}
 
 	private:
 		int m_hp;
 		int m_mp;
 		CharacterType m_type;
+		void shoot();
 	};
 
 	inline void character::update()
