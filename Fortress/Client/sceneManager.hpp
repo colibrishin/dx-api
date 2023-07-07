@@ -82,7 +82,7 @@ namespace Scene
 		static T* CreateScene()
 		{
 			std::shared_ptr<T> scene = std::make_shared<T>();
-			m_scenes.emplace(scene->getName(), scene);
+			m_scenes.emplace(scene->get_name(), scene);
 			scene->initialize();
 			return scene.get();
 		}

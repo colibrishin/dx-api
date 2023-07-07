@@ -34,9 +34,11 @@ namespace Object
 				}),
 			_known_grounds.end());
 		}
+
 		bool m_bActive;
 	private:
 		friend ObjectInternal::_rigidBody;
+		// @todo: ground_check is in the _ridgidbody.
 		inline static std::vector<ground*> _known_grounds = {};
 	};
 }

@@ -13,20 +13,6 @@
 
 namespace ObjectInternal
 {
-	enum class CollisionCode
-	{
-		None = 0,
-		Identical = 1,
-		Top = 2,
-		Bottom = 4,
-		Left = 8,
-		Right = 16,
-		TopLeft = 10,
-		TopRight = 18,
-		BottomLeft = 12,
-		BottomRight = 20,
-	};
-
 	class _rigidBody : public _baseObject
 	{
 	public:
@@ -56,7 +42,6 @@ namespace ObjectInternal
 
 		static void apply_gravity(_rigidBody* obj);
 		__forceinline static void update_collision(_rigidBody* left, const _rigidBody* right) noexcept;
-		__forceinline static CollisionCode is_collision(const _rigidBody* left, const _rigidBody* right) noexcept;
 		__forceinline static void move(_rigidBody* object);
 		inline static std::vector<_rigidBody*> _known_rigid_bodies = {};
 
@@ -64,6 +49,7 @@ namespace ObjectInternal
 		_rigidBody(const std::wstring& name, Math::Vector2 position, Math::Vector2 hitbox, Math::Vector2 velocity,
 		           float speed,
 		           float acceleration);
+		_rigidBody(const _baseObject& obj);
 	};
 
 	inline _rigidBody& _rigidBody::operator=(const _rigidBody& other)
@@ -91,6 +77,20 @@ namespace ObjectInternal
 		m_gravity_speed(0.0f),
 		m_gravity_acceleration(Math::G_ACC),
 		m_bGrounded(false)
+	{
+		initialize();
+	}
+
+	inline _rigidBody::_rigidBody(const _baseObject& obj) :
+		_baseObject(obj),
+		m_velocity({0.0f, 0.0f}),
+		m_speed(0.0f),
+	    m_acceleration(0.0f),
+	    m_bActive(true),
+	    m_bGrounded(false),
+	    m_curr_speed(0.0f),
+	    m_gravity_speed(0.0f),
+	    m_gravity_acceleration(Math::G_ACC)
 	{
 		initialize();
 	}
@@ -202,7 +202,7 @@ namespace ObjectInternal
 	{
 		m_velocity = {0, 0};
 	}
-	
+
 	inline void _rigidBody::apply_gravity(_rigidBody* obj)
 	{
 		// ground check
@@ -214,13 +214,15 @@ namespace ObjectInternal
 			}
 
 			const Math::Vector2 diff = Math::Vector2{0.0f, ground->get_y()} - obj->m_position;
-
-			// @todo: fix, ground-to-rigidbody conversion creates a dummy rigid body in static list.
-			// @todo: collision does not work as intended?
-			//CollisionCode code = is_collision(obj, &ground_rigidbody);
+			
+			_baseObject ground_base_class = _baseObject(*ground);
+			CollisionCode code = is_collision(obj, &ground_base_class);
 
 			const float y_diff = std::floorf(diff.get_y() - obj->m_hitbox.get_y());
-			if(y_diff < 1.0f && 0 <= y_diff)
+
+			if(y_diff < 1.0f && 0 <= y_diff && 
+				(static_cast<unsigned int>(code) & 
+				static_cast<unsigned int>(CollisionCode::Bottom)))
 			{
 				Fortress::Debug::Log(L"Object hit ground");
 				obj->m_bGrounded = true;
@@ -280,98 +282,6 @@ namespace ObjectInternal
 		}
 	}
 
-	__forceinline CollisionCode _rigidBody::is_collision(const _rigidBody* left, const _rigidBody* right) noexcept
-	{
-		// See also: https://www.acmicpc.net/problem/1002
-
-		const auto diff = left->get_position() - right->get_position();
-		const auto dist = std::sqrtf(std::powf(diff.get_x(), 2) + std::powf(diff.get_y(), 2));
-
-		// @todo: if two objects intersect, their collisions are done indefinitely.
-		// identical
-		if (left->m_position == right->get_position())
-		{
-			return CollisionCode::Identical;
-		}
-
-		const auto hitbox_diff = (left->m_hitbox - right->m_hitbox).abs();
-		// @note: using one hitbox size due to winapi middle point is actually top left.
-		//const auto hitbox_sum = m_hitbox + object.m_hitbox;
-		const auto& hitbox_sum = (left->m_hitbox + right->m_hitbox) / 2;
-
-		// Too far
-		if (hitbox_diff.get_x() > dist || hitbox_sum.get_x() < dist ||
-			hitbox_diff.get_y() > dist || hitbox_sum.get_y() < dist)
-		{
-			return CollisionCode::None;
-		}
-
-		float x = 0;
-		float y = 0;
-
-		// X Collision, meet each other in radius or meet each other their inside.
-		if (hitbox_diff.get_x() - dist < Math::epsilon || hitbox_sum.get_x() - dist < Math::epsilon ||
-			hitbox_diff.get_x() < dist && dist < hitbox_sum.get_x())
-		{
-			x = diff.unit_vector().get_x();
-		}
-
-		if (hitbox_diff.get_y() - dist < Math::epsilon || hitbox_sum.get_y() - dist < Math::epsilon ||
-			hitbox_diff.get_y() < dist && dist < hitbox_sum.get_y())
-		{
-			y = diff.unit_vector().get_y();
-		}
-
-		if (std::fabs(x) < Math::epsilon && std::fabs(y) < Math::epsilon)
-		{
-			return CollisionCode::None;
-		}
-
-		// using epsilon instead of zero.
-		if (x < 0 && std::fabs(y) < Math::epsilon)
-		{
-			Fortress::Debug::Log(L"Left");
-			return CollisionCode::Left;
-		}
-		if (x > 0 && std::fabs(y) < Math::epsilon)
-		{
-			Fortress::Debug::Log(L"Right");
-			return CollisionCode::Right;
-		}
-		if (std::fabs(x) < Math::epsilon && y < 0)
-		{
-			Fortress::Debug::Log(L"Bottom");
-			return CollisionCode::Bottom;
-		}
-		if (std::fabs(x) < Math::epsilon && y > 0)
-		{
-			Fortress::Debug::Log(L"Top");
-			return CollisionCode::Top;
-		}
-		if (x < 0 && y < 0)
-		{
-			Fortress::Debug::Log(L"BottomLeft");
-			return CollisionCode::BottomLeft;
-		}
-		if (x > 0 && y > 0)
-		{
-			Fortress::Debug::Log(L"TopRight");
-			return CollisionCode::TopRight;
-		}
-		if (x > 0 && y < 0)
-		{
-			Fortress::Debug::Log(L"BottomRight");
-			return CollisionCode::BottomRight;
-		}
-		if (x < 0 && y > 0)
-		{
-			Fortress::Debug::Log(L"TopLeft");
-			return CollisionCode::TopLeft;
-		}
-
-		return CollisionCode::None;
-	}
-
 	inline void _rigidBody::move(_rigidBody* object)
 	{
 		if (object->m_curr_speed < Math::epsilon)
@@ -382,6 +292,11 @@ namespace ObjectInternal
 		if (object->m_velocity == Math::Vector2{0.0f, 0.0f})
 		{
 			object->m_curr_speed = 0;
+			return;
+		}
+
+		if(object->m_bGrounded && object->m_velocity.get_y() > Math::epsilon)
+		{
 			return;
 		}
 
