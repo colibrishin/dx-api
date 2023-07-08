@@ -136,7 +136,9 @@ namespace Object
 
 	inline projectile::~projectile()
 	{
-		_known_projectiles.erase(
+		if(!_known_projectiles.empty())
+		{
+			_known_projectiles.erase(
 			std::remove_if(
 				_known_projectiles.begin(),
 				_known_projectiles.end(),
@@ -145,6 +147,7 @@ namespace Object
 					return r == this;
 				}),
 			_known_projectiles.end());
+		}
 	}
 
 	inline void projectile::initialize()

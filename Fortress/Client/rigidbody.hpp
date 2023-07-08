@@ -177,7 +177,9 @@ namespace ObjectInternal
 
 	inline _rigidBody::~_rigidBody()
 	{
-		_known_rigid_bodies.erase(
+		if(!_known_rigid_bodies.empty())
+		{
+			_known_rigid_bodies.erase(
 			std::remove_if(
 				_known_rigid_bodies.begin(),
 				_known_rigid_bodies.end(),
@@ -186,6 +188,7 @@ namespace ObjectInternal
 					return r == this;
 				}),
 			_known_rigid_bodies.end());
+		}
 	}
 
 	inline void _rigidBody::move_down()
