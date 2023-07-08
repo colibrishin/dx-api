@@ -2,7 +2,7 @@
 #define OBJECT_H
 #pragma once
 
-#include "character.h"
+#include "character.hpp"
 #include "ground.hpp"
 #include "object.hpp"
 #include "rigidbody.hpp"

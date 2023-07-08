@@ -17,6 +17,7 @@ namespace ObjectInternal
 		_baseObject() = delete;
 		virtual ~_baseObject() = default;
 		_baseObject& operator=(const _baseObject& other) = default;
+		virtual void render() {};
 
 		virtual void move_left()
 		{

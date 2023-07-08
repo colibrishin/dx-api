@@ -1,6 +1,6 @@
 #pragma once
-#ifndef CHARACTER_H
-#define CHARACTER_H
+#ifndef CHARACTER_HPP
+#define CHARACTER_HPP
 
 #include "object.h"
 #include "rigidbody.hpp"
@@ -13,8 +13,8 @@ namespace Object
 		CANNON = 0,
 	};
 
-	constexpr int character_full_hp = 100;
-	constexpr int character_full_mp = 100;
+	constexpr float character_full_hp = 100.0f;
+	constexpr float character_full_mp = 100.0f;
 
 	class projectile final : public ObjectInternal::_rigidBody
 	{
@@ -32,7 +32,7 @@ namespace Object
 			const Math::Vector2& velocity,
 			const float speed,
 			const float acceleration,
-			const int damage) :
+			const float damage) :
 			_rigidBody(name, position, WH, velocity, speed, acceleration),
 			m_projectile_type(ProjectileType::Precision),
 			m_damage(damage)
@@ -40,7 +40,7 @@ namespace Object
 			initialize();
 		}
 
-		int get_damage() const
+		float get_damage() const
 		{
 			return m_damage;
 		}
@@ -48,15 +48,15 @@ namespace Object
 		~projectile() override;
 		void initialize() override; 
 		static void update();
-		void render() const;
+		void render() override;
 	private:
 		ProjectileType m_projectile_type;
-		int m_damage;
+		float m_damage;
 		inline static std::vector<projectile*> _known_projectiles = {};
 	};
 
 	// @todo: render can be moved into baseObject, virtual and override.
-	inline void projectile::render() const
+	inline void projectile::render()
 	{
 		if(m_bActive)
 		{
@@ -124,11 +124,12 @@ namespace Object
 			return m_mp / static_cast<float>(character_full_mp);
 		}
 		void shoot();
-		void render();
+		bool is_movable() override;
+		void render() override;
 
 	private:
-		int m_hp;
-		int m_mp;
+		float m_hp;
+		float m_mp;
 		CharacterType m_type;
 		projectile m_base_projectile;
 	};
@@ -212,8 +213,22 @@ namespace Object
 		m_base_projectile.m_position = {m_position.get_x() + m_hitbox.get_x() + 10.0f, m_position.get_y() - 10.0f};
 		// set active for being calculated by rigidbody.
 		m_base_projectile.m_bActive = true;
+	}
 
-		//@todo: rest of collision and damage calculation should be done in projectile.
+	inline bool character::is_movable()
+	{
+		if(m_mp < Math::epsilon)
+		{
+			return false;
+		}
+
+		if(std::fabs(m_velocity.get_x()) > Math::epsilon || 
+			std::fabs(m_velocity.get_y()) > Math::epsilon)
+		{
+			m_mp -= 20.0f * Fortress::DeltaTime::get_deltaTime();
+		}
+
+		return true;
 	}
 
 	inline void character::render()

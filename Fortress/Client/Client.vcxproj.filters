@@ -57,7 +57,7 @@
     <ClInclude Include="object.h">
       <Filter>Engine\Object</Filter>
     </ClInclude>
-    <ClInclude Include="character.h">
+    <ClInclude Include="character.hpp">
       <Filter>Engine\Object</Filter>
     </ClInclude>
     <ClInclude Include="input.hpp">
@@ -80,6 +80,9 @@
     </ClInclude>
     <ClInclude Include="ground.hpp">
       <Filter>Engine\Object</Filter>
+    </ClInclude>
+    <ClInclude Include="flower.hpp">
+      <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

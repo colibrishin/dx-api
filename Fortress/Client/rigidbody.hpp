@@ -34,6 +34,10 @@ namespace ObjectInternal
 		void move_right() override;
 		void move_up() override;
 		void stop();
+		virtual bool is_movable()
+		{
+			return true;
+		};
 
 	private:
 		float m_curr_speed;
@@ -125,8 +129,11 @@ namespace ObjectInternal
 				continue;
 			}
 
-			move(r);
-			apply_gravity(r);
+			if(r->is_movable())
+			{
+				move(r);
+				apply_gravity(r);
+			}
 		}
 	}
 

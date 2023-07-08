@@ -3,6 +3,7 @@
 #define GROUND_H
 
 #include "object.hpp"
+#include "sceneManager.hpp"
 
 namespace ObjectInternal
 {
@@ -35,12 +36,27 @@ namespace Object
 			_known_grounds.end());
 		}
 
+		void render() override;
+
 		bool m_bActive;
 	private:
 		friend ObjectInternal::_rigidBody;
 		// @todo: ground_check is in the _ridgidbody.
 		inline static std::vector<ground*> _known_grounds = {};
 	};
+
+	inline void ground::render()
+	{
+		if(m_bActive)
+		{
+			Rectangle(
+				WinAPIHandles::get_buffer_dc(),
+				get_x(), 
+				get_y(), 
+				get_x() + m_hitbox.get_x(),
+				get_y() + m_hitbox.get_y());
+		}
+	}
 }
 
 #endif

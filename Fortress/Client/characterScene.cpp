@@ -119,12 +119,7 @@ void Scene::CharacterScene::render()
 	// Ground
 	m_render_queue.push(0, [this]() 
 	{
-		Rectangle(
-			m_hdc,
-			m_ground.get_x(), 
-			m_ground.get_y(), 
-			m_ground.get_x() + m_ground.m_hitbox.get_x(),
-			m_ground.get_y() + m_ground.m_hitbox.get_y());
+		m_ground.render();
 	});
 
 	// Player

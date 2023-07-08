@@ -17,12 +17,7 @@ namespace Math
 		{
 		}
 
-		vector2& operator=(const vector2& other)
-		{
-			m_x = other.m_x;
-			m_y = other.m_y;
-			return *this;
-		}
+		vector2& operator=(const vector2& other) = default;
 
 		vector2& operator+=(const vector2& other)
 		{
