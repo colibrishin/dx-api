@@ -3,8 +3,13 @@
 
 #include <cmath>
 
+#include "math.h"
+
 namespace Math
 {
+	/**
+	 * \brief An error range for the float comparison.
+	 */
 	static constexpr float epsilon = 0.0001f;
 
 	// High-level data structure for vector2
@@ -33,6 +38,11 @@ namespace Math
 			return *this;
 		}
 
+		/**
+		 * \brief A simple multiplication of the two vectors.
+		 * \param other another vector to multiply.
+		 * \return {A.x * B.x, A.y * B.y}
+		 */
 		vector2 operator*(const vector2& other) const
 		{
 			return {m_x * other.m_x, m_y * other.m_y};
@@ -46,6 +56,31 @@ namespace Math
 		vector2 operator*(const float& scalar) const
 		{
 			return {m_x * scalar, m_y * scalar};
+		}
+
+		float magnitude() const
+		{
+			return std::sqrtf(std::powf(m_x, 2) + std::powf(m_y, 2));
+		}
+
+		float inner_product(const vector2& other) const
+		{
+			return dot_product(other) / (magnitude() * other.magnitude());
+		}
+
+		float inner_angle(const vector2& other) const
+		{
+			return std::acosf(inner_product(other));
+		}
+
+		/**
+		 * \brief A dot product of the two vectors.
+		 * \param other a vector to get a product.
+		 * \return A dot product scalar value.
+		 */
+		float dot_product(const vector2& other) const
+		{
+			return m_x * other.m_x + m_y * other.m_y;
 		}
 
 		vector2 operator+(const vector2& right) const
@@ -89,7 +124,7 @@ namespace Math
 		__forceinline vector2 reflect_x() const noexcept;
 		__forceinline vector2 reflect_y() const noexcept;
 		__forceinline vector2 abs() const noexcept;
-		__forceinline vector2 unit_vector() const noexcept;
+		__forceinline vector2 normalized() const noexcept;
 
 	private:
 		float m_x;
@@ -126,24 +161,40 @@ namespace Math
 		return m_y;
 	}
 
+	/**
+	 * \brief A reflection version of a given vector.
+	 * \return A reflection vector that only applied in x-axis.
+	 */
 	__forceinline vector2 vector2::reflect_x() const noexcept
 	{
 		return *this + vector2{m_x * -2.0f, 0};
 	}
 
+	/**
+	 * \brief A reflection version of a given vector.
+	 * \return A reflection vector that only applied in y-axis.
+	 */
 	__forceinline vector2 vector2::reflect_y() const noexcept
 	{
 		return *this + vector2{0, m_y * -2.0f};
 	}
 
+	/**
+	 * \brief An absolute value vector.
+	 * \return An absolute vector.
+	 */
 	__forceinline vector2 vector2::abs() const noexcept
 	{
 		return {std::fabs(m_x), std::fabs(m_y)};
 	}
 
-	__forceinline vector2 vector2::unit_vector() const noexcept
+	/**
+	 * \brief Gets the normalized version of a given vector.
+	 * \return A normalized vector.
+	 */
+	__forceinline vector2 vector2::normalized() const noexcept
 	{
-		return {1 / m_x, 1 / m_y};
+		return {m_x / magnitude(), m_y / magnitude()};
 	}
 }
 
