@@ -95,12 +95,15 @@ namespace ObjectInternal
 
 		inline static std::vector<_baseObject*> _known_objects = {};
 
-		__forceinline static std::vector<_baseObject*> is_in_range(
+		template <typename T>
+		__forceinline static std::vector<T*> is_in_range(
 			const Math::Vector2& top_left, 
 			const Math::Vector2& hit_box,
 			const float radius)
 		{
-			std::vector<_baseObject*> ret = {};
+			std::vector<T*> ret = {};
+
+			static_assert(std::is_base_of_v<_baseObject, T>);
 
 			const auto mid_point = Math::Vector2{
 				top_left.get_x() + hit_box.get_x() / 2,
@@ -108,6 +111,11 @@ namespace ObjectInternal
 
 			for(const auto obj : _known_objects)
 			{
+				if(typeid(obj) != typeid(T))
+				{
+					continue;
+				}
+
 				if(obj->m_position.get_x() <= mid_point.get_x() + radius && 
 					obj->m_position.get_x() >= mid_point.get_x() - radius &&
 					obj->m_position.get_y() <= mid_point.get_y() + radius && 
