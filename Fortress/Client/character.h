@@ -117,11 +117,11 @@ namespace Object
 		static void update();
 		__forceinline float get_hp_percentage() const
 		{
-			return m_hp / character_full_hp;
+			return m_hp / static_cast<float>(character_full_hp);
 		}
 		__forceinline float get_mp_percentage() const
 		{
-			return m_mp / character_full_mp;
+			return m_mp / static_cast<float>(character_full_mp);
 		}
 		void shoot();
 		void render();
@@ -196,7 +196,6 @@ namespace Object
 
 	inline void character::hit(const projectile* p)
 	{
-		// @todo: somehow hp is reduced to 0?
 		m_hp -= p->get_damage();
 	}
 
@@ -208,7 +207,7 @@ namespace Object
 	}
 
 	inline void character::shoot()
-	{
+ 	{
 		// refreshing the projectile position
 		m_base_projectile.m_position = {m_position.get_x() + m_hitbox.get_x() + 10.0f, m_position.get_y() - 10.0f};
 		// set active for being calculated by rigidbody.

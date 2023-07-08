@@ -84,7 +84,7 @@ void Scene::CharacterScene::render()
 
 		// bar inside
 		const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
-		const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_object.get_hp_percentage() * 250), y + 25};
+		const RECT rect = {x + 20, y, static_cast<int>(x + 20.0f + m_object.get_hp_percentage() * 250.0f), y + 25};
 		FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 		DeleteObject(brush);
 	});
