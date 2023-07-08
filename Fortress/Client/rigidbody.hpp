@@ -24,7 +24,7 @@ namespace ObjectInternal
 
 		_rigidBody() = delete;
 		_rigidBody& operator=(const _rigidBody& other);
-		__forceinline void initialize();
+		virtual __forceinline void initialize();
 		__forceinline static void update();
 		__forceinline static void block_window_frame(_rigidBody& target);
 
@@ -41,7 +41,7 @@ namespace ObjectInternal
 		float m_gravity_acceleration;
 
 		static void apply_gravity(_rigidBody* obj);
-		__forceinline static void update_collision(_rigidBody* left, const _rigidBody* right) noexcept;
+		__forceinline static void update_collision(_rigidBody* left, _rigidBody* right) noexcept;
 		__forceinline static void move(_rigidBody* object);
 		inline static std::vector<_rigidBody*> _known_rigid_bodies = {};
 
@@ -50,6 +50,7 @@ namespace ObjectInternal
 		           float speed,
 		           float acceleration);
 		_rigidBody(const _baseObject& obj);
+		std::vector<_baseObject*> collision_lists;
 	};
 
 	inline _rigidBody& _rigidBody::operator=(const _rigidBody& other)
@@ -78,7 +79,7 @@ namespace ObjectInternal
 		m_gravity_acceleration(Math::G_ACC),
 		m_bGrounded(false)
 	{
-		initialize();
+		_rigidBody::initialize();
 	}
 
 	inline _rigidBody::_rigidBody(const _baseObject& obj) :
@@ -92,7 +93,7 @@ namespace ObjectInternal
 	    m_gravity_speed(0.0f),
 	    m_gravity_acceleration(Math::G_ACC)
 	{
-		initialize();
+		_rigidBody::initialize();
 	}
 
 	__forceinline void _rigidBody::initialize()
@@ -111,6 +112,8 @@ namespace ObjectInternal
 					continue;
 				}
 
+				// @todo: performance degrading
+				left_r->collision_lists.clear();
 				update_collision(left_r, right_r);
 			}
 		}
@@ -227,6 +230,7 @@ namespace ObjectInternal
 				Fortress::Debug::Log(L"Object hit ground");
 				obj->m_bGrounded = true;
 				obj->m_gravity_speed = 0.0f;
+				obj->collision_lists.push_back(ground);
 				return;
 			}
 		}
@@ -254,18 +258,12 @@ namespace ObjectInternal
 		}
 	}
 
-	__forceinline void _rigidBody::update_collision(_rigidBody* left, const _rigidBody* right) noexcept
+	__forceinline void _rigidBody::update_collision(_rigidBody* left, _rigidBody* right) noexcept
 	{
 		CollisionCode code = is_collision(left, right);
 
 		if (code == CollisionCode::None)
 		{
-			return;
-		}
-
-		if (code == CollisionCode::Identical)
-		{
-			left->m_velocity = -left->m_velocity;
 			return;
 		}
 
@@ -280,6 +278,8 @@ namespace ObjectInternal
 		{
 			left->m_velocity = left->m_velocity.reflect_y();
 		}
+
+		left->collision_lists.push_back(right);
 	}
 
 	inline void _rigidBody::move(_rigidBody* object)

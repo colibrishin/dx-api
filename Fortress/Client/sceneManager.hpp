@@ -9,6 +9,7 @@
 #include <queue>
 #include "framework.h"
 #include "baseEntity.hpp"
+#include "renderQueue.hpp"
 
 namespace Scene 
 {
@@ -31,27 +32,13 @@ namespace Scene
 			{
 				while(!m_render_queue.empty())
 				{
-					m_render_queue.top().second();
-					m_render_queue.pop();
+					m_render_queue.get_next()();
 				}
 			}
 			virtual void deactivate() {}
 			virtual void activate() {}
-		private:
-			struct PriorityCompare
-			{
-				bool operator()(
-					const std::pair<int, std::function<void()>>& left, 
-					const std::pair<int, std::function<void()>>& right) const
-				{
-					return left.first < right.first;
-				}
-			};
 		protected:
-			std::priority_queue<
-				std::pair<int, std::function<void()>>,
-				std::vector<std::pair<int, std::function<void()>>>,
-				PriorityCompare> m_render_queue;
+			Fortress::RenderQueue m_render_queue;
 			HWND m_hwnd;
 			HDC m_hdc;
 		};

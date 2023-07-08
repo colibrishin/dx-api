@@ -43,6 +43,11 @@ void Scene::CharacterScene::update()
 		m_object.move_right();
 	}
 
+	if(Fortress::Input::getKeyDown(Fortress::eKeyCode::SPACE))
+	{
+		m_object.shoot();
+	}
+
 	if(Fortress::Input::getKeyUp(Fortress::eKeyCode::W) ||
 		Fortress::Input::getKeyUp(Fortress::eKeyCode::A) ||
 		Fortress::Input::getKeyUp(Fortress::eKeyCode::S) ||
@@ -58,7 +63,7 @@ void Scene::CharacterScene::render()
 {
 	// @todo: Text and bar can be made in class
 	// HP bar
-	m_render_queue.emplace(0, [this]() 
+	m_render_queue.push(0, [this]() 
 	{
 		const int x = 30;
 		const int y = 500;
@@ -85,7 +90,7 @@ void Scene::CharacterScene::render()
 	});
 
 	// MP bar
-	m_render_queue.emplace(0, [this]() 
+	m_render_queue.push(0, [this]() 
 	{
 		const int x = 30;
 		const int y = 530;
@@ -112,7 +117,7 @@ void Scene::CharacterScene::render()
 	});
 
 	// Ground
-	m_render_queue.emplace(0, [this]() 
+	m_render_queue.push(0, [this]() 
 	{
 		Rectangle(
 			m_hdc,
@@ -123,17 +128,13 @@ void Scene::CharacterScene::render()
 	});
 
 	// Player
-	m_render_queue.emplace(0, [this]() 
+	m_render_queue.push(0, [this]()
 	{
-		Ellipse(
-			m_hdc,
-			m_object.get_x(), 
-			m_object.get_y(), 
-			m_object.get_x() + m_object.m_hitbox.get_x(),
-			m_object.get_y() + m_object.m_hitbox.get_y());
+		// @todo: workaround version of passing this pointer
+		m_object.render();
 	});
 
-	m_render_queue.emplace(1, [this]()
+	m_render_queue.push(1, [this]()
 	{
 		wchar_t notice[100] = {};
 		swprintf_s(notice, 100,  L"Use WASD to move...");

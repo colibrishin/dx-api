@@ -49,7 +49,7 @@ void Scene::TitleScene::update()
 
 void Scene::TitleScene::render()
 {
-	m_render_queue.emplace(0, [this](){
+	m_render_queue.push(0, [this](){
 		for(auto & m_object : m_objects)
 		{
 			Ellipse(
@@ -60,7 +60,7 @@ void Scene::TitleScene::render()
 				m_object.get_y() + m_object.m_hitbox.get_y());
 		}});
 
-	m_render_queue.emplace(1, [this](){
+	m_render_queue.push(1, [this](){
 		wchar_t notice[100] = {};
 		swprintf_s(notice, 100,  L"Press SPACE to continue...");
 		const size_t strlen = wcsnlen_s(notice, 100);

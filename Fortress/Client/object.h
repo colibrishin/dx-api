@@ -10,14 +10,15 @@
 namespace ObjectInternal
 {
 	enum class CollisionCode;
-	class _baseObject;
-	class _rigidBody;
+	typedef _baseObject BaseObject;
+	typedef _rigidBody RigidBody;
 }
 
 namespace Object
 {
 	using Character = character;
 	using Ground = ground;
+	using Projectile = projectile;
 }
 
 #endif

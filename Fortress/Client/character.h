@@ -4,6 +4,7 @@
 
 #include "object.h"
 #include "rigidbody.hpp"
+#include "sceneManager.hpp"
 
 namespace Object
 {
@@ -15,6 +16,59 @@ namespace Object
 	constexpr int character_full_hp = 100;
 	constexpr int character_full_mp = 100;
 
+	class projectile final : public ObjectInternal::_rigidBody
+	{
+		enum class ProjectileType
+		{
+			Precision = 0,
+			Explosion,
+		};
+
+	public:
+		projectile(
+			const std::wstring& name, 
+			const Math::Vector2& position, 
+			const Math::Vector2& WH, 
+			const Math::Vector2& velocity,
+			const float speed,
+			const float acceleration,
+			const int damage) :
+			_rigidBody(name, position, WH, velocity, speed, acceleration),
+			m_projectile_type(ProjectileType::Precision),
+			m_damage(damage)
+		{
+			initialize();
+		}
+
+		int get_damage() const
+		{
+			return m_damage;
+		}
+
+		~projectile() override;
+		void initialize() override; 
+		static void update();
+		void render() const;
+	private:
+		ProjectileType m_projectile_type;
+		int m_damage;
+		inline static std::vector<projectile*> _known_projectiles = {};
+	};
+
+	// @todo: render can be moved into baseObject, virtual and override.
+	inline void projectile::render() const
+	{
+		if(m_bActive)
+		{
+			Ellipse(
+				WinAPIHandles::get_buffer_dc(),
+				m_position.get_x(), 
+				m_position.get_y(), 
+				m_position.get_x() + m_hitbox.get_x(),
+				m_position.get_y() + m_hitbox.get_y());
+		}
+	}
+
 	class character final : public ObjectInternal::_rigidBody
 	{
 	public:
@@ -22,7 +76,18 @@ namespace Object
 		_rigidBody(L"", {0, 0}, {0, 0}, {0, 0}, 0, 0),
 		m_hp(0),
 		m_mp(0),
-		m_type(CharacterType::CANNON) {}
+		m_type(CharacterType::CANNON),
+		m_base_projectile(
+			L"Cannon Ball", 
+			{m_position.get_x() + m_hitbox.get_x(), m_position.get_y() - 1.0f},
+			{2.0f, 2.0f},
+			{1.0f, 1.0f},
+			50.0f,
+			0.0f,
+			10)
+		{
+			m_base_projectile.m_bActive = false;
+		}
 
 		// copying is intended for preventing nullptr (use-after-free).
 		character(
@@ -35,8 +100,20 @@ namespace Object
 			const int hp,
 			const int mp,
 			const CharacterType type)
-		: _rigidBody(name, position, WH, velocity, speed, acceleration), m_hp(hp), m_mp(mp), m_type(type) {}
+		: _rigidBody(name, position, WH, velocity, speed, acceleration), m_hp(hp), m_mp(mp), m_type(type),
+		m_base_projectile(
+			L"Cannon Ball", 
+			{m_position.get_x() + m_hitbox.get_x(), m_position.get_y() - 1.0f},
+			{2.0f, 2.0f},
+			{1.0f, -1.0f},
+			50.0f,
+			0.0f,
+			10)
+		{
+			m_base_projectile.m_bActive = false;
+		}
 
+		void hit(const projectile* p);
 		static void update();
 		__forceinline float get_hp_percentage() const
 		{
@@ -46,17 +123,113 @@ namespace Object
 		{
 			return m_mp / character_full_mp;
 		}
+		void shoot();
+		void render();
 
 	private:
 		int m_hp;
 		int m_mp;
 		CharacterType m_type;
-		void shoot();
+		projectile m_base_projectile;
 	};
+
+	inline projectile::~projectile()
+	{
+		_known_projectiles.erase(
+			std::remove_if(
+				_known_projectiles.begin(),
+				_known_projectiles.end(),
+				[this](const projectile* r)
+				{
+					return r == this;
+				}),
+			_known_projectiles.end());
+	}
+
+	inline void projectile::initialize()
+	{
+		_rigidBody::initialize();
+		_known_projectiles.push_back(this);
+	}
+
+	inline void projectile::update()
+	{
+		for(const auto p : _known_projectiles)
+		{
+			if(!p->m_bActive)
+			{
+				continue;
+			}
+
+			Fortress::Debug::Log(L"Projectile is flying");
+
+			if(!p->collision_lists.empty())
+			{
+				bool hit = false;
+
+				for(const auto collider : p->collision_lists)
+				{
+					ground* gr = dynamic_cast<ground*>(collider);
+					if(gr)
+					{
+						// @todo: dig a hole into the ground.
+						Fortress::Debug::Log(L"Projectile hits the ground");
+						hit = true;
+					}
+
+					character* ch = dynamic_cast<character*>(collider);
+					if(ch)
+					{
+						Fortress::Debug::Log(L"Projectile hits the character");
+						hit = true;
+						ch->hit(p);
+					}
+				}
+
+				if(hit)
+				{
+					p->m_bActive = false;
+				}
+			}
+		}
+	}
+
+	inline void character::hit(const projectile* p)
+	{
+		// @todo: somehow hp is reduced to 0?
+		m_hp -= p->get_damage();
+	}
 
 	inline void character::update()
 	{
 		_rigidBody::update();
+		// @note: we will just update projectile with character because simultaneous shooting is not happening.
+		projectile::update();
+	}
+
+	inline void character::shoot()
+	{
+		// refreshing the projectile position
+		m_base_projectile.m_position = {m_position.get_x() + m_hitbox.get_x() + 10.0f, m_position.get_y() - 10.0f};
+		// set active for being calculated by rigidbody.
+		m_base_projectile.m_bActive = true;
+
+		//@todo: rest of collision and damage calculation should be done in projectile.
+	}
+
+	inline void character::render()
+	{
+		if(m_bActive)
+		{
+			Ellipse(
+				WinAPIHandles::get_buffer_dc(),
+				get_x(), 
+				get_y(), 
+				get_x() + m_hitbox.get_x(),
+				get_y() + m_hitbox.get_y());
+		}
+
+		m_base_projectile.render();		
 	}
 }
 
