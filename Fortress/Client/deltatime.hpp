@@ -24,6 +24,9 @@ namespace Fortress
 		static float m_deltaTime;
 	};
 
+	/**
+	 * \brief Updates the DeltaTime variables, update should be done in the first time of every cycles.
+	 */
 	void DeltaTime::update()
 	{
 		QueryPerformanceCounter(&m_curr_frequency);
@@ -34,6 +37,10 @@ namespace Fortress
 		m_prev_frequency = m_curr_frequency;
 	}
 
+	/**
+	 * \brief Get DeltaTime of current system.
+	 * \return A deltaTime value, which is the duration for the one frame.
+	 */
 	float DeltaTime::get_deltaTime()
 	{
 		return m_deltaTime;

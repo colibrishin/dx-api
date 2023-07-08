@@ -43,6 +43,9 @@ namespace Fortress
 		RIGHT,
 	};
 
+	/**
+	 * \brief Internal code for key status. Use getKey series functions for get status.
+	 */
 	enum class _eKeyState
 	{
 		Down = 0,
@@ -59,6 +62,9 @@ namespace Fortress
 		VK_SPACE, VK_RETURN, VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT,
 	};
 
+	/**
+	 * \brief A static class to manage whether key is pressed or vice versa.
+	 */
 	class Input final
 	{
 	public:
@@ -113,6 +119,10 @@ namespace Fortress
 		}
 	}
 
+	/**
+	 * \brief A key state update function.
+	 * This function executed in parallel, so if any other parallel access is needed, then this requires a mutex lock.
+	 */
 	void Input::checkKeyState()
 	{
 		std::for_each(
@@ -150,6 +160,9 @@ namespace Fortress
 			});
 	}
 
+	/**
+	 * \brief Updates the key input status.
+	 */
 	void Input::update()
 	{
 		checkKeyState();

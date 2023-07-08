@@ -113,13 +113,13 @@ namespace ObjectInternal
 			if (hitbox_diff.get_x() - diff.get_x() < Math::epsilon || hitbox_sum.get_x() - diff.get_x() < Math::epsilon ||
 				hitbox_diff.get_x() < diff.get_x() && diff.get_x() < hitbox_sum.get_x())
 			{
-				x = diff.unit_vector().get_x();
+				x = diff.normalized().get_x();
 			}
 
 			if (hitbox_diff.get_y() - diff.get_y() < Math::epsilon || hitbox_sum.get_y() - diff.get_y() < Math::epsilon ||
 				hitbox_diff.get_y() < diff.get_y() && diff.get_y() < hitbox_sum.get_y())
 			{
-				y = diff.unit_vector().get_y();
+				y = diff.normalized().get_y();
 			}
 
 			if (std::fabs(x) < Math::epsilon && std::fabs(y) < Math::epsilon)

@@ -9,6 +9,9 @@ namespace Fortress
 	LARGE_INTEGER DeltaTime::m_curr_frequency = {};
 	float DeltaTime::m_deltaTime = 0.0f;
 
+	/**
+	 * \brief Initialize the DeltaTime variables.
+	 */
 	void DeltaTime::initialize()
 	{
 		if (!QueryPerformanceFrequency(&m_cpu_frequency))
@@ -20,6 +23,9 @@ namespace Fortress
 		QueryPerformanceCounter(&m_prev_frequency);
 	}
 
+	/**
+	 * \brief Shows the fps counter on the screen.
+	 */
 	void DeltaTime::render()
 	{
 		wchar_t szFloat[50]{};

@@ -6,6 +6,9 @@
 
 namespace Fortress 
 {
+	/**
+	* \brief The basic information for entity, which includes base object, or scene, etc...
+	*/
 	class _baseEntity
 	{
 	public:
