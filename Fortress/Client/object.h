@@ -9,7 +9,6 @@
 
 namespace ObjectInternal
 {
-	enum class CollisionCode;
 	typedef _baseObject BaseObject;
 	typedef _rigidBody RigidBody;
 }

@@ -25,15 +25,18 @@ namespace Object
 		{
 			_baseObject::~_baseObject();
 
-			_known_grounds.erase(
-			std::remove_if(
-				_known_grounds.begin(),
-				_known_grounds.end(),
-				[this](const ground* r)
-				{
-					return r == this;
-				}),
-			_known_grounds.end());
+			if(!_known_grounds.empty())
+			{
+				_known_grounds.erase(
+				std::remove_if(
+					_known_grounds.begin(),
+					_known_grounds.end(),
+					[this](const ground* r)
+					{
+						return r == this;
+					}),
+				_known_grounds.end());
+			}
 		}
 
 		void render() override;

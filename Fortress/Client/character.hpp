@@ -15,6 +15,7 @@ namespace Object
 
 	constexpr float character_full_hp = 100.0f;
 	constexpr float character_full_mp = 100.0f;
+	constexpr float default_explosion_radius = 10.0f;
 
 	class projectile final : public ObjectInternal::_rigidBody
 	{
@@ -50,9 +51,9 @@ namespace Object
 		static void update();
 		void render() override;
 	private:
+		inline static std::vector<projectile*> _known_projectiles = {};
 		ProjectileType m_projectile_type;
 		float m_damage;
-		inline static std::vector<projectile*> _known_projectiles = {};
 	};
 
 	// @todo: render can be moved into baseObject, virtual and override.
@@ -193,6 +194,7 @@ namespace Object
 				if(hit)
 				{
 					p->m_bActive = false;
+					// @todo: do a "thing" if a projectile is a explosive.
 				}
 			}
 		}
@@ -225,6 +227,7 @@ namespace Object
 			return false;
 		}
 
+		// @todo: going down also reduces the movement point.
 		if(std::fabs(m_velocity.get_x()) > Math::epsilon || 
 			std::fabs(m_velocity.get_y()) > Math::epsilon)
 		{
