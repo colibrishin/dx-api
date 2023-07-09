@@ -7,6 +7,7 @@
 #include "sceneManager.hpp"
 #include "titleScene.h"
 #include "winapihandles.hpp"
+#include "projectile.hpp"
 
 namespace Fortress
 {
@@ -29,7 +30,7 @@ namespace Fortress
 
 	void Application::update()
 	{
-		if(!m_hdc || !m_hwnd || !m_buffer_hdc)
+		if (!m_hdc || !m_hwnd || !m_buffer_hdc)
 		{
 			return;
 		}
@@ -37,7 +38,8 @@ namespace Fortress
 		DeltaTime::update();
 
 		Input::update();
-		Character::update();
+		ObjectBase::character::update();
+		ObjectBase::projectile::update();
 		Scene::SceneManager::update();
 
 		m_render_queue.push(0, DeltaTime::render);
@@ -48,14 +50,15 @@ namespace Fortress
 	void Application::render()
 	{
 		const auto hbrBkGnd = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
-	    FillRect(m_buffer_hdc, &WinAPIHandles::get_window_size(), hbrBkGnd);
-	    DeleteObject(hbrBkGnd);
+		FillRect(m_buffer_hdc, &WinAPIHandles::get_window_size(), hbrBkGnd);
+		DeleteObject(hbrBkGnd);
 
-		while(!m_render_queue.empty())
+		while (!m_render_queue.empty())
 		{
 			m_render_queue.get_next()();
 		}
 
-		BitBlt(m_hdc, 0 , 0, WinAPIHandles::get_window_width(), WinAPIHandles::get_window_height(), m_buffer_hdc, 0, 0, SRCCOPY);
+		BitBlt(m_hdc, 0, 0, WinAPIHandles::get_window_width(), WinAPIHandles::get_window_height(), m_buffer_hdc, 0, 0,
+		       SRCCOPY);
 	}
 }

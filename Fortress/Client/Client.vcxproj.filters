@@ -21,14 +21,26 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Engine\Object">
-      <UniqueIdentifier>{538739f4-e968-4386-a1d5-ca1cb6372b46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Engine\Scene">
+    <Filter Include="Engine\Abstracts">
+      <UniqueIdentifier>{4d369acf-a118-4ff7-bb08-ecd8273086a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Characters">
+      <UniqueIdentifier>{a4d27f8e-3247-4400-a82f-1ff59c738af7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{538739f4-e968-4386-a1d5-ca1cb6372b46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Projectiles">
+      <UniqueIdentifier>{c9b92583-e37a-48dd-b96c-578df772820d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Objects">
+      <UniqueIdentifier>{e94f1ec7-ea00-4806-ba17-66d23305d819}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Scene">
       <UniqueIdentifier>{b4d67fe7-c618-4c1d-b389-f0f443130bbf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -54,35 +66,35 @@
     <ClInclude Include="vector2.hpp">
       <Filter>Engine\Math</Filter>
     </ClInclude>
-    <ClInclude Include="object.h">
-      <Filter>Engine\Object</Filter>
-    </ClInclude>
-    <ClInclude Include="character.hpp">
-      <Filter>Engine\Object</Filter>
-    </ClInclude>
     <ClInclude Include="input.hpp">
       <Filter>Engine\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="rigidbody.hpp">
-      <Filter>Engine\Object</Filter>
     </ClInclude>
     <ClInclude Include="manager.hpp">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="titleScene.h">
-      <Filter>Engine\Scene</Filter>
+      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="characterScene.h">
-      <Filter>Engine\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="debug.hpp">
-      <Filter>Windows\헤더 파일</Filter>
+      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="ground.hpp">
-      <Filter>Engine\Object</Filter>
+      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="flower.hpp">
-      <Filter>Windows\헤더 파일</Filter>
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="debug.hpp">
+      <Filter>Engine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="rigidBody.hpp">
+      <Filter>Engine\Abstracts</Filter>
+    </ClInclude>
+    <ClInclude Include="character.hpp">
+      <Filter>Engine\Objects</Filter>
+    </ClInclude>
+    <ClInclude Include="projectile.hpp">
+      <Filter>Engine\Objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -95,12 +107,6 @@
     <ClCompile Include="application.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="vector2.cpp">
-      <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="object.hpp">
-      <Filter>Engine\Object</Filter>
-    </ClCompile>
     <ClCompile Include="deltatime.hpp">
       <Filter>Engine\Common</Filter>
     </ClCompile>
@@ -108,22 +114,37 @@
       <Filter>Engine\Common</Filter>
     </ClCompile>
     <ClCompile Include="sceneManager.hpp">
-      <Filter>Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="baseEntity.hpp">
-      <Filter>Engine\Common</Filter>
+      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="characterScene.cpp">
-      <Filter>Engine\Scene</Filter>
+      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="titleScene.cpp">
-      <Filter>Engine\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="renderQueue.hpp">
-      <Filter>Windows\헤더 파일</Filter>
+      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="winapihandles.hpp">
-      <Filter>Windows\헤더 파일</Filter>
+      <Filter>Engine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="render_queue.hpp">
+      <Filter>Engine\Common</Filter>
+    </ClCompile>
+    <ClCompile Include="CannonCharacter.hpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="entity.hpp">
+      <Filter>Engine\Abstracts</Filter>
+    </ClCompile>
+    <ClCompile Include="object.hpp">
+      <Filter>Engine\Abstracts</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="projectile.cpp">
+      <Filter>Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="PrecisonProjectile.cpp">
+      <Filter>Projectiles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

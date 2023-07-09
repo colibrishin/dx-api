@@ -139,9 +139,9 @@
     <ClInclude Include="input.hpp" />
     <ClInclude Include="manager.hpp" />
     <ClInclude Include="math.h" />
-    <ClInclude Include="object.h" />
+    <ClInclude Include="projectile.hpp" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="rigidbody.hpp" />
+    <ClInclude Include="rigidBody.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="vector2.hpp" />
@@ -149,15 +149,18 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="application.h" />
+    <ClCompile Include="CannonCharacter.hpp" />
+    <ClCompile Include="character.cpp" />
     <ClCompile Include="characterScene.cpp" />
     <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
-    <ClCompile Include="baseEntity.hpp" />
-    <ClCompile Include="renderQueue.hpp" />
+    <ClCompile Include="entity.hpp" />
+    <ClCompile Include="PrecisonProjectile.cpp" />
+    <ClCompile Include="projectile.cpp" />
+    <ClCompile Include="render_queue.hpp" />
     <ClCompile Include="sceneManager.hpp" />
     <ClCompile Include="titleScene.cpp" />
-    <ClCompile Include="vector2.cpp" />
     <ClCompile Include="winapihandles.hpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>

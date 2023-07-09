@@ -24,23 +24,27 @@ namespace Fortress
 			if (m_render_queue.empty())
 			{
 				// @todo: redundant return of function.
-				return [](){};
+				return []()
+				{
+				};
 			}
 
 			auto func = m_render_queue.top();
 			m_render_queue.pop();
 			return func.second;
 		}
+
 	private:
 		struct PriorityCompare
 		{
 			bool operator()(
-				const std::pair<int, std::function<void()>>& left, 
+				const std::pair<int, std::function<void()>>& left,
 				const std::pair<int, std::function<void()>>& right) const
 			{
 				return left.first < right.first;
 			}
 		};
+
 		std::priority_queue<
 			std::pair<int, std::function<void()>>,
 			std::vector<std::pair<int, std::function<void()>>>,

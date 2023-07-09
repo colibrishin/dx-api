@@ -2,254 +2,98 @@
 #ifndef CHARACTER_HPP
 #define CHARACTER_HPP
 
-#include "object.h"
-#include "rigidbody.hpp"
+#include "rigidBody.hpp"
 #include "sceneManager.hpp"
 
-namespace Object
+namespace Fortress::ObjectBase
 {
-	enum class CharacterType
-	{
-		CANNON = 0,
-	};
+	class projectile;
 
 	constexpr float character_full_hp = 100.0f;
 	constexpr float character_full_mp = 100.0f;
-	constexpr float default_explosion_radius = 10.0f;
 
-	class projectile final : public ObjectInternal::_rigidBody
+	class character : public Abstract::rigidBody
 	{
-		enum class ProjectileType
+	public:
+		character() = delete;
+		character& operator=(const character& other) = delete;
+		character& operator=(character&& other) = delete;
+
+		void hit(const projectile* p);
+		__forceinline static void update();
+
+		__forceinline virtual void shoot()
 		{
-			Precision = 0,
-			Explosion,
 		};
+		__forceinline bool is_movable() override;
 
-	public:
-		projectile(
-			const std::wstring& name, 
-			const Math::Vector2& position, 
-			const Math::Vector2& WH, 
-			const Math::Vector2& velocity,
-			const float speed,
-			const float acceleration,
-			const float damage) :
-			_rigidBody(name, position, WH, velocity, speed, acceleration),
-			m_projectile_type(ProjectileType::Precision),
-			m_damage(damage)
+		__forceinline float get_hp_percentage() const
 		{
-			initialize();
+			return m_hp / static_cast<float>(character_full_hp);
 		}
 
-		float get_damage() const
+		__forceinline float get_mp_percentage() const
 		{
-			return m_damage;
+			return m_mp / static_cast<float>(character_full_mp);
 		}
 
-		~projectile() override;
-		void initialize() override; 
-		static void update();
-		void render() override;
-	private:
-		inline static std::vector<projectile*> _known_projectiles = {};
-		ProjectileType m_projectile_type;
-		float m_damage;
-	};
-
-	// @todo: render can be moved into baseObject, virtual and override.
-	inline void projectile::render()
-	{
-		if(m_bActive)
+		__forceinline ~character() override
 		{
-			Ellipse(
-				WinAPIHandles::get_buffer_dc(),
-				m_position.get_x(), 
-				m_position.get_y(), 
-				m_position.get_x() + m_hitbox.get_x(),
-				m_position.get_y() + m_hitbox.get_y());
-		}
-	}
-
-	class character final : public ObjectInternal::_rigidBody
-	{
-	public:
-		character() :
-		_rigidBody(L"", {0, 0}, {0, 0}, {0, 0}, 0, 0),
-		m_hp(0),
-		m_mp(0),
-		m_type(CharacterType::CANNON),
-		m_base_projectile(
-			L"Cannon Ball", 
-			{m_position.get_x() + m_hitbox.get_x(), m_position.get_y() - 1.0f},
-			{2.0f, 2.0f},
-			{1.0f, 1.0f},
-			50.0f,
-			0.0f,
-			10)
-		{
-			m_base_projectile.m_bActive = false;
+			rigidBody::~rigidBody();
 		}
 
-		// copying is intended for preventing nullptr (use-after-free).
 		character(
 			const std::wstring& name,
-			const Math::Vector2 position, 
+			const Math::Vector2 position,
 			const Math::Vector2 velocity,
 			const Math::Vector2 WH,
 			const float speed,
 			const float acceleration,
 			const int hp,
-			const int mp,
-			const CharacterType type)
-		: _rigidBody(name, position, WH, velocity, speed, acceleration), m_hp(hp), m_mp(mp), m_type(type),
-		m_base_projectile(
-			L"Cannon Ball", 
-			{m_position.get_x() + m_hitbox.get_x(), m_position.get_y() - 1.0f},
-			{2.0f, 2.0f},
-			{1.0f, -1.0f},
-			50.0f,
-			0.0f,
-			10)
+			const int mp)
+			: rigidBody(name, position, WH, velocity, speed, acceleration),
+			  m_hp(hp),
+			  m_mp(mp)
 		{
-			m_base_projectile.m_bActive = false;
+			character::initialize();
 		}
-
-		void hit(const projectile* p);
-		static void update();
-		__forceinline float get_hp_percentage() const
-		{
-			return m_hp / static_cast<float>(character_full_hp);
-		}
-		__forceinline float get_mp_percentage() const
-		{
-			return m_mp / static_cast<float>(character_full_mp);
-		}
-		void shoot();
-		bool is_movable() override;
-		void render() override;
 
 	private:
 		float m_hp;
 		float m_mp;
-		CharacterType m_type;
-		projectile m_base_projectile;
+
+	protected:
+		character(const character& other);
 	};
 
-	inline projectile::~projectile()
+	__forceinline void character::update()
 	{
-		if(!_known_projectiles.empty())
-		{
-			_known_projectiles.erase(
-			std::remove_if(
-				_known_projectiles.begin(),
-				_known_projectiles.end(),
-				[this](const projectile* r)
-				{
-					return r == this;
-				}),
-			_known_projectiles.end());
-		}
+		rigidBody::update();
 	}
 
-	inline void projectile::initialize()
+	__forceinline bool character::is_movable()
 	{
-		_rigidBody::initialize();
-		_known_projectiles.push_back(this);
-	}
-
-	inline void projectile::update()
-	{
-		for(const auto p : _known_projectiles)
-		{
-			if(!p->m_bActive)
-			{
-				continue;
-			}
-
-			Fortress::Debug::Log(L"Projectile is flying");
-
-			if(!p->collision_lists.empty())
-			{
-				bool hit = false;
-
-				for(const auto collider : p->collision_lists)
-				{
-					ground* gr = dynamic_cast<ground*>(collider);
-					if(gr)
-					{
-						// @todo: dig a hole into the ground.
-						Fortress::Debug::Log(L"Projectile hits the ground");
-						hit = true;
-					}
-
-					character* ch = dynamic_cast<character*>(collider);
-					if(ch)
-					{
-						Fortress::Debug::Log(L"Projectile hits the character");
-						hit = true;
-						ch->hit(p);
-					}
-				}
-
-				if(hit)
-				{
-					p->m_bActive = false;
-					// @todo: do a "thing" if a projectile is a explosive.
-				}
-			}
-		}
-	}
-
-	inline void character::hit(const projectile* p)
-	{
-		m_hp -= p->get_damage();
-	}
-
-	inline void character::update()
-	{
-		_rigidBody::update();
-		// @note: we will just update projectile with character because simultaneous shooting is not happening.
-		projectile::update();
-	}
-
-	inline void character::shoot()
- 	{
-		// refreshing the projectile position
-		m_base_projectile.m_position = {m_position.get_x() + m_hitbox.get_x() + 10.0f, m_position.get_y() - 10.0f};
-		// set active for being calculated by rigidbody.
-		m_base_projectile.m_bActive = true;
-	}
-
-	inline bool character::is_movable()
-	{
-		if(m_mp < Math::epsilon)
+		if (m_mp < Math::epsilon)
 		{
 			return false;
 		}
 
 		// @todo: going down also reduces the movement point.
-		if(std::fabs(m_velocity.get_x()) > Math::epsilon || 
+		if (std::fabs(m_velocity.get_x()) > Math::epsilon ||
 			std::fabs(m_velocity.get_y()) > Math::epsilon)
 		{
-			m_mp -= 20.0f * Fortress::DeltaTime::get_deltaTime();
+			m_mp -= 20.0f * DeltaTime::get_deltaTime();
 		}
 
 		return true;
 	}
 
-	inline void character::render()
+	inline character::character(const character& other) :
+		rigidBody(other), m_hp(other.m_hp), m_mp(other.m_mp)
 	{
-		if(m_bActive)
-		{
-			Ellipse(
-				WinAPIHandles::get_buffer_dc(),
-				get_x(), 
-				get_y(), 
-				get_x() + m_hitbox.get_x(),
-				get_y() + m_hitbox.get_y());
-		}
-
-		m_base_projectile.render();		
+		// Calling initialization once in copy constructor is needed.
+		// If not, deconstructor removes the pointer and nothing updates the list.
+		character::initialize();
 	}
 }
 

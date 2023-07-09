@@ -2,16 +2,20 @@
 #ifndef DELTATIME_H
 #define DELTATIME_H
 
-#include <exception>
-#include <algorithm>
-#include "framework.h"
-#include "math.h"
+#include "common.h"
 
 namespace Fortress
 {
 	class DeltaTime
 	{
 	public:
+		DeltaTime() = delete;
+		DeltaTime& operator=(const DeltaTime& other) = delete;
+		DeltaTime& operator=(DeltaTime&& other) = delete;
+		~DeltaTime() = delete;
+		DeltaTime(const DeltaTime& other) = delete;
+		DeltaTime(const DeltaTime&& other) = delete;
+
 		static void initialize();
 		__forceinline static void update();
 		static void render();
@@ -23,11 +27,14 @@ namespace Fortress
 		static LARGE_INTEGER m_curr_frequency;
 		static float m_deltaTime;
 	};
+}
 
+namespace Fortress
+{
 	/**
 	 * \brief Updates the DeltaTime variables, update should be done in the first time of every cycles.
 	 */
-	void DeltaTime::update()
+	__forceinline void DeltaTime::update()
 	{
 		QueryPerformanceCounter(&m_curr_frequency);
 
@@ -41,7 +48,7 @@ namespace Fortress
 	 * \brief Get DeltaTime of current system.
 	 * \return A deltaTime value, which is the duration for the one frame.
 	 */
-	float DeltaTime::get_deltaTime()
+	__forceinline float DeltaTime::get_deltaTime()
 	{
 		return m_deltaTime;
 	}

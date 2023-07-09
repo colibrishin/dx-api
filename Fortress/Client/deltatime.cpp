@@ -1,5 +1,5 @@
 #include "deltatime.hpp"
-
+#include <exception>
 #include "winapihandles.hpp"
 
 namespace Fortress

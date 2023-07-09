@@ -3,20 +3,19 @@
 #pragma once
 
 #include "common.h"
-#include "renderQueue.hpp"
+#include "render_queue.hpp"
 
 namespace Fortress
 {
-	using namespace Math;
-	using namespace Object;
-
 	class Application
 	{
 	public:
 		Application() :
-		m_hwnd(nullptr),
-		m_hdc(nullptr),
-		m_buffer_hdc(nullptr) {}
+			m_hwnd(nullptr),
+			m_hdc(nullptr),
+			m_buffer_hdc(nullptr)
+		{
+		}
 
 		~Application() = default;
 		Application& operator=(const Application&) = delete;
@@ -24,6 +23,7 @@ namespace Fortress
 		void initialize(HWND, HDC);
 		void update();
 		void render();
+
 	private:
 		RenderQueue m_render_queue;
 		HWND m_hwnd;

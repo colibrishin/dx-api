@@ -7,7 +7,6 @@ namespace Object
 {
 	class Flower : public ObjectInternal::_baseObject
 	{
-		
 	};
 }
 

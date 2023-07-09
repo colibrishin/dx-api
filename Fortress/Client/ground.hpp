@@ -5,57 +5,58 @@
 #include "object.hpp"
 #include "sceneManager.hpp"
 
-namespace ObjectInternal
+namespace Fortress::Abstract
 {
-	class _rigidBody;
+	class rigidBody;
 }
 
-namespace Object
+namespace Fortress::Object
 {
-	class ground final : public ObjectInternal::_baseObject
+	class Ground final : public Abstract::object
 	{
 	public:
-		ground() :
-		_baseObject(L"Ground", {0.0f, 300.0f}, {1000.0f, 100.0f}), m_bActive(true)
+		Ground() :
+			object(L"Ground", {0.0f, 300.0f}, {1000.0f, 100.0f}), m_bActive(true)
 		{
 			_known_grounds.push_back(this);
 		}
 
-		~ground() override
+		~Ground() override
 		{
-			_baseObject::~_baseObject();
+			object::~object();
 
-			if(!_known_grounds.empty())
+			if (!_known_grounds.empty())
 			{
 				_known_grounds.erase(
-				std::remove_if(
-					_known_grounds.begin(),
-					_known_grounds.end(),
-					[this](const ground* r)
-					{
-						return r == this;
-					}),
-				_known_grounds.end());
+					std::remove_if(
+						_known_grounds.begin(),
+						_known_grounds.end(),
+						[this](const Ground* r)
+						{
+							return r == this;
+						}),
+					_known_grounds.end());
 			}
 		}
 
 		void render() override;
 
 		bool m_bActive;
+
 	private:
-		friend ObjectInternal::_rigidBody;
+		friend Abstract::rigidBody;
 		// @todo: ground_check is in the _ridgidbody.
-		inline static std::vector<ground*> _known_grounds = {};
+		inline static std::vector<Ground*> _known_grounds = {};
 	};
 
-	inline void ground::render()
+	inline void Ground::render()
 	{
-		if(m_bActive)
+		if (m_bActive)
 		{
 			Rectangle(
 				WinAPIHandles::get_buffer_dc(),
-				get_x(), 
-				get_y(), 
+				get_x(),
+				get_y(),
 				get_x() + m_hitbox.get_x(),
 				get_y() + m_hitbox.get_y());
 		}

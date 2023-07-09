@@ -2,10 +2,10 @@
 #ifndef TITLESCENE_H
 #define TITLESCENE_H
 
-#include "object.h"
+#include "character.hpp"
 #include "sceneManager.hpp"
 
-namespace Scene 
+namespace Fortress::Scene
 {
 	class TitleScene final : public SceneManager::_scene
 	{
@@ -13,6 +13,7 @@ namespace Scene
 		TitleScene() : _scene(L"Title Scene")
 		{
 		}
+
 		void initialize() override;
 		void update() override;
 		void render() override;
@@ -20,7 +21,7 @@ namespace Scene
 		void activate() override;
 
 	private:
-		Object::Character m_objects[100];
+		std::shared_ptr<ObjectBase::character> m_objects[100];
 	};
 }
 

@@ -4,17 +4,38 @@
 
 #include "framework.h"
 
-class WinAPIHandles
+namespace Fortress
 {
-public:
-	~WinAPIHandles()
+	class WinAPIHandles
 	{
-		DeleteObject(m_buffer_bitmap);
-		ReleaseDC(m_hwnd, m_buffer_hdc);
-		DeleteDC(m_buffer_hdc);
-	}
+	public:
+		~WinAPIHandles()
+		{
+			DeleteObject(m_buffer_bitmap);
+			ReleaseDC(m_hwnd, m_buffer_hdc);
+			DeleteDC(m_buffer_hdc);
+		}
 
-	__forceinline static void initialize(const HWND hwnd, const HDC hdc)
+		static void initialize(HWND hwnd, HDC hdc);
+		static int get_window_width();
+		static int get_window_height();
+		static HDC get_buffer_dc();
+		static int get_actual_max_y();
+		static RECT& get_window_size();
+
+	private:
+		inline static RECT m_window_size = {0, 0, 800, 600};
+		inline static RECT m_native_size = {0, 0, 0, 0};
+		inline static HWND m_hwnd = nullptr;
+		inline static HDC m_hdc = nullptr;
+		inline static HDC m_buffer_hdc = nullptr;
+		inline static HBITMAP m_buffer_bitmap = nullptr;
+	};
+}
+
+namespace Fortress
+{
+	__forceinline void WinAPIHandles::initialize(const HWND hwnd, const HDC hdc)
 	{
 		m_hwnd = hwnd;
 		m_hdc = hdc;
@@ -36,38 +57,30 @@ public:
 		DeleteObject(defaultBitmap);
 	}
 
-	__forceinline static int get_window_width()
+	__forceinline int WinAPIHandles::get_window_width()
 	{
 		return m_window_size.right - m_window_size.left;
 	}
 
-	__forceinline static int get_window_height()
+	__forceinline int WinAPIHandles::get_window_height()
 	{
 		return m_window_size.bottom - m_window_size.top;
 	}
 
-	__forceinline static HDC get_buffer_dc()
+	__forceinline HDC WinAPIHandles::get_buffer_dc()
 	{
 		return m_buffer_hdc;
 	}
 
-	__forceinline static int get_actual_max_y()
+	__forceinline int WinAPIHandles::get_actual_max_y()
 	{
 		return m_native_size.bottom - m_native_size.top;
 	}
 
-	__forceinline static RECT& get_window_size()
+	__forceinline RECT& WinAPIHandles::get_window_size()
 	{
 		return m_window_size;
 	}
-
-private:
-	inline static RECT m_window_size = {0, 0, 800, 600};
-	inline static RECT m_native_size = {0, 0, 0, 0};
-	inline static HWND m_hwnd = nullptr;
-	inline static HDC m_hdc = nullptr;
-	inline static HDC m_buffer_hdc = nullptr;
-	inline static HBITMAP m_buffer_bitmap = nullptr;
-};
+}
 
 #endif

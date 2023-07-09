@@ -1,10 +1,7 @@
 #pragma once
 #ifndef DEBUG_HPP
 #define DEBUG_HPP
-#include "framework.h"
-#include <functional>
-#include <queue>
-
+#include "common.h"
 #include "winapihandles.hpp"
 
 namespace Fortress
@@ -16,6 +13,7 @@ namespace Fortress
 		{
 			m_hdc = hdc;
 		}
+
 		static void Log(const std::wstring& str)
 		{
 			m_render_queue.push([str]()
@@ -25,9 +23,10 @@ namespace Fortress
 				y %= WinAPIHandles::get_actual_max_y();
 			});
 		}
+
 		static void render()
 		{
-			while(!m_render_queue.empty())
+			while (!m_render_queue.empty())
 			{
 				m_render_queue.front()();
 				m_render_queue.pop();
@@ -35,6 +34,7 @@ namespace Fortress
 
 			y = y_initial;
 		}
+
 	private:
 		static constexpr int y_movement = 15;
 		static constexpr int y_initial = 30;

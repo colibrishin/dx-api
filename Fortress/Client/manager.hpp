@@ -2,13 +2,12 @@
 #ifndef MANAGER_HPP
 #define MANAGER_HPP
 
-namespace Fortress 
+namespace Fortress
 {
-	class Manager 
+	class Manager
 	{
 	private:
 	public:
-
 	};
 }
 

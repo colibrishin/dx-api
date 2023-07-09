@@ -8,18 +8,18 @@
 #include <functional>
 #include <queue>
 #include "framework.h"
-#include "baseEntity.hpp"
-#include "renderQueue.hpp"
+#include "entity.hpp"
+#include "render_queue.hpp"
 
-namespace Scene 
+namespace Fortress::Scene
 {
 	class SceneManager final
 	{
 	public:
-		class _scene : public Fortress::_baseEntity
+		class _scene : public Abstract::entity
 		{
 		public:
-			_scene(const std::wstring& name) : _baseEntity(name), m_hwnd(SceneManager::m_hwnd), m_hdc(SceneManager::m_hdc)
+			_scene(const std::wstring& name) : entity(name), m_hwnd(SceneManager::m_hwnd), m_hdc(SceneManager::m_hdc)
 			{
 			}
 
@@ -27,39 +27,54 @@ namespace Scene
 			{
 				m_render_queue = {};
 			}
-			virtual void update() {}
+
+			virtual void update()
+			{
+			}
+
 			virtual void render()
 			{
-				while(!m_render_queue.empty())
+				while (!m_render_queue.empty())
 				{
 					m_render_queue.get_next()();
 				}
 			}
-			virtual void deactivate() {}
-			virtual void activate() {}
+
+			virtual void deactivate()
+			{
+			}
+
+			virtual void activate()
+			{
+			}
+
 		protected:
-			Fortress::RenderQueue m_render_queue;
+			RenderQueue m_render_queue;
 			HWND m_hwnd;
 			HDC m_hdc;
 		};
 
 		SceneManager() = default;
-		~SceneManager() 
+
+		~SceneManager()
 		{
-			for (auto& [_, ptr] : m_scenes) 
+			for (auto& [_, ptr] : m_scenes)
 			{
 				ptr.reset();
 			}
 		}
-		static void initialize(HWND hwnd, HDC hdc) 
+
+		static void initialize(HWND hwnd, HDC hdc)
 		{
 			m_hwnd = hwnd;
 			m_hdc = hdc;
 		}
+
 		static void update()
 		{
 			m_current_scene->update();
 		}
+
 		static void render()
 		{
 			m_current_scene->render();
@@ -78,9 +93,9 @@ namespace Scene
 		{
 			const auto scene = m_scenes.find(name);
 
-			if (scene != m_scenes.end()) 
+			if (scene != m_scenes.end())
 			{
-				if(m_current_scene)
+				if (m_current_scene)
 				{
 					m_current_scene->deactivate();
 				}
@@ -89,6 +104,7 @@ namespace Scene
 				m_current_scene->activate();
 			}
 		}
+
 	private:
 		friend class _scene;
 		// @todo: name can be different with scene

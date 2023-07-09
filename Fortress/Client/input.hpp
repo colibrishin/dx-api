@@ -3,7 +3,7 @@
 #pragma once
 
 #include <execution>
-#include "framework.h"
+#include "common.h"
 
 namespace Fortress
 {
@@ -68,6 +68,13 @@ namespace Fortress
 	class Input final
 	{
 	public:
+		Input() = delete;
+		Input& operator=(const Input& other) = delete;
+		Input& operator=(Input&& other) = delete;
+		~Input() = delete;
+		Input(const Input& other) = delete;
+		Input(const Input&& other) = delete;
+
 		struct Key
 		{
 			uint8_t m_native_code;
@@ -88,14 +95,7 @@ namespace Fortress
 				m_pressed = false;
 			}
 
-			Key& operator=(const Key& other)
-			{
-				m_native_code = other.m_native_code;
-				m_state = other.m_state;
-				m_pressed = other.m_pressed;
-
-				return *this;
-			}
+			Key& operator=(const Key& other) = default;
 		};
 
 		inline static void initialize();
@@ -133,9 +133,9 @@ namespace Fortress
 			{
 				USHORT winapi_state = GetAsyncKeyState(key.m_native_code);
 
-				if(winapi_state & 0x8001)
+				if (winapi_state & 0x8001)
 				{
-					if(key.m_pressed)
+					if (key.m_pressed)
 					{
 						key.m_state = _eKeyState::Pressing;
 					}
@@ -147,7 +147,7 @@ namespace Fortress
 				}
 				else
 				{
-					if(key.m_pressed)
+					if (key.m_pressed)
 					{
 						key.m_state = _eKeyState::Up;
 						key.m_pressed = false;

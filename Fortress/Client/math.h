@@ -6,12 +6,9 @@
 #define _USE_MATH_DEFINES
 
 #include <math.h>
-#include "vector2.hpp"
 
-namespace Math 
+namespace Fortress::Math
 {
-	using Vector2 = struct vector2;
-
 	/**
 	 * \brief Pi
 	 */
@@ -26,7 +23,6 @@ namespace Math
 	 * \brief Gravitational acceleration constant
 	 */
 	constexpr float G_ACC = 9.80f;
-
 }
 
 #endif
