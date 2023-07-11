@@ -15,10 +15,11 @@ namespace Fortress::Abstract
 		Math::Vector2 m_position;
 
 		object() = delete;
-		object& operator=(const object& other) = delete;
-		object& operator=(object&& other) = delete;
+		object& operator=(const object& other) = default;
+		object& operator=(object&& other) = default;
 
 		__forceinline virtual void render();
+		virtual void update();
 		__forceinline virtual void move_left();
 		__forceinline virtual void move_right();
 		__forceinline virtual void move_down();
@@ -29,22 +30,18 @@ namespace Fortress::Abstract
 		__forceinline virtual Math::Vector2 operator+(const Math::Vector2& vector) const;
 		__forceinline virtual object& operator+=(const Math::Vector2& vector);
 
+		bool is_active() const;
+		void set_disabled();
+		void set_enabled();
 	protected:
-		object(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox)
-			: entity(name), m_hitbox(hitbox), m_position(position)
-		{
-			object::initialize();
-		}
-
-		inline static std::vector<object*> _known_objects = {};
+		object(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox);
 
 		__forceinline virtual void initialize();
 		__forceinline ~object() override;
 		__forceinline object(const object& other);
 
-		template <typename T>
-		__forceinline static std::vector<T*> is_in_range(
-			const Math::Vector2& top_left, const Math::Vector2& hit_box, float radius);
+	private:
+		bool m_bActive;
 	};
 }
 
@@ -52,10 +49,13 @@ namespace Fortress::Abstract
 {
 	void object::initialize()
 	{
-		_known_objects.push_back(this);
 	}
 
 	void object::render()
+	{
+	}
+
+	inline void object::update()
 	{
 	}
 
@@ -105,63 +105,37 @@ namespace Fortress::Abstract
 		return *this;
 	}
 
+	inline object::object(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox): entity(name), m_hitbox(hitbox), m_position(position)
+	{
+		object::initialize();
+	}
+
 	object::~object()
 	{
-		if (!_known_objects.empty())
-		{
-			_known_objects.erase(
-				std::remove_if(
-					_known_objects.begin(),
-					_known_objects.end(),
-					[this](const object* r)
-					{
-						return r == this;
-					}),
-				_known_objects.end());
-		}
-
 		entity::~entity();
 	}
 
 	inline object::object(const object& other) :
 		entity(other),
 		m_hitbox(other.m_hitbox),
-		m_position(other.m_position)
+		m_position(other.m_position),
+		m_bActive(true)
 	{
 	}
 
-	template <typename T>
-	std::vector<T*> object::is_in_range(
-		const Math::Vector2& top_left,
-		const Math::Vector2& hit_box,
-		const float radius)
+	inline bool object::is_active() const
 	{
-		std::vector<T*> ret = {};
+		return m_bActive;
+	}
 
-		static_assert(std::is_base_of_v<object, T>);
+	inline void object::set_disabled()
+	{
+		m_bActive = false;
+	}
 
-		const auto mid_point = Math::Vector2{
-			top_left.get_x() + hit_box.get_x() / 2,
-			top_left.get_y() + hit_box.get_y() / 2
-		};
-
-		for (const auto obj : _known_objects)
-		{
-			if (typeid(obj) != typeid(T))
-			{
-				continue;
-			}
-
-			if (obj->m_position.get_x() <= mid_point.get_x() + radius &&
-				obj->m_position.get_x() >= mid_point.get_x() - radius &&
-				obj->m_position.get_y() <= mid_point.get_y() + radius &&
-				obj->m_position.get_y() >= mid_point.get_y() - radius)
-			{
-				ret.push_back(obj);
-			}
-		}
-
-		return ret;
+	inline void object::set_enabled()
+	{
+		m_bActive = true;
 	}
 }
 #endif // OBJECT_HPP

@@ -3,14 +3,15 @@
 #define CHARACTERSCENE_H
 
 #include "character.hpp"
+#include "ground.hpp"
 #include "sceneManager.hpp"
 
 namespace Fortress::Scene
 {
-	class CharacterScene final : public SceneManager::_scene
+	class CharacterScene final : public Abstract::scene
 	{
 	public:
-		CharacterScene() : _scene(L"Character Scene")
+		CharacterScene() : scene(L"Character Scene")
 		{
 		}
 

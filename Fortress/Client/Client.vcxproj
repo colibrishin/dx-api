@@ -137,11 +137,13 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="ground.hpp" />
     <ClInclude Include="input.hpp" />
+    <ClInclude Include="layer.hpp" />
     <ClInclude Include="manager.hpp" />
     <ClInclude Include="math.h" />
     <ClInclude Include="projectile.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="rigidBody.hpp" />
+    <ClInclude Include="scene.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="vector2.hpp" />
@@ -158,7 +160,7 @@
     <ClCompile Include="entity.hpp" />
     <ClCompile Include="PrecisonProjectile.cpp" />
     <ClCompile Include="projectile.cpp" />
-    <ClCompile Include="render_queue.hpp" />
+    <ClCompile Include="rigidBody.cpp" />
     <ClCompile Include="sceneManager.hpp" />
     <ClCompile Include="titleScene.cpp" />
     <ClCompile Include="winapihandles.hpp" />

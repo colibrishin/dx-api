@@ -8,7 +8,7 @@ namespace Fortress::Math
 	/**
 	 * \brief An error range for the float comparison.
 	 */
-	static constexpr float epsilon = 0.0001f;
+	static constexpr float epsilon = 0.000001f;
 
 	// High-level data structure for Vector2
 	struct Vector2 final

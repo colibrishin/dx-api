@@ -17,7 +17,8 @@ namespace Fortress::ObjectBase
 		projectile& operator=(projectile&& other) = delete;
 
 		__forceinline void initialize() override;
-		__forceinline static void update();
+		__forceinline virtual void update() override;
+		virtual void on_collision(rigidBody* other) override;
 
 		float get_damage() const;
 
@@ -30,7 +31,7 @@ namespace Fortress::ObjectBase
 			const float speed,
 			const float acceleration,
 			const float damage) :
-			rigidBody(name, position, WH, velocity, speed, acceleration),
+			rigidBody(name, position, WH, velocity, speed, acceleration, true, true),
 			m_damage(damage)
 		{
 			projectile::initialize();
@@ -38,68 +39,15 @@ namespace Fortress::ObjectBase
 
 		__forceinline ~projectile() override
 		{
-			if (!_known_projectiles.empty())
-			{
-				_known_projectiles.erase(
-					std::remove_if(
-						_known_projectiles.begin(),
-						_known_projectiles.end(),
-						[this](const projectile* r)
-						{
-							return r == this;
-						}),
-					_known_projectiles.end());
-			}
-
 			rigidBody::~rigidBody();
 		}
 
 	private:
-		inline static std::vector<projectile*> _known_projectiles = {};
 		float m_damage;
 	};
 
 	__forceinline void projectile::update()
 	{
-		for (const auto p : _known_projectiles)
-		{
-			if (!p->m_bActive)
-			{
-				continue;
-			}
-
-			Debug::Log(L"Projectile is flying");
-
-			if (!p->collision_lists.empty())
-			{
-				bool hit = false;
-
-				for (const auto collider : p->collision_lists)
-				{
-					auto gr = dynamic_cast<Object::Ground*>(collider);
-					if (gr)
-					{
-						// @todo: dig a hole into the Ground.
-						Debug::Log(L"Projectile hits the Ground");
-						hit = true;
-					}
-
-					auto ch = dynamic_cast<character*>(collider);
-					if (ch)
-					{
-						Debug::Log(L"Projectile hits the character");
-						hit = true;
-						ch->hit(p);
-					}
-				}
-
-				if (hit)
-				{
-					p->m_bActive = false;
-					// @todo: do a "thing" if a projectile is a explosive.
-				}
-			}
-		}
 	}
 }
 #endif // PROJECTILE_HPP

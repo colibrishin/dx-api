@@ -13,8 +13,8 @@ namespace Fortress::Abstract
 	{
 	public:
 		entity() = delete;
-		entity& operator=(const entity& other) = delete;
-		entity& operator=(entity&& other) = delete;
+		entity& operator=(const entity& other) = default;
+		entity& operator=(entity&& other) = default;
 		virtual ~entity() = default;
 
 		__forceinline const std::wstring& get_name() const noexcept;

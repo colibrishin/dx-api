@@ -33,6 +33,7 @@ namespace Fortress::Object
 
 		void shoot() override;
 		void render() override;
+
 	};
 }
 
@@ -52,7 +53,7 @@ namespace Fortress::Object
 	{
 		character::render();
 
-		if (m_bActive)
+		if (is_active())
 		{
 			Ellipse(
 				WinAPIHandles::get_buffer_dc(),

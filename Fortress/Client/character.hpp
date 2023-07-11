@@ -20,27 +20,14 @@ namespace Fortress::ObjectBase
 		character& operator=(character&& other) = delete;
 
 		void hit(const projectile* p);
-		__forceinline static void update();
+		void update() override;
+		virtual void shoot();;
+		virtual void move() override;
+		void on_collision(rigidBody* other) override;
 
-		__forceinline virtual void shoot()
-		{
-		};
-		__forceinline bool is_movable() override;
-
-		__forceinline float get_hp_percentage() const
-		{
-			return m_hp / static_cast<float>(character_full_hp);
-		}
-
-		__forceinline float get_mp_percentage() const
-		{
-			return m_mp / static_cast<float>(character_full_mp);
-		}
-
-		__forceinline ~character() override
-		{
-			rigidBody::~rigidBody();
-		}
+		float get_hp_percentage() const;
+		float get_mp_percentage() const;
+		~character() override;
 
 		character(
 			const std::wstring& name,
@@ -51,9 +38,10 @@ namespace Fortress::ObjectBase
 			const float acceleration,
 			const int hp,
 			const int mp)
-			: rigidBody(name, position, WH, velocity, speed, acceleration),
+			: rigidBody(name, position, WH, velocity, speed, acceleration, true, true),
 			  m_hp(hp),
-			  m_mp(mp)
+			  m_mp(mp),
+		      m_bGrounded(false)
 		{
 			character::initialize();
 		}
@@ -61,40 +49,11 @@ namespace Fortress::ObjectBase
 	private:
 		float m_hp;
 		float m_mp;
+		bool m_bGrounded;
 
 	protected:
 		character(const character& other);
 	};
-
-	__forceinline void character::update()
-	{
-		rigidBody::update();
-	}
-
-	__forceinline bool character::is_movable()
-	{
-		if (m_mp < Math::epsilon)
-		{
-			return false;
-		}
-
-		// @todo: going down also reduces the movement point.
-		if (std::fabs(m_velocity.get_x()) > Math::epsilon ||
-			std::fabs(m_velocity.get_y()) > Math::epsilon)
-		{
-			m_mp -= 20.0f * DeltaTime::get_deltaTime();
-		}
-
-		return true;
-	}
-
-	inline character::character(const character& other) :
-		rigidBody(other), m_hp(other.m_hp), m_mp(other.m_mp)
-	{
-		// Calling initialization once in copy constructor is needed.
-		// If not, deconstructor removes the pointer and nothing updates the list.
-		character::initialize();
-	}
 }
 
 #endif

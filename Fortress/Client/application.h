@@ -3,7 +3,6 @@
 #pragma once
 
 #include "common.h"
-#include "render_queue.hpp"
 
 namespace Fortress
 {
@@ -25,7 +24,6 @@ namespace Fortress
 		void render();
 
 	private:
-		RenderQueue m_render_queue;
 		HWND m_hwnd;
 		HDC m_hdc;
 		HDC m_buffer_hdc;

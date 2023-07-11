@@ -7,10 +7,10 @@
 
 namespace Fortress::Scene
 {
-	class TitleScene final : public SceneManager::_scene
+	class TitleScene final : public Abstract::scene
 	{
 	public:
-		TitleScene() : _scene(L"Title Scene")
+		TitleScene() : scene(L"Title Scene")
 		{
 		}
 
@@ -19,9 +19,6 @@ namespace Fortress::Scene
 		void render() override;
 		void deactivate() override;
 		void activate() override;
-
-	private:
-		std::shared_ptr<ObjectBase::character> m_objects[100];
 	};
 }
 

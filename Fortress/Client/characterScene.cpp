@@ -1,5 +1,6 @@
 #include "characterScene.h"
 #include "CannonCharacter.hpp"
+#include "ground.hpp"
 #include "input.hpp"
 #include "winapihandles.hpp"
 
@@ -7,18 +8,21 @@ namespace Fortress::Scene
 {
 	void CharacterScene::initialize()
 	{
-		_scene::initialize();
+		scene::initialize();
 		m_ground = std::make_shared<Object::Ground>();
 		m_object = std::make_shared<Object::CannonCharacter>(
 			Object::CannonCharacter(L"Ball", {1.0f, 1.0f}));
 
-		m_object->m_bActive = false;
-		m_ground->m_bActive = false;
+		add_game_object(Abstract::LayerType::Character, m_object.get());
+		add_game_object(Abstract::LayerType::Ground, m_ground.get());
+
+		m_object->set_disabled();
+		m_ground->set_disabled();
 	}
 
 	void CharacterScene::update()
 	{
-		_scene::update();
+		scene::update();
 
 		if (Input::getKey(eKeyCode::W))
 		{
@@ -50,14 +54,14 @@ namespace Fortress::Scene
 			m_object->stop();
 		}
 
-		ObjectBase::character::block_window_frame(*m_object);
+		ObjectBase::character::block_window_frame(m_object.get());
 	}
 
 	void CharacterScene::render()
 	{
 		// @todo: Text and bar can be made in class
 		// HP bar
-		m_render_queue.push(0, [this]()
+		[this]()
 		{
 			const int x = 30;
 			const int y = 500;
@@ -66,11 +70,11 @@ namespace Fortress::Scene
 			wchar_t hp_notice[100] = {};
 			swprintf_s(hp_notice, 100, L"HP : ");
 			const size_t strlen = wcsnlen_s(hp_notice, 100);
-			TextOut(m_hdc, x, y + 5, hp_notice, strlen);
+			TextOut(WinAPIHandles::get_buffer_dc(), x, y + 5, hp_notice, strlen);
 
 			// bar outline
 			Rectangle(
-				m_hdc,
+				WinAPIHandles::get_buffer_dc(),
 				x + 20,
 				y,
 				x + 20 + 250,
@@ -81,10 +85,10 @@ namespace Fortress::Scene
 			const RECT rect = {x + 20, y, static_cast<int>(x + 20.0f + m_object->get_hp_percentage() * 250.0f), y + 25};
 			FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 			DeleteObject(brush);
-		});
+		}();
 
 		// MP bar
-		m_render_queue.push(0, [this]()
+		[this]()
 		{
 			const int x = 30;
 			const int y = 530;
@@ -93,11 +97,11 @@ namespace Fortress::Scene
 			wchar_t hp_notice[100] = {};
 			swprintf_s(hp_notice, 100, L"MP : ");
 			const size_t strlen = wcsnlen_s(hp_notice, 100);
-			TextOut(m_hdc, x, y + 5, hp_notice, strlen);
+			TextOut(WinAPIHandles::get_buffer_dc(), x, y + 5, hp_notice, strlen);
 
 			// bar outline
 			Rectangle(
-				m_hdc,
+				WinAPIHandles::get_buffer_dc(),
 				x + 20,
 				y,
 				x + 20 + 250,
@@ -108,43 +112,26 @@ namespace Fortress::Scene
 			const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_object->get_mp_percentage() * 250), y + 25};
 			FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 			DeleteObject(brush);
-		});
+		}();
 
-		// Ground
-		// @todo: workaround version of passing this pointer
-		m_render_queue.push(0, [this]()
-		{
-			m_ground->render();
-		});
-
-		// Player
-		m_render_queue.push(0, [this]()
-		{
-			m_object->render();
-		});
-
-		m_render_queue.push(1, [this]()
+		[this]()
 		{
 			wchar_t notice[100] = {};
 			swprintf_s(notice, 100, L"Use WASD to move...");
 			const size_t strlen = wcsnlen_s(notice, 100);
-			TextOut(m_hdc, 300, 300, notice, strlen);
-		});
+			TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
+		}();
 
-		_scene::render();
+		scene::render();
 	}
 
 	void CharacterScene::deactivate()
 	{
-		_scene::deactivate();
-
-		m_object->m_bActive = false;
-		m_ground->m_bActive = false;
+		scene::deactivate();
 	}
 
 	void CharacterScene::activate()
 	{
-		m_object->m_bActive = true;
-		m_ground->m_bActive = true;
+		scene::activate();
 	}
 }
