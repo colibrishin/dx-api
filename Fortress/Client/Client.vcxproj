@@ -129,21 +129,26 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="character.hpp" />
+    <ClInclude Include="characterChooseScene.hpp" />
     <ClInclude Include="characterScene.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="debug.hpp" />
+    <ClInclude Include="difficulty.hpp" />
     <ClInclude Include="flower.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ground.hpp" />
+    <ClInclude Include="ImageWrapper.hpp" />
     <ClInclude Include="input.hpp" />
     <ClInclude Include="layer.hpp" />
     <ClInclude Include="manager.hpp" />
     <ClInclude Include="math.h" />
     <ClInclude Include="projectile.hpp" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="resource.hpp" />
     <ClInclude Include="rigidBody.hpp" />
     <ClInclude Include="scene.hpp" />
+    <ClInclude Include="sound.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="vector2.hpp" />
@@ -151,7 +156,7 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="application.h" />
-    <ClCompile Include="CannonCharacter.hpp" />
+    <ClCompile Include="RocketCharacter.hpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="characterScene.cpp" />
     <ClCompile Include="deltatime.cpp" />
@@ -160,8 +165,10 @@
     <ClCompile Include="entity.hpp" />
     <ClCompile Include="PrecisonProjectile.cpp" />
     <ClCompile Include="projectile.cpp" />
+    <ClCompile Include="resourceManager.hpp" />
     <ClCompile Include="rigidBody.cpp" />
     <ClCompile Include="sceneManager.hpp" />
+    <ClCompile Include="shootEstimation.cpp" />
     <ClCompile Include="titleScene.cpp" />
     <ClCompile Include="winapihandles.hpp" />
     <ClCompile Include="winmain.cpp" />

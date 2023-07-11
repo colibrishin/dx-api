@@ -3,6 +3,7 @@
 #define TITLESCENE_H
 
 #include "character.hpp"
+#include "ImageWrapper.hpp"
 #include "sceneManager.hpp"
 
 namespace Fortress::Scene
@@ -19,6 +20,8 @@ namespace Fortress::Scene
 		void render() override;
 		void deactivate() override;
 		void activate() override;
+
+		ImageWrapper* m_imBackground;
 	};
 }
 

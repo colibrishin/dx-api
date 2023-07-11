@@ -3,8 +3,10 @@
 #include <random>
 
 #include "application.h"
-#include "CannonCharacter.hpp"
+#include "RocketCharacter.hpp"
+#include "ImageWrapper.hpp"
 #include "input.hpp"
+#include "resourceManager.hpp"
 #include "sceneManager.hpp"
 #include "winapihandles.hpp"
 
@@ -13,6 +15,10 @@ namespace Fortress::Scene
 	void TitleScene::initialize()
 	{
 		scene::initialize();
+
+		// https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
+		Resource::ResourceManager::load<ImageWrapper>(L"Background", "./resources/images/bg.bmp");
+		m_imBackground = Resource::ResourceManager::Find<ImageWrapper>(L"Background");
 
 		for (int i = 0; i < 100; ++i)
 		{
@@ -24,7 +30,7 @@ namespace Fortress::Scene
 				static_cast<float>(w_distribution(generator)),
 				static_cast<float>(h_distribution(generator))
 			};
-			add_game_object(Abstract::LayerType::Character, new Object::CannonCharacter{L"Ball", random_pos});
+			add_game_object(Abstract::LayerType::Character, new Object::RocketCharacter{L"Ball", random_pos});
 
 			Abstract::rigidBody* rb = dynamic_cast<Abstract::rigidBody*>(m_objects.back());
 
@@ -73,6 +79,8 @@ namespace Fortress::Scene
 			const size_t strlen = wcsnlen_s(notice, 100);
 			TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
 		}();
+
+		m_imBackground->render({0, 0});
 
 		scene::render();
 	}

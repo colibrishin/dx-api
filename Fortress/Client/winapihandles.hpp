@@ -1,6 +1,11 @@
 #ifndef WINAPIHANDLES_H
 #define WINAPIHANDLES_H
 #pragma once
+#include <windows.h>
+#include <objidl.h>
+#include <gdiplus.h>
+using namespace Gdiplus;
+#pragma comment (lib,"Gdiplus.lib")
 
 #include "framework.h"
 
@@ -9,21 +14,30 @@ namespace Fortress
 	class WinAPIHandles
 	{
 	public:
+		WinAPIHandles()
+		{
+		    GdiplusStartup(&token, &input, NULL);
+		}
 		~WinAPIHandles()
 		{
 			DeleteObject(m_buffer_bitmap);
 			ReleaseDC(m_hwnd, m_buffer_hdc);
 			DeleteDC(m_buffer_hdc);
+			GdiplusShutdown(token);
 		}
 
 		static void initialize(HWND hwnd, HDC hdc);
 		static int get_window_width();
 		static int get_window_height();
 		static HDC get_buffer_dc();
+		static HDC get_main_dc();
+		static HWND get_hwnd();
 		static int get_actual_max_y();
 		static RECT& get_window_size();
 
 	private:
+		GdiplusStartupInput input;
+		ULONG_PTR token{};
 		inline static RECT m_window_size = {0, 0, 800, 600};
 		inline static RECT m_native_size = {0, 0, 0, 0};
 		inline static HWND m_hwnd = nullptr;
@@ -70,6 +84,16 @@ namespace Fortress
 	__forceinline HDC WinAPIHandles::get_buffer_dc()
 	{
 		return m_buffer_hdc;
+	}
+
+	__forceinline HDC WinAPIHandles::get_main_dc()
+	{
+		return m_hdc;
+	}
+
+	__forceinline HWND WinAPIHandles::get_hwnd()
+	{
+		return m_hwnd;
 	}
 
 	__forceinline int WinAPIHandles::get_actual_max_y()

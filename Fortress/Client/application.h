@@ -3,6 +3,7 @@
 #pragma once
 
 #include "common.h"
+#include "winapihandles.hpp"
 
 namespace Fortress
 {
@@ -24,6 +25,7 @@ namespace Fortress
 		void render();
 
 	private:
+		WinAPIHandles m_win_handles;
 		HWND m_hwnd;
 		HDC m_hdc;
 		HDC m_buffer_hdc;

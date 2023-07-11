@@ -58,6 +58,7 @@ namespace Fortress::ObjectBase
 		{
 			if(ground)
 			{
+				Debug::Log(L"Character hits the ground");
 				m_gravity_speed = 0.0f;
 				m_bGrounded = true;
 				return;

@@ -146,8 +146,7 @@ namespace Fortress::Math
 	__forceinline bool Vector2::operator!=(const Vector2& other) const
 	{
 		// rather safe comparison for float.
-		return fabs(m_x - other.m_x) > epsilon &&
-			fabs(m_y - other.m_y) > epsilon;
+		return !(*this == other);
 	}
 
 	__forceinline Vector2 Vector2::top() const noexcept
