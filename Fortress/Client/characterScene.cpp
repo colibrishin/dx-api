@@ -1,5 +1,5 @@
 #include "characterScene.h"
-#include "RocketCharacter.hpp"
+#include "MissileCharacter.hpp"
 #include "ground.hpp"
 #include "input.hpp"
 #include "winapihandles.hpp"
@@ -10,8 +10,8 @@ namespace Fortress::Scene
 	{
 		scene::initialize();
 		m_ground = std::make_shared<Object::Ground>();
-		m_object = std::make_shared<Object::RocketCharacter>(
-			Object::RocketCharacter(L"Ball", {1.0f, 1.0f}));
+		m_object = std::make_shared<Object::MissileCharacter>(
+			Object::MissileCharacter(L"Ball", {1.0f, 1.0f}));
 
 		add_game_object(Abstract::LayerType::Character, m_object.get());
 		add_game_object(Abstract::LayerType::Ground, m_ground.get());
@@ -41,7 +41,12 @@ namespace Fortress::Scene
 			m_object->move_right();
 		}
 
-		if (Input::getKeyDown(eKeyCode::SPACE))
+		if(Input::getKey(eKeyCode::SPACE))
+		{
+			m_object->firing();
+		}
+
+		if(Input::getKeyUp(eKeyCode::SPACE))
 		{
 			m_object->shoot();
 		}

@@ -13,6 +13,12 @@ namespace Fortress::ObjectBase
 
 	void character::shoot()
 	{
+		m_power = 0.0f;
+	}
+
+	float character::get_charged_power() const
+	{
+		return m_power;
 	}
 
 	float character::get_hp_percentage() const
@@ -33,6 +39,11 @@ namespace Fortress::ObjectBase
 	void character::update()
 	{
 		rigidBody::update();
+	}
+
+	void character::firing()
+	{
+		m_power += 20.0f * DeltaTime::get_deltaTime();
 	}
 
 	void character::move()

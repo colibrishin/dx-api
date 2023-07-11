@@ -3,9 +3,10 @@
 #ifndef GIFWRAPPER_HPP
 #define GIFWRAPPER_HPP
 
-#include "ImageWrapper.hpp"
-
+#include <functional>
 #include <map>
+
+#include "ImageWrapper.hpp"
 #include <objidl.h>
 #include <gdiplus.h>
 using namespace Gdiplus;
@@ -24,7 +25,7 @@ namespace Fortress
 		void render(const Math::Vector2& position, const Math::Vector2& facing) override;
 		virtual bool load() override;
 		virtual void initialize();
-		void play();
+		void play(const std::function<void()>& on_end);
 		void OnTimer();
 		virtual void flip() override;
 
@@ -39,6 +40,8 @@ namespace Fortress
 
 		GUID* m_pDimensionsIds;
 		std::vector<unsigned int> m_frame_delays;
+
+		std::function<void()> m_reserved_function;
 
 		inline static UINT used_timer_id = 8000;
 	};
@@ -95,8 +98,13 @@ namespace Fortress
 	{
 	}
 
-	inline void GifWrapper::play()
+	inline void GifWrapper::play(const std::function<void()>& on_end = nullptr)
 	{
+		if(on_end != nullptr)
+		{
+			m_reserved_function = on_end;
+		}
+
 		m_current_frame = 0;
 		const GUID guid = FrameDimensionTime;
 
@@ -117,6 +125,14 @@ namespace Fortress
 
 		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[m_current_frame] * 10, nullptr);
 		registered_gifs[m_timer_id] = this;
+
+		if(m_current_frame == m_frame_count - 1)
+		{
+			if(m_reserved_function != nullptr) 
+			{
+				m_reserved_function();
+			}
+		}
 
 		m_current_frame = ++(m_current_frame) % m_frame_count;
 	}

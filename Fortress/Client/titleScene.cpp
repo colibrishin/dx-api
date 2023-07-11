@@ -3,7 +3,7 @@
 #include <random>
 
 #include "application.h"
-#include "RocketCharacter.hpp"
+#include "MissileCharacter.hpp"
 #include "ImageWrapper.hpp"
 #include "input.hpp"
 #include "resourceManager.hpp"
@@ -30,7 +30,7 @@ namespace Fortress::Scene
 				static_cast<float>(w_distribution(generator)),
 				static_cast<float>(h_distribution(generator))
 			};
-			add_game_object(Abstract::LayerType::Character, new Object::RocketCharacter{L"Ball", random_pos});
+			add_game_object(Abstract::LayerType::Character, new Object::MissileCharacter{L"Ball", random_pos});
 
 			Abstract::rigidBody* rb = dynamic_cast<Abstract::rigidBody*>(m_objects.back());
 

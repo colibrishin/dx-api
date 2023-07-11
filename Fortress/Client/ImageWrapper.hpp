@@ -76,16 +76,6 @@ namespace Fortress
 	{
 		if(m_image)
 		{
-			delete m_image;
-		}
-
-		if(m_gdi_handle)
-		{
-			delete m_gdi_handle;
-		}
-
-		if(m_image)
-		{
 			DeleteObject(m_image);
 		}
 

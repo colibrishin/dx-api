@@ -21,7 +21,9 @@ namespace Fortress::ObjectBase
 
 		void hit(const projectile* p);
 		void update() override;
-		virtual void shoot();;
+		virtual void firing();
+		virtual void shoot();
+		float get_charged_power() const;
 		virtual void move() override;
 		void on_collision(rigidBody* other) override;
 
@@ -41,6 +43,7 @@ namespace Fortress::ObjectBase
 			: rigidBody(name, position, WH, velocity, speed, acceleration, true, true),
 			  m_hp(hp),
 			  m_mp(mp),
+		      m_power(0.0f),
 		      m_bGrounded(false)
 		{
 			character::initialize();
@@ -49,6 +52,7 @@ namespace Fortress::ObjectBase
 	private:
 		float m_hp;
 		float m_mp;
+		float m_power;
 		bool m_bGrounded;
 
 	protected:

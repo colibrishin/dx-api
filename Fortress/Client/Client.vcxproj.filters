@@ -173,7 +173,7 @@
     <ClCompile Include="resourceManager.hpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="RocketCharacter.hpp">
+    <ClCompile Include="MissileCharacter.hpp">
       <Filter>Characters</Filter>
     </ClCompile>
     <ClCompile Include="GifWrapper.hpp">
