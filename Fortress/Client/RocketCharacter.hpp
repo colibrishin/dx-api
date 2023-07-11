@@ -32,11 +32,21 @@ namespace Fortress::Object
 
 		void initialize() override
 		{
-			m_image = Resource::ResourceManager::load<GifWrapper>(
-				L"Rocket Character", "./resources/images/missile_idle.gif");
-			m_hitbox = m_image->get_hitbox();
+			m_idle_l = Resource::ResourceManager::load<GifWrapper>(
+				L"Rocket Character Idle Left", "./resources/images/missile_idle_l.gif");
+
+			m_idle_r = Resource::ResourceManager::load<GifWrapper>(
+				L"Rocket Character Idle Right", "./resources/images/missile_idle_r.gif");
+
+			m_hitbox = m_idle_l->get_hitbox();
 			m_facing = {-1.0f, 0.0f};
-			m_image->play();
+			m_idle_l->load();
+			m_idle_r->load();
+
+			m_idle_l->play();
+			m_idle_r->play();
+
+			m_current_sprite = m_idle_l;
 		}
 
 		void shoot() override;
@@ -45,7 +55,11 @@ namespace Fortress::Object
 		void move_right() override;
 	private:
 		Math::Vector2 m_facing;
-		GifWrapper* m_image;
+
+		GifWrapper* m_current_sprite;
+
+		GifWrapper* m_idle_l;
+		GifWrapper* m_idle_r;
 	};
 }
 
@@ -67,24 +81,21 @@ namespace Fortress::Object
 
 		if (is_active())
 		{
-			if(m_facing != Math::left)
-			{
-				m_image->flip();
-			}
-
-			m_image->render(m_position);
+			m_current_sprite->render(m_position);
 		}
 	}
 
 	inline void RocketCharacter::move_left()
 	{
 		m_facing = Math::left;
+		m_current_sprite = m_idle_l;
 		character::move_left();
 	}
 
 	inline void RocketCharacter::move_right()
 	{
 		m_facing = Math::right;
+		m_current_sprite = m_idle_r;
 		character::move_right();
 	}
 }

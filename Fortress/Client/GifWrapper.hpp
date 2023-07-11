@@ -28,9 +28,9 @@ namespace Fortress
 		void OnTimer();
 		virtual void flip() override;
 
-		inline static std::map<UINT, GifWrapper*> registered_gifs = {};
+		inline static std::map<UINT_PTR, GifWrapper*> registered_gifs = {};
 	private:
-		UINT m_timer_id;
+		UINT_PTR m_timer_id;
 		UINT m_dimension_count;
 		UINT m_frame_count;
 		UINT m_total_buffer;
@@ -38,10 +38,9 @@ namespace Fortress
 		WCHAR m_str_guid[39];
 
 		GUID* m_pDimensionsIds;
-		PropertyItem* m_property_item;
+		std::vector<unsigned int> m_frame_delays;
 
-		bool m_bFlipped;
-		inline static UINT used_timer_id = 0;
+		inline static UINT used_timer_id = 8000;
 	};
 
 	inline void GifWrapper::render(const Math::Vector2& position, const Math::Vector2& facing = {})
@@ -77,32 +76,34 @@ namespace Fortress
 		m_frame_count = m_image->GetFrameCount(&m_pDimensionsIds[0]);
 
 		m_total_buffer = m_image->GetPropertyItemSize(PropertyTagFrameDelay);
-		m_property_item = new PropertyItem[m_total_buffer];
+		const std::unique_ptr<PropertyItem[]> property(new PropertyItem[m_total_buffer]);
 
-		m_image->GetPropertyItem(PropertyTagFrameDelay, m_total_buffer, m_property_item);
+		m_image->GetPropertyItem(PropertyTagFrameDelay, m_total_buffer, property.get());
+
+		unsigned int* frame_delay_array = (unsigned int*)property.get()[0].value;
+
+	    // copy the delay values into an std::vector while converting to milliseconds.
+		m_frame_delays.assign(m_frame_count, 0);
+	    std::transform(frame_delay_array, frame_delay_array + m_frame_count, m_frame_delays.begin(),
+	        [](unsigned int n) {return n * 2.5; }
+	    );
 
 		return true;
 	}
 
 	inline void GifWrapper::initialize()
 	{
-		registered_gifs[m_timer_id] = this;
 	}
 
 	inline void GifWrapper::play()
 	{
-		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
-
 		m_current_frame = 0;
 		const GUID guid = FrameDimensionTime;
 
 		m_image->SelectActiveFrame(&guid, m_current_frame);
-		if(m_bFlipped)
-		{
-			m_image->RotateFlip(RotateNoneFlipX);
-		}
 
-		SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, ((UINT*)m_property_item[0].value)[m_current_frame] * 10, nullptr);
+		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[0], nullptr);
+		registered_gifs[m_timer_id] = this;
 
 		++m_current_frame;
 	}
@@ -114,22 +115,22 @@ namespace Fortress
 		const GUID guid = FrameDimensionTime;
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
-
-		SetTimer(WinAPIHandles::get_hwnd(), 1, static_cast<UINT*>(m_property_item[0].value)[m_current_frame] * 10, nullptr);
+		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[m_current_frame] * 10, nullptr);
+		registered_gifs[m_timer_id] = this;
 
 		m_current_frame = ++(m_current_frame) % m_frame_count;
 	}
 
 	inline void GifWrapper::flip()
 	{
+		ImageWrapper::flip();
 		// @todo: is there anyway to not break the gif property?
 	}
 
 	inline GifWrapper::GifWrapper(const std::wstring& name, const std::filesystem::path& path) :
 		ImageWrapper(name, path), m_dimension_count(0), m_frame_count(0), m_total_buffer(0), m_current_frame(0),
-		m_str_guid{}, m_pDimensionsIds(nullptr), m_property_item(nullptr), m_bFlipped(false), m_timer_id(used_timer_id)
+		m_str_guid{}, m_pDimensionsIds(nullptr), m_timer_id(used_timer_id++)
 	{
-		used_timer_id++;
 		GifWrapper::initialize();
 	}
 
@@ -142,11 +143,6 @@ namespace Fortress
 		if(m_pDimensionsIds)
 		{
 			delete[] m_pDimensionsIds;
-		}
-
-		if(m_property_item)
-		{
-			free(m_property_item);
 		}
 	}
 }

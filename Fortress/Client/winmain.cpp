@@ -189,7 +189,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_TIMER:
-		Fortress::GifWrapper::registered_gifs[lParam]->OnTimer();
+		if(wParam >= 8000)
+		{
+			Fortress::GifWrapper::registered_gifs[wParam]->OnTimer();
+		}
+		
 		break;
 	case WM_PAINT:
 		{

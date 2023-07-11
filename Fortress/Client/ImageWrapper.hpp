@@ -52,8 +52,8 @@ namespace Fortress
 				m_size.get_y()},
 				0,
 				0,
-				-m_size.get_x(),
-				-m_size.get_y(),
+				m_size.get_x(),
+				m_size.get_y(),
 				UnitPixel,
 				&m_chroma_key);
 		}
