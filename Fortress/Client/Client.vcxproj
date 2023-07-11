@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="application.h" />
+    <ClCompile Include="GifWrapper.hpp" />
     <ClCompile Include="RocketCharacter.hpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="characterScene.cpp" />

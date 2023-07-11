@@ -24,18 +24,17 @@ namespace Fortress
 
 		virtual void render(const Math::Vector2& position, const Math::Vector2& facing);
 		const Math::Vector2& get_hitbox() const;
-		void flip() const;
+		virtual void flip();
 
-	private:
-		bool load() override;
-
+	protected:
+		virtual bool load() override;
 		Image* m_image;
 		Graphics* m_gdi_handle;
 		Math::Vector2 m_size;
 		ImageAttributes m_chroma_key;
 	};
 
-	inline void ImageWrapper::flip() const
+	inline void ImageWrapper::flip()
 	{
 		m_image->RotateFlip(RotateNoneFlipX);
 	}
@@ -46,15 +45,15 @@ namespace Fortress
 		{
 			m_gdi_handle->DrawImage(
 				m_image,
-				Rect{
-				static_cast<int>(position.get_x()),
-				static_cast<int>(position.get_y()),
-				static_cast<int>(m_size.get_x()),
-				static_cast<int>(m_size.get_y())},
+				RectF{
+				position.get_x(),
+				position.get_y(),
+				m_size.get_x(),
+				m_size.get_y()},
 				0,
 				0,
-				static_cast<int>(m_size.get_x()),
-				static_cast<int>(m_size.get_y()),
+				-m_size.get_x(),
+				-m_size.get_y(),
 				UnitPixel,
 				&m_chroma_key);
 		}

@@ -43,15 +43,15 @@
     <Filter Include="Scene">
       <UniqueIdentifier>{b4d67fe7-c618-4c1d-b389-f0f443130bbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Resource">
+      <UniqueIdentifier>{67164768-64d4-4ec6-a330-756e252d4f33}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Client.h">
@@ -96,6 +96,30 @@
     <ClInclude Include="projectile.hpp">
       <Filter>Engine\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="difficulty.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="sound.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="characterChooseScene.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageWrapper.hpp">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.hpp">
+      <Filter>Engine\Abstracts</Filter>
+    </ClInclude>
+    <ClInclude Include="layer.hpp">
+      <Filter>Engine\Abstracts</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -125,12 +149,6 @@
     <ClCompile Include="winapihandles.hpp">
       <Filter>Engine\Common</Filter>
     </ClCompile>
-    <ClCompile Include="render_queue.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="CannonCharacter.hpp">
-      <Filter>Characters</Filter>
-    </ClCompile>
     <ClCompile Include="entity.hpp">
       <Filter>Engine\Abstracts</Filter>
     </ClCompile>
@@ -145,6 +163,21 @@
     </ClCompile>
     <ClCompile Include="PrecisonProjectile.cpp">
       <Filter>Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="rigidBody.cpp">
+      <Filter>Windows\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="shootEstimation.cpp">
+      <Filter>Windows\소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="resourceManager.hpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="RocketCharacter.hpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="GifWrapper.hpp">
+      <Filter>Engine\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

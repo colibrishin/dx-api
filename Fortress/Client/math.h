@@ -23,6 +23,12 @@ namespace Fortress::Math
 	 * \brief Gravitational acceleration constant
 	 */
 	constexpr float G_ACC = 9.80f;
+
+	const Vector2 identity = {1.0f, 1.0f};
+	const Vector2 left = {-1.0f, 0.0f};
+	const Vector2 right = {1.0f, 0.0f};
+	const Vector2 top = {0.0f, -1.0f};
+	const Vector2 bottom = {0.0f, 1.0f};
 }
 
 #endif

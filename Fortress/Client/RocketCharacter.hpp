@@ -2,7 +2,8 @@
 #ifndef CANNONCHARACTER_HPP
 #define CANNONCHARACTER_HPP
 #include "character.hpp"
-#include "ImageWrapper.hpp"
+#include "GifWrapper.hpp"
+#include "math.h"
 #include "resourceManager.hpp"
 
 namespace Fortress::Object
@@ -31,11 +32,11 @@ namespace Fortress::Object
 
 		void initialize() override
 		{
-			// @todo: add gif wrapper
-			m_image = Resource::ResourceManager::load<ImageWrapper>(
+			m_image = Resource::ResourceManager::load<GifWrapper>(
 				L"Rocket Character", "./resources/images/missile_idle.gif");
 			m_hitbox = m_image->get_hitbox();
 			m_facing = {-1.0f, 0.0f};
+			m_image->play();
 		}
 
 		void shoot() override;
@@ -44,7 +45,7 @@ namespace Fortress::Object
 		void move_right() override;
 	private:
 		Math::Vector2 m_facing;
-		ImageWrapper* m_image;
+		GifWrapper* m_image;
 	};
 }
 
@@ -66,29 +67,24 @@ namespace Fortress::Object
 
 		if (is_active())
 		{
-			if(m_facing != Math::Vector2{-1.0f, 0.0f})
+			if(m_facing != Math::left)
 			{
 				m_image->flip();
 			}
 
 			m_image->render(m_position);
-
-			if(m_facing != Math::Vector2{-1.0f, 0.0f})
-			{
-				m_image->flip();
-			}
 		}
 	}
 
 	inline void RocketCharacter::move_left()
 	{
-		m_facing = {-1.0f, 0.0f};
+		m_facing = Math::left;
 		character::move_left();
 	}
 
 	inline void RocketCharacter::move_right()
 	{
-		m_facing = {1.0f, 0.0f};
+		m_facing = Math::right;
 		character::move_right();
 	}
 }

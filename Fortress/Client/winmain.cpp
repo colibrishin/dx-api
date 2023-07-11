@@ -4,6 +4,7 @@
 #include "framework.h"
 #include "Client.h"
 #include "application.h"
+#include "GifWrapper.hpp"
 
 static Fortress::Application application;
 
@@ -186,6 +187,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 				return DefWindowProc(hWnd, message, wParam, lParam);
 			}
 		}
+		break;
+	case WM_TIMER:
+		Fortress::GifWrapper::registered_gifs[lParam]->OnTimer();
 		break;
 	case WM_PAINT:
 		{

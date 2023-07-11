@@ -17,10 +17,10 @@ namespace Fortress::Scene
 		scene::initialize();
 
 		// https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
-		Resource::ResourceManager::load<ImageWrapper>(L"Background", "./resources/images/bg.bmp");
+		Resource::ResourceManager::load<ImageWrapper>(L"Background", "./resources/images/background.jpg");
 		m_imBackground = Resource::ResourceManager::Find<ImageWrapper>(L"Background");
 
-		for (int i = 0; i < 100; ++i)
+		for (int i = 0; i < 1; ++i)
 		{
 			static thread_local std::mt19937 generator(static_cast<unsigned int>(time(nullptr)));
 			std::uniform_int_distribution h_distribution(0, WinAPIHandles::get_window_width());
