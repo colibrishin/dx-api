@@ -12,6 +12,7 @@ namespace Fortress
 		void update();
 		void initialize();
 		void set_object(Abstract::object* obj);
+		void restore_object();
 		Math::Vector2 get_relative_position(const Abstract::object* obj) const;
 		Math::Vector2 get_offset() const;
 		Abstract::object* get_locked_object() const;
@@ -20,6 +21,7 @@ namespace Fortress
 		Math::Vector2 m_window_size = {};
 		Math::Vector2 m_center_position = {};
 		Abstract::object* m_lock_target = nullptr;
+		Abstract::object* m_backup_target = nullptr;
 	};
 
 	inline void Camera::update()
@@ -47,13 +49,24 @@ namespace Fortress
 
 	inline void Camera::set_object(Abstract::object* obj)
 	{
+		m_backup_target = m_lock_target;
 		m_lock_target = obj;
+	}
+
+	inline void Camera::restore_object()
+	{
+		m_lock_target = m_backup_target;
 	}
 
 	inline Math::Vector2 Camera::get_relative_position(const Abstract::object* obj) const
 	{
-		const auto diff = m_lock_target->get_position() - obj->get_position();
-		return m_center_position - diff;
+		if(m_lock_target)
+		{
+			const auto diff = m_lock_target->get_position() - obj->get_position();
+			return m_center_position - diff;
+		}
+
+		return m_center_position;
 	}
 
 	inline Math::Vector2 Camera::get_offset() const

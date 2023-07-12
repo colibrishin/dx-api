@@ -151,7 +151,7 @@ namespace Fortress::Object
 			}
 			else
 			{
-				m_current_sprite->render(m_position);
+				m_current_sprite->render(Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(this));
 			}
 		}
 	}
