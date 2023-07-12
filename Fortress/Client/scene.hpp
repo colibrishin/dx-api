@@ -22,6 +22,7 @@ namespace Fortress::Abstract
 		template <class T>
 		std::vector<T*> is_in_range(const Math::Vector2& top_left, const Math::Vector2& hit_box, float radius);
 		void add_game_object(LayerType layer_type, object* obj);
+		void remove_game_object(LayerType layer_type, object* obj);
 		Camera* get_camera();
 
 		std::vector<object*> get_objects();
@@ -41,6 +42,18 @@ namespace Fortress::Abstract
 	{
 		m_layers[static_cast<unsigned int>(layer_type)].add_game_object(obj);
 		m_objects.push_back(obj);
+	}
+
+	inline void scene::remove_game_object(LayerType layer_type, object* obj)
+	{
+		m_layers[static_cast<unsigned int>(layer_type)].remove_game_object(obj);
+		m_objects.erase(
+			std::remove_if(m_objects.begin(), m_objects.end(),
+				[this, obj](const object* p)
+			{
+				return p == obj;
+			}),
+			m_objects.end());
 	}
 
 	inline Camera* scene::get_camera()

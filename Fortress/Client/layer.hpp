@@ -35,6 +35,7 @@ namespace Fortress::Abstract
 		void deactivate() const;
 		void activate() const;
 		void add_game_object(object* object);
+		void remove_game_object(const object* object);
 
 	private:
 		std::vector<object*> m_objects;
@@ -99,6 +100,17 @@ namespace Fortress::Abstract
 	inline void Layer::add_game_object(object* object)
 	{
 		m_objects.push_back(object);
+	}
+
+	inline void Layer::remove_game_object(const object* obj)
+	{
+		m_objects.erase(
+			std::remove_if(m_objects.begin(), m_objects.end(),
+				[this, obj](const object* p)
+			{
+				return p == obj;
+			}),
+			m_objects.end());
 	}
 }
 #endif // LAYER_HPP

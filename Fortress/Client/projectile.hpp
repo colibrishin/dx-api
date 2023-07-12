@@ -13,10 +13,10 @@ namespace Fortress::ObjectBase
 	{
 	public:
 		projectile() = delete;
-		projectile& operator=(const projectile& other) = delete;
-		projectile& operator=(projectile&& other) = delete;
+		projectile& operator=(const projectile& other) = default;
+		projectile& operator=(projectile&& other) = default;
 
-		__forceinline void initialize() override;
+		void initialize() override;
 		__forceinline virtual void update() override;
 		virtual void on_collision(rigidBody* other) override;
 
@@ -37,6 +37,8 @@ namespace Fortress::ObjectBase
 			projectile::initialize();
 		}
 
+		projectile(const projectile& other) = default;
+
 		__forceinline ~projectile() override
 		{
 			rigidBody::~rigidBody();
@@ -48,6 +50,7 @@ namespace Fortress::ObjectBase
 
 	__forceinline void projectile::update()
 	{
+		rigidBody::update();
 	}
 }
 #endif // PROJECTILE_HPP

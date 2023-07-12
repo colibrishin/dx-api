@@ -26,6 +26,7 @@ namespace Fortress::Math
 
 		__forceinline Vector2& operator=(const Vector2& other) = default;
 		__forceinline Vector2& operator+=(const Vector2& other);
+		__forceinline Vector2& operator*=(const Vector2& other);
 		__forceinline Vector2& operator-=(const Vector2& other);
 		__forceinline Vector2 operator*(const Vector2& other) const;
 		__forceinline Vector2 operator/(const float& scalar) const;
@@ -66,6 +67,12 @@ namespace Fortress::Math
 	{
 		m_x += other.m_x;
 		m_y += other.m_y;
+		return *this;
+	}
+
+	inline Vector2& Vector2::operator*=(const Vector2& other)
+	{
+		*this = *this * other;
 		return *this;
 	}
 

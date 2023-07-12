@@ -164,7 +164,7 @@
     <ClCompile Include="projectile.cpp">
       <Filter>Engine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="PrecisonProjectile.cpp">
+    <ClCompile Include="PrecisonProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
     <ClCompile Include="rigidBody.cpp">

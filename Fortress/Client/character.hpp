@@ -25,12 +25,19 @@ namespace Fortress::ObjectBase
 		virtual void shoot();
 		float get_charged_power() const;
 		virtual void move() override;
-		void on_collision(rigidBody* other) override;
+		virtual void on_collision(rigidBody* other) override;
 
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
 		~character() override;
 
+	private:
+		float m_hp;
+		float m_mp;
+		float m_power;
+		bool m_bGrounded;
+
+	protected:
 		character(
 			const std::wstring& name,
 			const Math::Vector2 position,
@@ -49,13 +56,6 @@ namespace Fortress::ObjectBase
 			character::initialize();
 		}
 
-	private:
-		float m_hp;
-		float m_mp;
-		float m_power;
-		bool m_bGrounded;
-
-	protected:
 		character(const character& other);
 	};
 }

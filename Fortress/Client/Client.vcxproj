@@ -165,7 +165,7 @@
     <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
     <ClCompile Include="entity.hpp" />
-    <ClCompile Include="PrecisonProjectile.cpp" />
+    <ClCompile Include="PrecisonProjectile.hpp" />
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="resourceManager.hpp" />
     <ClCompile Include="rigidBody.cpp" />

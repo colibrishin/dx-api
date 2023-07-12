@@ -5,6 +5,7 @@
 #include "GifWrapper.hpp"
 #include "math.h"
 #include "resourceManager.hpp"
+#include "PrecisonProjectile.hpp"
 
 namespace Fortress::Object
 {
@@ -28,7 +29,7 @@ namespace Fortress::Object
 		~MissileCharacter() override
 		{
 			character::~character();
-		};
+		}
 
 		void initialize() override
 		{
@@ -68,6 +69,8 @@ namespace Fortress::Object
 		void move_left() override;
 		void move_right() override;
 	private:
+		PrecisionProjectile m_base_projectile;
+
 		Math::Vector2 m_facing;
 
 		GifWrapper* m_current_sprite;
@@ -124,13 +127,16 @@ namespace Fortress::Object
 			}
 		});
 
-		const float charged = get_charged_power();
+		float charged = get_charged_power();
+
+		if(charged < 0)
+		{
+			charged = 10.0f;
+		}
+
 		character::shoot();
 
-		// refreshing the projectile position
-		//m_base_projectile.m_position = {m_position.get_x() + m_hitbox.get_x() + 10.0f, m_position.get_y() - 10.0f};
-		// set active for being calculated by rigidBody.
-		//m_base_projectile.m_bActive = true;
+		m_base_projectile.fire(m_position, m_facing, charged);
 	}
 
 	inline void MissileCharacter::render()

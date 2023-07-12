@@ -24,6 +24,7 @@ namespace Fortress::ObjectBase
 
 		if (hit)
 		{
+			m_gravity_speed = 0.0f;
 			set_disabled();
 			// @todo: do a "thing" if a projectile is a explosive.
 		}
@@ -36,7 +37,7 @@ namespace Fortress::ObjectBase
 		return m_damage;
 	}
 
-	__forceinline void projectile::initialize()
+	void projectile::initialize()
 	{
 		rigidBody::initialize();
 	}
