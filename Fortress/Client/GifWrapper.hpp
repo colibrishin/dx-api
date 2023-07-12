@@ -38,7 +38,6 @@ namespace Fortress
 		UINT m_current_frame;
 		WCHAR m_str_guid[39];
 
-		GUID* m_pDimensionsIds;
 		std::vector<unsigned int> m_frame_delays;
 
 		std::function<void()> m_reserved_function;
@@ -72,8 +71,8 @@ namespace Fortress
 
 		m_dimension_count = m_image->GetFrameDimensionsCount();
 
-		m_pDimensionsIds = new GUID[m_dimension_count];
-		m_image->GetFrameDimensionsList(m_pDimensionsIds, m_dimension_count);
+		const std::unique_ptr<GUID[]> m_pDimensionsIds (new GUID[m_dimension_count]);
+		m_image->GetFrameDimensionsList(m_pDimensionsIds.get(), m_dimension_count);
 
 		StringFromGUID2(m_pDimensionsIds[0], m_str_guid, 39);
 		m_frame_count = m_image->GetFrameCount(&m_pDimensionsIds[0]);
@@ -145,7 +144,7 @@ namespace Fortress
 
 	inline GifWrapper::GifWrapper(const std::wstring& name, const std::filesystem::path& path) :
 		ImageWrapper(name, path), m_dimension_count(0), m_frame_count(0), m_total_buffer(0), m_current_frame(0),
-		m_str_guid{}, m_pDimensionsIds(nullptr), m_timer_id(used_timer_id++)
+		m_str_guid{}, m_timer_id(used_timer_id++)
 	{
 		GifWrapper::initialize();
 	}
@@ -155,11 +154,6 @@ namespace Fortress
 		ImageWrapper::~ImageWrapper();
 
 		registered_gifs.erase(m_timer_id);
-
-		if(m_pDimensionsIds)
-		{
-			delete[] m_pDimensionsIds;
-		}
 	}
 }
 #endif // GIFWRAPPER_HPP

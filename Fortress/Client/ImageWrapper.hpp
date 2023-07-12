@@ -74,11 +74,6 @@ namespace Fortress
 
 	inline ImageWrapper::~ImageWrapper()
 	{
-		if(m_image)
-		{
-			DeleteObject(m_image);
-		}
-
 		Resource::~Resource();
 	}
 
@@ -94,8 +89,10 @@ namespace Fortress
 		m_size = {static_cast<float>(m_image->GetWidth()), static_cast<float>(m_image->GetHeight())};
 		m_gdi_handle = new Graphics{WinAPIHandles::get_buffer_dc()};
 
-		const auto magenta = Color(255,0,255);
-		m_chroma_key.SetColorKey(magenta, magenta, ColorAdjustTypeBitmap);  
+		constexpr float range = 3.0f;
+		const auto magenta_high = Color(255, 255 / range,255);
+		const auto magenta_low = Color(255 / range, 0,255 / range);
+		m_chroma_key.SetColorKey(magenta_low, magenta_high, ColorAdjustTypeBitmap);  
 
 		return true;
 	}
