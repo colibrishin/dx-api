@@ -120,6 +120,9 @@
     <ClInclude Include="layer.hpp">
       <Filter>Engine\Abstracts</Filter>
     </ClInclude>
+    <ClInclude Include="camera.hpp">
+      <Filter>Engine\Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">

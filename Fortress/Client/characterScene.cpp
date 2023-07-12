@@ -1,4 +1,6 @@
 #include "characterScene.h"
+
+#include "camera.hpp"
 #include "MissileCharacter.hpp"
 #include "ground.hpp"
 #include "input.hpp"
@@ -15,6 +17,8 @@ namespace Fortress::Scene
 
 		add_game_object(Abstract::LayerType::Character, m_object.get());
 		add_game_object(Abstract::LayerType::Ground, m_ground.get());
+
+		m_camera.set_object(m_object.get());
 
 		m_object->set_disabled();
 		m_ground->set_disabled();
@@ -58,8 +62,6 @@ namespace Fortress::Scene
 		{
 			m_object->stop();
 		}
-
-		ObjectBase::character::block_window_frame(m_object.get());
 	}
 
 	void CharacterScene::render()

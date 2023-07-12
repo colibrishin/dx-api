@@ -66,7 +66,7 @@ namespace Fortress
 	}
 
 	inline bool GifWrapper::load()
-	{
+	{ 
 		ImageWrapper::load();
 
 		m_dimension_count = m_image->GetFrameDimensionsCount();

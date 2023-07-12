@@ -128,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="camera.hpp" />
     <ClInclude Include="character.hpp" />
     <ClInclude Include="characterChooseScene.hpp" />
     <ClInclude Include="characterScene.h" />

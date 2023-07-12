@@ -32,7 +32,7 @@ namespace Fortress::Scene
 			};
 			add_game_object(Abstract::LayerType::Character, new Object::MissileCharacter{L"Ball", random_pos});
 
-			Abstract::rigidBody* rb = dynamic_cast<Abstract::rigidBody*>(m_objects.back());
+			auto* rb = dynamic_cast<Abstract::rigidBody*>(m_objects.back());
 
 			rb->m_velocity = {1.0f, 1.0f};
 			rb->set_disabled();

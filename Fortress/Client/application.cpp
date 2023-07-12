@@ -1,13 +1,13 @@
 #include <random>
 
 #include "application.h"
+
 #include "characterScene.h"
 #include "input.hpp"
 #include "deltatime.hpp"
 #include "sceneManager.hpp"
 #include "titleScene.h"
 #include "winapihandles.hpp"
-#include "projectile.hpp"
 
 namespace Fortress
 {

@@ -139,7 +139,14 @@ namespace Fortress::Object
 
 		if (is_active())
 		{
-			m_current_sprite->render(m_position);
+			if(Scene::SceneManager::get_active_scene()->get_camera()->get_locked_object() == this)
+			{
+				m_current_sprite->render(Scene::SceneManager::get_active_scene()->get_camera()->get_offset());
+			}
+			else
+			{
+				m_current_sprite->render(m_position);
+			}
 		}
 	}
 

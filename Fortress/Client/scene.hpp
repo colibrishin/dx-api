@@ -3,6 +3,7 @@
 #define SCENE_HPP
 #include <vector>
 
+#include "camera.hpp"
 #include "entity.hpp"
 #include "layer.hpp"
 
@@ -21,18 +22,15 @@ namespace Fortress::Abstract
 		template <class T>
 		std::vector<T*> is_in_range(const Math::Vector2& top_left, const Math::Vector2& hit_box, float radius);
 		void add_game_object(LayerType layer_type, object* obj);
-		virtual void check_ground();
+		Camera* get_camera();
 
 		std::vector<object*> get_objects();
 
 	protected:
+		Camera m_camera;
 		std::vector<Layer> m_layers;
 		std::vector<object*> m_objects{};
 	};
-
-	inline void scene::check_ground()
-	{
-	}
 
 	inline std::vector<object*> scene::get_objects()
 	{
@@ -43,6 +41,11 @@ namespace Fortress::Abstract
 	{
 		m_layers[static_cast<unsigned int>(layer_type)].add_game_object(obj);
 		m_objects.push_back(obj);
+	}
+
+	inline Camera* scene::get_camera()
+	{
+		return &m_camera;
 	}
 
 	inline scene::scene(const std::wstring& name):
@@ -58,10 +61,14 @@ namespace Fortress::Abstract
 		{
 			m_layers.emplace_back(static_cast<LayerType>(i));
 		}
+
+		m_camera.initialize();
 	}
 
 	inline void scene::update()
 	{
+		m_camera.update();
+
 		for(const auto& l : m_layers)
 		{
 			l.update();

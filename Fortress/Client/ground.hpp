@@ -36,12 +36,14 @@ namespace Fortress::Object
 	{
 		if (is_active())
 		{
+			const auto pos = Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(this);
+
 			Rectangle(
 				WinAPIHandles::get_buffer_dc(),
-				get_x(),
-				get_y(),
-				get_x() + m_hitbox.get_x(),
-				get_y() + m_hitbox.get_y());
+				pos.get_x(),
+				pos.get_y(),
+				pos.get_x() + m_hitbox.get_x(),
+				pos.get_y() + m_hitbox.get_y());
 		}
 	}
 }
