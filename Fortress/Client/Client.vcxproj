@@ -143,6 +143,7 @@
     <ClInclude Include="ImageWrapper.hpp" />
     <ClInclude Include="input.hpp" />
     <ClInclude Include="layer.hpp" />
+    <ClInclude Include="LoadingScene.h" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="manager.hpp" />
     <ClInclude Include="math.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="application.h" />
     <ClCompile Include="BulletinBoardScene.cpp" />
     <ClCompile Include="GifWrapper.hpp" />
+    <ClCompile Include="LoadingScene.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MissileCharacter.hpp" />
     <ClCompile Include="character.cpp" />
