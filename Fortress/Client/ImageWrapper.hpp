@@ -39,7 +39,7 @@ namespace Fortress
 		m_image->RotateFlip(RotateNoneFlipX);
 	}
 
-	inline void ImageWrapper::render(const Math::Vector2& position, const Math::Vector2& facing = {})
+	inline void ImageWrapper::render(const Math::Vector2& position, const Math::Vector2& scaling = {1.0f, 1.0f})
 	{
 		if(m_image)
 		{
@@ -48,8 +48,8 @@ namespace Fortress
 				RectF{
 				position.get_x(),
 				position.get_y(),
-				m_size.get_x(),
-				m_size.get_y()},
+				m_size.get_x() * scaling.get_x(),
+				m_size.get_y() * scaling.get_y()},
 				0,
 				0,
 				m_size.get_x(),

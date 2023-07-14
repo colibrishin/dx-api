@@ -129,10 +129,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BulletinBoardScene.h" />
     <ClInclude Include="camera.hpp" />
     <ClInclude Include="character.hpp" />
-    <ClInclude Include="characterChooseScene.hpp" />
-    <ClInclude Include="characterScene.h" />
+    <ClInclude Include="BattleScene.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="debug.hpp" />
@@ -143,12 +143,14 @@
     <ClInclude Include="ImageWrapper.hpp" />
     <ClInclude Include="input.hpp" />
     <ClInclude Include="layer.hpp" />
+    <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="manager.hpp" />
     <ClInclude Include="math.h" />
     <ClInclude Include="projectile.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="resource.hpp" />
     <ClInclude Include="rigidBody.hpp" />
+    <ClInclude Include="RoomScene.h" />
     <ClInclude Include="scene.hpp" />
     <ClInclude Include="sound.hpp" />
     <ClInclude Include="targetver.h" />
@@ -158,10 +160,12 @@
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="application.h" />
+    <ClCompile Include="BulletinBoardScene.cpp" />
     <ClCompile Include="GifWrapper.hpp" />
+    <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MissileCharacter.hpp" />
     <ClCompile Include="character.cpp" />
-    <ClCompile Include="characterScene.cpp" />
+    <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
@@ -170,6 +174,7 @@
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="resourceManager.hpp" />
     <ClCompile Include="rigidBody.cpp" />
+    <ClCompile Include="RoomScene.cpp" />
     <ClCompile Include="sceneManager.hpp" />
     <ClCompile Include="shootEstimation.cpp" />
     <ClCompile Include="titleScene.cpp" />

@@ -34,24 +34,30 @@ namespace Fortress::Object
 		void initialize() override
 		{
 			m_idle_l = Resource::ResourceManager::load<GifWrapper>(
-				L"Rocket Character Idle Left", "./resources/images/missile_idle_l.gif");
+				L"Rocket Character Idle Left", "./resources/images/missile/missile_idle_l.gif");
 
 			m_idle_r = Resource::ResourceManager::load<GifWrapper>(
-				L"Rocket Character Idle Right", "./resources/images/missile_idle_r.gif");
+				L"Rocket Character Idle Right", "./resources/images/missile/missile_idle_r.gif");
 
 			m_firing_l = Resource::ResourceManager::load<GifWrapper>(
-				L"Rocket Character Firing Left", "./resources/images/missile_firing_l.gif");
+				L"Rocket Character Firing Left", "./resources/images/missile/missile_firing_l.gif");
 
 			m_firing_r = Resource::ResourceManager::load<GifWrapper>(
-				L"Rocket Character Firing Right", "./resources/images/missile_firing_r.gif");
+				L"Rocket Character Firing Right", "./resources/images/missile/missile_firing_r.gif");
 
 			m_fire_l = Resource::ResourceManager::load<GifWrapper>(
-				L"Rocket Character Fire Left", "./resources/images/missile_fire_l.gif");
+				L"Rocket Character Fire Left", "./resources/images/missile/missile_fire_l.gif");
 
 			m_fire_r = Resource::ResourceManager::load<GifWrapper>(
-				L"Rocket Character Fire Right", "./resources/images/missile_fire_r.gif");
+				L"Rocket Character Fire Right", "./resources/images/missile/missile_fire_r.gif");
 
-			m_hitbox = m_idle_l->get_hitbox();
+			m_move_l = Resource::ResourceManager::load<GifWrapper>(
+				L"Rocket Character Moving Left", "./resources/images/missile/missile_move_l.gif");
+
+			m_move_r = Resource::ResourceManager::load<GifWrapper>(
+				L"Rocket Character Moving Right", "./resources/images/missile/missile_move_r.gif");
+
+
 			m_facing = {-1.0f, 0.0f};
 
 			// run silently.
@@ -59,6 +65,8 @@ namespace Fortress::Object
 			m_idle_r->play();
 			m_firing_l->play();
 			m_firing_r->play();
+			m_move_l->play();
+			m_move_r->play();
 
 			m_current_sprite = m_idle_l;
 		}
@@ -68,6 +76,7 @@ namespace Fortress::Object
 		void render() override;
 		void move_left() override;
 		void move_right() override;
+		void stop() override;
 	private:
 		PrecisionProjectile m_base_projectile;
 
@@ -81,6 +90,8 @@ namespace Fortress::Object
 		GifWrapper* m_firing_r;
 		GifWrapper* m_fire_l;
 		GifWrapper* m_fire_r;
+		GifWrapper* m_move_l;
+		GifWrapper* m_move_r;
 	};
 }
 
@@ -159,15 +170,28 @@ namespace Fortress::Object
 	inline void MissileCharacter::move_left()
 	{
 		m_facing = Math::left;
-		m_current_sprite = m_idle_l;
+		m_current_sprite = m_move_l;
 		character::move_left();
 	}
 
 	inline void MissileCharacter::move_right()
 	{
 		m_facing = Math::right;
-		m_current_sprite = m_idle_r;
+		m_current_sprite = m_move_r;
 		character::move_right();
+	}
+
+	inline void MissileCharacter::stop()
+	{
+		if(m_facing == Math::left)
+		{
+			m_current_sprite = m_idle_l;
+		}
+		else if(m_facing == Math::right)
+		{
+			m_current_sprite = m_idle_r;
+		}
+		character::stop();
 	}
 }
 
