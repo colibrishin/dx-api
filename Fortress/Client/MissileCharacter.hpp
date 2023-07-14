@@ -59,6 +59,7 @@ namespace Fortress::Object
 
 
 			m_facing = {-1.0f, 0.0f};
+			m_hitbox = m_idle_l->get_hitbox();
 
 			// run silently.
 			m_idle_l->play();
@@ -158,11 +159,11 @@ namespace Fortress::Object
 		{
 			if(Scene::SceneManager::get_active_scene()->get_camera()->get_locked_object() == this)
 			{
-				m_current_sprite->render(Scene::SceneManager::get_active_scene()->get_camera()->get_offset());
+				m_current_sprite->render(Scene::SceneManager::get_active_scene()->get_camera()->get_offset(), {});
 			}
 			else
 			{
-				m_current_sprite->render(Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(this));
+				m_current_sprite->render(Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(this), {});
 			}
 		}
 	}

@@ -129,6 +129,9 @@
     <ClInclude Include="LobbyScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -196,6 +199,9 @@
     </ClCompile>
     <ClCompile Include="LobbyScene.cpp">
       <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LoadingScene.cpp">
+      <Filter>Windows\소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
