@@ -28,6 +28,8 @@ namespace Fortress
 		void play(const std::function<void()>& on_end);
 		void OnTimer();
 		virtual void flip() override;
+		virtual void rotate(const float angle);
+		void reset_transfrom();
 
 		inline static std::map<UINT_PTR, GifWrapper*> registered_gifs = {};
 	private:
@@ -87,7 +89,7 @@ namespace Fortress
 	    // copy the delay values into an std::vector while converting to milliseconds.
 		m_frame_delays.assign(m_frame_count, 0);
 	    std::transform(frame_delay_array, frame_delay_array + m_frame_count, m_frame_delays.begin(),
-	        [](unsigned int n) {return n * 2.5; }
+	        [](unsigned int n) {return n; }
 	    );
 
 		return true;
@@ -140,6 +142,16 @@ namespace Fortress
 	{
 		ImageWrapper::flip();
 		// @todo: is there anyway to not break the gif property?
+	}
+
+	inline void GifWrapper::rotate(const float angle)
+	{
+		m_gdi_handle->RotateTransform(angle);
+	}
+
+	inline void GifWrapper::reset_transfrom()
+	{
+		m_gdi_handle->ResetTransform();
 	}
 
 	inline GifWrapper::GifWrapper(const std::wstring& name, const std::filesystem::path& path) :

@@ -2,9 +2,12 @@
 
 #include "application.h"
 
-#include "characterScene.h"
+#include "BattleScene.h"
+#include "BulletinBoardScene.h"
 #include "input.hpp"
 #include "deltatime.hpp"
+#include "LobbyScene.h"
+#include "RoomScene.h"
 #include "sceneManager.hpp"
 #include "titleScene.h"
 #include "winapihandles.hpp"
@@ -24,7 +27,10 @@ namespace Fortress
 
 		Scene::SceneManager::initialize();
 		Scene::SceneManager::CreateScene<Scene::TitleScene>();
-		Scene::SceneManager::CreateScene<Scene::CharacterScene>();
+		Scene::SceneManager::CreateScene<Scene::BattleScene>();
+		Scene::SceneManager::CreateScene<Scene::BulletinBoardScene>();
+		Scene::SceneManager::CreateScene<Scene::LobbyScene>();
+		Scene::SceneManager::CreateScene<Scene::RoomScene>();
 		Scene::SceneManager::SetActive(L"Title Scene");
 	}
 

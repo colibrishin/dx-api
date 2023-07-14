@@ -16,7 +16,6 @@ namespace Fortress::Scene
 	{
 		scene::initialize();
 
-		// https://people.math.sc.edu/Burkardt/data/bmp/bmp.html
 		Resource::ResourceManager::load<ImageWrapper>(L"Background", "./resources/images/background.jpg");
 		m_imBackground = Resource::ResourceManager::Find<ImageWrapper>(L"Background");
 
@@ -54,6 +53,21 @@ namespace Fortress::Scene
 		if (Input::getKey(eKeyCode::SPACE))
 		{
 			SceneManager::SetActive(L"Character Scene");
+		}
+
+		if (Input::getKey(eKeyCode::L))
+		{
+			SceneManager::SetActive(L"Lobby Scene");
+		}
+
+		if (Input::getKey(eKeyCode::B))
+		{
+			SceneManager::SetActive(L"Bulletin Board Scene");
+		}
+
+		if (Input::getKey(eKeyCode::R))
+		{
+			SceneManager::SetActive(L"Room Scene");
 		}
 	}
 

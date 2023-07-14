@@ -5,6 +5,7 @@
 #include "GifWrapper.hpp"
 #include "projectile.hpp"
 #include "math.h"
+#include "resourceManager.hpp"
 
 namespace Fortress::Object
 {
@@ -25,18 +26,36 @@ namespace Fortress::Object
 		void render() override;
 		void focus_this();
 		void unfocus_this();
-		void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
+		void fire(const Math::Vector2& position, const Math::Vector2 velocity, const float charged);
 		virtual void on_collision(rigidBody* other) override;
 
 	private:
-		GifWrapper* m_image{};
+		Math::Vector2 m_fired_position;
+
+		GifWrapper* m_current_sprite;
+
+		GifWrapper* m_left{};
+		GifWrapper* m_right{};
 	};
 
 	inline void PrecisionProjectile::initialize()
 	{
 		projectile::initialize();
 
-		m_image = nullptr;
+		m_left = Resource::ResourceManager::load<GifWrapper>(
+			L"Missile Launching Left", "./resources/images/missile/missile_launching_l.gif");
+
+		m_right = Resource::ResourceManager::load<GifWrapper>(
+			L"Missile Launching Right", "./resources/images/missile/missile_launching_r.gif");
+
+		m_hitbox = m_left->get_hitbox();
+
+		m_current_sprite = m_left;
+
+		m_left->load();
+		m_left->play(nullptr);
+		m_right->load();
+		m_right->play(nullptr);
 	}
 
 	inline void PrecisionProjectile::update()
@@ -55,7 +74,7 @@ namespace Fortress::Object
 		{
 			projectile::render();
 
-			Math::Vector2 pos;
+			Math::Vector2 pos{};
 
 			if(Scene::SceneManager::get_active_scene()->get_camera()->get_locked_object() == this)
 			{
@@ -66,12 +85,7 @@ namespace Fortress::Object
 				pos = Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(this);	
 			}
 
-			Rectangle(
-				WinAPIHandles::get_buffer_dc(),
-				pos.get_x(),
-				pos.get_y(),
-				pos.get_x() + m_hitbox.get_x(),
-				pos.get_y() + m_hitbox.get_y());
+			m_current_sprite->render(pos, {});
 		}
 	}
 
@@ -93,11 +107,22 @@ namespace Fortress::Object
 
 	inline void PrecisionProjectile::fire(
 		const Math::Vector2& position,
-		const Math::Vector2& velocity,
+		const Math::Vector2 velocity,
 		const float charged)
 	{
 		m_position = {position.get_x() + m_hitbox.get_x() + 50.0f, position.get_y() - 50.0f};
+		m_fired_position = {position.get_x(), position.get_y()};
 		m_speed = 3.0f * charged;
+
+		if(velocity * Math::Vector2{1, 0} == Math::left)
+		{
+			m_current_sprite = m_left;
+		}
+		else if (velocity * Math::Vector2{1, 0} == Math::right)
+		{
+			m_current_sprite = m_right;
+		}
+
 		m_velocity = Math::identity * Math::Vector2{velocity.get_x(), -1};
 		focus_this();
 	}

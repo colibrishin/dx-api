@@ -75,7 +75,7 @@
     <ClInclude Include="titleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="characterScene.h">
+    <ClInclude Include="BattleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="ground.hpp">
@@ -105,9 +105,6 @@
     <ClInclude Include="sound.hpp">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="characterChooseScene.hpp">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="ImageWrapper.hpp">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
@@ -122,6 +119,15 @@
     </ClInclude>
     <ClInclude Include="camera.hpp">
       <Filter>Engine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="BulletinBoardScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="RoomScene.h">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="LobbyScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -143,7 +149,7 @@
     <ClCompile Include="sceneManager.hpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="characterScene.cpp">
+    <ClCompile Include="BattleScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="titleScene.cpp">
@@ -181,6 +187,15 @@
     </ClCompile>
     <ClCompile Include="GifWrapper.hpp">
       <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="BulletinBoardScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="RoomScene.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="LobbyScene.cpp">
+      <Filter>Scene</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

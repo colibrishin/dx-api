@@ -45,7 +45,7 @@ namespace Fortress::Abstract
 		void move_left() override;
 		void move_right() override;
 		void move_up() override;
-		void stop();
+		virtual void stop();
 
 	private:
 		float m_curr_speed;
