@@ -29,12 +29,13 @@ namespace Fortress::Scene
 				static_cast<float>(w_distribution(generator)),
 				static_cast<float>(h_distribution(generator))
 			};
-			add_game_object(Abstract::LayerType::Character, new Object::MissileCharacter{L"Ball", random_pos});
+			add_game_object(Abstract::LayerType::Character, new Object::MissileCharacter{L"Ball", random_pos, Math::left});
 
 			auto* rb = dynamic_cast<Abstract::rigidBody*>(m_objects.back());
 
 			rb->m_velocity = {1.0f, 1.0f};
 			rb->set_disabled();
+			get_camera()->set_object(rb);
 		}
 	}
 
@@ -75,26 +76,14 @@ namespace Fortress::Scene
 	{
 		[this]()
 		{
-			for (const auto& m_object : m_objects)
-			{
-				Ellipse(
-					WinAPIHandles::get_buffer_dc(),
-					m_object->get_x(),
-					m_object->get_y(),
-					m_object->get_x() + m_object->m_hitbox.get_x(),
-					m_object->get_y() + m_object->m_hitbox.get_y());
-			}
-		}();
-
-		[this]()
-		{
 			wchar_t notice[100] = {};
 			swprintf_s(notice, 100, L"Press SPACE to continue...");
 			const size_t strlen = wcsnlen_s(notice, 100);
 			TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
 		}();
 
-		m_imBackground->render({0, 0});
+		m_imBackground->render({}, {});
+		m_objects[0]->render();
 
 		scene::render();
 	}

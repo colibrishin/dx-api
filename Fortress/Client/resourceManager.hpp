@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 
+#include "vector2.hpp"
 #include "resource.hpp"
 
 namespace Fortress::Resource
@@ -27,7 +28,7 @@ namespace Fortress::Resource
 			return resource;
 		}
 
-		m_resources[name] = std::make_shared<T>(name, path);
+		m_resources[name] = std::make_shared<T>(name, path, Math::Vector2(0.0f, 0.0f));
 		m_resources[name]->load();
 
 		return dynamic_cast<T*>(m_resources[name].get());

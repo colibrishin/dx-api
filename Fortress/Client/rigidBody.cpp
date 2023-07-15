@@ -14,10 +14,10 @@ namespace Fortress::Abstract
 		m_speed(speed),
 		m_acceleration(acceleration),
 		m_curr_speed(0.0f),
-		m_gravity_speed(0.0f),
-		m_gravity_acceleration(Math::G_ACC),
 		m_bGravity(gravity),
-		m_bClipping(clipping)
+		m_bClipping(clipping),
+		m_gravity_speed(0.0f),
+		m_gravity_acceleration(Math::G_ACC)
 	{
 		rigidBody::initialize();
 	}
@@ -72,11 +72,8 @@ namespace Fortress::Abstract
 
 	void rigidBody::block_window_frame(rigidBody* target)
 	{
-		const float x = target->m_hitbox.get_x() * 2;
-		const float y = target->m_hitbox.get_y();
-
-		if (target->get_x() > WinAPIHandles::get_window_width() ||
-			target->get_y() > WinAPIHandles::get_actual_max_y())
+		if (target->get_right().get_x() > WinAPIHandles::get_window_width() ||
+			target->get_bottom().get_y()> WinAPIHandles::get_actual_max_y())
 		{
 			// OOB
 			// @todo: if the scene moves like "camera" then oob definition can be different with assumption.
@@ -85,23 +82,23 @@ namespace Fortress::Abstract
 			return;
 		}
 
-		if (target->get_x() <= 0)
+		if (target->get_left().get_x() <= 0)
 		{
 			target->m_velocity = target->m_velocity.reflect_x();
 			target->m_position += {1.0f, 0.0f};
 		}
-		else if (target->get_x() - (WinAPIHandles::get_window_width() - x) > Math::epsilon)
+		else if (target->get_right().get_x() - WinAPIHandles::get_window_width() > Math::epsilon)
 		{
 			target->m_velocity = target->m_velocity.reflect_x();
 			target->m_position -= {1.0f, 0.0f};
 		}
 
-		if (target->get_y() <= 0)
+		if (target->get_top().get_y() <= 0)
 		{
 			target->m_velocity = target->m_velocity.reflect_y();
 			target->m_position += {0.0f, 1.0f};
 		}
-		else if (target->get_y() - (WinAPIHandles::get_actual_max_y() - y) > Math::epsilon)
+		else if (target->get_bottom().get_y() - WinAPIHandles::get_actual_max_y() > Math::epsilon)
 		{
 			target->m_velocity = target->m_velocity.reflect_y();
 			target->m_position -= {0.0f, 1.0f};
@@ -146,24 +143,20 @@ namespace Fortress::Abstract
 
 	CollisionCode rigidBody::is_collision(const object* left, const object* right) noexcept
 	{
-		const auto left_mid = Math::Vector2{
-			left->get_x() + left->m_hitbox.get_x() / 2,
-			left->get_y() + left->m_hitbox.get_y() / 2};
-
-		const auto right_mid = Math::Vector2{
-			right->get_x() + left->m_hitbox.get_x() / 2,
-			right->get_y() + left->m_hitbox.get_y() / 2};
-
-		const auto diff = left_mid - right_mid;
+		const auto diff = left->get_top_left() - right->get_top_left();
 
 		// identical
-		if (left_mid == right_mid)
+		if (left == right)
 		{
 			return CollisionCode::Identical;
 		}
 
-		if (left_mid.get_x() + left->m_hitbox.get_x() > right_mid.get_x() && left_mid.get_x() < right_mid.get_x() + right->m_hitbox.get_x() &&
-			left_mid.get_y() + left->m_hitbox.get_y() > right_mid.get_y() && left_mid.get_y() < right_mid.get_y() + right->m_hitbox.get_y())
+		const bool right_check = left->get_right().get_x() >= right->get_left().get_x();
+		const bool left_check = left->get_left().get_x() <= right->get_right().get_x();
+		const bool bottom_check = left->get_bottom().get_y() >= right->get_top().get_y();
+		const bool top_check = left->get_top().get_y() <= right->get_bottom().get_y();
+
+		if(right_check && left_check && bottom_check && top_check)
 		{
 			const float x = diff.normalized().get_x();
 			const float y = diff.normalized().get_y();
@@ -218,11 +211,11 @@ namespace Fortress::Abstract
 	void rigidBody::apply_gravity()
 	{
 		// free-falling
-		const Math::Vector2 diff = m_position - Math::Vector2{
+		const Math::Vector2 diff = get_bottom() - Math::Vector2{
 			0.0f, static_cast<float>(WinAPIHandles::get_actual_max_y())
 		};
 
-		if (std::floorf(diff.abs().get_y() - m_hitbox.get_y()) <= 0)
+		if (diff.abs().get_y() <= Math::epsilon)
 		{
 			Debug::Log(L"Object grounded");
 			m_gravity_speed = 0.0f;

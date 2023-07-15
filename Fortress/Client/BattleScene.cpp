@@ -18,7 +18,7 @@ namespace Fortress::Scene
 		scene::initialize();
 		m_ground = std::make_shared<Object::Ground>();
 		m_object = std::make_shared<Object::MissileCharacter>(
-			Object::MissileCharacter(L"Ball", {1.0f, 1.0f}));
+			Object::MissileCharacter(L"Ball", {1.0f, 1.0f}, Math::left));
 
 		add_game_object(Abstract::LayerType::Character, m_object.get());
 		add_game_object(Abstract::LayerType::Ground, m_ground.get());

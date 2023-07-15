@@ -17,15 +17,14 @@ namespace Fortress
 	class GifWrapper : public ImageWrapper
 	{
 	public:
-		GifWrapper(const std::wstring& name, const std::filesystem::path& path);
+		GifWrapper(const std::wstring& name, const std::filesystem::path& path, const Math::Vector2& offset);
 		GifWrapper& operator=(const GifWrapper& other) = default;
 		GifWrapper& operator=(GifWrapper&& other) = default;
 		virtual ~GifWrapper() override;
 
-		void render(const Math::Vector2& position, const Math::Vector2& facing) override;
 		virtual bool load() override;
 		virtual void initialize();
-		void play(const std::function<void()>& on_end);
+		void play(const std::function<void()>& on_end = {});
 		void OnTimer();
 		virtual void flip() override;
 		virtual void rotate(const float angle);
@@ -46,26 +45,6 @@ namespace Fortress
 
 		inline static UINT used_timer_id = 8000;
 	};
-
-	inline void GifWrapper::render(const Math::Vector2& position, const Math::Vector2& facing = {})
-	{
-		if(m_image)
-		{
-			m_gdi_handle->DrawImage(
-				m_image,
-				Rect{
-				static_cast<int>(position.get_x()),
-				static_cast<int>(position.get_y()),
-				static_cast<int>(m_size.get_x()),
-				static_cast<int>(m_size.get_y())},
-				0,
-				0,
-				static_cast<int>(m_size.get_x()),
-				static_cast<int>(m_size.get_y()),
-				UnitPixel,
-				&m_chroma_key);
-		}
-	}
 
 	inline bool GifWrapper::load()
 	{ 
@@ -99,7 +78,7 @@ namespace Fortress
 	{
 	}
 
-	inline void GifWrapper::play(const std::function<void()>& on_end = nullptr)
+	inline void GifWrapper::play(const std::function<void()>& on_end)
 	{
 		if(on_end != nullptr)
 		{
@@ -154,8 +133,8 @@ namespace Fortress
 		m_gdi_handle->ResetTransform();
 	}
 
-	inline GifWrapper::GifWrapper(const std::wstring& name, const std::filesystem::path& path) :
-		ImageWrapper(name, path), m_dimension_count(0), m_frame_count(0), m_total_buffer(0), m_current_frame(0),
+	inline GifWrapper::GifWrapper(const std::wstring& name, const std::filesystem::path& path, const Math::Vector2& offset) :
+		ImageWrapper(name, path, offset), m_dimension_count(0), m_frame_count(0), m_total_buffer(0), m_current_frame(0),
 		m_str_guid{}, m_timer_id(used_timer_id++)
 	{
 		GifWrapper::initialize();

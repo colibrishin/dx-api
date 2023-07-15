@@ -26,6 +26,7 @@ namespace Fortress::ObjectBase
 		float get_charged_power() const;
 		virtual void move() override;
 		virtual void on_collision(rigidBody* other) override;
+		virtual Math::Vector2 get_footpoint() const;
 
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;

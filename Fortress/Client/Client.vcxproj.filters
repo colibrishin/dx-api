@@ -99,16 +99,10 @@
     <ClInclude Include="difficulty.hpp">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="resource.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="sound.hpp">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ImageWrapper.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="scene.hpp">
@@ -131,6 +125,12 @@
     </ClInclude>
     <ClInclude Include="LoadingScene.h">
       <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.hpp">
+      <Filter>Engine\Resource</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -173,11 +173,8 @@
     <ClCompile Include="projectile.cpp">
       <Filter>Engine\Objects</Filter>
     </ClCompile>
-    <ClCompile Include="PrecisonProjectile.hpp">
+    <ClCompile Include="MissileProjectile.hpp">
       <Filter>Projectiles</Filter>
-    </ClCompile>
-    <ClCompile Include="rigidBody.cpp">
-      <Filter>Windows\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="shootEstimation.cpp">
       <Filter>Windows\소스 파일</Filter>
@@ -200,8 +197,14 @@
     <ClCompile Include="LobbyScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
+    <ClCompile Include="Texture.hpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
     <ClCompile Include="LoadingScene.cpp">
-      <Filter>Windows\소스 파일</Filter>
+      <Filter>Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="rigidBody.cpp">
+      <Filter>Engine\Abstracts</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

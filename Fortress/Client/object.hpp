@@ -4,6 +4,7 @@
 
 #include "vector2.hpp"
 #include "debug.hpp"
+#include "math.h"
 #include "entity.hpp"
 
 namespace Fortress::Abstract
@@ -33,6 +34,16 @@ namespace Fortress::Abstract
 		bool is_active() const;
 		void set_disabled();
 		void set_enabled();
+
+		__forceinline Math::Vector2 get_top() const;
+		__forceinline Math::Vector2 get_bottom() const;
+		__forceinline Math::Vector2 get_left() const;
+		__forceinline Math::Vector2 get_right() const;
+		__forceinline Math::Vector2 get_top_left() const;
+		__forceinline Math::Vector2 get_top_right() const;
+		__forceinline Math::Vector2 get_bottom_left() const;
+		__forceinline Math::Vector2 get_bottom_right() const;
+		__forceinline Math::Vector2 get_center() const;
 	protected:
 		object(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox);
 
@@ -136,6 +147,51 @@ namespace Fortress::Abstract
 	inline void object::set_enabled()
 	{
 		m_bActive = true;
+	}
+
+	inline Math::Vector2 object::get_top() const
+	{
+		return m_position + Math::top;
+	}
+
+	inline Math::Vector2 object::get_bottom() const
+	{
+		return m_position + Math::Vector2{0, m_hitbox.get_y()} + Math::bottom;
+	}
+
+	inline Math::Vector2 object::get_left() const
+	{
+		return m_position + Math::left;
+	}
+
+	inline Math::Vector2 object::get_right() const
+	{
+		return m_position + Math::Vector2{m_hitbox.get_x(), 0} + Math::right;
+	}
+
+	inline Math::Vector2 object::get_top_left() const
+	{
+		return m_position;
+	}
+
+	inline Math::Vector2 object::get_top_right() const
+	{
+		return m_position + Math::Vector2{m_hitbox.get_x(), 0};
+	}
+
+	inline Math::Vector2 object::get_bottom_left() const
+	{
+		return m_position + Math::Vector2{0, m_hitbox.get_y()};
+	}
+
+	inline Math::Vector2 object::get_bottom_right() const
+	{
+		return m_position + Math::Vector2{m_hitbox.get_x(), m_hitbox.get_y()};
+	}
+
+	inline Math::Vector2 object::get_center() const
+	{
+		return m_position + m_hitbox / 2;
 	}
 }
 #endif // OBJECT_HPP

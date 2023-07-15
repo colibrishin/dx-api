@@ -172,13 +172,14 @@
     <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
     <ClCompile Include="entity.hpp" />
-    <ClCompile Include="PrecisonProjectile.hpp" />
+    <ClCompile Include="MissileProjectile.hpp" />
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="resourceManager.hpp" />
     <ClCompile Include="rigidBody.cpp" />
     <ClCompile Include="RoomScene.cpp" />
     <ClCompile Include="sceneManager.hpp" />
     <ClCompile Include="shootEstimation.cpp" />
+    <ClCompile Include="Texture.hpp" />
     <ClCompile Include="titleScene.cpp" />
     <ClCompile Include="winapihandles.hpp" />
     <ClCompile Include="winmain.cpp" />

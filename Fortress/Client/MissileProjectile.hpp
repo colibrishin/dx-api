@@ -6,17 +6,18 @@
 #include "projectile.hpp"
 #include "math.h"
 #include "resourceManager.hpp"
+#include "Texture.hpp"
 
 namespace Fortress::Object
 {
-	class PrecisionProjectile final : public ObjectBase::projectile
+	class MissileProjectile final : public ObjectBase::projectile
 	{
 	public:
-		PrecisionProjectile() : projectile(L"Precision Projectile", {}, {10.0f, 10.0f}, Math::identity, 2.0f, 0.0f, 10.0f)
+		MissileProjectile() : projectile(L"Precision Projectile", {}, {10.0f, 10.0f}, Math::identity, 2.0f, 0.0f, 10.0f), m_texture(L"missile")
 		{
-			PrecisionProjectile::initialize();
+			MissileProjectile::initialize();
 		}
-		~PrecisionProjectile() override
+		~MissileProjectile() override
 		{
 			projectile::~projectile();
 		}
@@ -31,6 +32,7 @@ namespace Fortress::Object
 
 	private:
 		Math::Vector2 m_fired_position;
+		Texture<GifWrapper> m_texture;
 
 		GifWrapper* m_current_sprite;
 
@@ -38,17 +40,12 @@ namespace Fortress::Object
 		GifWrapper* m_right{};
 	};
 
-	inline void PrecisionProjectile::initialize()
+	inline void MissileProjectile::initialize()
 	{
 		projectile::initialize();
 
-		m_left = Resource::ResourceManager::load<GifWrapper>(
-			L"Missile Launching Left", "./resources/images/missile/missile_launching_l.gif");
-
-		m_right = Resource::ResourceManager::load<GifWrapper>(
-			L"Missile Launching Right", "./resources/images/missile/missile_launching_r.gif");
-
-		m_hitbox = m_left->get_hitbox();
+		m_left = m_texture.get_image(L"projectile", L"left");
+		m_right = m_texture.get_image(L"projectile", L"right");
 
 		m_current_sprite = m_left;
 
@@ -58,7 +55,7 @@ namespace Fortress::Object
 		m_right->play(nullptr);
 	}
 
-	inline void PrecisionProjectile::update()
+	inline void MissileProjectile::update()
 	{
 		if(m_position.get_y() >= WinAPIHandles::get_actual_max_y() - 50.0f)
 		{
@@ -68,7 +65,7 @@ namespace Fortress::Object
 		projectile::update();
 	}
 
-	inline void PrecisionProjectile::render()
+	inline void MissileProjectile::render()
 	{
 		if(is_active())
 		{
@@ -85,11 +82,13 @@ namespace Fortress::Object
 				pos = Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(this);	
 			}
 
-			m_current_sprite->render(pos, {});
+			m_current_sprite->render(pos, m_hitbox);
+			Debug::draw_rect(pos, m_hitbox);
+			Debug::draw_dot(pos);
 		}
 	}
 
-	inline void PrecisionProjectile::focus_this()
+	inline void MissileProjectile::focus_this()
 	{
 		Scene::SceneManager::get_active_scene()->add_game_object(
 			Abstract::LayerType::Character, this);
@@ -97,7 +96,7 @@ namespace Fortress::Object
 		set_enabled();
 	}
 
-	inline void PrecisionProjectile::unfocus_this()
+	inline void MissileProjectile::unfocus_this()
 	{
 		Scene::SceneManager::get_active_scene()->remove_game_object(
 			Abstract::LayerType::Character, this);
@@ -105,7 +104,7 @@ namespace Fortress::Object
 		set_disabled();
 	}
 
-	inline void PrecisionProjectile::fire(
+	inline void MissileProjectile::fire(
 		const Math::Vector2& position,
 		const Math::Vector2 velocity,
 		const float charged)
@@ -117,17 +116,19 @@ namespace Fortress::Object
 		if(velocity * Math::Vector2{1, 0} == Math::left)
 		{
 			m_current_sprite = m_left;
+			m_hitbox = m_left->get_hitbox();
 		}
 		else if (velocity * Math::Vector2{1, 0} == Math::right)
 		{
 			m_current_sprite = m_right;
+			m_hitbox = m_right->get_hitbox();
 		}
 
 		m_velocity = Math::identity * Math::Vector2{velocity.get_x(), -1};
 		focus_this();
 	}
 
-	inline void PrecisionProjectile::on_collision(rigidBody* other)
+	inline void MissileProjectile::on_collision(rigidBody* other)
 	{
 		projectile::on_collision(other);
 		unfocus_this();

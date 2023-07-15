@@ -79,6 +79,11 @@ namespace Fortress::ObjectBase
 		rigidBody::on_collision(other);
 	}
 
+	Math::Vector2 ObjectBase::character::get_footpoint() const
+	{
+		return m_position + Math::Vector2{m_hitbox.get_x()/ 2, m_hitbox.get_y()};
+	}
+
 	character::character(const character& other) :
 		rigidBody(other), m_hp(other.m_hp), m_mp(other.m_mp)
 	{

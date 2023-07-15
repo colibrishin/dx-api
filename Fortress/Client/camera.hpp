@@ -26,15 +26,7 @@ namespace Fortress
 
 	inline void Camera::update()
 	{
-		if(m_lock_target)
-		{
-			m_center_position = 
-				(m_window_size / 2) - Math::Vector2{m_lock_target->m_hitbox.get_x() / 2, m_lock_target->m_hitbox.get_y() / 2};
-		}
-		else
-		{
-			m_center_position = m_window_size / 2;
-		}
+		m_center_position = m_window_size / 2;
 	}
 
 	inline void Camera::initialize()
@@ -62,7 +54,7 @@ namespace Fortress
 	{
 		if(m_lock_target)
 		{
-			const auto diff = m_lock_target->get_position() - obj->get_position();
+			const auto diff = m_lock_target->get_top_left() - obj->get_top_left();
 			return m_center_position - diff;
 		}
 
