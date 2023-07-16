@@ -34,11 +34,11 @@ namespace Fortress::Abstract
 		void render() const;
 		void deactivate() const;
 		void activate() const;
-		void add_game_object(object* object);
-		void remove_game_object(const object* object);
+		void add_game_object(const std::shared_ptr<object>& object);
+		void remove_game_object(const std::shared_ptr<object>& obj);
 
 	private:
-		std::vector<object*> m_objects;
+		std::vector<std::shared_ptr<object>> m_objects;
 	};
 }
 
@@ -67,7 +67,7 @@ namespace Fortress::Abstract
 
 	inline void Layer::update() const
 	{
-		for(const auto obj : m_objects)
+		for (const auto& obj : m_objects)
 		{
 			obj->update();
 		}
@@ -75,7 +75,7 @@ namespace Fortress::Abstract
 
 	inline void Layer::render() const
 	{
-		for(const auto obj : m_objects)
+		for(const auto& obj : m_objects)
 		{
 			obj->render();
 		}
@@ -83,7 +83,7 @@ namespace Fortress::Abstract
 
 	inline void Layer::deactivate() const
 	{
-		for(const auto obj : m_objects)
+		for(const auto& obj : m_objects)
 		{
 			obj->set_disabled();
 		}
@@ -91,22 +91,22 @@ namespace Fortress::Abstract
 
 	inline void Layer::activate() const
 	{
-		for(const auto obj : m_objects)
+		for(const auto& obj : m_objects)
 		{
 			obj->set_enabled();
 		}
 	}
 
-	inline void Layer::add_game_object(object* object)
+	inline void Layer::add_game_object(const std::shared_ptr<object>& object)
 	{
 		m_objects.push_back(object);
 	}
 
-	inline void Layer::remove_game_object(const object* obj)
+	inline void Layer::remove_game_object(const std::shared_ptr<object>& obj)
 	{
 		m_objects.erase(
 			std::remove_if(m_objects.begin(), m_objects.end(),
-				[this, obj](const object* p)
+				[this, obj](const std::shared_ptr<object>& p)
 			{
 				return p == obj;
 			}),

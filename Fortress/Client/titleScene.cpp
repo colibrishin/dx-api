@@ -29,9 +29,11 @@ namespace Fortress::Scene
 				static_cast<float>(w_distribution(generator)),
 				static_cast<float>(h_distribution(generator))
 			};
-			add_game_object(Abstract::LayerType::Character, new Object::MissileCharacter{L"Ball", random_pos, Math::left});
+			add_game_object(
+				Abstract::LayerType::Character, 
+				std::make_shared<Object::MissileCharacter>(L"Ball", random_pos, Math::left));
 
-			auto* rb = dynamic_cast<Abstract::rigidBody*>(m_objects.back());
+			auto rb = std::dynamic_pointer_cast<Abstract::rigidBody>(m_objects.back());
 
 			rb->m_velocity = {1.0f, 1.0f};
 			rb->set_disabled();
@@ -45,7 +47,7 @@ namespace Fortress::Scene
 
 		for (const auto obj : m_objects)
 		{
-			if(auto* rb = dynamic_cast<Abstract::rigidBody*>(obj))
+			if(auto rb = std::dynamic_pointer_cast<Abstract::rigidBody>(obj))
 			{
 				ObjectBase::character::block_window_frame(rb);
 			}

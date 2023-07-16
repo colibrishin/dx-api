@@ -36,7 +36,8 @@ namespace Fortress::Object
 	{
 		if (is_active())
 		{
-			const auto pos = Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(this);
+			const auto pos = Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(
+				std::dynamic_pointer_cast<object>(shared_from_this()));
 			Debug::Log(L"Ground pos" + std::to_wstring(pos.get_x()) + std::to_wstring(pos.get_y()));
 
 			const auto char_pos = Scene::SceneManager::get_active_scene()->get_camera()->get_offset();

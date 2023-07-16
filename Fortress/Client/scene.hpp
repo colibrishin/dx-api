@@ -21,35 +21,35 @@ namespace Fortress::Abstract
 		virtual void activate();
 		template <class T>
 		std::vector<T*> is_in_range(const Math::Vector2& top_left, const Math::Vector2& hit_box, float radius);
-		void add_game_object(LayerType layer_type, object* obj);
-		void remove_game_object(LayerType layer_type, object* obj);
+		void add_game_object(LayerType layer_type, std::shared_ptr<object> obj);
+		void remove_game_object(LayerType layer_type, const std::shared_ptr<object>& obj);
 		Camera* get_camera();
 
-		std::vector<object*> get_objects();
+		std::vector<std::shared_ptr<object>> get_objects();
 
 	protected:
 		Camera m_camera;
 		std::vector<Layer> m_layers;
-		std::vector<object*> m_objects{};
+		std::vector<std::shared_ptr<object>> m_objects{};
 	};
 
-	inline std::vector<object*> scene::get_objects()
+	inline std::vector<std::shared_ptr<object>> scene::get_objects()
 	{
 		return m_objects;
 	}
 
-	inline void scene::add_game_object(LayerType layer_type, object* obj)
+	inline void scene::add_game_object(LayerType layer_type, std::shared_ptr<object> obj)
 	{
 		m_layers[static_cast<unsigned int>(layer_type)].add_game_object(obj);
 		m_objects.push_back(obj);
 	}
 
-	inline void scene::remove_game_object(LayerType layer_type, object* obj)
+	inline void scene::remove_game_object(LayerType layer_type, const std::shared_ptr<object>& obj)
 	{
 		m_layers[static_cast<unsigned int>(layer_type)].remove_game_object(obj);
 		m_objects.erase(
 			std::remove_if(m_objects.begin(), m_objects.end(),
-				[this, obj](const object* p)
+				[this, obj](const std::shared_ptr<object>& p)
 			{
 				return p == obj;
 			}),

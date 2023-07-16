@@ -3,13 +3,14 @@
 #define BASEENTITY_HPP
 
 #include <string>
+#include <memory>
 
 namespace Fortress::Abstract
 {
 	/**
 	* \brief The basic information for entity, which includes base object, or scene, etc...
 	*/
-	class entity
+	class entity : public std::enable_shared_from_this<entity>
 	{
 	public:
 		entity() = delete;

@@ -17,13 +17,12 @@ namespace Fortress::Scene
 	{
 		scene::initialize();
 		m_ground = std::make_shared<Object::Ground>();
-		m_object = std::make_shared<Object::MissileCharacter>(
-			Object::MissileCharacter(L"Ball", {1.0f, 1.0f}, Math::left));
+		m_object = std::make_shared<Object::MissileCharacter>(L"Missile", Math::Vector2{1.0f, 1.0f}, Math::left);
 
-		add_game_object(Abstract::LayerType::Character, m_object.get());
-		add_game_object(Abstract::LayerType::Ground, m_ground.get());
+		add_game_object(Abstract::LayerType::Character, m_object);
+		add_game_object(Abstract::LayerType::Ground, m_ground);
 
-		m_camera.set_object(m_object.get());
+		m_camera.set_object(m_object);
 
 		m_object->set_disabled();
 		m_ground->set_disabled();

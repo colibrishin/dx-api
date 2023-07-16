@@ -4,7 +4,10 @@
 
 #include <vector>
 #include <string>
+
+#include "GifWrapper.hpp"
 #include "object.hpp"
+#include "Texture.hpp"
 
 namespace Fortress::Abstract
 {
@@ -36,10 +39,10 @@ namespace Fortress::Abstract
 
 		void initialize() override;
 		void update() override;
-		static void block_window_frame(rigidBody* target);
+		static void block_window_frame(const std::shared_ptr<rigidBody>& target);
 
-		virtual void on_collision(rigidBody* other);
-		static CollisionCode is_collision(const object* left, const object* right) noexcept;
+		virtual void on_collision(const std::shared_ptr<rigidBody>& other);
+		static CollisionCode is_collision(const std::shared_ptr<object>& left, const std::shared_ptr<object>& right) noexcept;
 
 		void move_down() override;
 		void move_left() override;
@@ -56,8 +59,15 @@ namespace Fortress::Abstract
 		bool update_reflection(CollisionCode code) noexcept;
 
 	protected:
-		rigidBody(const std::wstring& name, Math::Vector2 position, Math::Vector2 hitbox, Math::Vector2 velocity,
-		          float speed, float acceleration, bool gravity, bool clipping);
+		rigidBody(
+			const std::wstring& name,
+			const Math::Vector2& position, 
+			const Math::Vector2& hitbox,
+			const Math::Vector2& velocity,
+			const float& speed, 
+			const float& acceleration, 
+			const bool& gravity, 
+			const bool& clipping);
 		~rigidBody() override;
 		rigidBody(const rigidBody& other) = default;
 		virtual void move();

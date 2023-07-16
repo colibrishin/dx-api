@@ -123,14 +123,14 @@
     <ClInclude Include="LobbyScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="LoadingScene.h">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Resource.h">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="resource.hpp">
       <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

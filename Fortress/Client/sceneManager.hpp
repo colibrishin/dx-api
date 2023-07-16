@@ -13,21 +13,14 @@ namespace Fortress::Scene
 	{
 	public:
 		SceneManager() = default;
-
-		~SceneManager()
-		{
-			for (auto& [_, ptr] : m_scenes)
-			{
-				ptr.reset();
-			}
-		}
+		~SceneManager() = default;
 
 		static void initialize();
 		static void update();
 		static void render();
 
 		template <typename T>
-		static T* CreateScene();
+		static std::shared_ptr<T> CreateScene();
 		static void SetActive(const std::wstring& name);
 		static Abstract::scene* get_active_scene();
 
@@ -73,12 +66,12 @@ namespace Fortress::Scene
 	}
 
 	template <typename T>
-	T* SceneManager::CreateScene()
+	std::shared_ptr<T> SceneManager::CreateScene()
 	{
 		std::shared_ptr<T> scene = std::make_shared<T>();
 		m_scenes.emplace(scene->get_name(), scene);
 		scene->initialize();
-		return scene.get();
+		return scene;
 	}
 
 }

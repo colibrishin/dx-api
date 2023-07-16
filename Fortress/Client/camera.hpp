@@ -11,17 +11,17 @@ namespace Fortress
 	public:
 		void update();
 		void initialize();
-		void set_object(Abstract::object* obj);
+		void set_object(const std::shared_ptr<Abstract::object>& obj);
 		void restore_object();
-		Math::Vector2 get_relative_position(const Abstract::object* obj) const;
+		Math::Vector2 get_relative_position(const std::shared_ptr<Abstract::object>& obj) const;
 		Math::Vector2 get_offset() const;
-		Abstract::object* get_locked_object() const;
+		std::shared_ptr<Abstract::object> get_locked_object() const;
 
 	private:
 		Math::Vector2 m_window_size = {};
 		Math::Vector2 m_center_position = {};
-		Abstract::object* m_lock_target = nullptr;
-		Abstract::object* m_backup_target = nullptr;
+		std::shared_ptr<Abstract::object> m_lock_target = nullptr;
+		std::shared_ptr<Abstract::object> m_backup_target = nullptr;
 	};
 
 	inline void Camera::update()
@@ -39,7 +39,7 @@ namespace Fortress
 		m_lock_target = nullptr;
 	}
 
-	inline void Camera::set_object(Abstract::object* obj)
+	inline void Camera::set_object(const std::shared_ptr<Abstract::object>& obj)
 	{
 		m_backup_target = m_lock_target;
 		m_lock_target = obj;
@@ -50,7 +50,7 @@ namespace Fortress
 		m_lock_target = m_backup_target;
 	}
 
-	inline Math::Vector2 Camera::get_relative_position(const Abstract::object* obj) const
+	inline Math::Vector2 Camera::get_relative_position(const std::shared_ptr<Abstract::object>& obj) const
 	{
 		if(m_lock_target)
 		{
@@ -66,7 +66,7 @@ namespace Fortress
 		return m_center_position;
 	}
 
-	inline Abstract::object* Camera::get_locked_object() const
+	inline std::shared_ptr<Abstract::object> Camera::get_locked_object() const
 	{
 		return m_lock_target;
 	}

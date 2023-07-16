@@ -2,6 +2,8 @@
 #define OBJECT_HPP
 #pragma once
 
+#include <memory>
+
 #include "vector2.hpp"
 #include "debug.hpp"
 #include "math.h"

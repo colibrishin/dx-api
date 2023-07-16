@@ -14,6 +14,8 @@ using namespace Gdiplus;
 
 namespace Fortress
 {
+	constexpr int gif_timer_id = 8000;
+
 	class GifWrapper : public ImageWrapper
 	{
 	public:
@@ -43,7 +45,7 @@ namespace Fortress
 
 		std::function<void()> m_reserved_function;
 
-		inline static UINT used_timer_id = 8000;
+		inline static UINT used_timer_id = gif_timer_id;
 	};
 
 	inline bool GifWrapper::load()
@@ -111,6 +113,7 @@ namespace Fortress
 			if(m_reserved_function != nullptr) 
 			{
 				m_reserved_function();
+				m_reserved_function = nullptr;
 			}
 		}
 

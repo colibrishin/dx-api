@@ -6,9 +6,9 @@
 
 namespace Fortress::Abstract
 {
-	rigidBody::rigidBody(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox,
-	                            const Math::Vector2 velocity, const float speed, const float acceleration, 
-								const bool gravity, const bool clipping) :
+	rigidBody::rigidBody(const std::wstring& name, const Math::Vector2& position, const Math::Vector2& hitbox,
+	                            const Math::Vector2& velocity, const float& speed, const float& acceleration, 
+								const bool& gravity, const bool& clipping) :
 		object(name, position, hitbox),
 		m_velocity(velocity),
 		m_speed(speed),
@@ -35,19 +35,19 @@ namespace Fortress::Abstract
 		}
 
 		// gets the objects from active scene.
-		for (const auto right_r : Scene::SceneManager::get_active_scene()->get_objects())
+		for (const auto& right_r : Scene::SceneManager::get_active_scene()->get_objects())
 		{
 			// @todo: performance degrading. objects could contain others.
 			// check if object is rigid body.
-			rigidBody* rb = dynamic_cast<rigidBody*>(right_r);
+			std::shared_ptr<rigidBody> rb = std::dynamic_pointer_cast<rigidBody>(right_r);
 
-			if (!rb || this == right_r || !this->is_active() || !rb->is_active())
+			if (!rb || shared_from_this() == right_r || !this->is_active() || !rb->is_active())
 			{
 				continue;
 			}
 
 			// check collsion.
-			CollisionCode code = is_collision(this, right_r);
+			CollisionCode code = is_collision(std::dynamic_pointer_cast<object>(shared_from_this()), right_r);
 
 			if(code != CollisionCode::None)
 			{
@@ -70,7 +70,7 @@ namespace Fortress::Abstract
 		}
 	}
 
-	void rigidBody::block_window_frame(rigidBody* target)
+	void rigidBody::block_window_frame(const std::shared_ptr<rigidBody>& target)
 	{
 		if (target->get_right().get_x() > WinAPIHandles::get_window_width() ||
 			target->get_bottom().get_y()> WinAPIHandles::get_actual_max_y())
@@ -135,13 +135,13 @@ namespace Fortress::Abstract
 		m_velocity = {0, 0};
 	}
 
-	void rigidBody::on_collision(rigidBody* other)
+	void rigidBody::on_collision(const std::shared_ptr<rigidBody>& other)
 	{
 		
 	}
 
 
-	CollisionCode rigidBody::is_collision(const object* left, const object* right) noexcept
+	CollisionCode rigidBody::is_collision(const std::shared_ptr<object>& left, const std::shared_ptr<object>& right) noexcept
 	{
 		const auto diff = left->get_top_left() - right->get_top_left();
 
