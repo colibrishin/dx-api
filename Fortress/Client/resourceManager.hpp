@@ -12,6 +12,8 @@ namespace Fortress::Resource
 	class ResourceManager
 	{
 	public:
+		ResourceManager() = default;
+		~ResourceManager();
 		template <typename T>
 		static T* load(const std::wstring& name, const std::filesystem::path& path);
 		template <typename T>
@@ -19,6 +21,14 @@ namespace Fortress::Resource
 	private:
 		inline static std::map<std::wstring, std::shared_ptr<Abstract::Resource>> m_resources = {};
 	};
+
+	inline ResourceManager::~ResourceManager()
+	{
+		for (auto& resource : m_resources)
+		{
+			resource.second.reset();
+		}
+	}
 
 	template <typename T>
 	T* ResourceManager::load(const std::wstring& name, const std::filesystem::path& path)

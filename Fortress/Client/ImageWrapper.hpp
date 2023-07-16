@@ -33,7 +33,6 @@ namespace Fortress
 		Graphics* m_gdi_handle;
 		Math::Vector2 m_size;
 		Math::Vector2 m_offset;
-		ImageAttributes m_chroma_key;
 	};
 
 	inline void ImageWrapper::flip()
@@ -68,7 +67,7 @@ namespace Fortress
 				m_size.get_x(),
 				m_size.get_y(),
 				UnitPixel,
-				&m_chroma_key);
+				nullptr);
 		}
 	}
 
@@ -106,7 +105,6 @@ namespace Fortress
 		constexpr float range = 3.0f;
 		const auto magenta_high = Color(255, 255 / range,255);
 		const auto magenta_low = Color(255 / range, 0,255 / range);
-		m_chroma_key.SetColorKey(magenta_low, magenta_high, ColorAdjustTypeBitmap);  
 
 		return true;
 	}

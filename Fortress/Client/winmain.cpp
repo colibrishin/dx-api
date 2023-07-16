@@ -79,7 +79,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	if (msg.message == WM_QUIT)
 	{
-		// ** Cleanup
 	}
 
 	return static_cast<int>(msg.wParam);
@@ -150,6 +149,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 	}
 
 	ShowWindow(hWnd, nCmdShow);
+
 	application.initialize(hWnd, GetDC(hWnd));
 	// ** remember the mfc class
 	UpdateWindow(hWnd);

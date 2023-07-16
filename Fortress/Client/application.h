@@ -3,6 +3,8 @@
 #pragma once
 
 #include "common.h"
+#include "resourceManager.hpp"
+#include "sceneManager.hpp"
 #include "winapihandles.hpp"
 
 namespace Fortress
@@ -25,7 +27,10 @@ namespace Fortress
 		void render();
 
 	private:
+		Resource::ResourceManager m_resource_manager;
+		Scene::SceneManager m_scene_manager;
 		WinAPIHandles m_win_handles;
+
 		HWND m_hwnd;
 		HDC m_hdc;
 		HDC m_buffer_hdc;
