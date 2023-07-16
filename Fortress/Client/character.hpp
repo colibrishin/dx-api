@@ -30,6 +30,7 @@ namespace Fortress::ObjectBase
 		float get_charged_power() const;
 		virtual void move() override;
 		virtual void on_collision(const std::shared_ptr<rigidBody>& other) override;
+		virtual void on_nocollison() override;
 
 		void set_current_sprite(const std::wstring& name, const std::wstring& orientation);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);

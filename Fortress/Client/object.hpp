@@ -34,8 +34,8 @@ namespace Fortress::Abstract
 		__forceinline virtual object& operator+=(const Math::Vector2& vector);
 
 		bool is_active() const;
-		void set_disabled();
-		void set_enabled();
+		virtual void set_disabled();
+		virtual void set_enabled();
 
 		__forceinline Math::Vector2 get_top() const;
 		__forceinline Math::Vector2 get_bottom() const;

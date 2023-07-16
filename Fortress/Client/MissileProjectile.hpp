@@ -31,7 +31,6 @@ namespace Fortress::Object
 		}
 
 		void initialize() override;
-		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged) override;
 
 	private:
 		Math::Vector2 m_fired_position;
@@ -40,12 +39,6 @@ namespace Fortress::Object
 	inline void MissileProjectile::initialize()
 	{
 		projectile::initialize();
-	}
-
-	inline void MissileProjectile::fire(const Math::Vector2& position, const Math::Vector2& velocity,
-		const float charged)
-	{
-		projectile::fire(position, velocity, charged);
 	}
 }
 #endif // PRECISONPROJECTILE_HPP

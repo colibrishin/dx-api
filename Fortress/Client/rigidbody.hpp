@@ -29,7 +29,6 @@ namespace Fortress::Abstract
 	{
 	public:
 		Math::Vector2 m_velocity;
-		float m_speed;
 		float m_acceleration;
 
 		// rigidBody should be used with inheritance
@@ -42,7 +41,10 @@ namespace Fortress::Abstract
 		static void block_window_frame(const std::shared_ptr<rigidBody>& target);
 
 		virtual void on_collision(const std::shared_ptr<rigidBody>& other);
+		virtual void on_nocollison();
 		static CollisionCode is_collision(const std::shared_ptr<object>& left, const std::shared_ptr<object>& right) noexcept;
+
+		void set_speed(const float speed);
 
 		void move_down() override;
 		void move_left() override;
@@ -51,6 +53,7 @@ namespace Fortress::Abstract
 		virtual void stop();
 
 	private:
+		float m_speed;
 		float m_curr_speed;
 		bool m_bGravity{};
 		bool m_bClipping{};
@@ -72,6 +75,12 @@ namespace Fortress::Abstract
 		~rigidBody() override;
 		rigidBody(const rigidBody& other) = default;
 		virtual void move();
+
+		void reset_current_speed();
+		void reset_current_gravity_speed();
+		void disable_gravity();
+		void enable_gravity();
+
 
 		float m_gravity_speed;
 		float m_gravity_acceleration;

@@ -62,7 +62,7 @@ namespace Fortress::Object
 
 		if(charged <= 0.0f)
 		{
-			charged = 1.0f;
+			charged = 10.0f;
 		}
 
 		character::shoot();

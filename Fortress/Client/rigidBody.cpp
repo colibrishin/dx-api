@@ -34,6 +34,8 @@ namespace Fortress::Abstract
 			return;
 		}
 
+		bool collided = false;
+
 		// gets the objects from active scene.
 		for (const auto& right_r : Scene::SceneManager::get_active_scene()->get_objects())
 		{
@@ -57,8 +59,15 @@ namespace Fortress::Abstract
 					update_reflection(code);
 				}
 
+				collided = true;
+
 				on_collision(rb);
 			}
+		}
+
+		if(!collided)
+		{
+			on_nocollison();
 		}
 
 		move();
@@ -103,6 +112,10 @@ namespace Fortress::Abstract
 			target->m_velocity = target->m_velocity.reflect_y();
 			target->m_position -= {0.0f, 1.0f};
 		}
+	}
+
+	void rigidBody::on_nocollison()
+	{
 	}
 
 	rigidBody::~rigidBody()
@@ -208,6 +221,32 @@ namespace Fortress::Abstract
 		return CollisionCode::None;
 	}
 
+	void rigidBody::reset_current_speed()
+	{
+		Debug::Log(L"Speed reset at " + get_name());
+		m_curr_speed = 0;
+	}
+
+	void rigidBody::reset_current_gravity_speed()
+	{
+		m_gravity_speed = 0;
+	}
+
+	void rigidBody::disable_gravity()
+	{
+		m_bGravity = false;
+	}
+
+	void rigidBody::enable_gravity()
+	{
+		m_bGravity = true;
+	}
+
+	void rigidBody::set_speed(const float speed)
+	{
+		m_speed = speed;
+	}
+
 	void rigidBody::apply_gravity()
 	{
 		// free-falling
@@ -260,7 +299,7 @@ namespace Fortress::Abstract
 
 		if (m_velocity == Math::Vector2{0.0f, 0.0f})
 		{
-			m_curr_speed = 0;
+			reset_current_speed();
 			return;
 		}
 
@@ -268,5 +307,7 @@ namespace Fortress::Abstract
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
 		*this += m_velocity * m_curr_speed * DeltaTime::get_deltaTime();
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
+
+		Debug::Log(L"Moving " + get_name() + std::to_wstring(m_curr_speed));
 	}
 }

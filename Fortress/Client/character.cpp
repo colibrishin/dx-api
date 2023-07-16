@@ -101,16 +101,7 @@ namespace Fortress::ObjectBase
 			set_current_sprite(L"charging", m_offset == Math::left ? L"left" : L"right");
 		}
 
-		// @todo: somewhat like quadratic function
-		static float interval = 0.0f;
-
-		if(interval >= 0.2f)
-		{
-			m_power = m_power * m_power + 0.0001f;
-			interval = 0.0f;
-		}
-
-		interval += DeltaTime::get_deltaTime();
+		m_power += 100.0f * DeltaTime::get_deltaTime();
 
 		Debug::Log(L"Power : " + std::to_wstring(m_power));
 	}
@@ -137,13 +128,20 @@ namespace Fortress::ObjectBase
 			if(ground)
 			{
 				Debug::Log(L"Character hits the ground");
-				m_gravity_speed = 0.0f;
+				reset_current_gravity_speed();
+				disable_gravity();
 				m_bGrounded = true;
 				return;
 			}
 		}
 
 		rigidBody::on_collision(other);
+	}
+
+	void ObjectBase::character::on_nocollison()
+	{
+		enable_gravity();
+		m_bGrounded = false;
 	}
 
 	void character::set_current_sprite(const std::wstring& name, const std::wstring& orientation)

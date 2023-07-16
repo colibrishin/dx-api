@@ -26,7 +26,6 @@ namespace Fortress::ObjectBase
 		{
 			m_gravity_speed = 0.0f;
 			set_disabled();
-			// @todo: do a "thing" if a projectile is a explosive.
 		}
 
 		rigidBody::on_collision(other);
@@ -38,6 +37,9 @@ namespace Fortress::ObjectBase
 		Scene::SceneManager::get_active_scene()->add_game_object(
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 		Scene::SceneManager::get_active_scene()->get_camera()->set_object(std::dynamic_pointer_cast<object>(shared_from_this()));
+
+		reset_current_gravity_speed();
+		reset_current_speed();
 		set_enabled();
 	}
 
@@ -46,6 +48,9 @@ namespace Fortress::ObjectBase
 		Scene::SceneManager::get_active_scene()->remove_game_object(
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 		Scene::SceneManager::get_active_scene()->get_camera()->restore_object();
+
+		reset_current_gravity_speed();
+		reset_current_speed();
 		set_disabled();
 	}
 
@@ -94,7 +99,7 @@ namespace Fortress::ObjectBase
 	{
 		const auto x_velocity = velocity * Math::Vector2{1, 0};
 
-		m_speed = charged;
+		set_speed(charged);
 
 		if(x_velocity.get_x() < 0)
 		{
