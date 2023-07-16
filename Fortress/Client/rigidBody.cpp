@@ -7,9 +7,9 @@
 namespace Fortress::Abstract
 {
 	rigidBody::rigidBody(const std::wstring& name, const Math::Vector2& position, const Math::Vector2& hitbox,
-	                            const Math::Vector2& velocity, const float& speed, const float& acceleration, 
+	                            const Math::Vector2& velocity, const float& mass, const float& speed, const float& acceleration, 
 								const bool& gravity, const bool& clipping) :
-		object(name, position, hitbox),
+		object(name, position, hitbox, mass),
 		m_velocity(velocity),
 		m_speed(speed),
 		m_acceleration(acceleration),
@@ -225,7 +225,7 @@ namespace Fortress::Abstract
 		Debug::Log(L"Object is floating");
 
 		m_gravity_speed += m_gravity_acceleration * DeltaTime::get_deltaTime() * 0.5f;
-		*this += {0.0f, m_gravity_speed * DeltaTime::get_deltaTime()};
+		*this += {0.0f, get_mass() * m_gravity_speed * DeltaTime::get_deltaTime()};
 		m_gravity_speed += m_gravity_acceleration * DeltaTime::get_deltaTime() * 0.5f;
 	}
 

@@ -46,14 +46,22 @@ namespace Fortress::Abstract
 		__forceinline Math::Vector2 get_bottom_left() const;
 		__forceinline Math::Vector2 get_bottom_right() const;
 		__forceinline Math::Vector2 get_center() const;
+
+		__forceinline float get_mass() const;
 	protected:
-		object(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox);
+		object(
+			const std::wstring& name, 
+			Math::Vector2 position, 
+			Math::Vector2 hitbox, 
+			const float& mass);
+
 
 		__forceinline virtual void initialize();
 		__forceinline ~object() override;
 		__forceinline object(const object& other);
 
 	private:
+		float m_mass;
 		bool m_bActive;
 	};
 }
@@ -118,7 +126,11 @@ namespace Fortress::Abstract
 		return *this;
 	}
 
-	inline object::object(const std::wstring& name, const Math::Vector2 position, const Math::Vector2 hitbox): entity(name), m_hitbox(hitbox), m_position(position)
+	inline object::object(
+		const std::wstring& name, 
+		const Math::Vector2 position, 
+		const Math::Vector2 hitbox,
+		const float& mass): entity(name), m_hitbox(hitbox), m_position(position), m_mass(mass)
 	{
 		object::initialize();
 	}
@@ -194,6 +206,11 @@ namespace Fortress::Abstract
 	inline Math::Vector2 object::get_center() const
 	{
 		return m_position + m_hitbox / 2;
+	}
+
+	inline float object::get_mass() const
+	{
+		return m_mass;
 	}
 }
 #endif // OBJECT_HPP

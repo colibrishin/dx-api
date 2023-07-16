@@ -17,7 +17,8 @@ namespace Fortress::Object
 			L"Precision Projectile",
 			L"missile",
 			{}, 
-			Math::identity, 
+			Math::identity,
+			5.0f,
 			2.0f, 
 			0.0f, 
 			10.0f)
@@ -30,7 +31,7 @@ namespace Fortress::Object
 		}
 
 		void initialize() override;
-		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged) override;;
+		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged) override;
 
 	private:
 		Math::Vector2 m_fired_position;

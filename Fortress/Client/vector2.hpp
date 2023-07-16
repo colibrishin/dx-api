@@ -45,7 +45,8 @@ namespace Fortress::Math
 
 		__forceinline float magnitude() const;
 		__forceinline float inner_product(const Vector2& other) const;
-		__forceinline float inner_angle(const Vector2& other) const;
+		__forceinline float global_inner_angle(const Vector2& other) const;
+		__forceinline float local_inner_angle(const Vector2& other) const;
 		__forceinline float dot_product(const Vector2& other) const;
 		__forceinline float global_angle() const noexcept;
 		__forceinline float get_x() const noexcept;
@@ -113,9 +114,14 @@ namespace Fortress::Math
 		return dot_product(other) / (magnitude() * other.magnitude());
 	}
 
-	__forceinline float Vector2::inner_angle(const Vector2& other) const
+	__forceinline float Vector2::global_inner_angle(const Vector2& other) const
 	{
 		return std::acosf(inner_product(other));
+	}
+
+	inline float Vector2::local_inner_angle(const Vector2& other) const
+	{
+		return std::atanf((m_y - other.m_y) / (m_x - other.m_x));
 	}
 
 	/**

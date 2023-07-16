@@ -32,10 +32,11 @@ namespace Fortress::ObjectBase
 			const std::wstring& short_name,
 			const Math::Vector2& position,
 			const Math::Vector2& velocity,
+			const float mass,
 			const float speed,
 			const float acceleration,
 			const float damage) :
-			rigidBody(name, position, {}, velocity, speed, acceleration, true, true),
+			rigidBody(name, position, {}, velocity, mass, speed, acceleration, true, true),
 			m_damage(damage),
 			m_texture(short_name)
 		{

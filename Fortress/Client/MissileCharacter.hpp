@@ -22,6 +22,7 @@ namespace Fortress::Object
 				position,
 				orientation,
 				{0.0f, 0.0f},
+				1.0f,
 				500.0f,
 				0.0f,
 				ObjectBase::character_full_hp,
@@ -59,16 +60,27 @@ namespace Fortress::Object
 	{
 		float charged = get_charged_power();
 
-		if(charged < 0)
+		if(charged <= 0.0f)
 		{
-			charged = 10.0f;
+			charged = 1.0f;
 		}
 
 		character::shoot();
 
+		Math::Vector2 angle{};
+
+		if(get_offset() == Math::left)
+		{
+			angle = {-std::cosf(Math::to_radian(45.0f)), -std::cosf(Math::to_radian(45.0f))};
+		}
+		else
+		{
+			angle = {std::cosf(Math::to_radian(45.0f)), -std::cosf(Math::to_radian(45.0f))};
+		}
+
 		m_base_projectile->fire(
 			get_offset() == Math::left ? get_top_left() : get_top_right(), 
-			get_offset(), 
+			angle, 
 			charged);
 	}
 }

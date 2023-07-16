@@ -27,7 +27,7 @@ namespace Fortress::ObjectBase
 		{
 			set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
 		});
-		m_power = 0.0f;
+		m_power = 1.0f;
 	}
 
 	float character::get_charged_power() const
@@ -75,6 +75,20 @@ namespace Fortress::ObjectBase
 			Debug::Log(L"Char pos" + std::to_wstring(pos.get_x()) + std::to_wstring(pos.get_y()));
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
+
+			Debug::Log(L"Angle : " +  std::to_wstring(Scene::SceneManager::get_active_scene()->get_camera()->get_offset().local_inner_angle(pos)));
+
+			// c
+			Debug::draw_line(pos, Scene::SceneManager::get_active_scene()->get_camera()->get_offset());
+
+			// t
+			Debug::draw_line(
+				Scene::SceneManager::get_active_scene()->get_camera()->get_offset(), 
+				{Scene::SceneManager::get_active_scene()->get_camera()->get_offset().get_x(), pos.get_y()});
+
+			// s
+			Debug::draw_line(
+				{Scene::SceneManager::get_active_scene()->get_camera()->get_offset().get_x(), pos.get_y()}, pos);
 		}
 
 		rigidBody::render();
@@ -86,7 +100,19 @@ namespace Fortress::ObjectBase
 		{
 			set_current_sprite(L"charging", m_offset == Math::left ? L"left" : L"right");
 		}
-		m_power += 50.0f * DeltaTime::get_deltaTime();
+
+		// @todo: somewhat like quadratic function
+		static float interval = 0.0f;
+
+		if(interval >= 0.2f)
+		{
+			m_power = m_power * m_power + 0.0001f;
+			interval = 0.0f;
+		}
+
+		interval += DeltaTime::get_deltaTime();
+
+		Debug::Log(L"Power : " + std::to_wstring(m_power));
 	}
 
 	void character::move()
@@ -164,8 +190,8 @@ namespace Fortress::ObjectBase
 
 	character::character(const character& other) :
 		rigidBody(other), m_hp(other.m_hp), m_mp(other.m_mp),
-		m_offset(other.m_offset), m_texture(other.m_texture.get_name()),
-		m_current_sprite(other.m_current_sprite)
+		m_power(other.m_power), m_bGrounded(other.m_bGrounded),
+		m_offset(other.m_offset), m_texture(other.m_texture.get_name()), m_current_sprite(other.m_current_sprite)
 	{
 		character::initialize();
 	}

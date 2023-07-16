@@ -92,21 +92,24 @@ namespace Fortress::ObjectBase
 		const Math::Vector2& velocity,
 		const float charged)
 	{
-		m_position = {position.get_x() + m_hitbox.get_x() + 2.0f, position.get_y() - m_hitbox.get_y() - 2.0f};
-		m_speed = 10.0f * charged;
+		const auto x_velocity = velocity * Math::Vector2{1, 0};
 
-		if(velocity * Math::Vector2{1, 0} == Math::left)
+		m_speed = charged;
+
+		if(x_velocity.get_x() < 0)
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"left");
+			m_position = Math::Vector2{position.get_x() - m_hitbox.get_x() - 5.0f, position.get_y() - 5.0f};
 		}
-		else if (velocity * Math::Vector2{1, 0} == Math::right)
+		else if (x_velocity.get_x() > 0)
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"right");
+			m_position = Math::Vector2{position.get_x() + 5.0f, position.get_y() - 5.0f};
 		}
 
 		m_current_sprite->play();
 		m_hitbox = m_current_sprite->get_hitbox();
-		m_velocity = Math::identity * Math::Vector2{velocity.get_x(), -1};
+		m_velocity = velocity;
 		focus_this();
 	}
 }

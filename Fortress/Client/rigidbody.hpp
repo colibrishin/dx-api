@@ -64,6 +64,7 @@ namespace Fortress::Abstract
 			const Math::Vector2& position, 
 			const Math::Vector2& hitbox,
 			const Math::Vector2& velocity,
+			const float& mass,
 			const float& speed, 
 			const float& acceleration, 
 			const bool& gravity, 

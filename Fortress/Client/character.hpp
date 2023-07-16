@@ -48,8 +48,8 @@ namespace Fortress::ObjectBase
 	private:
 		float m_hp;
 		float m_mp;
-		float m_power{};
-		bool m_bGrounded{};
+		float m_power;
+		bool m_bGrounded;
 
 		Math::Vector2 m_offset;
 
@@ -63,14 +63,15 @@ namespace Fortress::ObjectBase
 			const Math::Vector2 offset,
 			const Math::Vector2 position,
 			const Math::Vector2 velocity,
+			const float mass,
 			const float speed,
 			const float acceleration,
 			const int hp,
 			const int mp)
-			: rigidBody(name, position, {}, velocity, speed, acceleration, true, true),
+			: rigidBody(name, position, {}, velocity, mass, speed, acceleration, true, true),
 			  m_hp(hp),
 			  m_mp(mp),
-		      m_power(0.0f),
+		      m_power(1.0f),
 		      m_bGrounded(false),
 			  m_offset(offset),
 			  m_texture(short_name),

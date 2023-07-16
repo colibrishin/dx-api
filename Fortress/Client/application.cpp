@@ -41,13 +41,13 @@ namespace Fortress
 			return;
 		}
 
-		Debug::draw_line(
+		/*Debug::draw_line(
 			{static_cast<float>(WinAPIHandles::get_window_width() / 2), 0}, 
 			{static_cast<float>(WinAPIHandles::get_window_width() / 2), static_cast<float>(WinAPIHandles::get_actual_max_y())});
 
 		Debug::draw_line(
 			{static_cast<float>(0), static_cast<float>(WinAPIHandles::get_actual_max_y() / 2)}, 
-			{static_cast<float>(WinAPIHandles::get_window_width()), static_cast<float>(WinAPIHandles::get_actual_max_y() / 2)});
+			{static_cast<float>(WinAPIHandles::get_window_width()), static_cast<float>(WinAPIHandles::get_actual_max_y() / 2)})*/;
 
 		DeltaTime::update();
 		Input::update();
