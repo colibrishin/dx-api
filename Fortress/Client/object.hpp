@@ -20,6 +20,9 @@ namespace Fortress::Abstract
 		object() = delete;
 		object& operator=(const object& other) = default;
 		object& operator=(object&& other) = default;
+		object(const object& other) = default;
+		object(object&& other) = default;
+		~object() override = default;
 
 		__forceinline virtual void render();
 		virtual void update();
@@ -51,14 +54,11 @@ namespace Fortress::Abstract
 	protected:
 		object(
 			const std::wstring& name, 
-			Math::Vector2 position, 
-			Math::Vector2 hitbox, 
-			const float& mass);
-
+			const Math::Vector2& position, 
+			const Math::Vector2& hitbox, 
+			const float mass);
 
 		__forceinline virtual void initialize();
-		__forceinline ~object() override;
-		__forceinline object(const object& other);
 
 	private:
 		float m_mass;
@@ -128,24 +128,11 @@ namespace Fortress::Abstract
 
 	inline object::object(
 		const std::wstring& name, 
-		const Math::Vector2 position, 
-		const Math::Vector2 hitbox,
-		const float& mass): entity(name), m_hitbox(hitbox), m_position(position), m_mass(mass)
+		const Math::Vector2& position, 
+		const Math::Vector2& hitbox,
+		const float mass): entity(name), m_hitbox(hitbox), m_position(position), m_mass(mass)
 	{
 		object::initialize();
-	}
-
-	object::~object()
-	{
-		entity::~entity();
-	}
-
-	inline object::object(const object& other) :
-		entity(other),
-		m_hitbox(other.m_hitbox),
-		m_position(other.m_position),
-		m_bActive(true)
-	{
 	}
 
 	inline bool object::is_active() const

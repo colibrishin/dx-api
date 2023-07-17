@@ -22,11 +22,16 @@ namespace Fortress
 		GifWrapper(const std::wstring& name, const std::filesystem::path& path, const Math::Vector2& offset);
 		GifWrapper& operator=(const GifWrapper& other) = default;
 		GifWrapper& operator=(GifWrapper&& other) = default;
+		GifWrapper(const GifWrapper& other) = default;
+		GifWrapper(GifWrapper&& other) = default;
 		virtual ~GifWrapper() override;
 
 		virtual bool load() override;
 		virtual void initialize();
+		static void cleanup();
+
 		void play(const std::function<void()>& on_end = {});
+		void stop() const;
 		void OnTimer();
 		virtual void flip() override;
 		virtual void rotate(const float angle);
@@ -78,6 +83,18 @@ namespace Fortress
 
 	inline void GifWrapper::initialize()
 	{
+		registered_gifs[m_timer_id] = this;
+	}
+
+	inline void GifWrapper::cleanup()
+	{
+		for(const auto& f : registered_gifs)
+		{
+			f.second->stop();
+			f.second->ImageWrapper::cleanup();
+		}
+
+		registered_gifs.clear();
 	}
 
 	inline void GifWrapper::play(const std::function<void()>& on_end)
@@ -93,9 +110,13 @@ namespace Fortress
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
 		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[0], nullptr);
-		registered_gifs[m_timer_id] = this;
 
 		++m_current_frame;
+	}
+
+	inline void GifWrapper::stop() const
+	{
+		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
 	}
 
 	inline void GifWrapper::OnTimer()
@@ -106,7 +127,6 @@ namespace Fortress
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
 		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[m_current_frame] * 10, nullptr);
-		registered_gifs[m_timer_id] = this;
 
 		if(m_current_frame == m_frame_count - 1)
 		{
@@ -136,18 +156,29 @@ namespace Fortress
 		m_gdi_handle->ResetTransform();
 	}
 
-	inline GifWrapper::GifWrapper(const std::wstring& name, const std::filesystem::path& path, const Math::Vector2& offset) :
-		ImageWrapper(name, path, offset), m_dimension_count(0), m_frame_count(0), m_total_buffer(0), m_current_frame(0),
-		m_str_guid{}, m_timer_id(used_timer_id++)
+	inline GifWrapper::GifWrapper(
+		const std::wstring& name,
+		const std::filesystem::path& path, 
+		const Math::Vector2& offset) :
+		ImageWrapper(name, path, offset),
+		m_dimension_count(0),
+		m_frame_count(0),
+		m_total_buffer(0),
+		m_current_frame(0),
+		m_str_guid{},
+		m_timer_id(used_timer_id++)
 	{
 		GifWrapper::initialize();
 	}
 
 	inline GifWrapper::~GifWrapper()
 	{
+		stop();
+		if(registered_gifs.find(m_timer_id) != registered_gifs.end())
+		{
+			registered_gifs.erase(m_timer_id);
+		}
 		ImageWrapper::~ImageWrapper();
-
-		registered_gifs.erase(m_timer_id);
 	}
 }
 #endif // GIFWRAPPER_HPP

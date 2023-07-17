@@ -19,7 +19,10 @@ namespace Fortress
 		{
 		}
 
-		~Application() = default;
+		~Application()
+		{
+			Resource::ResourceManager::cleanup();
+		}
 		Application& operator=(const Application&) = delete;
 
 		void initialize(HWND, HDC);

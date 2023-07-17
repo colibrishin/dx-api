@@ -34,9 +34,11 @@ namespace Fortress::ObjectBase
 
 	void projectile::focus_this()
 	{
-		Scene::SceneManager::get_active_scene()->add_game_object(
+		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
+
+		scene_ptr->add_game_object(
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
-		Scene::SceneManager::get_active_scene()->get_camera()->set_object(std::dynamic_pointer_cast<object>(shared_from_this()));
+		scene_ptr->get_camera().lock()->set_object(std::dynamic_pointer_cast<object>(shared_from_this()));
 
 		reset_current_gravity_speed();
 		reset_current_speed();
@@ -45,9 +47,11 @@ namespace Fortress::ObjectBase
 
 	void projectile::unfocus_this()
 	{
-		Scene::SceneManager::get_active_scene()->remove_game_object(
+		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
+
+		scene_ptr->remove_game_object(
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
-		Scene::SceneManager::get_active_scene()->get_camera()->restore_object();
+		scene_ptr->get_camera().lock()->restore_object();
 
 		reset_current_gravity_speed();
 		reset_current_speed();
@@ -59,17 +63,18 @@ namespace Fortress::ObjectBase
 		if(is_active())
 		{
 			Math::Vector2 pos{};
+			const auto camera_ptr = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
 
-			if(Scene::SceneManager::get_active_scene()->get_camera()->get_locked_object() == shared_from_this())
+			if(camera_ptr->get_locked_object().lock() == shared_from_this())
 			{
-				pos = Scene::SceneManager::get_active_scene()->get_camera()->get_offset();
+				pos = camera_ptr->get_offset();
 			}
 			else
 			{
-				pos = Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(std::dynamic_pointer_cast<object>(shared_from_this()));	
+				pos = camera_ptr->get_relative_position(std::dynamic_pointer_cast<object>(shared_from_this()));	
 			}
 
-			m_current_sprite->render(pos, m_hitbox);
+			m_current_sprite.lock()->render(pos, m_hitbox);
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
 		}
@@ -88,7 +93,7 @@ namespace Fortress::ObjectBase
 			L"projectile",
 			m_velocity * Math::Vector2{1, 0} == Math::left ? L"left" : L"right");
 
-		m_hitbox = m_current_sprite->get_hitbox();
+		m_hitbox = m_current_sprite.lock()->get_hitbox();
 		rigidBody::initialize();
 	}
 
@@ -112,8 +117,8 @@ namespace Fortress::ObjectBase
 			m_position = Math::Vector2{position.get_x() + 5.0f, position.get_y() - 5.0f};
 		}
 
-		m_current_sprite->play();
-		m_hitbox = m_current_sprite->get_hitbox();
+		m_current_sprite.lock()->play();
+		m_hitbox = m_current_sprite.lock()->get_hitbox();
 		m_velocity = velocity;
 		focus_this();
 	}

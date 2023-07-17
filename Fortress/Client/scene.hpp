@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "camera.hpp"
+#include "cameraManager.hpp"
 #include "entity.hpp"
 #include "layer.hpp"
 
@@ -19,46 +20,51 @@ namespace Fortress::Abstract
 		virtual void render();
 		virtual void deactivate();
 		virtual void activate();
+
 		template <class T>
-		std::vector<T*> is_in_range(const Math::Vector2& top_left, const Math::Vector2& hit_box, float radius);
-		void add_game_object(LayerType layer_type, std::shared_ptr<object> obj);
-		void remove_game_object(LayerType layer_type, const std::shared_ptr<object>& obj);
-		Camera* get_camera();
+		std::vector<std::weak_ptr<T>> is_in_range(
+			const Math::Vector2& top_left, 
+			const Math::Vector2& hit_box, 
+			float radius);
 
-		std::vector<std::shared_ptr<object>> get_objects();
+		void add_game_object(LayerType layer_type, const std::weak_ptr<object>& obj);
+		void remove_game_object(LayerType layer_type, const std::weak_ptr<object>& obj);
+		std::weak_ptr<Camera> get_camera();
 
-	protected:
-		Camera m_camera;
+		std::vector<std::weak_ptr<object>> get_objects();
+
+	private:
+		std::weak_ptr<Camera> m_camera;
+		std::vector<std::weak_ptr<object>> m_objects{};
 		std::vector<Layer> m_layers;
-		std::vector<std::shared_ptr<object>> m_objects{};
 	};
 
-	inline std::vector<std::shared_ptr<object>> scene::get_objects()
+	inline std::vector<std::weak_ptr<object>> scene::get_objects()
 	{
 		return m_objects;
 	}
 
-	inline void scene::add_game_object(LayerType layer_type, std::shared_ptr<object> obj)
+	inline void scene::add_game_object(LayerType layer_type, const std::weak_ptr<object>& obj)
 	{
 		m_layers[static_cast<unsigned int>(layer_type)].add_game_object(obj);
 		m_objects.push_back(obj);
 	}
 
-	inline void scene::remove_game_object(LayerType layer_type, const std::shared_ptr<object>& obj)
+	inline void scene::remove_game_object(LayerType layer_type, const std::weak_ptr<object>& obj)
 	{
 		m_layers[static_cast<unsigned int>(layer_type)].remove_game_object(obj);
 		m_objects.erase(
 			std::remove_if(m_objects.begin(), m_objects.end(),
-				[this, obj](const std::shared_ptr<object>& p)
+				[this, obj](const std::weak_ptr<object>& p)
 			{
-				return p == obj;
+				return p.lock() == obj.lock();
 			}),
 			m_objects.end());
 	}
 
-	inline Camera* scene::get_camera()
+	inline std::weak_ptr<Camera> scene::get_camera()
 	{
-		return &m_camera;
+		return m_camera;
 	}
 
 	inline scene::scene(const std::wstring& name):
@@ -75,12 +81,16 @@ namespace Fortress::Abstract
 			m_layers.emplace_back(static_cast<LayerType>(i));
 		}
 
-		m_camera.initialize();
+		m_camera = CameraManager::create_camera<Camera>();
+		m_camera.lock()->initialize();
 	}
 
 	inline void scene::update()
 	{
-		m_camera.update();
+		if(const auto ptr = m_camera.lock())
+		{
+			ptr->update();
+		}
 
 		for(const auto& l : m_layers)
 		{
@@ -113,12 +123,12 @@ namespace Fortress::Abstract
 	}
 
 	template <typename T>
-	std::vector<T*> scene::is_in_range(
+	std::vector<std::weak_ptr<T>> scene::is_in_range(
 		const Math::Vector2& top_left,
 		const Math::Vector2& hit_box,
 		const float radius)
 	{
-		std::vector<T*> ret = {};
+		std::vector<std::weak_ptr<T>> ret = {};
 
 		static_assert(std::is_base_of_v<object, T>);
 
@@ -129,15 +139,17 @@ namespace Fortress::Abstract
 
 		for (const auto obj : m_objects)
 		{
-			if (typeid(obj) != typeid(T) || !obj->is_active())
+			const auto ptr = obj.lock();
+
+			if (typeid(obj) != typeid(T) || !ptr->is_active())
 			{
 				continue;
 			}
 
-			if (obj->m_position.get_x() <= mid_point.get_x() + radius &&
-				obj->m_position.get_x() >= mid_point.get_x() - radius &&
-				obj->m_position.get_y() <= mid_point.get_y() + radius &&
-				obj->m_position.get_y() >= mid_point.get_y() - radius)
+			if (ptr->m_position.get_x() <= mid_point.get_x() + radius &&
+				ptr->m_position.get_x() >= mid_point.get_x() - radius &&
+				ptr->m_position.get_y() <= mid_point.get_y() + radius &&
+				ptr->m_position.get_y() >= mid_point.get_y() - radius)
 			{
 				ret.push_back(obj);
 			}

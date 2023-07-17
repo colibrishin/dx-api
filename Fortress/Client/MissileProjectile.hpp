@@ -25,10 +25,12 @@ namespace Fortress::Object
 		{
 			MissileProjectile::initialize();
 		}
-		~MissileProjectile() override
-		{
-			projectile::~projectile();
-		}
+
+		MissileProjectile& operator=(const MissileProjectile& other) = default;
+		MissileProjectile& operator=(MissileProjectile&& other) = default;
+		MissileProjectile(const MissileProjectile& other) = default;
+		MissileProjectile(MissileProjectile&& other) = default;
+		~MissileProjectile() override = default;
 
 		void initialize() override;
 

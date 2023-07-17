@@ -8,7 +8,7 @@ namespace Fortress::ObjectBase
 {
 	void character::initialize()
 	{
-		m_hitbox = m_texture.get_image(L"idle", L"left")->get_hitbox();
+		m_hitbox = m_texture.get_image(L"idle", L"left").lock()->get_hitbox();
 		set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
 		rigidBody::initialize();
 	}
@@ -23,7 +23,7 @@ namespace Fortress::ObjectBase
 		set_current_sprite(L"fire", m_offset == Math::left ? L"left" : L"right");
 
 		// @todo: maybe queue?
-		m_current_sprite->play([this]()
+		m_current_sprite.lock()->play([this]()
 		{
 			set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
 		});
@@ -45,11 +45,6 @@ namespace Fortress::ObjectBase
 		return m_mp / static_cast<float>(character_full_mp);
 	}
 
-	character::~character()
-	{
-		rigidBody::~rigidBody();
-	}
-
 	void character::update()
 	{
 		rigidBody::update();
@@ -61,34 +56,37 @@ namespace Fortress::ObjectBase
 
 		if (is_active())
 		{
-			if(Scene::SceneManager::get_active_scene()->get_camera()->get_locked_object() == std::dynamic_pointer_cast<object>(shared_from_this()))
+			const auto camera_ptr = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
+
+			if(camera_ptr->get_locked_object().lock() == std::dynamic_pointer_cast<object>(shared_from_this()))
 			{
-				pos = Scene::SceneManager::get_active_scene()->get_camera()->get_offset();
+				pos = camera_ptr->get_offset();
 			}
 			else
 			{
-				pos = Scene::SceneManager::get_active_scene()->get_camera()->get_relative_position(std::dynamic_pointer_cast<object>(shared_from_this()));
+				pos = camera_ptr->get_relative_position(
+					std::dynamic_pointer_cast<object>(shared_from_this()));
 			}
 
-			m_current_sprite->render(pos, m_hitbox);
+			m_current_sprite.lock()->render(pos, m_hitbox);
 
 			Debug::Log(L"Char pos" + std::to_wstring(pos.get_x()) + std::to_wstring(pos.get_y()));
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
 
-			Debug::Log(L"Angle : " +  std::to_wstring(Scene::SceneManager::get_active_scene()->get_camera()->get_offset().local_inner_angle(pos)));
+			Debug::Log(L"Angle : " +  std::to_wstring(camera_ptr->get_offset().local_inner_angle(pos)));
 
 			// c
-			Debug::draw_line(pos, Scene::SceneManager::get_active_scene()->get_camera()->get_offset());
+			Debug::draw_line(pos, camera_ptr->get_offset());
 
 			// t
 			Debug::draw_line(
-				Scene::SceneManager::get_active_scene()->get_camera()->get_offset(), 
-				{Scene::SceneManager::get_active_scene()->get_camera()->get_offset().get_x(), pos.get_y()});
+				camera_ptr->get_offset(), 
+				{camera_ptr->get_offset().get_x(), pos.get_y()});
 
 			// s
 			Debug::draw_line(
-				{Scene::SceneManager::get_active_scene()->get_camera()->get_offset().get_x(), pos.get_y()}, pos);
+				{camera_ptr->get_offset().get_x(), pos.get_y()}, pos);
 		}
 
 		rigidBody::render();
@@ -147,18 +145,18 @@ namespace Fortress::ObjectBase
 	void character::set_current_sprite(const std::wstring& name, const std::wstring& orientation)
 	{
 		m_current_sprite = m_texture.get_image(name, orientation);
-		m_current_sprite->play();
+		m_current_sprite.lock()->play();
 	}
 
 	void character::set_sprite_offset(const std::wstring& name, const std::wstring& orientation,
 		const Math::Vector2& offset)
 	{
-		m_texture.get_image(name, orientation)->set_offset(offset);
+		m_texture.get_image(name, orientation).lock()->set_offset(offset);
 	}
 
 	const std::wstring& character::get_current_sprite_name() const
 	{
-		return m_current_sprite->get_name();
+		return m_current_sprite.lock()->get_name();
 	}
 
 	Math::Vector2 character::get_offset() const
@@ -184,13 +182,5 @@ namespace Fortress::ObjectBase
 	{
 		set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
 		rigidBody::stop();
-	}
-
-	character::character(const character& other) :
-		rigidBody(other), m_hp(other.m_hp), m_mp(other.m_mp),
-		m_power(other.m_power), m_bGrounded(other.m_bGrounded),
-		m_offset(other.m_offset), m_texture(other.m_texture.get_name()), m_current_sprite(other.m_current_sprite)
-	{
-		character::initialize();
 	}
 }

@@ -162,6 +162,7 @@
     <ClCompile Include="application.cpp" />
     <ClCompile Include="application.h" />
     <ClCompile Include="BulletinBoardScene.cpp" />
+    <ClCompile Include="cameraManager.hpp" />
     <ClCompile Include="GifWrapper.hpp" />
     <ClCompile Include="LoadingScene.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
@@ -173,6 +174,7 @@
     <ClCompile Include="object.hpp" />
     <ClCompile Include="entity.hpp" />
     <ClCompile Include="MissileProjectile.hpp" />
+    <ClCompile Include="objectManager.hpp" />
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="resourceManager.hpp" />
     <ClCompile Include="rigidBody.cpp" />

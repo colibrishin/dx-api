@@ -37,19 +37,20 @@ namespace Fortress::Abstract
 		bool collided = false;
 
 		// gets the objects from active scene.
-		for (const auto& right_r : Scene::SceneManager::get_active_scene()->get_objects())
+		for (const auto& right_r : Scene::SceneManager::get_active_scene().lock()->get_objects())
 		{
 			// @todo: performance degrading. objects could contain others.
 			// check if object is rigid body.
-			std::shared_ptr<rigidBody> rb = std::dynamic_pointer_cast<rigidBody>(right_r);
+			const auto locked_ptr = right_r.lock();
+			std::shared_ptr<rigidBody> rb = std::dynamic_pointer_cast<rigidBody>(locked_ptr);
 
-			if (!rb || shared_from_this() == right_r || !this->is_active() || !rb->is_active())
+			if (!rb || shared_from_this() == locked_ptr || !this->is_active() || !rb->is_active())
 			{
 				continue;
 			}
 
 			// check collsion.
-			CollisionCode code = is_collision(std::dynamic_pointer_cast<object>(shared_from_this()), right_r);
+			CollisionCode code = is_collision(std::dynamic_pointer_cast<object>(shared_from_this()), locked_ptr);
 
 			if(code != CollisionCode::None)
 			{
@@ -79,48 +80,45 @@ namespace Fortress::Abstract
 		}
 	}
 
-	void rigidBody::block_window_frame(const std::shared_ptr<rigidBody>& target)
+	void rigidBody::block_window_frame(const std::weak_ptr<rigidBody>& target)
 	{
-		if (target->get_right().get_x() > WinAPIHandles::get_window_width() ||
-			target->get_bottom().get_y()> WinAPIHandles::get_actual_max_y())
+		const auto locked_ptr = target.lock();
+
+		if (locked_ptr->get_right().get_x() > WinAPIHandles::get_window_width() ||
+			locked_ptr->get_bottom().get_y()> WinAPIHandles::get_actual_max_y())
 		{
 			// OOB
 			// @todo: if the scene moves like "camera" then oob definition can be different with assumption.
 			// @todo: if the character is oob in y-axis wise, then consider it as dead.
-			target->m_position = {1.0f, 1.0f};
+			locked_ptr->m_position = {1.0f, 1.0f};
 			return;
 		}
 
-		if (target->get_left().get_x() <= 0)
+		if (locked_ptr->get_left().get_x() <= 0)
 		{
-			target->m_velocity = target->m_velocity.reflect_x();
-			target->m_position += {1.0f, 0.0f};
+			locked_ptr->m_velocity = locked_ptr->m_velocity.reflect_x();
+			locked_ptr->m_position += {1.0f, 0.0f};
 		}
-		else if (target->get_right().get_x() - WinAPIHandles::get_window_width() > Math::epsilon)
+		else if (locked_ptr->get_right().get_x() - WinAPIHandles::get_window_width() > Math::epsilon)
 		{
-			target->m_velocity = target->m_velocity.reflect_x();
-			target->m_position -= {1.0f, 0.0f};
+			locked_ptr->m_velocity = locked_ptr->m_velocity.reflect_x();
+			locked_ptr->m_position -= {1.0f, 0.0f};
 		}
 
-		if (target->get_top().get_y() <= 0)
+		if (locked_ptr->get_top().get_y() <= 0)
 		{
-			target->m_velocity = target->m_velocity.reflect_y();
-			target->m_position += {0.0f, 1.0f};
+			locked_ptr->m_velocity = locked_ptr->m_velocity.reflect_y();
+			locked_ptr->m_position += {0.0f, 1.0f};
 		}
-		else if (target->get_bottom().get_y() - WinAPIHandles::get_actual_max_y() > Math::epsilon)
+		else if (locked_ptr->get_bottom().get_y() - WinAPIHandles::get_actual_max_y() > Math::epsilon)
 		{
-			target->m_velocity = target->m_velocity.reflect_y();
-			target->m_position -= {0.0f, 1.0f};
+			locked_ptr->m_velocity = locked_ptr->m_velocity.reflect_y();
+			locked_ptr->m_position -= {0.0f, 1.0f};
 		}
 	}
 
 	void rigidBody::on_nocollison()
 	{
-	}
-
-	rigidBody::~rigidBody()
-	{
-		object::~object();
 	}
 
 	void rigidBody::move_down()
@@ -154,20 +152,23 @@ namespace Fortress::Abstract
 	}
 
 
-	CollisionCode rigidBody::is_collision(const std::shared_ptr<object>& left, const std::shared_ptr<object>& right) noexcept
+	CollisionCode rigidBody::is_collision(const std::weak_ptr<object>& left, const std::weak_ptr<object>& right) noexcept
 	{
-		const auto diff = left->get_top_left() - right->get_top_left();
+		const auto left_locked_ptr = left.lock();
+		const auto right_locked_ptr = right.lock();
+
+		const auto diff = left_locked_ptr->get_top_left() - right_locked_ptr->get_top_left();
 
 		// identical
-		if (left == right)
+		if (left_locked_ptr == right_locked_ptr)
 		{
 			return CollisionCode::Identical;
 		}
 
-		const bool right_check = left->get_right().get_x() >= right->get_left().get_x();
-		const bool left_check = left->get_left().get_x() <= right->get_right().get_x();
-		const bool bottom_check = left->get_bottom().get_y() >= right->get_top().get_y();
-		const bool top_check = left->get_top().get_y() <= right->get_bottom().get_y();
+		const bool right_check = left_locked_ptr->get_right().get_x() >= right_locked_ptr->get_left().get_x();
+		const bool left_check = left_locked_ptr->get_left().get_x() <= right_locked_ptr->get_right().get_x();
+		const bool bottom_check = left_locked_ptr->get_bottom().get_y() >= right_locked_ptr->get_top().get_y();
+		const bool top_check = left_locked_ptr->get_top().get_y() <= right_locked_ptr->get_bottom().get_y();
 
 		if(right_check && left_check && bottom_check && top_check)
 		{

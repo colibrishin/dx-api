@@ -35,14 +35,17 @@ namespace Fortress::Abstract
 		rigidBody() = delete;
 		rigidBody& operator=(const rigidBody& other) = default;
 		rigidBody& operator=(rigidBody&& other) = default;
+		rigidBody(const rigidBody& other) = default;
+		rigidBody(rigidBody&& other) = default;
+		~rigidBody() override = default;
 
 		void initialize() override;
 		void update() override;
-		static void block_window_frame(const std::shared_ptr<rigidBody>& target);
+		static void block_window_frame(const std::weak_ptr<rigidBody>& target);
 
 		virtual void on_collision(const std::shared_ptr<rigidBody>& other);
 		virtual void on_nocollison();
-		static CollisionCode is_collision(const std::shared_ptr<object>& left, const std::shared_ptr<object>& right) noexcept;
+		static CollisionCode is_collision(const std::weak_ptr<object>& left, const std::weak_ptr<object>& right) noexcept;
 
 		void set_speed(const float speed);
 
@@ -72,8 +75,6 @@ namespace Fortress::Abstract
 			const float& acceleration, 
 			const bool& gravity, 
 			const bool& clipping);
-		~rigidBody() override;
-		rigidBody(const rigidBody& other) = default;
 		virtual void move();
 
 		void reset_current_speed();

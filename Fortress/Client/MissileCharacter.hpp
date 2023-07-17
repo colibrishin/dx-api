@@ -26,15 +26,16 @@ namespace Fortress::Object
 				500.0f,
 				0.0f,
 				ObjectBase::character_full_hp,
-				ObjectBase::character_full_mp)
+				ObjectBase::character_full_mp),
+			m_base_projectile(std::make_shared<MissileProjectile>())
 		{
 			initialize();
 		}
-
-		~MissileCharacter() override
-		{
-			character::~character();
-		}
+		MissileCharacter& operator=(const MissileCharacter& other) = default;
+		MissileCharacter& operator=(MissileCharacter&& other) = default;
+		MissileCharacter(const MissileCharacter& other) = default;
+		MissileCharacter(MissileCharacter&& other) = default;
+		~MissileCharacter() override = default;
 
 		void initialize() override
 		{
@@ -42,8 +43,6 @@ namespace Fortress::Object
 			set_sprite_offset(L"fire", L"left", {0, 10.0f});
 			set_sprite_offset(L"charging", L"right", {0, 10.0f});
 			set_sprite_offset(L"charging", L"left", {0, 10.0f});
-
-			m_base_projectile = std::make_shared<MissileProjectile>();
 
 			character::initialize();
 		}

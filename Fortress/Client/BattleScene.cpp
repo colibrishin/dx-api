@@ -9,6 +9,8 @@
 #include <windows.h>
 #include <MMSystem.h>
 
+#include "objectManager.hpp"
+
 #pragma comment (lib,"winmm.lib")
 
 namespace Fortress::Scene
@@ -16,16 +18,17 @@ namespace Fortress::Scene
 	void BattleScene::initialize()
 	{
 		scene::initialize();
-		m_ground = std::make_shared<Object::Ground>();
-		m_object = std::make_shared<Object::MissileCharacter>(L"Missile", Math::Vector2{1.0f, 1.0f}, Math::left);
+		m_ground = ObjectBase::ObjectManager::create_object<Object::Ground>();
+		m_object = ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
+			L"Missile", Math::Vector2{1.0f, 1.0f}, Math::left);
 
 		add_game_object(Abstract::LayerType::Character, m_object);
 		add_game_object(Abstract::LayerType::Ground, m_ground);
 
-		m_camera.set_object(m_object);
+		get_camera().lock()->set_object(m_object);
 
-		m_object->set_disabled();
-		m_ground->set_disabled();
+		m_object.lock()->set_disabled();
+		m_ground.lock()->set_disabled();
 	}
 
 	void BattleScene::update()
@@ -34,29 +37,29 @@ namespace Fortress::Scene
 
 		if (Input::getKey(eKeyCode::W))
 		{
-			m_object->move_up();
+			m_object.lock()->move_up();
 		}
 		if (Input::getKey(eKeyCode::A))
 		{
-			m_object->move_left();
+			m_object.lock()->move_left();
 		}
 		if (Input::getKey(eKeyCode::S))
 		{
-			m_object->move_down();
+			m_object.lock()->move_down();
 		}
 		if (Input::getKey(eKeyCode::D))
 		{
-			m_object->move_right();
+			m_object.lock()->move_right();
 		}
 
 		if(Input::getKey(eKeyCode::SPACE))
 		{
-			m_object->firing();
+			m_object.lock()->firing();
 		}
 
 		if(Input::getKeyUp(eKeyCode::SPACE))
 		{
-			m_object->shoot();
+			m_object.lock()->shoot();
 		}
 
 		if (Input::getKeyUp(eKeyCode::W) ||
@@ -64,7 +67,7 @@ namespace Fortress::Scene
 			Input::getKeyUp(eKeyCode::S) ||
 			Input::getKeyUp(eKeyCode::D))
 		{
-			m_object->stop();
+			m_object.lock()->stop();
 		}
 	}
 
@@ -93,7 +96,7 @@ namespace Fortress::Scene
 
 			// bar inside
 			const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
-			const RECT rect = {x + 20, y, static_cast<int>(x + 20.0f + m_object->get_hp_percentage() * 250.0f), y + 25};
+			const RECT rect = {x + 20, y, static_cast<int>(x + 20.0f + m_object.lock()->get_hp_percentage() * 250.0f), y + 25};
 			FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 			DeleteObject(brush);
 		}();
@@ -120,7 +123,7 @@ namespace Fortress::Scene
 
 			// bar inside
 			const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
-			const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_object->get_mp_percentage() * 250), y + 25};
+			const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_object.lock()->get_mp_percentage() * 250), y + 25};
 			FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 			DeleteObject(brush);
 		}();

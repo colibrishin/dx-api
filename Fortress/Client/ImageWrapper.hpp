@@ -22,6 +22,7 @@ namespace Fortress
 		ImageWrapper& operator=(ImageWrapper&& other) = default;
 		virtual ~ImageWrapper() override;
 
+		void cleanup();
 		virtual void render(const Math::Vector2& position, const Math::Vector2& hitbox, const Math::Vector2& scaling = {1.0f, 1.0f});
 		const Math::Vector2& get_hitbox() const;
 		virtual void flip();
@@ -29,8 +30,8 @@ namespace Fortress
 
 	protected:
 		virtual bool load() override;
-		Image* m_image;
-		Graphics* m_gdi_handle;
+		std::shared_ptr<Image> m_image;
+		std::shared_ptr<Graphics> m_gdi_handle;
 		Math::Vector2 m_size;
 		Math::Vector2 m_offset;
 	};
@@ -56,7 +57,7 @@ namespace Fortress
 			const Math::Vector2 hitbox_diff = hitbox - scaled_m_size;
 
 			m_gdi_handle->DrawImage(
-				m_image,
+				m_image.get(),
 				RectF{
 				position.get_x() + hitbox_diff.get_x() + m_offset.get_x(),
 				position.get_y() + hitbox_diff.get_y() + m_offset.get_y(),
@@ -87,12 +88,19 @@ namespace Fortress
 
 	inline ImageWrapper::~ImageWrapper()
 	{
+		ImageWrapper::cleanup();
 		Resource::~Resource();
+	}
+
+	inline void ImageWrapper::cleanup()
+	{
+		m_image.reset();
+		m_gdi_handle.reset();
 	}
 
 	inline bool ImageWrapper::load()
 	{
-		m_image = new Image(get_path().native().c_str());
+		m_image = std::make_shared<Image>(get_path().native().c_str());
 
 		if(!m_image)
 		{
@@ -100,11 +108,7 @@ namespace Fortress
 		}
 
 		m_size = {static_cast<float>(m_image->GetWidth()), static_cast<float>(m_image->GetHeight())};
-		m_gdi_handle = new Graphics{WinAPIHandles::get_buffer_dc()};
-
-		constexpr float range = 3.0f;
-		const auto magenta_high = Color(255, 255 / range,255);
-		const auto magenta_low = Color(255 / range, 0,255 / range);
+		m_gdi_handle = std::make_shared<Graphics>(WinAPIHandles::get_buffer_dc());
 
 		return true;
 	}

@@ -21,7 +21,8 @@ namespace Fortress::Scene
 		void deactivate() override;
 		void activate() override;
 
-		std::shared_ptr<ImageWrapper> m_imBackground;
+		std::weak_ptr<ImageWrapper> m_imBackground;
+		std::shared_ptr<ObjectBase::character> m_object;
 	};
 }
 

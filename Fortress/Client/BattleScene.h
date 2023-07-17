@@ -22,8 +22,8 @@ namespace Fortress::Scene
 		void activate() override;
 
 	private:
-		std::shared_ptr<ObjectBase::character> m_object;
-		std::shared_ptr<Object::Ground> m_ground;
+		std::weak_ptr<ObjectBase::character> m_object;
+		std::weak_ptr<Object::Ground> m_ground;
 	};
 }
 

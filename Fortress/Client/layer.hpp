@@ -27,18 +27,22 @@ namespace Fortress::Abstract
 	public:
 		Layer();
 		Layer(LayerType);
-		virtual ~Layer() final;
+		Layer& operator=(const Layer& other) = default;
+		Layer& operator=(Layer&& other) = default;
+		Layer(const Layer& other) = default;
+		Layer(Layer&& other) = default;
+		virtual ~Layer() final = default;
 
 		void initialize();
 		void update() const;
 		void render() const;
 		void deactivate() const;
 		void activate() const;
-		void add_game_object(const std::shared_ptr<object>& object);
-		void remove_game_object(const std::shared_ptr<object>& obj);
+		void add_game_object(const std::weak_ptr<object>& object);
+		void remove_game_object(const std::weak_ptr<object>& obj);
 
 	private:
-		std::vector<std::shared_ptr<object>> m_objects;
+		std::vector<std::weak_ptr<object>> m_objects;
 	};
 }
 
@@ -55,11 +59,6 @@ namespace Fortress::Abstract
 		m_objects = {};
 	}
 
-	inline Layer::~Layer()
-	{
-		entity::~entity();
-	}
-
 	inline void Layer::initialize()
 	{
 		m_objects = {};
@@ -69,7 +68,7 @@ namespace Fortress::Abstract
 	{
 		for (const auto& obj : m_objects)
 		{
-			obj->update();
+			obj.lock()->update();
 		}
 	}
 
@@ -77,7 +76,7 @@ namespace Fortress::Abstract
 	{
 		for(const auto& obj : m_objects)
 		{
-			obj->render();
+			obj.lock()->render();
 		}
 	}
 
@@ -85,7 +84,7 @@ namespace Fortress::Abstract
 	{
 		for(const auto& obj : m_objects)
 		{
-			obj->set_disabled();
+			obj.lock()->set_disabled();
 		}
 	}
 
@@ -93,22 +92,22 @@ namespace Fortress::Abstract
 	{
 		for(const auto& obj : m_objects)
 		{
-			obj->set_enabled();
+			obj.lock()->set_enabled();
 		}
 	}
 
-	inline void Layer::add_game_object(const std::shared_ptr<object>& object)
+	inline void Layer::add_game_object(const std::weak_ptr<object>& object)
 	{
 		m_objects.push_back(object);
 	}
 
-	inline void Layer::remove_game_object(const std::shared_ptr<object>& obj)
+	inline void Layer::remove_game_object(const std::weak_ptr<object>& obj)
 	{
 		m_objects.erase(
 			std::remove_if(m_objects.begin(), m_objects.end(),
-				[this, obj](const std::shared_ptr<object>& p)
+				[this, obj](const std::weak_ptr<object>& p)
 			{
-				return p == obj;
+				return p.lock() == obj.lock();
 			}),
 			m_objects.end());
 	}

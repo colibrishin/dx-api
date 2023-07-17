@@ -16,6 +16,8 @@ namespace Fortress::Abstract
 		entity() = delete;
 		entity& operator=(const entity& other) = default;
 		entity& operator=(entity&& other) = default;
+		entity(const entity& other) = default;
+		entity(entity&& other) = default;
 		virtual ~entity() = default;
 
 		__forceinline const std::wstring& get_name() const noexcept;
@@ -23,15 +25,8 @@ namespace Fortress::Abstract
 	protected:
 		std::wstring m_name;
 
-		explicit entity(std::wstring name) : m_name(std::move(name))
+		explicit entity(const std::wstring name) : m_name(name)
 		{
-		}
-
-		entity(const entity& other) = default;
-
-		entity(entity&& other) noexcept
-		{
-			m_name = std::move(other.m_name);
 		}
 	};
 

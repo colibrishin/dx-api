@@ -31,19 +31,19 @@ namespace Fortress
 					auto storage_name = name + TEXT("_") + category + TEXT("_") + filename;
 
 					m_images[storage_name] = Resource::ResourceManager::load<T>(storage_name, p);
-					m_images[storage_name]->load();
+					m_images[storage_name].lock()->load();
 				}
 			}
 		}
 
-		std::shared_ptr<T> get_image(const std::wstring& category, const std::wstring& orientation)
+		std::weak_ptr<T> get_image(const std::wstring& category, const std::wstring& orientation)
 		{
 			return m_images[m_name + TEXT("_") + category + TEXT("_") + orientation];
 		}
 
 	
 	private:
-	    std::map<std::wstring, std::shared_ptr<T>> m_images;
+	    std::map<std::wstring, std::weak_ptr<T>> m_images;
 	};
 }
 

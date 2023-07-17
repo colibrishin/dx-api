@@ -11,17 +11,17 @@ namespace Fortress
 	public:
 		void update();
 		void initialize();
-		void set_object(const std::shared_ptr<Abstract::object>& obj);
+		void set_object(const std::weak_ptr<Abstract::object>& obj);
 		void restore_object();
-		Math::Vector2 get_relative_position(const std::shared_ptr<Abstract::object>& obj) const;
+		Math::Vector2 get_relative_position(const std::weak_ptr<Abstract::object>& obj) const;
 		Math::Vector2 get_offset() const;
-		std::shared_ptr<Abstract::object> get_locked_object() const;
+		std::weak_ptr<Abstract::object> get_locked_object() const;
 
 	private:
 		Math::Vector2 m_window_size = {};
 		Math::Vector2 m_center_position = {};
-		std::shared_ptr<Abstract::object> m_lock_target = nullptr;
-		std::shared_ptr<Abstract::object> m_backup_target = nullptr;
+		std::weak_ptr<Abstract::object> m_lock_target;
+		std::weak_ptr<Abstract::object> m_backup_target;
 	};
 
 	inline void Camera::update()
@@ -36,10 +36,10 @@ namespace Fortress
 			static_cast<float>(WinAPIHandles::get_actual_max_y())};
 
 		m_center_position = m_window_size / 2;
-		m_lock_target = nullptr;
+		m_lock_target.reset();
 	}
 
-	inline void Camera::set_object(const std::shared_ptr<Abstract::object>& obj)
+	inline void Camera::set_object(const std::weak_ptr<Abstract::object>& obj)
 	{
 		m_backup_target = m_lock_target;
 		m_lock_target = obj;
@@ -50,11 +50,11 @@ namespace Fortress
 		m_lock_target = m_backup_target;
 	}
 
-	inline Math::Vector2 Camera::get_relative_position(const std::shared_ptr<Abstract::object>& obj) const
+	inline Math::Vector2 Camera::get_relative_position(const std::weak_ptr<Abstract::object>& obj) const
 	{
-		if(m_lock_target)
+		if(const auto target_ptr = m_lock_target.lock())
 		{
-			const auto diff = m_lock_target->get_top_left() - obj->get_top_left();
+			const auto diff = target_ptr->get_top_left() - obj.lock()->get_top_left();
 			return m_center_position - diff;
 		}
 
@@ -66,7 +66,7 @@ namespace Fortress
 		return m_center_position;
 	}
 
-	inline std::shared_ptr<Abstract::object> Camera::get_locked_object() const
+	inline std::weak_ptr<Abstract::object> Camera::get_locked_object() const
 	{
 		return m_lock_target;
 	}

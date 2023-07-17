@@ -206,6 +206,12 @@
     <ClCompile Include="rigidBody.cpp">
       <Filter>Engine\Abstracts</Filter>
     </ClCompile>
+    <ClCompile Include="objectManager.hpp">
+      <Filter>Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="cameraManager.hpp">
+      <Filter>Engine\Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">

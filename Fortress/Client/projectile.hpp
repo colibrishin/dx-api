@@ -15,6 +15,9 @@ namespace Fortress::ObjectBase
 		projectile() = delete;
 		projectile& operator=(const projectile& other) = default;
 		projectile& operator=(projectile&& other) = default;
+		projectile(const projectile& other) = default;
+		projectile(projectile&& other) = default;
+		~projectile() override = default;
 
 		void initialize() override;
 		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
@@ -43,17 +46,10 @@ namespace Fortress::ObjectBase
 			projectile::initialize();
 		}
 
-		projectile(const projectile& other) = default;
-
-		__forceinline ~projectile() override
-		{
-			rigidBody::~rigidBody();
-		}
-
 	private:
 		float m_damage;
 		Texture<GifWrapper> m_texture;
-		std::shared_ptr<GifWrapper> m_current_sprite;
+		std::weak_ptr<GifWrapper> m_current_sprite;
 	};
 
 	__forceinline void projectile::update()

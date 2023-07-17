@@ -18,8 +18,11 @@ namespace Fortress::ObjectBase
 	{
 	public:
 		character() = delete;
-		character& operator=(const character& other) = delete;
-		character& operator=(character&& other) = delete;
+		character& operator=(const character& other) = default;
+		character& operator=(character&& other) = default;
+		character(const character& other) = default;
+		character(character&& other) = default;
+		~character() override = default;
 
 		virtual void initialize() override;
 		void hit(const projectile* p);
@@ -44,7 +47,6 @@ namespace Fortress::ObjectBase
 
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
-		~character() override;
 
 	private:
 		float m_hp;
@@ -55,7 +57,7 @@ namespace Fortress::ObjectBase
 		Math::Vector2 m_offset;
 
 		Texture<GifWrapper> m_texture;
-		std::shared_ptr<GifWrapper> m_current_sprite;
+		std::weak_ptr<GifWrapper> m_current_sprite;
 
 	protected:
 		character(
@@ -75,13 +77,10 @@ namespace Fortress::ObjectBase
 		      m_power(1.0f),
 		      m_bGrounded(false),
 			  m_offset(offset),
-			  m_texture(short_name),
-			  m_current_sprite(nullptr)
+			  m_texture(short_name)
 		{
 			character::initialize();
 		}
-
-		character(const character& other);
 	};
 }
 
