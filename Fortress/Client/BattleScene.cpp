@@ -2,6 +2,7 @@
 
 #include "camera.hpp"
 #include "MissileCharacter.hpp"
+#include "CannonCharacter.hpp"
 #include "ground.hpp"
 #include "input.hpp"
 #include "winapihandles.hpp"
@@ -19,15 +20,18 @@ namespace Fortress::Scene
 	{
 		scene::initialize();
 		m_ground = ObjectBase::ObjectManager::create_object<Object::Ground>();
-		m_object = ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
-			L"Missile", Math::Vector2{1.0f, 1.0f}, Math::left);
+		m_home_object = ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
+			L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right);
+		m_away_object = ObjectBase::ObjectManager::create_object<Object::CannonCharacter>(
+			L"Cannon", Math::Vector2{300.0f, 1.0f}, Math::left);
 
-		add_game_object(Abstract::LayerType::Character, m_object);
+		add_game_object(Abstract::LayerType::Character, m_home_object);
+		add_game_object(Abstract::LayerType::Character, m_away_object);
 		add_game_object(Abstract::LayerType::Ground, m_ground);
 
-		get_camera().lock()->set_object(m_object);
+		get_camera().lock()->set_object(m_home_object);
 
-		m_object.lock()->set_disabled();
+		m_home_object.lock()->set_disabled();
 		m_ground.lock()->set_disabled();
 	}
 
@@ -37,29 +41,29 @@ namespace Fortress::Scene
 
 		if (Input::getKey(eKeyCode::W))
 		{
-			m_object.lock()->move_up();
+			m_home_object.lock()->move_up();
 		}
 		if (Input::getKey(eKeyCode::A))
 		{
-			m_object.lock()->move_left();
+			m_home_object.lock()->move_left();
 		}
 		if (Input::getKey(eKeyCode::S))
 		{
-			m_object.lock()->move_down();
+			m_home_object.lock()->move_down();
 		}
 		if (Input::getKey(eKeyCode::D))
 		{
-			m_object.lock()->move_right();
+			m_home_object.lock()->move_right();
 		}
 
 		if(Input::getKey(eKeyCode::SPACE))
 		{
-			m_object.lock()->firing();
+			m_home_object.lock()->firing();
 		}
 
 		if(Input::getKeyUp(eKeyCode::SPACE))
 		{
-			m_object.lock()->shoot();
+			m_home_object.lock()->shoot();
 		}
 
 		if (Input::getKeyUp(eKeyCode::W) ||
@@ -67,7 +71,42 @@ namespace Fortress::Scene
 			Input::getKeyUp(eKeyCode::S) ||
 			Input::getKeyUp(eKeyCode::D))
 		{
-			m_object.lock()->stop();
+			m_home_object.lock()->stop();
+		}
+
+		if (Input::getKey(eKeyCode::UP))
+		{
+			m_away_object.lock()->move_up();
+		}
+		if (Input::getKey(eKeyCode::LEFT))
+		{
+			m_away_object.lock()->move_left();
+		}
+		if (Input::getKey(eKeyCode::DOWN))
+		{
+			m_away_object.lock()->move_down();
+		}
+		if (Input::getKey(eKeyCode::RIGHT))
+		{
+			m_away_object.lock()->move_right();
+		}
+
+		if(Input::getKey(eKeyCode::ENTER))
+		{
+			m_away_object.lock()->firing();
+		}
+
+		if(Input::getKeyUp(eKeyCode::ENTER))
+		{
+			m_away_object.lock()->shoot();
+		}
+
+		if (Input::getKeyUp(eKeyCode::LEFT) ||
+			Input::getKeyUp(eKeyCode::RIGHT) ||
+			Input::getKeyUp(eKeyCode::UP) ||
+			Input::getKeyUp(eKeyCode::DOWN))
+		{
+			m_away_object.lock()->stop();
 		}
 	}
 
@@ -96,7 +135,7 @@ namespace Fortress::Scene
 
 			// bar inside
 			const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
-			const RECT rect = {x + 20, y, static_cast<int>(x + 20.0f + m_object.lock()->get_hp_percentage() * 250.0f), y + 25};
+			const RECT rect = {x + 20, y, static_cast<int>(x + 20.0f + m_home_object.lock()->get_hp_percentage() * 250.0f), y + 25};
 			FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 			DeleteObject(brush);
 		}();
@@ -123,7 +162,7 @@ namespace Fortress::Scene
 
 			// bar inside
 			const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
-			const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_object.lock()->get_mp_percentage() * 250), y + 25};
+			const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_home_object.lock()->get_mp_percentage() * 250), y + 25};
 			FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 			DeleteObject(brush);
 		}();

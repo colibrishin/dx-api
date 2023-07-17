@@ -22,7 +22,8 @@ namespace Fortress::Scene
 		void activate() override;
 
 	private:
-		std::weak_ptr<ObjectBase::character> m_object;
+		std::weak_ptr<ObjectBase::character> m_home_object;
+		std::weak_ptr<ObjectBase::character> m_away_object;
 		std::weak_ptr<Object::Ground> m_ground;
 	};
 }

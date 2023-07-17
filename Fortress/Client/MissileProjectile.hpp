@@ -1,12 +1,10 @@
 #pragma once
-#ifndef PRECISONPROJECTILE_HPP
-#define PRECISONPROJECTILE_HPP
+#ifndef MISSILEPROJECTILE_HPP
+#define MISSILEPROJECTILE_HPP
 
 #include "GifWrapper.hpp"
 #include "projectile.hpp"
 #include "math.h"
-#include "resourceManager.hpp"
-#include "Texture.hpp"
 
 namespace Fortress::Object
 {
@@ -43,4 +41,4 @@ namespace Fortress::Object
 		projectile::initialize();
 	}
 }
-#endif // PRECISONPROJECTILE_HPP
+#endif // CANNONPROJECTILE_HPP

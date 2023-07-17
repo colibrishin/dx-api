@@ -163,6 +163,8 @@
     <ClCompile Include="application.h" />
     <ClCompile Include="BulletinBoardScene.cpp" />
     <ClCompile Include="cameraManager.hpp" />
+    <ClCompile Include="CannonCharacter.hpp" />
+    <ClCompile Include="CannonProjectile.hpp" />
     <ClCompile Include="GifWrapper.hpp" />
     <ClCompile Include="LoadingScene.cpp" />
     <ClCompile Include="LobbyScene.cpp" />

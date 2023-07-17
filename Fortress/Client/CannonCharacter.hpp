@@ -1,24 +1,22 @@
 #pragma once
-#ifndef MISSILECHARACTER_HPP
-#define MISSILECHARACTER_HPP
+#ifndef CANNONCHARACTER_HPP
+#define CANNONCHARACTER_HPP
+#include "CannonProjectile.hpp"
 #include "character.hpp"
-#include "GifWrapper.hpp"
 #include "math.h"
-#include "MissileProjectile.hpp"
-#include "resourceManager.hpp"
 
 namespace Fortress::Object
 {
-	class MissileCharacter final : public ObjectBase::character
+	class CannonCharacter final : public ObjectBase::character
 	{
 	public:
-		MissileCharacter(
+		CannonCharacter(
 			const std::wstring& name, 
 			const Math::Vector2& position, 
 			const Math::Vector2& orientation)
 			: character(
 				name,
-				L"missile",
+				L"cannon",
 				orientation,
 				position,
 				{0.0f, 0.0f},
@@ -27,15 +25,15 @@ namespace Fortress::Object
 				0.0f,
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp),
-			m_base_projectile(std::make_shared<MissileProjectile>())
+			m_base_projectile(std::make_shared<CannonProjectile>())
 		{
 			initialize();
 		}
-		MissileCharacter& operator=(const MissileCharacter& other) = default;
-		MissileCharacter& operator=(MissileCharacter&& other) = default;
-		MissileCharacter(const MissileCharacter& other) = default;
-		MissileCharacter(MissileCharacter&& other) = default;
-		~MissileCharacter() override = default;
+		CannonCharacter& operator=(const CannonCharacter& other) = default;
+		CannonCharacter& operator=(CannonCharacter&& other) = default;
+		CannonCharacter(const CannonCharacter& other) = default;
+		CannonCharacter(CannonCharacter&& other) = default;
+		~CannonCharacter() override = default;
 
 		void initialize() override
 		{
@@ -49,13 +47,13 @@ namespace Fortress::Object
 
 		void shoot() override;
 	private:
-		std::shared_ptr<MissileProjectile> m_base_projectile;
+		std::shared_ptr<CannonProjectile> m_base_projectile;
 	};
 }
 
 namespace Fortress::Object
 {
-	inline void MissileCharacter::shoot()
+	inline void CannonCharacter::shoot()
 	{
 		float charged = get_charged_power();
 
@@ -84,4 +82,4 @@ namespace Fortress::Object
 	}
 }
 
-#endif // MISSILECHARACTER_HPP
+#endif // CANNONCHARACTER_HPP

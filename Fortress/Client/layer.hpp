@@ -68,7 +68,10 @@ namespace Fortress::Abstract
 	{
 		for (const auto& obj : m_objects)
 		{
-			obj.lock()->update();
+			if(const auto ptr = obj.lock())
+			{
+				ptr->update();	
+			}
 		}
 	}
 
@@ -76,7 +79,10 @@ namespace Fortress::Abstract
 	{
 		for(const auto& obj : m_objects)
 		{
-			obj.lock()->render();
+			if(const auto ptr = obj.lock())
+			{
+				ptr->render();	
+			}
 		}
 	}
 
@@ -84,7 +90,10 @@ namespace Fortress::Abstract
 	{
 		for(const auto& obj : m_objects)
 		{
-			obj.lock()->set_disabled();
+			if(const auto ptr = obj.lock())
+			{
+				ptr->set_disabled();	
+			}
 		}
 	}
 
@@ -92,7 +101,10 @@ namespace Fortress::Abstract
 	{
 		for(const auto& obj : m_objects)
 		{
-			obj.lock()->set_enabled();
+			if(const auto ptr = obj.lock())
+			{
+				ptr->set_enabled();	
+			}
 		}
 	}
 

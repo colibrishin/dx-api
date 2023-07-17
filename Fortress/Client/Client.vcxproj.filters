@@ -212,6 +212,12 @@
     <ClCompile Include="cameraManager.hpp">
       <Filter>Engine\Common</Filter>
     </ClCompile>
+    <ClCompile Include="CannonCharacter.hpp">
+      <Filter>Characters</Filter>
+    </ClCompile>
+    <ClCompile Include="CannonProjectile.hpp">
+      <Filter>Projectiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
