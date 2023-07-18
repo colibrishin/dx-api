@@ -86,6 +86,17 @@ namespace Fortress
 				m_size.get_y(),
 				UnitPixel,
 				nullptr);
+
+			if(rotate_degree != 0.0f)
+			{
+				m_gdi_handle->TranslateTransform(
+					position.get_x() + offset.get_x() + (hitbox.get_x() / 2), 
+					position.get_y() + offset.get_y() + (hitbox.get_y() / 2));
+				m_gdi_handle->RotateTransform(-rotate_degree);
+				m_gdi_handle->TranslateTransform(
+					-(position.get_x() + offset.get_x() + (hitbox.get_x() / 2)),
+					-(position.get_y() + offset.get_y() + (hitbox.get_y() / 2)));
+			}
 		}
 	}
 

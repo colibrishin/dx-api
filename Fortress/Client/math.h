@@ -37,6 +37,11 @@ namespace Fortress::Math
 		return degree * (PI / 180);
 	}
 
+	inline float to_degree(const float radian)
+	{
+		return radian * (180 / PI);
+	}
+
 	inline float sigmod(const float t)
 	{
 		return 1 / (1 + std::powf(E, -t));

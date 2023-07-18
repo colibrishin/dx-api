@@ -53,13 +53,13 @@ namespace Fortress::ObjectBase
 				pos = camera_ptr->get_relative_position(std::dynamic_pointer_cast<object>(shared_from_this()));	
 			}
 
-			const auto angle = camera_ptr->get_offset().local_inner_angle(m_fired_position);
+			const auto angle = m_position.local_inner_angle(m_fired_position);
 
 			m_current_sprite.lock()->render(
 				pos,
 				m_hitbox, 
-				{1, 1}, 
-				angle);
+				{1, 1},
+				Math::to_degree(angle));
 
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
