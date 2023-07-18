@@ -20,7 +20,7 @@ namespace Fortress::ObjectBase
 		~projectile() override = default;
 
 		void initialize() override;
-		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
+		virtual void fire(const Math::Vector2& position, const Math::Vector2& bottom, const Math::Vector2& velocity, const float charged);
 		__forceinline virtual void update() override;
 		virtual void on_collision(const std::shared_ptr<rigidBody>& other) override;
 		virtual void focus_this();
@@ -54,6 +54,7 @@ namespace Fortress::ObjectBase
 		int m_radius;
 		Texture<GifWrapper> m_texture;
 		std::weak_ptr<GifWrapper> m_current_sprite;
+		Math::Vector2 m_fired_position;
 	};
 
 	__forceinline void projectile::update()

@@ -49,33 +49,41 @@ namespace Fortress::Object
 		if (auto const projectile = 
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
 		{
+
 			// @todo: multi angle hit detection
 			const auto local_position = projectile->get_bottom() - get_top_left();
-			if(!is_destroyed(
+
+			// OOB check
+			if(!(local_position.get_x() < 0 || local_position.get_x() >= m_hitbox.get_x() || 
+				local_position.get_y() < 0 || local_position.get_y() >= m_hitbox.get_y()))
+			{
+				if(!is_destroyed(
 					std::floorf(local_position.get_x()), 
 					std::floorf(local_position.get_y())))
-			{
-				const int y = local_position.get_y();
-				const int x = local_position.get_x();
-
-				constexpr float max = Math::PI / 2;
-				const int radius = projectile->get_radius();
-				const int end_point = y + radius;
-				const float inc = max * (static_cast<float>(y) / end_point);
-				float i = 0;
-
-				for(int height = y; height < end_point; height++)
 				{
-					const int next_n = std::floorf(radius * cosf(i));
-					set_line_destroyed(x, height, next_n);
-					i += inc;
-				}
+					const int y = local_position.get_y();
+					const int x = local_position.get_x();
 
-				Debug::Log(L"Projectile hits the Ground");
-			}
-			else
-			{
-				Debug::Log(L"Projectile hits the destroyed ground");
+					constexpr float max = Math::PI / 2;
+					const int radius = projectile->get_radius();
+					const int end_point = y + radius;
+					const float inc = max * (static_cast<float>(y) / end_point);
+					float i = 0;
+
+					for(int height = y; height < end_point; height++)
+					{
+						const int next_n = std::floorf(radius * cosf(i));
+						set_line_destroyed(x, height, next_n);
+						i += inc;
+					}
+
+					Debug::Log(L"Projectile hits the Ground");
+					Debug::draw_dot(other->get_center());
+				}
+				else
+				{
+					Debug::Log(L"Projectile hits the destroyed ground");
+				}
 			}
 		}
 
@@ -102,6 +110,7 @@ namespace Fortress::Object
 					pos.get_x() + m_hitbox.get_x(),
 					pos.get_y() + m_hitbox.get_y());
 
+				// @todo: performance degrading, this should be replaced with intersection removal.
 				for(int i = 0; i < m_hitbox.get_y(); ++i)
 				{
 					for(int j = 0; j < m_hitbox.get_x(); ++j)
@@ -120,16 +129,12 @@ namespace Fortress::Object
 
 	inline bool Ground::is_destroyed(const int x, const int y) const
 	{
-		if(y < 0)
-		{
-			return m_destroyed_table[0][x];
-		}
 		return m_destroyed_table[y][x];
 	}
 
 	inline void Ground::set_destroyed(const int x, const int y)
 	{
-		if(!m_destroyed_table[y - 1][x])
+		if(y != 0 && !m_destroyed_table[y - 1][x])
 		{
 			m_destroyed_table[y - 1][x] = true;
 		}
@@ -142,11 +147,17 @@ namespace Fortress::Object
 
 		for(int i = 0; i < n / 2; ++i)
 		{
-			set_destroyed(left_x++, mid_y);
+			if(left_x >= 0)
+			{
+				set_destroyed(left_x++, mid_y);
+			}
 		}
 		for(int i = n / 2; i < n; ++i)
 		{
-			set_destroyed(to_right_x++, mid_y);
+			if(to_right_x < m_hitbox.get_x())
+			{
+				set_destroyed(to_right_x++, mid_y);
+			}
 		}
 	}
 }

@@ -31,6 +31,7 @@ namespace Fortress::ObjectBase
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 		scene_ptr->get_camera().lock()->restore_object();
 
+		m_current_sprite.lock()->reset_transfrom();
 		reset_current_gravity_speed();
 		reset_current_speed();
 		set_disabled();
@@ -52,7 +53,14 @@ namespace Fortress::ObjectBase
 				pos = camera_ptr->get_relative_position(std::dynamic_pointer_cast<object>(shared_from_this()));	
 			}
 
-			m_current_sprite.lock()->render(pos, m_hitbox);
+			const auto angle = camera_ptr->get_offset().local_inner_angle(m_fired_position);
+
+			m_current_sprite.lock()->render(
+				pos,
+				m_hitbox, 
+				{1, 1}, 
+				angle);
+
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
 		}
@@ -82,6 +90,7 @@ namespace Fortress::ObjectBase
 
 	void projectile::fire(
 		const Math::Vector2& position,
+		const Math::Vector2& bottom,
 		const Math::Vector2& velocity,
 		const float charged)
 	{
@@ -103,6 +112,7 @@ namespace Fortress::ObjectBase
 
 		m_current_sprite.lock()->play();
 		m_hitbox = m_current_sprite.lock()->get_hitbox();
+		m_fired_position = bottom;
 		m_velocity = velocity;
 		focus_this();
 	}

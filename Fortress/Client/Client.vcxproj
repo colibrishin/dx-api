@@ -165,13 +165,13 @@
     <ClCompile Include="cameraManager.hpp" />
     <ClCompile Include="CannonCharacter.hpp" />
     <ClCompile Include="CannonProjectile.hpp" />
+    <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="GifWrapper.hpp" />
     <ClCompile Include="LoadingScene.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MissileCharacter.hpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="BattleScene.cpp" />
-    <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
     <ClCompile Include="entity.hpp" />

@@ -138,8 +138,8 @@ namespace Fortress::ObjectBase
 				}
 				else
 				{
-					enable_gravity();
-					m_bGrounded = false;
+					disable_gravity();
+					m_bGrounded = true;
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 			}

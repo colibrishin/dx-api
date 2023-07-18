@@ -16,16 +16,16 @@ namespace Fortress
 		DeltaTime(const DeltaTime& other) = delete;
 		DeltaTime(const DeltaTime&& other) = delete;
 
-		static void initialize();
+		__forceinline static void initialize();
 		__forceinline static void update();
 		static void render();
 		__forceinline static float get_deltaTime();
 
 	private:
-		static LARGE_INTEGER m_cpu_frequency;
-		static LARGE_INTEGER m_prev_frequency;
-		static LARGE_INTEGER m_curr_frequency;
-		static float m_deltaTime;
+		inline static LARGE_INTEGER m_cpu_frequency = {};
+		inline static LARGE_INTEGER m_prev_frequency = {};
+		inline static LARGE_INTEGER m_curr_frequency = {};
+		inline static float m_deltaTime = {};
 	};
 }
 
@@ -51,6 +51,20 @@ namespace Fortress
 	__forceinline float DeltaTime::get_deltaTime()
 	{
 		return m_deltaTime;
+	}
+
+	/**
+	 * \brief Initialize the DeltaTime variables.
+	 */
+	void DeltaTime::initialize()
+	{
+		if (!QueryPerformanceFrequency(&m_cpu_frequency))
+		{
+			throw std::exception("Deltatime error : QueryPerformanceFrequency, Deltatime unsupported cpu");
+		}
+
+		QueryPerformanceCounter(&m_curr_frequency);
+		QueryPerformanceCounter(&m_prev_frequency);
 	}
 }
 

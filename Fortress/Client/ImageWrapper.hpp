@@ -23,7 +23,11 @@ namespace Fortress
 		virtual ~ImageWrapper() override;
 
 		void cleanup();
-		virtual void render(const Math::Vector2& position, const Math::Vector2& hitbox, const Math::Vector2& scaling = {1.0f, 1.0f});
+		virtual void render(
+			const Math::Vector2& position, 
+			const Math::Vector2& hitbox, 
+			const Math::Vector2& scaling = {1.0f, 1.0f},
+			const float rotate_degree = 0.0f);
 		const Math::Vector2& get_hitbox() const;
 		virtual void flip();
 		void set_offset(const Math::Vector2& offset);
@@ -49,18 +53,31 @@ namespace Fortress
 	inline void ImageWrapper::render(
 		const Math::Vector2& position,
 		const Math::Vector2& hitbox,
-		const Math::Vector2& scaling)
+		const Math::Vector2& scaling,
+		const float rotate_degree)
 	{
 		if(m_image)
 		{
 			const Math::Vector2 scaled_m_size = m_size * scaling;
 			const Math::Vector2 hitbox_diff = hitbox - scaled_m_size;
+			const Math::Vector2 offset = hitbox_diff + m_offset;
+
+			if(rotate_degree != 0.0f)
+			{
+				m_gdi_handle->TranslateTransform(
+					position.get_x() + offset.get_x() + (hitbox.get_x() / 2), 
+					position.get_y() + offset.get_y() + (hitbox.get_y() / 2));
+				m_gdi_handle->RotateTransform(rotate_degree);
+				m_gdi_handle->TranslateTransform(
+					-(position.get_x() + offset.get_x() + (hitbox.get_x() / 2)),
+					-(position.get_y() + offset.get_y() + (hitbox.get_y() / 2)));
+			}
 
 			m_gdi_handle->DrawImage(
 				m_image.get(),
 				RectF{
-				position.get_x() + hitbox_diff.get_x() + m_offset.get_x(),
-				position.get_y() + hitbox_diff.get_y() + m_offset.get_y(),
+				position.get_x() + offset.get_x(),
+				position.get_y() + offset.get_y(),
 				scaled_m_size.get_x(),
 				scaled_m_size.get_y()},
 				0,

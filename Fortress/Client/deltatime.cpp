@@ -1,28 +1,8 @@
 #include "deltatime.hpp"
-#include <exception>
 #include "winapihandles.hpp"
 
 namespace Fortress
 {
-	LARGE_INTEGER DeltaTime::m_cpu_frequency = {};
-	LARGE_INTEGER DeltaTime::m_prev_frequency = {};
-	LARGE_INTEGER DeltaTime::m_curr_frequency = {};
-	float DeltaTime::m_deltaTime = 0.0f;
-
-	/**
-	 * \brief Initialize the DeltaTime variables.
-	 */
-	void DeltaTime::initialize()
-	{
-		if (!QueryPerformanceFrequency(&m_cpu_frequency))
-		{
-			throw std::exception("Deltatime error : QueryPerformanceFrequency, Deltatime unsupported cpu");
-		}
-
-		QueryPerformanceCounter(&m_curr_frequency);
-		QueryPerformanceCounter(&m_prev_frequency);
-	}
-
 	/**
 	 * \brief Shows the fps counter on the screen.
 	 */

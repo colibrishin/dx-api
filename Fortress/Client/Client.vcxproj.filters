@@ -146,9 +146,6 @@
     <ClCompile Include="deltatime.hpp">
       <Filter>Engine\Common</Filter>
     </ClCompile>
-    <ClCompile Include="deltatime.cpp">
-      <Filter>Engine\Common</Filter>
-    </ClCompile>
     <ClCompile Include="sceneManager.hpp">
       <Filter>Scene</Filter>
     </ClCompile>
@@ -217,6 +214,9 @@
     </ClCompile>
     <ClCompile Include="CannonProjectile.hpp">
       <Filter>Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="deltatime.cpp">
+      <Filter>Engine\Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
