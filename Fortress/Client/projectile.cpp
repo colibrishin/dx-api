@@ -6,28 +6,6 @@ namespace Fortress::ObjectBase
 {
 	void projectile::on_collision(const std::shared_ptr<Abstract::rigidBody>& other)
 	{
-		bool hit = false;
-
-		if (auto gr = std::dynamic_pointer_cast<Object::Ground>(other))
-		{
-			// @todo: dig a hole into the Ground.
-			Debug::Log(L"Projectile hits the Ground");
-			hit = true;
-		}
-
-		if (const auto ch = std::dynamic_pointer_cast<character>(other))
-		{
-			Debug::Log(L"Projectile hits the character");
-			hit = true;
-			ch->hit(this);
-		}
-
-		if (hit)
-		{
-			m_gravity_speed = 0.0f;
-			set_disabled();
-		}
-
 		rigidBody::on_collision(other);
 		unfocus_this();
 	}
@@ -80,6 +58,11 @@ namespace Fortress::ObjectBase
 		}
 
 		rigidBody::render();
+	}
+
+	int projectile::get_radius() const
+	{
+		return m_radius;
 	}
 
 	float projectile::get_damage() const

@@ -25,7 +25,7 @@ namespace Fortress::ObjectBase
 		~character() override = default;
 
 		virtual void initialize() override;
-		void hit(const projectile* p);
+		void hit(const std::weak_ptr<projectile>& p);
 		void update() override;
 		void render() override;
 		virtual void firing();

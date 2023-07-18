@@ -26,6 +26,7 @@ namespace Fortress::ObjectBase
 		virtual void focus_this();
 		virtual void unfocus_this();
 		virtual void render() override;
+		int get_radius() const;
 
 		float get_damage() const;
 
@@ -38,9 +39,11 @@ namespace Fortress::ObjectBase
 			const float mass,
 			const float speed,
 			const float acceleration,
-			const float damage) :
+			const float damage,
+			const float radius) :
 			rigidBody(name, position, {}, velocity, mass, speed, acceleration, true, true),
 			m_damage(damage),
+			m_radius(radius),
 			m_texture(short_name)
 		{
 			projectile::initialize();
@@ -48,6 +51,7 @@ namespace Fortress::ObjectBase
 
 	private:
 		float m_damage;
+		int m_radius;
 		Texture<GifWrapper> m_texture;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 	};

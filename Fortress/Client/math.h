@@ -14,6 +14,8 @@ namespace Fortress::Math
 	 */
 	constexpr float PI = M_PI;
 
+	constexpr float E = M_E;
+
 	/**
 	 * \brief Gravity constant
 	 */
@@ -33,6 +35,11 @@ namespace Fortress::Math
 	inline float to_radian(const float degree)
 	{
 		return degree * (PI / 180);
+	}
+
+	inline float sigmod(const float t)
+	{
+		return 1 / (1 + std::powf(E, -t));
 	}
 }
 

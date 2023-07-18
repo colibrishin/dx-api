@@ -19,7 +19,8 @@ namespace Fortress::Object
 			5.0f,
 			2.0f, 
 			0.0f, 
-			10.0f)
+			10.0f,
+			50)
 		{
 			MissileProjectile::initialize();
 		}

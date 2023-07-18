@@ -13,9 +13,9 @@ namespace Fortress::ObjectBase
 		rigidBody::initialize();
 	}
 
-	void character::hit(const projectile* p)
+	void character::hit(const std::weak_ptr<projectile>& p)
 	{
-		m_hp -= p->get_damage();
+		m_hp -= p.lock()->get_damage();
 	}
 
 	void character::shoot()
@@ -125,12 +125,31 @@ namespace Fortress::ObjectBase
 		{
 			if(ground)
 			{
-				Debug::Log(L"Character hits the ground");
-				reset_current_gravity_speed();
-				disable_gravity();
-				m_bGrounded = true;
-				return;
+				const auto local_position = get_bottom() - ground->get_top_left();
+
+				if(!ground->is_destroyed(
+					std::floorf(local_position.get_x()), 
+					std::floorf(local_position.get_y())))
+				{
+					Debug::Log(L"Character hits the ground");
+					reset_current_gravity_speed();
+					disable_gravity();
+					m_bGrounded = true;
+				}
+				else
+				{
+					enable_gravity();
+					m_bGrounded = false;
+					Debug::Log(L"Character hits the destroyed ground");
+				}
 			}
+		}
+
+		if (const auto projectile = 
+				std::dynamic_pointer_cast<ObjectBase::projectile>(other))
+		{
+			Debug::Log(L"Projectile hits the character");
+			hit(projectile);
 		}
 
 		rigidBody::on_collision(other);

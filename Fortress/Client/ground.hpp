@@ -2,7 +2,9 @@
 #ifndef GROUND_H
 #define GROUND_H
 
+#include <vector>
 #include "rigidBody.hpp"
+#include "projectile.hpp"
 
 namespace Fortress::Object
 {
@@ -19,11 +21,14 @@ namespace Fortress::Object
 				0.0f, 
 				0.0f, 
 				false,
-				false)
+				false),
+			m_destroyed_table(static_cast<int>(m_hitbox.get_y()), std::vector<bool>(static_cast<int>(m_hitbox.get_x())))
 		{
 		}
 		Ground& operator=(const Ground& other) = default;
 		Ground& operator=(Ground&& other) = default;
+
+		void on_collision(const std::shared_ptr<rigidBody>& other) override;
 
 		~Ground() override
 		{
@@ -31,7 +36,51 @@ namespace Fortress::Object
 		}
 
 		void render() override;
+		bool is_destroyed(const int x, const int y) const;
+		void get_explosion_effect(const Math::Vector2& bottom, const float radius);
+		void set_destroyed(const int x, const int y);
+		void set_line_destroyed(const int mid_x, const int mid_y, const int n);
+	private:
+		std::vector<std::vector<bool>> m_destroyed_table;
 	};
+
+	inline void Ground::on_collision(const std::shared_ptr<rigidBody>& other)
+	{
+		if (auto const projectile = 
+			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
+		{
+			// @todo: multi angle hit detection
+			const auto local_position = projectile->get_bottom() - get_top_left();
+			if(!is_destroyed(
+					std::floorf(local_position.get_x()), 
+					std::floorf(local_position.get_y())))
+			{
+				const int y = local_position.get_y();
+				const int x = local_position.get_x();
+
+				constexpr float max = Math::PI / 2;
+				const int radius = projectile->get_radius();
+				const int end_point = y + radius;
+				const float inc = max * (static_cast<float>(y) / end_point);
+				float i = 0;
+
+				for(int height = y; height < end_point; height++)
+				{
+					const int next_n = std::floorf(radius * cosf(i));
+					set_line_destroyed(x, height, next_n);
+					i += inc;
+				}
+
+				Debug::Log(L"Projectile hits the Ground");
+			}
+			else
+			{
+				Debug::Log(L"Projectile hits the destroyed ground");
+			}
+		}
+
+		rigidBody::on_collision(other);
+	}
 
 	inline void Ground::render()
 	{
@@ -53,8 +102,51 @@ namespace Fortress::Object
 					pos.get_x() + m_hitbox.get_x(),
 					pos.get_y() + m_hitbox.get_y());
 
+				for(int i = 0; i < m_hitbox.get_y(); ++i)
+				{
+					for(int j = 0; j < m_hitbox.get_x(); ++j)
+					{
+						if(m_destroyed_table[i][j])
+						{
+							Debug::draw_dot({pos.get_x() + j, pos.get_y() + i});
+						}
+					}
+				}
+
 				Debug::draw_dot(pos);
 			}
+		}
+	}
+
+	inline bool Ground::is_destroyed(const int x, const int y) const
+	{
+		if(y < 0)
+		{
+			return m_destroyed_table[0][x];
+		}
+		return m_destroyed_table[y][x];
+	}
+
+	inline void Ground::set_destroyed(const int x, const int y)
+	{
+		if(!m_destroyed_table[y - 1][x])
+		{
+			m_destroyed_table[y - 1][x] = true;
+		}
+		m_destroyed_table[y][x] = true;
+	}
+	inline void Ground::set_line_destroyed(const int mid_x, const int mid_y, const int n)
+	{
+		int left_x = mid_x - (n / 2);
+		int to_right_x = mid_x;
+
+		for(int i = 0; i < n / 2; ++i)
+		{
+			set_destroyed(left_x++, mid_y);
+		}
+		for(int i = n / 2; i < n; ++i)
+		{
+			set_destroyed(to_right_x++, mid_y);
 		}
 	}
 }
