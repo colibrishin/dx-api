@@ -60,9 +60,9 @@ namespace Fortress
 		FillRect(m_buffer_hdc, &WinAPIHandles::get_window_size(), hbrBkGnd);
 		DeleteObject(hbrBkGnd);
 
-		DeltaTime::render();
 		Scene::SceneManager::render();
 		Debug::render();
+		DeltaTime::render();
 
 		BitBlt(m_hdc, 0, 0, WinAPIHandles::get_window_width(), WinAPIHandles::get_window_height(), m_buffer_hdc, 0, 0,
 		       SRCCOPY);

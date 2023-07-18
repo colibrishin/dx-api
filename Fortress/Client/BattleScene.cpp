@@ -19,6 +19,9 @@ namespace Fortress::Scene
 	void BattleScene::initialize()
 	{
 		scene::initialize();
+		m_hud = Resource::ResourceManager::load<ImageWrapper>(L"HUD", "./resources/images/hud.gif");
+		m_background = Resource::ResourceManager::load<ImageWrapper>(
+			L"valley", "./resources/images/wirestock_valley.jpg");
 		m_ground = ObjectBase::ObjectManager::create_object<Object::Ground>();
 		m_home_object = ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
 			L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right);
@@ -112,70 +115,58 @@ namespace Fortress::Scene
 
 	void BattleScene::render()
 	{
-		// @todo: Text and bar can be made in class
-		// HP bar
-		[this]()
-		{
-			const int x = 30;
-			const int y = 500;
-
-			// hp text
-			wchar_t hp_notice[100] = {};
-			swprintf_s(hp_notice, 100, L"HP : ");
-			const size_t strlen = wcsnlen_s(hp_notice, 100);
-			TextOut(WinAPIHandles::get_buffer_dc(), x, y + 5, hp_notice, strlen);
-
-			// bar outline
-			Rectangle(
-				WinAPIHandles::get_buffer_dc(),
-				x + 20,
-				y,
-				x + 20 + 250,
-				y + 25);
-
-			// bar inside
-			const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
-			const RECT rect = {x + 20, y, static_cast<int>(x + 20.0f + m_home_object.lock()->get_hp_percentage() * 250.0f), y + 25};
-			FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
-			DeleteObject(brush);
-		}();
-
-		// MP bar
-		[this]()
-		{
-			const int x = 30;
-			const int y = 530;
-
-			// hp text
-			wchar_t hp_notice[100] = {};
-			swprintf_s(hp_notice, 100, L"MP : ");
-			const size_t strlen = wcsnlen_s(hp_notice, 100);
-			TextOut(WinAPIHandles::get_buffer_dc(), x, y + 5, hp_notice, strlen);
-
-			// bar outline
-			Rectangle(
-				WinAPIHandles::get_buffer_dc(),
-				x + 20,
-				y,
-				x + 20 + 250,
-				y + 25);
-
-			// bar inside
-			const HBRUSH brush = CreateSolidBrush(BLACK_BRUSH);
-			const RECT rect = {x + 20, y, static_cast<int>(x + 20 + m_home_object.lock()->get_mp_percentage() * 250), y + 25};
-			FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
-			DeleteObject(brush);
-		}();
-
-		[this]()
-		{
-			wchar_t notice[100] = {};
-			swprintf_s(notice, 100, L"Use WASD to move...");
-			const size_t strlen = wcsnlen_s(notice, 100);
-			TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
-		}();
-
+		m_background.lock()->render({}, m_background.lock()->get_hitbox());
 		scene::render();
+
+		if(const auto hud_ptr = m_hud.lock())
+		{
+			const auto hud_size = hud_ptr->get_hitbox();
+			const auto hud_position = Math::Vector2{0, WinAPIHandles::get_actual_max_y() - hud_size.get_y()};
+			hud_ptr->render({0, hud_position.get_y()}, hud_size);
+
+			// @todo: Text and bar can be made in class
+			// MP bar
+			[this, hud_position]()
+			{
+				const int x = 280;
+				const int y = hud_position.get_y() + 98;
+				
+				// bar inside
+				const HBRUSH brush = CreateSolidBrush(RGB(255, 255,0));
+				const RECT rect = {
+					x,
+					y,
+					static_cast<int>(x + m_home_object.lock()->get_mp_percentage() * 400.0f),
+					y + 20};
+				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+				DeleteObject(brush);
+			}();
+
+			// HP bar
+			[this, hud_position]()
+			{
+				const int x = 280;
+				const int y = hud_position.get_y() + 52;
+				
+				// bar inside
+				const HBRUSH brush = CreateSolidBrush(RGB(0,255,0));
+				const RECT rect = {
+					x,
+					y,
+					static_cast<int>(x + m_home_object.lock()->get_hp_percentage() * 400.0f),
+					y + 20};
+				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+				DeleteObject(brush);
+			}();
+
+			[this]()
+			{
+				wchar_t notice[100] = {};
+				swprintf_s(notice, 100, L"Use WASD to move...");
+				const size_t strlen = wcsnlen_s(notice, 100);
+				TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
+			}();
+		}
 	}
 
 	void BattleScene::deactivate()

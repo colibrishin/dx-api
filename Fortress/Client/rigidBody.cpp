@@ -62,7 +62,7 @@ namespace Fortress::Abstract
 
 				collided = true;
 
-				on_collision(rb);
+				on_collision(code, rb);
 			}
 		}
 
@@ -146,7 +146,7 @@ namespace Fortress::Abstract
 		m_velocity = {0, 0};
 	}
 
-	void rigidBody::on_collision(const std::shared_ptr<rigidBody>& other)
+	void rigidBody::on_collision(const CollisionCode& code, const std::shared_ptr<rigidBody>& other)
 	{
 		
 	}

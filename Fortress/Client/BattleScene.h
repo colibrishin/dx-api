@@ -25,6 +25,8 @@ namespace Fortress::Scene
 		std::weak_ptr<ObjectBase::character> m_home_object;
 		std::weak_ptr<ObjectBase::character> m_away_object;
 		std::weak_ptr<Object::Ground> m_ground;
+		std::weak_ptr<ImageWrapper> m_hud;
+		std::weak_ptr<ImageWrapper> m_background;
 	};
 }
 

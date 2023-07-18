@@ -28,7 +28,7 @@ namespace Fortress::Object
 		Ground& operator=(const Ground& other) = default;
 		Ground& operator=(Ground&& other) = default;
 
-		void on_collision(const std::shared_ptr<rigidBody>& other) override;
+		virtual void on_collision(const CollisionCode& collison, const std::shared_ptr<rigidBody>& other) override;
 
 		~Ground() override
 		{
@@ -44,12 +44,11 @@ namespace Fortress::Object
 		std::vector<std::vector<bool>> m_destroyed_table;
 	};
 
-	inline void Ground::on_collision(const std::shared_ptr<rigidBody>& other)
+	inline void Ground::on_collision(const CollisionCode& collison, const std::shared_ptr<rigidBody>& other)
 	{
 		if (auto const projectile = 
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
 		{
-
 			// @todo: multi angle hit detection
 			const auto local_position = projectile->get_bottom() - get_top_left();
 
@@ -87,7 +86,7 @@ namespace Fortress::Object
 			}
 		}
 
-		rigidBody::on_collision(other);
+		rigidBody::on_collision(collison, other);
 	}
 
 	inline void Ground::render()

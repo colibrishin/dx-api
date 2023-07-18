@@ -4,9 +4,9 @@
 
 namespace Fortress::ObjectBase
 {
-	void projectile::on_collision(const std::shared_ptr<Abstract::rigidBody>& other)
+	void projectile::on_collision(const CollisionCode& collison, const std::shared_ptr<Abstract::rigidBody>& other)
 	{
-		rigidBody::on_collision(other);
+		rigidBody::on_collision(collison, other);
 		unfocus_this();
 	}
 
@@ -90,7 +90,6 @@ namespace Fortress::ObjectBase
 
 	void projectile::fire(
 		const Math::Vector2& position,
-		const Math::Vector2& bottom,
 		const Math::Vector2& velocity,
 		const float charged)
 	{
@@ -112,7 +111,7 @@ namespace Fortress::ObjectBase
 
 		m_current_sprite.lock()->play();
 		m_hitbox = m_current_sprite.lock()->get_hitbox();
-		m_fired_position = bottom;
+		m_fired_position = m_position ;
 		m_velocity = velocity;
 		focus_this();
 	}

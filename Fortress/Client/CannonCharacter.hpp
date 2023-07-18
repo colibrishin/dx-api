@@ -77,7 +77,6 @@ namespace Fortress::Object
 
 		m_base_projectile->fire(
 			get_offset() == Math::left ? get_top_left() : get_top_right(),
-			get_bottom(),
 			angle, 
 			charged);
 	}

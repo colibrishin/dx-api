@@ -119,13 +119,13 @@ namespace Fortress::ObjectBase
 		rigidBody::move();
 	}
 
-	void character::on_collision(const std::shared_ptr<Abstract::rigidBody>& other)
+	void character::on_collision(const CollisionCode& collision, const std::shared_ptr<rigidBody>& other)
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other))
 		{
 			if(ground)
 			{
-				const auto local_position = get_bottom() - ground->get_top_left();
+				const Math::Vector2 local_position = get_bottom() - ground->get_top_left();
 
 				if(!ground->is_destroyed(
 					std::floorf(local_position.get_x()), 
@@ -138,8 +138,8 @@ namespace Fortress::ObjectBase
 				}
 				else
 				{
-					disable_gravity();
-					m_bGrounded = true;
+					enable_gravity();
+					m_bGrounded = false;
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 			}
@@ -152,7 +152,7 @@ namespace Fortress::ObjectBase
 			hit(projectile);
 		}
 
-		rigidBody::on_collision(other);
+		rigidBody::on_collision(collision, other);
 	}
 
 	void ObjectBase::character::on_nocollison()
