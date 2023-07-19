@@ -145,6 +145,16 @@ namespace Fortress::Abstract
 			}
 		}
 
+		std::sort(
+			ret.begin(), 
+			ret.end(), 
+			[mid_point](
+				const std::weak_ptr<T>& left, const std::weak_ptr<T>& right)
+		{
+			return Math::Vector2(left.lock()->m_position - mid_point).magnitude() >
+				Math::Vector2(right.lock()->m_position - mid_point).magnitude();
+		});
+
 		return ret;
 	}
 }

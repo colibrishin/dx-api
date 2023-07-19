@@ -50,7 +50,6 @@ namespace Fortress::Object
 			const auto characters = scene_ptr->is_in_range<ObjectBase::character>(
 				x_velocity.get_x() < 0 ? get_bottom_left() : get_bottom_right(), 50.0f);
 
-			// @todo: this is not positionally nearest but order-wise nearest. 
 			if (!characters.empty())
 			{
 				if(const auto nearest = characters[0].lock())
