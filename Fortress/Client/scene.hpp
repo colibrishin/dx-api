@@ -22,10 +22,7 @@ namespace Fortress::Abstract
 		virtual void activate();
 
 		template <class T>
-		std::vector<std::weak_ptr<T>> is_in_range(
-			const Math::Vector2& top_left, 
-			const Math::Vector2& hit_box, 
-			float radius);
+		std::vector<std::weak_ptr<T>> is_in_range(const Math::Vector2& mid_point, float radius);
 
 		void add_game_object(LayerType layer_type, const std::weak_ptr<object>& obj);
 		void remove_game_object(LayerType layer_type, const std::weak_ptr<object>& obj);
@@ -124,18 +121,12 @@ namespace Fortress::Abstract
 
 	template <typename T>
 	std::vector<std::weak_ptr<T>> scene::is_in_range(
-		const Math::Vector2& top_left,
-		const Math::Vector2& hit_box,
+		const Math::Vector2& mid_point,
 		const float radius)
 	{
 		std::vector<std::weak_ptr<T>> ret = {};
 
 		static_assert(std::is_base_of_v<object, T>);
-
-		const auto mid_point = Math::Vector2{
-			top_left.get_x() + hit_box.get_x() / 2,
-			top_left.get_y() + hit_box.get_y() / 2
-		};
 
 		for (const auto& obj : m_objects)
 		{

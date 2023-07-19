@@ -27,6 +27,7 @@ namespace Fortress
 		static void draw_line(const Math::Vector2 left, const Math::Vector2 right);
 
 		static void draw_dot(const Math::Vector2 point);
+		static void draw_circle(Math::Vector2 point, float radius);
 		static void draw_rect(Math::Vector2 point, Math::Vector2 size);
 
 		static void render()
@@ -63,6 +64,14 @@ namespace Fortress
 		m_render_queue.push([point]()
 		{
 			Ellipse(m_hdc, point.get_x(), point.get_y(), point.get_x() + 5, point.get_y() + 5);
+		});
+	}
+
+	inline void Debug::draw_circle(const Math::Vector2 point, const float radius)
+	{
+		m_render_queue.push([point, radius]()
+		{
+			Ellipse(m_hdc, point.get_x(), point.get_y(), point.get_x() + radius, point.get_y() + radius);
 		});
 	}
 

@@ -36,24 +36,25 @@ namespace Fortress::Object
 		void initialize() override;
 
 	private:
+		std::weak_ptr<ObjectBase::character> m_fire_object; 
 		Math::Vector2 m_fired_position;
 	};
 
 	inline void GuidedMissileProjectile::update()
 	{
+		const auto x_velocity = m_velocity * Math::Vector2{1, 0};
+
 		if(const auto scene_ptr = Scene::SceneManager::get_active_scene().lock())
 		{
 			const auto characters = scene_ptr->is_in_range<ObjectBase::character>(
-				m_position,
-				m_hitbox,
-				100.0f);
+				x_velocity.get_x() < 0 ? get_bottom_left() : get_bottom_right(), 50.0f);
 
 			// @todo: this is not positionally nearest but order-wise nearest. 
 			if (!characters.empty())
 			{
 				if(const auto nearest = characters[0].lock())
 				{
-					const auto diff = m_position - nearest->get_position();
+					const auto diff = get_top_left() - nearest->get_top_left();
 					m_velocity = -diff.normalized();
 				}
 			}
