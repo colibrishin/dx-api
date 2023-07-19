@@ -139,19 +139,18 @@ namespace Fortress::Abstract
 
 		for (const auto& obj : m_objects)
 		{
-			const auto ptr = obj.lock();
-
-			if (typeid(obj) != typeid(T) || !ptr->is_active())
+			if (const auto ptr = std::dynamic_pointer_cast<T>(obj.lock()))
 			{
-				continue;
-			}
-
-			if (ptr->m_position.get_x() <= mid_point.get_x() + radius &&
-				ptr->m_position.get_x() >= mid_point.get_x() - radius &&
-				ptr->m_position.get_y() <= mid_point.get_y() + radius &&
-				ptr->m_position.get_y() >= mid_point.get_y() - radius)
-			{
-				ret.push_back(std::dynamic_pointer_cast<T>(ptr));
+				if(ptr->is_active())
+				{
+					if (ptr->m_position.get_x() <= mid_point.get_x() + radius &&
+						ptr->m_position.get_x() >= mid_point.get_x() - radius &&
+						ptr->m_position.get_y() <= mid_point.get_y() + radius &&
+						ptr->m_position.get_y() >= mid_point.get_y() - radius)
+					{
+						ret.push_back(ptr);
+					}
+				}
 			}
 		}
 
