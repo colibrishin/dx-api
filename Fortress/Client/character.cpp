@@ -219,7 +219,6 @@ namespace Fortress::ObjectBase
 	void character::set_current_sprite(const std::wstring& name, const std::wstring& orientation)
 	{
 		m_current_sprite = m_texture.get_image(name, orientation);
-		m_current_sprite.lock()->play();
 	}
 
 	void character::set_sprite_offset(const std::wstring& name, const std::wstring& orientation,
