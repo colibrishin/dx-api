@@ -2,6 +2,7 @@
 
 #include "deltatime.hpp"
 #include "ground.hpp"
+#include "input.hpp"
 #include "projectile.hpp"
 
 namespace Fortress::ObjectBase
@@ -214,6 +215,116 @@ namespace Fortress::ObjectBase
 	{
 		enable_gravity();
 		m_bGrounded = false;
+	}
+
+	eCharacterState character::get_state() const
+	{
+		return m_state;
+	}
+
+	void character::idle_state()
+	{
+		const eKeyCode left_key = m_player_id == 0 ? eKeyCode::A : eKeyCode::LEFT;
+		const eKeyCode right_key = m_player_id == 0 ? eKeyCode::D : eKeyCode::RIGHT;
+		const eKeyCode up_key = m_player_id == 0 ? eKeyCode::W : eKeyCode::UP;
+		const eKeyCode down_key = m_player_id == 0 ? eKeyCode::S : eKeyCode::DOWN;
+		const eKeyCode firing_key = m_player_id == 0 ? eKeyCode::SPACE : eKeyCode::ENTER;
+		const eKeyCode swap_key = m_player_id == 0 ? eKeyCode::TAB : eKeyCode::SHIFT;
+
+		if (Input::getKey(up_key))
+		{
+			m_state = eCharacterState::Move;
+			move_up();
+		}
+		else if (Input::getKey(left_key))
+		{
+			m_state = eCharacterState::Move;
+			move_left();
+		}
+		else if (Input::getKey(down_key))
+		{
+			m_state = eCharacterState::Move;
+			move_down();
+		}
+		else if (Input::getKey(right_key))
+		{
+			m_state = eCharacterState::Move;
+			move_right();
+		}
+		else if (Input::getKey(firing_key))
+		{
+			m_state = eCharacterState::Firing;
+			firing();
+		}
+		else if (Input::getKeyDown(swap_key))
+		{
+			change_projectile();
+		}
+		else if (Input::getKeyUp(left_key) || Input::getKeyUp(right_key) || Input::getKeyUp(up_key) || Input::getKeyUp(down_key))
+		{
+			m_state = eCharacterState::Idle;
+			stop();
+		}
+	}
+
+	void character::move_state()
+	{
+		const eKeyCode left = m_player_id == 0 ? eKeyCode::A : eKeyCode::LEFT;
+		const eKeyCode right = m_player_id == 0 ? eKeyCode::D : eKeyCode::RIGHT;
+		const eKeyCode up = m_player_id == 0 ? eKeyCode::W : eKeyCode::UP;
+		const eKeyCode down = m_player_id == 0 ? eKeyCode::S : eKeyCode::DOWN;
+
+		if (Input::getKey(up))
+		{
+			m_state = eCharacterState::Move;
+			move_up();
+		}
+		else if (Input::getKey(left))
+		{
+			m_state = eCharacterState::Move;
+			move_left();
+		}
+		else if (Input::getKey(down))
+		{
+			m_state = eCharacterState::Move;
+			move_down();
+		}
+		else if (Input::getKey(right))
+		{
+			m_state = eCharacterState::Move;
+			move_right();
+		}
+		else if (Input::getKeyUp(left) || Input::getKeyUp(right) || Input::getKeyUp(up) || Input::getKeyUp(down))
+		{
+			m_state = eCharacterState::Idle;
+			stop();
+		}
+	}
+
+	void character::firing_state()
+	{
+		const eKeyCode firing_key = m_player_id == 0 ? eKeyCode::SPACE : eKeyCode::ENTER;
+		if (Input::getKey(firing_key))
+		{
+			m_state = eCharacterState::Firing;
+			firing();
+		}
+		else if(Input::getKeyUp(firing_key))
+		{
+			m_state = eCharacterState::Fire;
+			shoot();
+		}
+	}
+
+	void character::fire_state()
+	{
+		if(const auto prj = m_current_projectile.lock())
+		{
+			if(!prj->is_active())
+			{
+				m_state = eCharacterState::Idle;
+			}
+		}
 	}
 
 	void character::set_current_sprite(const std::wstring& name, const std::wstring& orientation)

@@ -24,9 +24,9 @@ namespace Fortress::Scene
 			L"valley", "./resources/images/wirestock_valley.jpg");
 		m_ground = ObjectBase::ObjectManager::create_object<Object::Ground>();
 		m_home_object = ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
-			L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right);
+			0, L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right);
 		m_away_object = ObjectBase::ObjectManager::create_object<Object::CannonCharacter>(
-			L"Cannon", Math::Vector2{300.0f, 1.0f}, Math::left);
+			1, L"Cannon", Math::Vector2{300.0f, 1.0f}, Math::left);
 
 		add_game_object(Abstract::LayerType::Character, m_home_object);
 		add_game_object(Abstract::LayerType::Character, m_away_object);
@@ -42,79 +42,50 @@ namespace Fortress::Scene
 	{
 		scene::update();
 
-		if (Input::getKey(eKeyCode::W))
+		if (const auto obj = m_home_object.lock())
 		{
-			m_home_object.lock()->move_up();
-		}
-		if (Input::getKey(eKeyCode::A))
-		{
-			m_home_object.lock()->move_left();
-		}
-		if (Input::getKey(eKeyCode::S))
-		{
-			m_home_object.lock()->move_down();
-		}
-		if (Input::getKey(eKeyCode::D))
-		{
-			m_home_object.lock()->move_right();
-		}
-
-		if(Input::getKey(eKeyCode::SPACE))
-		{
-			m_home_object.lock()->firing();
-		}
-
-		if(Input::getKeyUp(eKeyCode::SPACE))
-		{
-			m_home_object.lock()->shoot();
+			switch(obj->get_state())
+			{
+			case eCharacterState::Idle:
+				obj->idle_state();
+				break;
+			case eCharacterState::Firing:
+				obj->firing_state();
+				break;
+			case eCharacterState::Fire:
+				obj->fire_state();
+				break;
+			case eCharacterState::Item:
+				break;
+			case eCharacterState::Move:
+				obj->move_state();
+				break;
+			default:
+				break;
+			}
 		}
 
-		if(Input::getKeyDown(eKeyCode::TAB))
+		if (const auto obj = m_away_object.lock())
 		{
-			m_home_object.lock()->change_projectile();
-		}
-
-		if (Input::getKeyUp(eKeyCode::W) ||
-			Input::getKeyUp(eKeyCode::A) ||
-			Input::getKeyUp(eKeyCode::S) ||
-			Input::getKeyUp(eKeyCode::D))
-		{
-			m_home_object.lock()->stop();
-		}
-
-		if (Input::getKey(eKeyCode::UP))
-		{
-			m_away_object.lock()->move_up();
-		}
-		if (Input::getKey(eKeyCode::LEFT))
-		{
-			m_away_object.lock()->move_left();
-		}
-		if (Input::getKey(eKeyCode::DOWN))
-		{
-			m_away_object.lock()->move_down();
-		}
-		if (Input::getKey(eKeyCode::RIGHT))
-		{
-			m_away_object.lock()->move_right();
-		}
-
-		if(Input::getKey(eKeyCode::ENTER))
-		{
-			m_away_object.lock()->firing();
-		}
-
-		if(Input::getKeyUp(eKeyCode::ENTER))
-		{
-			m_away_object.lock()->shoot();
-		}
-
-		if (Input::getKeyUp(eKeyCode::LEFT) ||
-			Input::getKeyUp(eKeyCode::RIGHT) ||
-			Input::getKeyUp(eKeyCode::UP) ||
-			Input::getKeyUp(eKeyCode::DOWN))
-		{
-			m_away_object.lock()->stop();
+			switch(obj->get_state())
+			{
+			case eCharacterState::Idle:
+				obj->idle_state();
+				break;
+			case eCharacterState::Firing:
+				obj->firing_state();
+				break;
+			case eCharacterState::Fire:
+				obj->fire_state();
+				break;
+			case eCharacterState::Item:
+				break;
+			case eCharacterState::Move:
+				obj->move_state();
+				break;
+			default:
+				break;
+			}
 		}
 	}
 

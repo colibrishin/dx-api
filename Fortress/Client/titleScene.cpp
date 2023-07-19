@@ -28,7 +28,7 @@ namespace Fortress::Scene
 			static_cast<float>(h_distribution(generator))
 		};
 
-		m_object = std::make_shared<Object::MissileCharacter>(L"Ball", random_pos, Math::left);
+		m_object = std::make_shared<Object::MissileCharacter>(0, L"Ball", random_pos, Math::left);
 
 		add_game_object(Abstract::LayerType::Character, m_object);
 

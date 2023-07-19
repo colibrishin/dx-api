@@ -29,4 +29,13 @@ namespace Fortress
 		BottomLeft = 12,
 		BottomRight = 20,
 	};
+
+	enum class eCharacterState
+	{
+		Idle = 0,
+		Move,
+		Firing,
+		Fire,
+		Item
+	};
 }

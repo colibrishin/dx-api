@@ -39,6 +39,12 @@ namespace Fortress::ObjectBase
 		virtual void on_collision(const CollisionCode& collision, const std::shared_ptr<rigidBody>& other) override;
 		virtual void on_nocollison() override;
 
+		eCharacterState get_state() const;
+		void idle_state();
+		void move_state();
+		void firing_state();
+		void fire_state();
+
 		void set_current_sprite(const std::wstring& name, const std::wstring& orientation);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
@@ -54,10 +60,12 @@ namespace Fortress::ObjectBase
 		float get_mp_percentage() const;
 
 	private:
+		int m_player_id;
 		float m_hp;
 		float m_mp;
 		float m_power;
 		bool m_bGrounded;
+		eCharacterState m_state;
 
 		void render_hp_bar(const Math::Vector2& position);
 
@@ -72,6 +80,7 @@ namespace Fortress::ObjectBase
 
 	protected:
 		character(
+			const int player_id,
 			const std::wstring& name,
 			const std::wstring& short_name,
 			const Math::Vector2 offset,
@@ -85,10 +94,12 @@ namespace Fortress::ObjectBase
 			const std::weak_ptr<projectile>& main_projectile,
 			const std::weak_ptr<projectile>& secondary_projectile)
 			: rigidBody(name, position, {}, velocity, mass, speed, acceleration, true, true),
+		      m_player_id(player_id),
 			  m_hp(hp),
 			  m_mp(mp),
 		      m_power(1.0f),
 			  m_bGrounded(false),
+		      m_state(eCharacterState::Idle),
 			  m_offset(offset),
 			  m_texture(short_name),
 			  m_main_projectile(main_projectile),
