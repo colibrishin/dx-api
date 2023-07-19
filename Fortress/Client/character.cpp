@@ -126,30 +126,23 @@ namespace Fortress::ObjectBase
 			if(ground)
 			{
 				const Math::Vector2 local_position = get_bottom() - ground->get_top_left();
-
-				if(!ground->is_destroyed(
+				const int ground_check = ground->is_destroyed(
 					std::floorf(local_position.get_x()), 
-					std::floorf(local_position.get_y())))
+					std::floorf(local_position.get_y()));
+				if(ground_check == 0)
 				{
 					Debug::Log(L"Character hits the ground");
 					reset_current_gravity_speed();
 					disable_gravity();
 					m_bGrounded = true;
 				}
-				else
+				else if(ground_check == 1 || ground_check == -1)
 				{
 					enable_gravity();
 					m_bGrounded = false;
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 			}
-		}
-
-		if (const auto projectile = 
-				std::dynamic_pointer_cast<ObjectBase::projectile>(other))
-		{
-			Debug::Log(L"Projectile hits the character");
-			hit(projectile);
 		}
 
 		rigidBody::on_collision(collision, other);

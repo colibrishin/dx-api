@@ -36,7 +36,7 @@ namespace Fortress::Object
 		}
 
 		void render() override;
-		bool is_destroyed(const int x, const int y) const;
+		int is_destroyed(const int x, const int y) const;
 		void get_explosion_effect(const Math::Vector2& bottom, const float radius);
 		void set_destroyed(const int x, const int y);
 		void set_line_destroyed(const int mid_x, const int mid_y, const int n);
@@ -126,16 +126,24 @@ namespace Fortress::Object
 		}
 	}
 
-	inline bool Ground::is_destroyed(const int x, const int y) const
+	inline int Ground::is_destroyed(const int x, const int y) const
 	{
-		return m_destroyed_table[y][x];
+		if(x >= 0 && x < m_hitbox.get_x() && y >= 0 && y < m_hitbox.get_y())
+		{
+			return m_destroyed_table[y][x];
+		}
+
+		return -1;
 	}
 
 	inline void Ground::set_destroyed(const int x, const int y)
 	{
-		if(y != 0 && !m_destroyed_table[y - 1][x])
+		for(int i = 0; i < y; ++i)
 		{
-			m_destroyed_table[y - 1][x] = true;
+			if(!m_destroyed_table[i][x])
+			{
+				m_destroyed_table[i][x] = true;
+			}
 		}
 		m_destroyed_table[y][x] = true;
 	}
@@ -146,16 +154,18 @@ namespace Fortress::Object
 
 		for(int i = 0; i < n / 2; ++i)
 		{
-			if(left_x >= 0)
+			if(left_x >= 0 && mid_y < static_cast<int>(m_hitbox.get_y()))
 			{
-				set_destroyed(left_x++, mid_y);
+				set_destroyed(left_x, mid_y);
+				left_x++;
 			}
 		}
 		for(int i = n / 2; i < n; ++i)
 		{
-			if(to_right_x < m_hitbox.get_x())
+			if(to_right_x < m_hitbox.get_x() && mid_y < static_cast<int>(m_hitbox.get_y()))
 			{
-				set_destroyed(to_right_x++, mid_y);
+				set_destroyed(to_right_x, mid_y);
+				to_right_x++;
 			}
 		}
 	}

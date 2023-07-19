@@ -7,7 +7,34 @@ namespace Fortress::ObjectBase
 	void projectile::on_collision(const CollisionCode& collison, const std::shared_ptr<Abstract::rigidBody>& other)
 	{
 		rigidBody::on_collision(collison, other);
-		unfocus_this();
+
+		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other))
+		{
+			if(ground)
+			{
+				const Math::Vector2 local_position = get_bottom() - ground->get_top_left();
+				const int ground_check = ground->is_destroyed(
+					std::floorf(local_position.get_x()), 
+					std::floorf(local_position.get_y()));
+
+				if(ground_check == 0)
+				{
+					Debug::Log(L"Projectile hits the ground");
+					unfocus_this();
+				}
+				else if(ground_check == 1)
+				{
+					Debug::Log(L"Projectile hits the destroyed ground");
+				}
+			}
+		}
+
+		if (const auto character = 
+				std::dynamic_pointer_cast<ObjectBase::character>(other))
+		{
+			Debug::Log(L"Projectile hits the character");
+			character->hit(std::dynamic_pointer_cast<projectile>(shared_from_this()));
+		}
 	}
 
 	void projectile::focus_this()
