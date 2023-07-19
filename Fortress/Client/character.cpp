@@ -10,6 +10,7 @@ namespace Fortress::ObjectBase
 	{
 		m_hitbox = m_texture.get_image(L"idle", L"left").lock()->get_hitbox();
 		set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
+		m_current_projectile = m_main_projectile;
 		rigidBody::initialize();
 	}
 
@@ -76,6 +77,8 @@ namespace Fortress::ObjectBase
 
 			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(m_pitch)));
 
+			Debug::Log(m_name + L" projectile : " + m_current_projectile.lock()->get_name());
+
 			// c
 			Debug::draw_line(pos, camera_ptr->get_offset());
 
@@ -117,6 +120,23 @@ namespace Fortress::ObjectBase
 		}
 
 		rigidBody::move();
+	}
+
+	void character::change_projectile()
+	{
+		if(m_current_projectile.lock() == m_main_projectile)
+		{
+			m_current_projectile = m_secondary_projectile;
+		}
+		else
+		{
+			m_current_projectile = m_main_projectile;
+		}
+	}
+
+	std::weak_ptr<projectile> character::get_current_projectile()
+	{
+		return m_current_projectile;
 	}
 
 	void character::on_collision(const CollisionCode& collision, const std::shared_ptr<rigidBody>& other)

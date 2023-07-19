@@ -14,7 +14,7 @@ namespace Fortress::Object
 			const std::wstring& name, 
 			const Math::Vector2& position, 
 			const Math::Vector2& orientation)
-			: character(
+			:character(
 				name,
 				L"cannon",
 				orientation,
@@ -24,8 +24,9 @@ namespace Fortress::Object
 				500.0f,
 				0.0f,
 				ObjectBase::character_full_hp,
-				ObjectBase::character_full_mp),
-			m_base_projectile(std::make_shared<CannonProjectile>())
+				ObjectBase::character_full_mp,
+				std::make_shared<CannonProjectile>(),
+				std::make_shared<CannonProjectile>())
 		{
 			initialize();
 		}
@@ -46,8 +47,6 @@ namespace Fortress::Object
 		}
 
 		void shoot() override;
-	private:
-		std::shared_ptr<CannonProjectile> m_base_projectile;
 	};
 }
 
@@ -75,7 +74,7 @@ namespace Fortress::Object
 			angle = {std::cosf(Math::to_radian(45.0f)), -std::cosf(Math::to_radian(45.0f))};
 		}
 
-		m_base_projectile->fire(
+		get_current_projectile().lock()->fire(
 			get_offset() == Math::left ? get_top_left() : get_top_right(),
 			angle, 
 			charged);

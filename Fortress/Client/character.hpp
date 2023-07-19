@@ -33,6 +33,8 @@ namespace Fortress::ObjectBase
 		virtual void shoot();
 		float get_charged_power() const;
 		virtual void move() override;
+		void change_projectile();
+		std::weak_ptr<projectile> get_current_projectile();
 
 		virtual void on_collision(const CollisionCode& collision, const std::shared_ptr<rigidBody>& other) override;
 		virtual void on_nocollison() override;
@@ -62,6 +64,10 @@ namespace Fortress::ObjectBase
 		Texture<GifWrapper> m_texture;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 
+		std::weak_ptr<projectile> m_current_projectile;
+		std::shared_ptr<projectile> m_main_projectile;
+		std::shared_ptr<projectile> m_secondary_projectile;
+
 	protected:
 		character(
 			const std::wstring& name,
@@ -73,7 +79,9 @@ namespace Fortress::ObjectBase
 			const float speed,
 			const float acceleration,
 			const int hp,
-			const int mp)
+			const int mp,
+			const std::weak_ptr<projectile>& main_projectile,
+			const std::weak_ptr<projectile>& secondary_projectile)
 			: rigidBody(name, position, {}, velocity, mass, speed, acceleration, true, true),
 			  m_hp(hp),
 			  m_mp(mp),
@@ -81,7 +89,9 @@ namespace Fortress::ObjectBase
 			  m_pitch(0.0f),
 			  m_bGrounded(false),
 			  m_offset(offset),
-			  m_texture(short_name)
+			  m_texture(short_name),
+			  m_main_projectile(main_projectile),
+			  m_secondary_projectile(secondary_projectile)
 		{
 			character::initialize();
 		}

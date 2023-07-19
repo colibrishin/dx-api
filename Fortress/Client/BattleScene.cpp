@@ -69,6 +69,11 @@ namespace Fortress::Scene
 			m_home_object.lock()->shoot();
 		}
 
+		if(Input::getKeyDown(eKeyCode::TAB))
+		{
+			m_home_object.lock()->change_projectile();
+		}
+
 		if (Input::getKeyUp(eKeyCode::W) ||
 			Input::getKeyUp(eKeyCode::A) ||
 			Input::getKeyUp(eKeyCode::S) ||
