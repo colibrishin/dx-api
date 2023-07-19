@@ -27,9 +27,11 @@ namespace Fortress::ObjectBase
 		virtual void unfocus_this();
 		virtual void render() override;
 		void up_hit_count();
-		int get_radius() const;
 
+		const std::weak_ptr<GifWrapper>& get_current_sprite() const;
+		int get_radius() const;
 		float get_damage() const;
+		const Math::Vector2& get_fired_position() const;
 
 	protected:
 		projectile(

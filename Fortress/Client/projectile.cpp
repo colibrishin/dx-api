@@ -106,6 +106,11 @@ namespace Fortress::ObjectBase
 		m_curr_hit_count++;
 	}
 
+	const std::weak_ptr<GifWrapper>& projectile::get_current_sprite() const
+	{
+		return m_current_sprite;
+	}
+
 	int projectile::get_radius() const
 	{
 		return m_radius;
@@ -114,6 +119,11 @@ namespace Fortress::ObjectBase
 	float projectile::get_damage() const
 	{
 		return m_damage;
+	}
+
+	const Math::Vector2& projectile::get_fired_position() const
+	{
+		return m_fired_position;
 	}
 
 	void projectile::initialize()
