@@ -59,6 +59,8 @@ namespace Fortress::ObjectBase
 		float m_power;
 		bool m_bGrounded;
 
+		void render_hp_bar(const Math::Vector2& position);
+
 		Math::Vector2 m_offset;
 
 		Texture<GifWrapper> m_texture;
