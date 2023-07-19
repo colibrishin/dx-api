@@ -32,8 +32,10 @@ namespace Fortress::Math
 		__forceinline Vector2 operator/(const float& scalar) const;
 		__forceinline Vector2 operator*(const float& scalar) const;
 		__forceinline Vector2 operator+(const Vector2& right) const;
+		__forceinline Vector2 operator+(const float scalar) const;
 		__forceinline Vector2 operator-() const;
 		__forceinline Vector2 operator-(const Vector2& right) const;
+		__forceinline Vector2 operator-(const float scalar) const;
 		__forceinline bool operator==(const Vector2& other) const;
 		__forceinline bool operator!=(const Vector2& other) const;
 
@@ -139,6 +141,11 @@ namespace Fortress::Math
 		return Vector2{m_x + right.m_x, m_y + right.m_y};
 	}
 
+	inline Vector2 Vector2::operator+(const float scalar) const
+	{
+		return Vector2{m_x + scalar, m_y + scalar};
+	}
+
 	__forceinline Vector2 Vector2::operator-() const
 	{
 		return {-m_x, -m_y};
@@ -147,6 +154,11 @@ namespace Fortress::Math
 	__forceinline Vector2 Vector2::operator-(const Vector2& right) const
 	{
 		return Vector2{m_x - right.m_x, m_y - right.m_y};
+	}
+
+	inline Vector2 Vector2::operator-(const float scalar) const
+	{
+		return Vector2{m_x - scalar, m_y - scalar};
 	}
 
 	__forceinline bool Vector2::operator==(const Vector2& other) const

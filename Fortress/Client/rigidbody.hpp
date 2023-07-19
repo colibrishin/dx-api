@@ -2,10 +2,7 @@
 #ifndef RIGIDBODY_HPP
 #define RIGIDBODY_HPP
 
-#include <vector>
 #include <string>
-
-#include "GifWrapper.hpp"
 #include "object.hpp"
 #include "Texture.hpp"
 

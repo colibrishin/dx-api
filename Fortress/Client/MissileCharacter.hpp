@@ -25,7 +25,7 @@ namespace Fortress::Object
 				position,
 				{0.0f, 0.0f},
 				1.0f,
-				500.0f,
+				20.0f,
 				0.0f,
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp,

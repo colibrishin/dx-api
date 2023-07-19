@@ -22,8 +22,11 @@ namespace Fortress::Object
 				0.0f, 
 				false,
 				false),
-			m_destroyed_table(static_cast<int>(m_hitbox.get_y()), std::vector<bool>(static_cast<int>(m_hitbox.get_x())))
+			m_destroyed_table(static_cast<int>(m_hitbox.get_y()), std::vector<bool>(static_cast<int>(m_hitbox.get_x()))),
+			m_ground_hdc(nullptr),
+			m_ground_bitmap(nullptr)
 		{
+			Ground::initialize();
 		}
 		Ground& operator=(const Ground& other) = default;
 		Ground& operator=(Ground&& other) = default;
@@ -32,16 +35,27 @@ namespace Fortress::Object
 
 		~Ground() override
 		{
+			if(m_ground_hdc)
+			{
+				DeleteObject(m_ground_bitmap);
+				ReleaseDC(WinAPIHandles::get_hwnd(), m_ground_hdc);
+				DeleteDC(m_ground_hdc);
+			}
 			rigidBody::~rigidBody();
 		}
 
+		void initialize() override;
 		void render() override;
 		int is_destroyed(const int x, const int y) const;
-		void get_explosion_effect(const Math::Vector2& bottom, const float radius);
+
+	private:
 		void set_destroyed(const int x, const int y);
 		void set_line_destroyed(const int mid_x, const int mid_y, const int n);
-	private:
+		void draw_destroyed(const Math::Vector2& top_left, const float radius) const;
+
 		std::vector<std::vector<bool>> m_destroyed_table;
+		HDC m_ground_hdc;
+		HBITMAP m_ground_bitmap;
 	};
 
 	inline void Ground::on_collision(const CollisionCode& collison, const std::shared_ptr<rigidBody>& other)
@@ -83,10 +97,28 @@ namespace Fortress::Object
 				{
 					Debug::Log(L"Projectile hits the destroyed ground");
 				}
+
+				// align to top left position, set_line_destroyed will set destroyed in mid point way.
+				// @todo: using position top left and mid mix debt is getting higher.
+				draw_destroyed(
+					{local_position.get_x() - projectile->get_radius() / 2, local_position.get_y()}, 
+					projectile->get_radius());
 			}
 		}
 
 		rigidBody::on_collision(collison, other);
+	}
+
+	inline void Ground::initialize()
+	{
+		m_ground_hdc = CreateCompatibleDC(WinAPIHandles::get_main_dc());
+		m_ground_bitmap = CreateCompatibleBitmap(WinAPIHandles::get_main_dc(), m_hitbox.get_x(), m_hitbox.get_y());
+
+		SelectObject(m_ground_hdc, m_ground_bitmap);
+		// @todo: replace with image or so.
+		Rectangle(m_ground_hdc, 0, 0, m_hitbox.get_x(), m_hitbox.get_y());
+		
+		rigidBody::initialize();
 	}
 
 	inline void Ground::render()
@@ -102,24 +134,19 @@ namespace Fortress::Object
 				const auto char_pos = camera_ptr->get_offset();
 				Debug::Log(L"char diff" + std::to_wstring((pos - char_pos).get_x() ) + std::to_wstring((pos - char_pos).get_y()));
 
-				Rectangle(
+				// Transparent color is the destroyed ground.
+				GdiTransparentBlt(
 					WinAPIHandles::get_buffer_dc(),
 					pos.get_x(),
 					pos.get_y(),
-					pos.get_x() + m_hitbox.get_x(),
-					pos.get_y() + m_hitbox.get_y());
-
-				// @todo: performance degrading, this should be replaced with intersection removal.
-				for(int i = 0; i < m_hitbox.get_y(); ++i)
-				{
-					for(int j = 0; j < m_hitbox.get_x(); ++j)
-					{
-						if(m_destroyed_table[i][j])
-						{
-							Debug::draw_dot({pos.get_x() + j, pos.get_y() + i});
-						}
-					}
-				}
+					m_hitbox.get_x(),
+					m_hitbox.get_y(),
+					m_ground_hdc,
+					0,
+					0,
+					m_hitbox.get_x(),
+					m_hitbox.get_y(),
+					RGB(255,0,255));
 
 				Debug::draw_dot(pos);
 			}
@@ -145,6 +172,7 @@ namespace Fortress::Object
 				m_destroyed_table[i][x] = true;
 			}
 		}
+
 		m_destroyed_table[y][x] = true;
 	}
 	inline void Ground::set_line_destroyed(const int mid_x, const int mid_y, const int n)
@@ -168,6 +196,23 @@ namespace Fortress::Object
 				to_right_x++;
 			}
 		}
+	}
+
+	inline void Ground::draw_destroyed(const Math::Vector2& top_left, const float radius) const
+	{
+		Graphics m_ground_gdi(m_ground_hdc);
+		const SolidBrush removal_brush(Color(255,0,255));
+
+		const RectF ellipse_rect = {
+			top_left.get_x(), top_left.get_y(), radius, radius};
+
+
+		// due to the set_destroyed logic, we need to also remove upper side.
+		const RectF upper_ellipse_rect = {
+			top_left.get_x(), top_left.get_y() - radius, radius, radius};
+
+		m_ground_gdi.FillEllipse(&removal_brush, ellipse_rect);
+		m_ground_gdi.FillEllipse(&removal_brush, upper_ellipse_rect);
 	}
 }
 
