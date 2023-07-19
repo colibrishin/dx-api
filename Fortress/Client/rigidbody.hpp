@@ -38,7 +38,10 @@ namespace Fortress::Abstract
 		void move_up() override;
 		virtual void stop();
 
+		void set_pitch(const float pitch);
+		float get_pitch();
 	private:
+		float m_pitch;
 		float m_speed;
 		float m_curr_speed;
 		bool m_bGravity{};

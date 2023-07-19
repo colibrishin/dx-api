@@ -34,7 +34,7 @@ namespace Fortress::Object
 
 		void update() override;
 		void initialize() override;
-		void render() override;
+		virtual void prerender() override;
 		void unfocus_this() override;
 
 	private:
@@ -69,43 +69,18 @@ namespace Fortress::Object
 		projectile::initialize();
 	}
 
-	inline void GuidedMissileProjectile::render()
+	inline void GuidedMissileProjectile::prerender()
 	{
-		if(is_active())
+		if (const auto target = m_locked_target.lock())
 		{
-			Math::Vector2 pos{};
-			const auto camera_ptr = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
-
-			if(camera_ptr->get_locked_object().lock() == shared_from_this())
-			{
-				pos = camera_ptr->get_offset();
-			}
-			else
-			{
-				pos = camera_ptr->get_relative_position(std::dynamic_pointer_cast<object>(shared_from_this()));	
-			}
-
-			float angle;
-
-			if(const auto target = m_locked_target.lock())
-			{
-				angle = m_position.local_inner_angle(target->get_position());
-			}
-			else
-			{
-				angle = m_position.local_inner_angle(get_fired_position());
-			}
-
-			get_current_sprite().lock()->render(
-				pos,
-				m_hitbox, 
-				{1, 1},
-				Math::to_degree(angle));
-
-			Debug::draw_rect(pos, m_hitbox);
-			Debug::draw_dot(pos);
+			set_pitch(m_position.local_inner_angle(target->get_position()));
+		}
+		else
+		{
+			set_pitch(m_position.local_inner_angle(get_fired_position()));
 		}
 	}
+	
 	inline void GuidedMissileProjectile::unfocus_this()
 	{
 		m_locked_target.reset();

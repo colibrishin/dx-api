@@ -48,6 +48,7 @@ namespace Fortress::ObjectBase
 		virtual void move_left() override;
 		virtual void move_right() override;
 		virtual void stop() override;
+		virtual void prerender();
 
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
@@ -56,8 +57,9 @@ namespace Fortress::ObjectBase
 		float m_hp;
 		float m_mp;
 		float m_power;
-		float m_pitch;
 		bool m_bGrounded;
+
+		void render_hp_bar(const Math::Vector2& position);
 
 		Math::Vector2 m_offset;
 
@@ -86,7 +88,6 @@ namespace Fortress::ObjectBase
 			  m_hp(hp),
 			  m_mp(mp),
 		      m_power(1.0f),
-			  m_pitch(0.0f),
 			  m_bGrounded(false),
 			  m_offset(offset),
 			  m_texture(short_name),

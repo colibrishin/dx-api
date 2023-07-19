@@ -46,6 +46,43 @@ namespace Fortress::ObjectBase
 		return m_mp / static_cast<float>(character_full_mp);
 	}
 
+	void character::render_hp_bar(const Math::Vector2& position)
+	{
+		// white box
+		Rectangle(
+			WinAPIHandles::get_buffer_dc(),
+			position.get_x(),
+			position.get_y() - 20,
+			position.get_x() + 52,
+			position.get_y() - 10);
+
+		// inside hp bar
+
+		const float hp_percentage = get_hp_percentage();
+		HBRUSH brush;
+
+		if (hp_percentage > 0.5) 
+		{
+			brush = CreateSolidBrush(RGB(0, 255, 0));
+		}
+		else if (hp_percentage >= 0.3)
+		{
+			brush = CreateSolidBrush(RGB(255, 255, 0));
+		}
+		else
+		{
+			brush = CreateSolidBrush(RGB(255, 0, 0));
+		}
+
+		const RECT rect = {
+			position.get_x(),
+			position.get_y() - 19,
+			position.get_x() + (51 * get_hp_percentage()),
+			position.get_y() - 12 };
+		FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+		DeleteObject(brush);
+	}
+
 	void character::update()
 	{
 		rigidBody::update();
@@ -69,13 +106,16 @@ namespace Fortress::ObjectBase
 					std::dynamic_pointer_cast<object>(shared_from_this()));
 			}
 
-			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(m_pitch));
+			prerender();
+			render_hp_bar(pos);
+			
+			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(get_pitch()));
 
 			Debug::Log(m_name + L" pos " + std::to_wstring(pos.get_x()) + L", " + std::to_wstring(pos.get_y()));
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
 
-			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(m_pitch)));
+			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(get_pitch())));
 
 			Debug::Log(m_name + L" projectile : " + m_current_projectile.lock()->get_name());
 
@@ -163,7 +203,7 @@ namespace Fortress::ObjectBase
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
-				m_pitch = ground->get_top_left().local_inner_angle(get_bottom());
+				set_pitch(ground->get_top_left().local_inner_angle(get_bottom()));
 			}
 		}
 
@@ -216,5 +256,8 @@ namespace Fortress::ObjectBase
 	{
 		set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
 		rigidBody::stop();
+	}
+	void character::prerender()
+	{
 	}
 }
