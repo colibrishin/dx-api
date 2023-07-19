@@ -54,6 +54,7 @@ namespace Fortress::ObjectBase
 		float m_hp;
 		float m_mp;
 		float m_power;
+		float m_pitch;
 		bool m_bGrounded;
 
 		Math::Vector2 m_offset;
@@ -77,7 +78,8 @@ namespace Fortress::ObjectBase
 			  m_hp(hp),
 			  m_mp(mp),
 		      m_power(1.0f),
-		      m_bGrounded(false),
+			  m_pitch(0.0f),
+			  m_bGrounded(false),
 			  m_offset(offset),
 			  m_texture(short_name)
 		{

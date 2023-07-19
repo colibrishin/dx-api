@@ -77,7 +77,7 @@ namespace Fortress::Object
 					}
 
 					Debug::Log(L"Projectile hits the Ground");
-					Debug::draw_dot(other->get_center());
+					projectile->up_hit_count();
 				}
 				else
 				{

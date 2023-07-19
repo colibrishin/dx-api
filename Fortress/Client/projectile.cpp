@@ -12,6 +12,11 @@ namespace Fortress::ObjectBase
 		{
 			if(ground)
 			{
+				if(m_curr_hit_count == m_max_hit_count)
+				{
+					unfocus_this();
+				}
+
 				const Math::Vector2 local_position = get_bottom() - ground->get_top_left();
 				const int ground_check = ground->is_destroyed(
 					std::floorf(local_position.get_x()), 
@@ -20,7 +25,6 @@ namespace Fortress::ObjectBase
 				if(ground_check == 0)
 				{
 					Debug::Log(L"Projectile hits the ground");
-					unfocus_this();
 				}
 				else if(ground_check == 1)
 				{
@@ -34,6 +38,7 @@ namespace Fortress::ObjectBase
 		{
 			Debug::Log(L"Projectile hits the character");
 			character->hit(std::dynamic_pointer_cast<projectile>(shared_from_this()));
+			unfocus_this();
 		}
 	}
 
@@ -58,6 +63,7 @@ namespace Fortress::ObjectBase
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 		scene_ptr->get_camera().lock()->restore_object();
 
+		m_curr_hit_count = 0;
 		m_current_sprite.lock()->reset_transfrom();
 		reset_current_gravity_speed();
 		reset_current_speed();
@@ -93,6 +99,11 @@ namespace Fortress::ObjectBase
 		}
 
 		rigidBody::render();
+	}
+
+	void projectile::up_hit_count()
+	{
+		m_curr_hit_count++;
 	}
 
 	int projectile::get_radius() const
