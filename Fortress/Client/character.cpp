@@ -57,15 +57,14 @@ namespace Fortress::ObjectBase
 			position.get_y() - 10);
 
 		// inside hp bar
-
 		const float hp_percentage = get_hp_percentage();
 		HBRUSH brush;
 
-		if (hp_percentage > 0.5) 
+		if (hp_percentage > 0.5f) 
 		{
 			brush = CreateSolidBrush(RGB(0, 255, 0));
 		}
-		else if (hp_percentage >= 0.3)
+		else if (hp_percentage >= 0.3f)
 		{
 			brush = CreateSolidBrush(RGB(255, 255, 0));
 		}
@@ -75,10 +74,11 @@ namespace Fortress::ObjectBase
 		}
 
 		const RECT rect = {
-			position.get_x(),
-			position.get_y() - 19,
-			position.get_x() + (51 * get_hp_percentage()),
-			position.get_y() - 12 };
+			static_cast<int>(position.get_x()),
+			static_cast<int>(position.get_y() - 19),
+			static_cast<int>(position.get_x() + (51 * get_hp_percentage())),
+			static_cast<int>(position.get_y() - 12) };
+
 		FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 		DeleteObject(brush);
 	}
