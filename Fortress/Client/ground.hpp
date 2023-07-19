@@ -209,7 +209,7 @@ namespace Fortress::Object
 
 		// due to the set_destroyed logic, we need to also remove upper side.
 		const RectF upper_ellipse_rect = {
-			top_left.get_x(), top_left.get_y() - radius, radius, radius};
+			top_left.get_x(), top_left.get_y() - (radius / 2), radius, radius};
 
 		m_ground_gdi.FillEllipse(&removal_brush, ellipse_rect);
 		m_ground_gdi.FillEllipse(&removal_brush, upper_ellipse_rect);
