@@ -86,19 +86,26 @@ namespace Fortress::ObjectBase
 				pos = camera_ptr->get_relative_position(std::dynamic_pointer_cast<object>(shared_from_this()));	
 			}
 
-			const auto angle = m_position.local_inner_angle(m_fired_position);
+			prerender();
 
 			m_current_sprite.lock()->render(
 				pos,
 				m_hitbox, 
 				{1, 1},
-				Math::to_degree(angle));
+				Math::to_degree(get_pitch()));
 
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
 		}
 
 		rigidBody::render();
+	}
+
+	void projectile::prerender()
+	{
+		const auto angle = m_position.local_inner_angle(m_fired_position);
+
+		set_pitch(angle);
 	}
 
 	void projectile::up_hit_count()

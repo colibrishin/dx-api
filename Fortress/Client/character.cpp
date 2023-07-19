@@ -69,13 +69,15 @@ namespace Fortress::ObjectBase
 					std::dynamic_pointer_cast<object>(shared_from_this()));
 			}
 
-			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(m_pitch));
+			prerender();
+
+			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(get_pitch()));
 
 			Debug::Log(m_name + L" pos " + std::to_wstring(pos.get_x()) + L", " + std::to_wstring(pos.get_y()));
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
 
-			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(m_pitch)));
+			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(get_pitch())));
 
 			Debug::Log(m_name + L" projectile : " + m_current_projectile.lock()->get_name());
 
@@ -163,7 +165,7 @@ namespace Fortress::ObjectBase
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
-				m_pitch = ground->get_top_left().local_inner_angle(get_bottom());
+				set_pitch(ground->get_top_left().local_inner_angle(get_bottom()));
 			}
 		}
 
@@ -216,5 +218,8 @@ namespace Fortress::ObjectBase
 	{
 		set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
 		rigidBody::stop();
+	}
+	void character::prerender()
+	{
 	}
 }

@@ -11,6 +11,7 @@ namespace Fortress::Abstract
 								const bool& gravity, const bool& clipping) :
 		object(name, position, hitbox, mass),
 		m_velocity(velocity),
+		m_pitch(0.0f),
 		m_speed(speed),
 		m_acceleration(acceleration),
 		m_curr_speed(0.0f),
@@ -144,6 +145,16 @@ namespace Fortress::Abstract
 	void rigidBody::stop()
 	{
 		m_velocity = {0, 0};
+	}
+
+	void rigidBody::set_pitch(const float pitch)
+	{
+		m_pitch = pitch;
+	}
+
+	float rigidBody::get_pitch()
+	{
+		return m_pitch;
 	}
 
 	void rigidBody::on_collision(const CollisionCode& code, const std::shared_ptr<rigidBody>& other)

@@ -26,6 +26,7 @@ namespace Fortress::ObjectBase
 		virtual void focus_this();
 		virtual void unfocus_this();
 		virtual void render() override;
+		virtual void prerender();
 		void up_hit_count();
 
 		const std::weak_ptr<GifWrapper>& get_current_sprite() const;
