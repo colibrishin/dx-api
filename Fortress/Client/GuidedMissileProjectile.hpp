@@ -36,7 +36,6 @@ namespace Fortress::Object
 		void initialize() override;
 
 	private:
-		std::weak_ptr<ObjectBase::character> m_fire_object; 
 		Math::Vector2 m_fired_position;
 	};
 
