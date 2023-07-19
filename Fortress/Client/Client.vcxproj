@@ -140,6 +140,7 @@
     <ClInclude Include="flower.hpp" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ground.hpp" />
+    <ClInclude Include="GuidedMissileProjectile.hpp" />
     <ClInclude Include="ImageWrapper.hpp" />
     <ClInclude Include="input.hpp" />
     <ClInclude Include="layer.hpp" />

@@ -3,6 +3,7 @@
 #define MISSILECHARACTER_HPP
 #include "character.hpp"
 #include "GifWrapper.hpp"
+#include "GuidedMissileProjectile.hpp"
 #include "math.h"
 #include "MissileProjectile.hpp"
 #include "resourceManager.hpp"
@@ -27,7 +28,7 @@ namespace Fortress::Object
 				0.0f,
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp),
-			m_base_projectile(std::make_shared<MissileProjectile>())
+			m_base_projectile(std::make_shared<GuidedMissileProjectile>())
 		{
 			initialize();
 		}
@@ -49,7 +50,7 @@ namespace Fortress::Object
 
 		void shoot() override;
 	private:
-		std::shared_ptr<MissileProjectile> m_base_projectile;
+		std::shared_ptr<GuidedMissileProjectile> m_base_projectile;
 	};
 }
 

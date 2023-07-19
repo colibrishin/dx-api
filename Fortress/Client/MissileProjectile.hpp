@@ -32,6 +32,8 @@ namespace Fortress::Object
 		MissileProjectile(MissileProjectile&& other) = default;
 		~MissileProjectile() override = default;
 
+		virtual void update() override;
+
 		void initialize() override;
 
 	private:

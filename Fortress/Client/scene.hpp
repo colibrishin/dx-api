@@ -137,7 +137,7 @@ namespace Fortress::Abstract
 			top_left.get_y() + hit_box.get_y() / 2
 		};
 
-		for (const auto obj : m_objects)
+		for (const auto& obj : m_objects)
 		{
 			const auto ptr = obj.lock();
 
@@ -151,7 +151,7 @@ namespace Fortress::Abstract
 				ptr->m_position.get_y() <= mid_point.get_y() + radius &&
 				ptr->m_position.get_y() >= mid_point.get_y() - radius)
 			{
-				ret.push_back(obj);
+				ret.push_back(std::dynamic_pointer_cast<T>(ptr));
 			}
 		}
 
