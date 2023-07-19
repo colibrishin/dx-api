@@ -66,7 +66,7 @@ namespace Fortress::Object
 					constexpr float max = Math::PI / 2;
 					const int radius = projectile->get_radius();
 					const int end_point = y + radius;
-					const float inc = max * (static_cast<float>(y) / end_point);
+					const float inc = max / radius;
 					float i = 0;
 
 					for(int height = y; height < end_point; height++)
