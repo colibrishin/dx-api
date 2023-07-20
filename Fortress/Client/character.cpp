@@ -195,6 +195,8 @@ namespace Fortress::ObjectBase
 						(m_offset == Math::left ? 
 						get_bottom_left() : get_bottom_right()) - ground->get_top_left();
 
+				// @todo: find the nearest point that can character move and change the
+				// @todo: velocity to there?
 				if(collision == CollisionCode::Inside && 
 					!ground->is_destroyed(
 						local_position_front.get_x(), local_position_front.get_y()))
