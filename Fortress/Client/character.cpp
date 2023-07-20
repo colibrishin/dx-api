@@ -188,30 +188,100 @@ namespace Fortress::ObjectBase
 			{
 				const Math::Vector2 local_position_bottom = get_bottom() - ground->get_top_left();
 
-				const int ground_check_bottom = ground->is_destroyed(
+				const Object::GroundState ground_check_bottom = ground->is_destroyed(
 					local_position_bottom.get_x(),local_position_bottom.get_y());
-
-				const auto local_position_front = 
-						(m_offset == Math::left ? 
-						get_bottom_left() : get_bottom_right()) - ground->get_top_left();
 
 				// @todo: find the nearest point that can character move and change the
 				// @todo: velocity to there?
-				if(collision == CollisionCode::Inside && 
-					!ground->is_destroyed(
-						local_position_front.get_x(), local_position_front.get_y()))
+
+				if(collision == CollisionCode::Inside)
 				{
-					m_velocity = {0, 0};
+					if(ground_check_bottom == Object::GroundState::NotDestroyed &&
+						m_velocity != Math::Vector2{0, 0})
+					{
+						bool found = false;
+
+						if(m_offset == Math::right)
+						{
+							for(int i = 0; i < 10; i++)
+							{
+								if(found)
+								{
+									break;
+								}
+
+								for(int j = 0; j < 100; ++j)
+								{
+									Math::Vector2 new_pos = {
+										local_position_bottom.get_x() + i,
+										local_position_bottom.get_y() - j
+									};
+
+									const auto diff = new_pos - local_position_bottom;
+									const auto unit = diff.normalized();
+
+									if(isnan(unit.get_x()) || isnan(unit.get_y()))
+									{
+										continue;
+									}
+
+									if(ground->is_destroyed(
+										new_pos.get_x(),
+										new_pos.get_y()) == Object::GroundState::NotDestroyed)
+									{
+										m_velocity = unit;
+										found = true;
+										break;
+									}
+								}
+							}
+						}
+						else if(m_velocity == Math::left)
+						{
+							for(int i = 0; i < 10; i++)
+							{
+								if(found)
+								{
+									break;
+								}
+
+								for(int j = 0; j < 100; ++j)
+								{
+									Math::Vector2 new_pos = {
+										local_position_bottom.get_x() - i,
+										local_position_bottom.get_y() - j
+									};
+
+									const auto diff = new_pos - local_position_bottom;
+									const auto unit = diff.normalized();
+
+									if(isnan(unit.get_x()) || isnan(unit.get_y()))
+									{
+										continue;
+									}
+
+									if(ground->is_destroyed(
+										new_pos.get_x(),
+										new_pos.get_y()) == Object::GroundState::NotDestroyed)
+									{
+										m_velocity = unit;
+										found = true;
+										break;
+									}
+								}	
+							}
+						}
+					}
 				}
 
-				if(ground_check_bottom == 0)
+				if(ground_check_bottom == Object::GroundState::NotDestroyed)
 				{
 					Debug::Log(L"Character hits the ground");
 					reset_current_gravity_speed();
 					disable_gravity();
 					m_bGrounded = true;
 				}
-				else
+				else if (ground_check_bottom == Object::GroundState::Destroyed)
 				{
 					enable_gravity();
 					m_bGrounded = false;

@@ -194,16 +194,6 @@ namespace Fortress::Abstract
 		const bool top_inside_check = 
 			left_locked_ptr->get_top().get_y() - right_locked_ptr->get_bottom().get_y() < Math::epsilon + 1.0f;
 
-		Debug::Log(left_locked_ptr->get_name() + right_locked_ptr->get_name() + L" Boundary check : " + std::to_wstring(right_boundary_check)
-			+ std::to_wstring(left_boundary_check)
-			+ std::to_wstring(bottom_boundary_check)
-			+ std::to_wstring(top_boundary_check));
-
-		Debug::Log(left_locked_ptr->get_name() + right_locked_ptr->get_name() + L" Inside check : " + std::to_wstring(right_inside_check)
-			+ std::to_wstring(left_inside_check)
-			+ std::to_wstring(bottom_inside_check)
-			+ std::to_wstring(top_inside_check));
-
 		if(right_inside_check && left_inside_check && bottom_inside_check && top_inside_check)
 		{
 			Debug::Log(left_locked_ptr->get_name() + L" inside collision");

@@ -20,15 +20,15 @@ namespace Fortress::ObjectBase
 				const auto x_velocity = m_velocity * Math::Vector2{1, 0};
 				const Math::Vector2 local_position = 
 					x_velocity == Math::left ? get_bottom_left() : get_bottom_right() - ground->get_top_left();
-				const int ground_check = ground->is_destroyed(
+				const Object::GroundState ground_check = ground->is_destroyed(
 					std::floorf(local_position.get_x()), 
 					std::floorf(local_position.get_y()));
 
-				if(ground_check == 0)
+				if(ground_check == Object::GroundState::NotDestroyed)
 				{
 					Debug::Log(L"Projectile hits the ground");
 				}
-				else if(ground_check == 1)
+				else if(ground_check == Object::GroundState::Destroyed)
 				{
 					Debug::Log(L"Projectile hits the destroyed ground");
 				}
