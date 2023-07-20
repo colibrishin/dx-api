@@ -156,6 +156,7 @@ namespace Fortress::ObjectBase
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"left");
 			const Math::Vector2 next_pos = position - m_hitbox;
+			m_position = Math::Vector2{next_pos.get_x() - 5.0f, next_pos.get_y() - 5.0f};
 		}
 		else if (x_velocity.get_x() > 0)
 		{
