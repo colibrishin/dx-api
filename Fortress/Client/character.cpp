@@ -186,22 +186,35 @@ namespace Fortress::ObjectBase
 		{
 			if(ground)
 			{
-				const Math::Vector2 local_position = get_bottom() - ground->get_top_left();
-				const int ground_check = ground->is_destroyed(
-					std::floorf(local_position.get_x()), 
-					std::floorf(local_position.get_y()));
-				if(ground_check == 0)
+				const Math::Vector2 local_position_bottom = get_bottom() - ground->get_top_left();
+
+				const int ground_check_bottom = ground->is_destroyed(
+					local_position_bottom.get_x(),local_position_bottom.get_y());
+
+				const auto local_position_front = 
+						(m_offset == Math::left ? 
+						get_bottom_left() : get_bottom_right()) - ground->get_top_left();
+
+				if(collision == CollisionCode::Inside && 
+					!ground->is_destroyed(
+						local_position_front.get_x(), local_position_front.get_y()))
+				{
+					m_velocity = {0, 0};
+				}
+
+				if(ground_check_bottom == 0)
 				{
 					Debug::Log(L"Character hits the ground");
 					reset_current_gravity_speed();
 					disable_gravity();
 					m_bGrounded = true;
 				}
-				else if(ground_check == 1 || ground_check == -1)
+				else
 				{
 					enable_gravity();
 					m_bGrounded = false;
 					Debug::Log(L"Character hits the destroyed ground");
+					
 				}
 
 				set_pitch(ground->get_top_left().local_inner_angle(get_bottom()));
@@ -211,7 +224,7 @@ namespace Fortress::ObjectBase
 		rigidBody::on_collision(collision, other);
 	}
 
-	void ObjectBase::character::on_nocollison()
+	void character::on_nocollison()
 	{
 		enable_gravity();
 		m_bGrounded = false;

@@ -56,9 +56,9 @@ namespace Fortress
 
 	void Application::render()
 	{
-		const auto hbrBkGnd = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
-		FillRect(m_buffer_hdc, &WinAPIHandles::get_window_size(), hbrBkGnd);
-		DeleteObject(hbrBkGnd);
+		//const auto hbrBkGnd = CreateSolidBrush(GetSysColor(COLOR_WINDOW));
+		//FillRect(m_buffer_hdc, &WinAPIHandles::get_window_size(), hbrBkGnd);
+		//DeleteObject(hbrBkGnd);
 
 		Scene::SceneManager::render();
 		Debug::render();

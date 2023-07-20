@@ -46,7 +46,7 @@ namespace Fortress::ObjectBase
 			const float damage,
 			const float radius,
 			const int hit_count) :
-			rigidBody(name, position, {}, velocity, mass, speed, acceleration, true, true),
+			rigidBody(name, position, {}, velocity, mass, speed, acceleration, true),
 			m_damage(damage),
 			m_radius(radius),
 			m_max_hit_count(hit_count),

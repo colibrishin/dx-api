@@ -13,7 +13,7 @@ namespace Fortress::ObjectBase
 	class projectile;
 
 	constexpr float character_full_hp = 100.0f;
-	constexpr float character_full_mp = 100.0f;
+	constexpr float character_full_mp = 1000.0f;
 
 	class character : public Abstract::rigidBody
 	{
@@ -93,7 +93,7 @@ namespace Fortress::ObjectBase
 			const int mp,
 			const std::weak_ptr<projectile>& main_projectile,
 			const std::weak_ptr<projectile>& secondary_projectile)
-			: rigidBody(name, position, {}, velocity, mass, speed, acceleration, true, true),
+			: rigidBody(name, position, {}, velocity, mass, speed, acceleration, true),
 		      m_player_id(player_id),
 			  m_hp(hp),
 			  m_mp(mp),

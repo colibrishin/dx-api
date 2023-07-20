@@ -20,7 +20,6 @@ namespace Fortress::Object
 				10000.0f,
 				0.0f, 
 				0.0f, 
-				false,
 				false),
 			m_destroyed_table(static_cast<int>(m_hitbox.get_y()), std::vector<bool>(static_cast<int>(m_hitbox.get_x()))),
 			m_ground_hdc(nullptr),

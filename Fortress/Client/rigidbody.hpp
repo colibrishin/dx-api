@@ -45,10 +45,8 @@ namespace Fortress::Abstract
 		float m_speed;
 		float m_curr_speed;
 		bool m_bGravity{};
-		bool m_bClipping{};
 
 		void apply_gravity();
-		bool update_reflection(CollisionCode code) noexcept;
 
 	protected:
 		rigidBody(
@@ -59,8 +57,7 @@ namespace Fortress::Abstract
 			const float& mass,
 			const float& speed, 
 			const float& acceleration, 
-			const bool& gravity, 
-			const bool& clipping);
+			const bool& gravity);
 		virtual void move();
 
 		void reset_current_speed();

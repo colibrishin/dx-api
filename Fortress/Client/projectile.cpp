@@ -17,7 +17,9 @@ namespace Fortress::ObjectBase
 					unfocus_this();
 				}
 
-				const Math::Vector2 local_position = get_bottom() - ground->get_top_left();
+				const auto x_velocity = m_velocity * Math::Vector2{1, 0};
+				const Math::Vector2 local_position = 
+					x_velocity == Math::left ? get_bottom_left() : get_bottom_right() - ground->get_top_left();
 				const int ground_check = ground->is_destroyed(
 					std::floorf(local_position.get_x()), 
 					std::floorf(local_position.get_y()));
@@ -138,8 +140,6 @@ namespace Fortress::ObjectBase
 		m_current_sprite = m_texture.get_image(
 			L"projectile",
 			m_velocity * Math::Vector2{1, 0} == Math::left ? L"left" : L"right");
-
-		m_hitbox = m_current_sprite.lock()->get_hitbox();
 		rigidBody::initialize();
 	}
 
@@ -156,7 +156,6 @@ namespace Fortress::ObjectBase
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"left");
 			const Math::Vector2 next_pos = position - m_hitbox;
-			m_position = Math::Vector2{next_pos.get_x() - 5.0f, next_pos.get_y() - 5.0f};
 		}
 		else if (x_velocity.get_x() > 0)
 		{

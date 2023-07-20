@@ -8,7 +8,7 @@ namespace Fortress::Abstract
 {
 	rigidBody::rigidBody(const std::wstring& name, const Math::Vector2& position, const Math::Vector2& hitbox,
 	                            const Math::Vector2& velocity, const float& mass, const float& speed, const float& acceleration, 
-								const bool& gravity, const bool& clipping) :
+								const bool& gravity) :
 		object(name, position, hitbox, mass),
 		m_velocity(velocity),
 		m_pitch(0.0f),
@@ -16,7 +16,6 @@ namespace Fortress::Abstract
 		m_acceleration(acceleration),
 		m_curr_speed(0.0f),
 		m_bGravity(gravity),
-		m_bClipping(clipping),
 		m_gravity_speed(0.0f),
 		m_gravity_acceleration(Math::G_ACC)
 	{
@@ -50,19 +49,14 @@ namespace Fortress::Abstract
 				continue;
 			}
 
+			const auto objectified_this = std::dynamic_pointer_cast<object>(shared_from_this());
+
 			// check collsion.
-			CollisionCode code = is_collision(std::dynamic_pointer_cast<object>(shared_from_this()), locked_ptr);
+			CollisionCode code = is_collision(objectified_this, locked_ptr);
 
 			if(code != CollisionCode::None)
 			{
-				// if object is not reflecting each other, we don't update reflection.
-				if(rb->m_bClipping)
-				{
-					update_reflection(code);
-				}
-
 				collided = true;
-
 				on_collision(code, rb);
 			}
 		}
@@ -176,57 +170,49 @@ namespace Fortress::Abstract
 			return CollisionCode::Identical;
 		}
 
-		const bool right_check = left_locked_ptr->get_right().get_x() >= right_locked_ptr->get_left().get_x();
-		const bool left_check = left_locked_ptr->get_left().get_x() <= right_locked_ptr->get_right().get_x();
-		const bool bottom_check = left_locked_ptr->get_bottom().get_y() >= right_locked_ptr->get_top().get_y();
-		const bool top_check = left_locked_ptr->get_top().get_y() <= right_locked_ptr->get_bottom().get_y();
+		const bool right_boundary_check = 
+			left_locked_ptr->get_right().get_x() - right_locked_ptr->get_left().get_x() > Math::epsilon;
 
-		if(right_check && left_check && bottom_check && top_check)
+		const bool left_boundary_check = 
+			left_locked_ptr->get_left().get_x() - right_locked_ptr->get_right().get_x() < Math::epsilon;
+
+		const bool bottom_boundary_check = 
+			left_locked_ptr->get_bottom().get_y() - right_locked_ptr->get_top().get_y() > Math::epsilon;
+
+		const bool top_boundary_check = 
+			left_locked_ptr->get_top().get_y() - right_locked_ptr->get_bottom().get_y() < Math::epsilon;
+
+		const bool right_inside_check = 
+			left_locked_ptr->get_right().get_x() - right_locked_ptr->get_left().get_x() > Math::epsilon + 1.0f;
+
+		const bool left_inside_check = 
+			left_locked_ptr->get_left().get_x() - right_locked_ptr->get_right().get_x() < Math::epsilon + 1.0f;
+
+		const bool bottom_inside_check = 
+			left_locked_ptr->get_bottom().get_y() - right_locked_ptr->get_top().get_y() > Math::epsilon + 1.0f;
+
+		const bool top_inside_check = 
+			left_locked_ptr->get_top().get_y() - right_locked_ptr->get_bottom().get_y() < Math::epsilon + 1.0f;
+
+		Debug::Log(left_locked_ptr->get_name() + right_locked_ptr->get_name() + L" Boundary check : " + std::to_wstring(right_boundary_check)
+			+ std::to_wstring(left_boundary_check)
+			+ std::to_wstring(bottom_boundary_check)
+			+ std::to_wstring(top_boundary_check));
+
+		Debug::Log(left_locked_ptr->get_name() + right_locked_ptr->get_name() + L" Inside check : " + std::to_wstring(right_inside_check)
+			+ std::to_wstring(left_inside_check)
+			+ std::to_wstring(bottom_inside_check)
+			+ std::to_wstring(top_inside_check));
+
+		if(right_inside_check && left_inside_check && bottom_inside_check && top_inside_check)
 		{
-			const float x = diff.normalized().get_x();
-			const float y = diff.normalized().get_y();
-
-			// using epsilon instead of zero.
-			if (x < 0 && std::fabs(y) < Math::epsilon)
-			{
-				Debug::Log(L"Left");
-				return CollisionCode::Left;
-			}
-			if (x > 0 && std::fabs(y) < Math::epsilon)
-			{
-				Debug::Log(L"Right");
-				return CollisionCode::Right;
-			}
-			if (std::fabs(x) < Math::epsilon && y < 0)
-			{
-				Debug::Log(L"Bottom");
-				return CollisionCode::Bottom;
-			}
-			if (std::fabs(x) < Math::epsilon && y > 0)
-			{
-				Debug::Log(L"Top");
-				return CollisionCode::Top;
-			}
-			if (x < 0 && y < 0)
-			{
-				Debug::Log(L"BottomLeft");
-				return CollisionCode::BottomLeft;
-			}
-			if (x > 0 && y > 0)
-			{
-				Debug::Log(L"TopRight");
-				return CollisionCode::TopRight;
-			}
-			if (x > 0 && y < 0)
-			{
-				Debug::Log(L"BottomRight");
-				return CollisionCode::BottomRight;
-			}
-			if (x < 0 && y > 0)
-			{
-				Debug::Log(L"TopLeft");
-				return CollisionCode::TopLeft;
-			}
+			Debug::Log(left_locked_ptr->get_name() + L" inside collision");
+			return CollisionCode::Inside;
+		}
+		if(right_boundary_check && left_boundary_check && bottom_boundary_check && top_boundary_check)
+		{
+			Debug::Log(left_locked_ptr->get_name() + L" boundary collision");
+			return CollisionCode::Boundary;
 		}
 
 		Debug::Log(L"None");
@@ -278,28 +264,6 @@ namespace Fortress::Abstract
 		m_gravity_speed += m_gravity_acceleration * DeltaTime::get_deltaTime() * 0.5f;
 		*this += {0.0f, get_mass() * m_gravity_speed * DeltaTime::get_deltaTime()};
 		m_gravity_speed += m_gravity_acceleration * DeltaTime::get_deltaTime() * 0.5f;
-	}
-
-	bool rigidBody::update_reflection(CollisionCode code) noexcept
-	{
-		if (code == CollisionCode::None)
-		{
-			return false;
-		}
-
-		if (static_cast<unsigned char>(code) & static_cast<unsigned char>(CollisionCode::Left) ||
-			static_cast<unsigned char>(code) & static_cast<unsigned char>(CollisionCode::Right))
-		{
-			m_velocity = m_velocity.reflect_x();
-		}
-
-		if (static_cast<unsigned char>(code) & static_cast<unsigned char>(CollisionCode::Top) ||
-			static_cast<unsigned char>(code) & static_cast<unsigned char>(CollisionCode::Bottom))
-		{
-			m_velocity = m_velocity.reflect_y();
-		}
-
-		return true;
 	}
 
 	void rigidBody::move()

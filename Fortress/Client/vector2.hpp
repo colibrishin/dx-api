@@ -8,7 +8,7 @@ namespace Fortress::Math
 	/**
 	 * \brief An error range for the float comparison.
 	 */
-	static constexpr float epsilon = 0.000001f;
+	static constexpr float epsilon = 0.001f;
 
 	// High-level data structure for Vector2
 	struct Vector2 final
@@ -210,7 +210,7 @@ namespace Fortress::Math
 	 */
 	__forceinline Vector2 Vector2::reflect_x() const noexcept
 	{
-		return *this + Vector2{m_x * -2.0f, 0};
+		return {m_x * -2.0f, m_y};
 	}
 
 	/**
@@ -219,7 +219,7 @@ namespace Fortress::Math
 	 */
 	__forceinline Vector2 Vector2::reflect_y() const noexcept
 	{
-		return *this + Vector2{0, m_y * -2.0f};
+		return Vector2{m_x, m_y * -2.0f};
 	}
 
 	/**
