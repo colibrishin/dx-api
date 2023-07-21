@@ -152,12 +152,12 @@ namespace Fortress::Abstract
 
 	inline Math::Vector2 object::get_top() const
 	{
-		return m_position - Math::Vector2{m_hitbox.get_x() / 2, 0};
+		return m_position - Math::Vector2{0, m_hitbox.get_y() / 2};
 	}
 
 	inline Math::Vector2 object::get_bottom() const
 	{
-		return m_position + Math::Vector2{m_hitbox.get_x() / 2, m_hitbox.get_y()};
+		return m_position + Math::Vector2{0, m_hitbox.get_y() / 2};
 	}
 
 	inline Math::Vector2 object::get_left() const

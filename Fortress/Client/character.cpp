@@ -99,7 +99,7 @@ namespace Fortress::ObjectBase
 
 			if(camera_ptr->get_locked_object().lock() == std::dynamic_pointer_cast<object>(shared_from_this()))
 			{
-				pos = camera_ptr->get_offset();
+				pos = camera_ptr->get_offset(m_hitbox);
 			}
 			else
 			{

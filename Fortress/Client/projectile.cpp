@@ -161,7 +161,8 @@ namespace Fortress::ObjectBase
 		else if (x_velocity.get_x() > 0)
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"right");
-			m_position = Math::Vector2{position.get_x() + 5.0f, position.get_y() - 5.0f};
+			const Math::Vector2 next_pos = position + m_hitbox;
+			m_position = Math::Vector2{ next_pos.get_x() + 5.0f, next_pos.get_y() - 5.0f};
 		}
 
 		m_current_sprite.lock()->play();
