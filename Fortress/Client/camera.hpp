@@ -54,7 +54,7 @@ namespace Fortress
 	{
 		if(const auto target_ptr = m_lock_target.lock())
 		{
-			const auto diff = target_ptr->get_top_left() - obj.lock()->get_top_left();
+			const auto diff = target_ptr->get_center() - obj.lock()->get_center();
 			return m_center_position - diff;
 		}
 
