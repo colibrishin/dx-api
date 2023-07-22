@@ -83,6 +83,43 @@ namespace Fortress::ObjectBase
 		DeleteObject(brush);
 	}
 
+	void character::calculating_next_climbing(
+		const Math::Vector2& local_position_bottom,
+		const std::weak_ptr<Object::Ground>& ground_ptr)
+	{
+		if (const auto ground = ground_ptr.lock())
+		{
+			for(int i = 0; i < 10; i++)
+			{
+				for(int j = 0; j < 100; ++j)
+				{
+					Math::Vector2 new_pos = {
+						local_position_bottom.get_x() + 
+							(m_velocity == Math::left ?  -i : + i),
+						local_position_bottom.get_y() - j
+					};
+
+					const auto diff = new_pos - local_position_bottom;
+					const auto unit = diff.normalized();
+
+					if(isnan(unit.get_x()) || isnan(unit.get_y()))
+					{
+						continue;
+					}
+
+					if(ground->is_destroyed(
+						new_pos.get_x(),
+						new_pos.get_y()) == Object::GroundState::NotDestroyed)
+					{
+						// @todo: if angle is too stiff, then don't climb.
+						m_velocity = unit;
+						return;
+					}
+				}	
+			}
+		}
+	}
+
 	void character::update()
 	{
 		rigidBody::update();
@@ -190,86 +227,12 @@ namespace Fortress::ObjectBase
 				const Object::GroundState ground_check_bottom = ground->is_destroyed(
 					local_position_bottom.get_x(),local_position_bottom.get_y());
 
-				// @todo: find the nearest point that can character move and change the
-				// @todo: velocity to there?
-
 				if(collision == CollisionCode::Inside)
 				{
 					if(ground_check_bottom == Object::GroundState::NotDestroyed &&
 						m_velocity != Math::Vector2{0, 0})
 					{
-						bool found = false;
-
-						if(m_offset == Math::right)
-						{
-							for(int i = 0; i < 10; i++)
-							{
-								if(found)
-								{
-									break;
-								}
-
-								for(int j = 0; j < 100; ++j)
-								{
-									Math::Vector2 new_pos = {
-										local_position_bottom.get_x() + i,
-										local_position_bottom.get_y() - j
-									};
-
-									const auto diff = new_pos - local_position_bottom;
-									const auto unit = diff.normalized();
-
-									if(isnan(unit.get_x()) || isnan(unit.get_y()))
-									{
-										continue;
-									}
-
-									if(ground->is_destroyed(
-										new_pos.get_x(),
-										new_pos.get_y()) == Object::GroundState::NotDestroyed)
-									{
-										m_velocity = unit;
-										found = true;
-										break;
-									}
-								}
-							}
-						}
-						else if(m_velocity == Math::left)
-						{
-							for(int i = 0; i < 10; i++)
-							{
-								if(found)
-								{
-									break;
-								}
-
-								for(int j = 0; j < 100; ++j)
-								{
-									Math::Vector2 new_pos = {
-										local_position_bottom.get_x() - i,
-										local_position_bottom.get_y() - j
-									};
-
-									const auto diff = new_pos - local_position_bottom;
-									const auto unit = diff.normalized();
-
-									if(isnan(unit.get_x()) || isnan(unit.get_y()))
-									{
-										continue;
-									}
-
-									if(ground->is_destroyed(
-										new_pos.get_x(),
-										new_pos.get_y()) == Object::GroundState::NotDestroyed)
-									{
-										m_velocity = unit;
-										found = true;
-										break;
-									}
-								}	
-							}
-						}
+						calculating_next_climbing(local_position_bottom, ground);
 					}
 				}
 

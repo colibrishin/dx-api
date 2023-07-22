@@ -8,6 +8,16 @@
 #include "sceneManager.hpp"
 #include "Texture.hpp"
 
+
+// forward declaration for avoiding circular reference
+namespace Fortress
+{
+	namespace Object
+	{
+		class Ground;
+	}
+}
+
 namespace Fortress::ObjectBase
 {
 	class projectile;
@@ -68,6 +78,7 @@ namespace Fortress::ObjectBase
 		eCharacterState m_state;
 
 		void render_hp_bar(const Math::Vector2& position);
+		void calculating_next_climbing(const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr);
 
 		Math::Vector2 m_offset;
 
