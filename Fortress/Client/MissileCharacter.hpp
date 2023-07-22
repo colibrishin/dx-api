@@ -48,6 +48,7 @@ namespace Fortress::Object
 			set_sprite_offset(L"fire", L"left", {0, 10.0f});
 			set_sprite_offset(L"charging", L"right", {0, 10.0f});
 			set_sprite_offset(L"charging", L"left", {0, 10.0f});
+			set_sprite_offset(L"idle", L"left", {15.0f, 0.0f});
 
 			character::initialize();
 		}
