@@ -284,6 +284,8 @@ namespace Fortress::ObjectBase
 				{
 					enable_gravity();
 					m_bGrounded = false;
+					// @todo: this should be somehow moving smoothly.
+					m_velocity = {0, 1};
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
