@@ -95,7 +95,7 @@ namespace Fortress::ObjectBase
 				{
 					Math::Vector2 new_pos = {
 						local_position_bottom.get_x() + 
-							(m_velocity == Math::left ?  -i : + i),
+							(m_velocity == Math::left ?  -i : i),
 						local_position_bottom.get_y() - j
 					};
 
@@ -232,6 +232,7 @@ namespace Fortress::ObjectBase
 					if(ground_check_bottom == Object::GroundState::NotDestroyed &&
 						m_velocity != Math::Vector2{0, 0})
 					{
+						// @todo: if offset is opposite, character climbs the ground automatically.
 						calculating_next_climbing(local_position_bottom, ground);
 					}
 				}
