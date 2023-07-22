@@ -93,7 +93,7 @@ namespace Fortress::ObjectBase
 			const int mp,
 			const std::weak_ptr<projectile>& main_projectile,
 			const std::weak_ptr<projectile>& secondary_projectile)
-			: rigidBody(name, position, {}, velocity, mass, speed, acceleration, true),
+			: rigidBody(name, position, {50.0f, 50.0f}, velocity, mass, speed, acceleration, true),
 		      m_player_id(player_id),
 			  m_hp(hp),
 			  m_mp(mp),

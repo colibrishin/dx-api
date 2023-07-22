@@ -81,7 +81,7 @@ namespace Fortress::ObjectBase
 
 			if(camera_ptr->get_locked_object().lock() == shared_from_this())
 			{
-				pos = camera_ptr->get_offset();
+				pos = camera_ptr->get_offset(m_hitbox);
 			}
 			else
 			{
@@ -155,18 +155,17 @@ namespace Fortress::ObjectBase
 		if(x_velocity.get_x() < 0)
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"left");
-			const Math::Vector2 next_pos = position - m_hitbox;
+			const Math::Vector2 next_pos = position - Math::Vector2{m_hitbox.get_x(), 0};
 			m_position = Math::Vector2{next_pos.get_x() - 5.0f, next_pos.get_y() - 5.0f};
 		}
 		else if (x_velocity.get_x() > 0)
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"right");
-			const Math::Vector2 next_pos = position + m_hitbox;
+			const Math::Vector2 next_pos = position + Math::Vector2{m_hitbox.get_x(), 0};
 			m_position = Math::Vector2{ next_pos.get_x() + 5.0f, next_pos.get_y() - 5.0f};
 		}
 
 		m_current_sprite.lock()->play();
-		m_hitbox = m_current_sprite.lock()->get_hitbox();
 		m_fired_position = m_position ;
 		m_velocity = velocity;
 		focus_this();

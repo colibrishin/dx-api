@@ -9,7 +9,6 @@ namespace Fortress::ObjectBase
 {
 	void character::initialize()
 	{
-		m_hitbox = m_texture.get_image(L"idle", L"left").lock()->get_hitbox();
 		set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
 		m_current_projectile = m_main_projectile;
 		rigidBody::initialize();
@@ -114,7 +113,7 @@ namespace Fortress::ObjectBase
 
 			Debug::Log(m_name + L" pos " + std::to_wstring(pos.get_x()) + L", " + std::to_wstring(pos.get_y()));
 			Debug::draw_rect(pos, m_hitbox);
-			Debug::draw_dot(pos);
+			Debug::draw_dot(camera_ptr->get_offset(m_hitbox));
 
 			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(get_pitch())));
 
