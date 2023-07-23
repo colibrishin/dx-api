@@ -60,6 +60,7 @@ namespace Fortress::Object
 		void set_destroyed(const int x, const int y);
 		void set_destroyed_visual(int x, int y);
 		void set_line_destroyed(const int mid_x, const int mid_y, const int n);
+		bool is_projectile_hit(const Math::Vector2& local_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr);
 		void _debug_draw_destroyed_table() const;
 
 		std::vector<std::vector<GroundState>> m_destroyed_table;
@@ -72,41 +73,22 @@ namespace Fortress::Object
 		if (auto const projectile = 
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
 		{
-			// @todo: multi angle hit detection
-			const auto local_position = projectile->get_bottom() - get_top_left();
-
-			// OOB check
-			if(!(local_position.get_x() < 0 || local_position.get_x() >= m_hitbox.get_x() || 
-				local_position.get_y() < 0 || local_position.get_y() >= m_hitbox.get_y()))
+			// order matters.
+			const Math::Vector2 local_positions[] = 
 			{
-				GroundState ground_status = is_destroyed(
-					std::floorf(local_position.get_x()), 
-					std::floorf(local_position.get_y()));
+				projectile->get_bottom() - get_top_left(),
+				projectile->get_left() - get_top_left(),
+				projectile->get_right() - get_top_left(),
+				projectile->get_top() - get_top_left(),
+			};
 
-				if(ground_status == GroundState::NotDestroyed)
+			for(const auto& position : local_positions)
+			{
+				if(is_projectile_hit(position, projectile) ||
+					projectile->get_max_hit_count() <= projectile->get_hit_count())
 				{
-					const int y = local_position.get_y();
-					const int x = local_position.get_x();
-
-					constexpr float max = Math::PI / 2;
-					const int radius = projectile->get_radius();
-					const int end_point = y + radius;
-					const float inc = max / radius;
-					float i = 0;
-
-					for(int height = y; height < end_point; height++)
-					{
-						const int next_n = std::floorf(radius * cosf(i));
-						set_line_destroyed(x, height, next_n);
-						i += inc;
-					}
-
-					Debug::Log(L"Projectile hits the Ground");
 					projectile->up_hit_count();
-				}
-				else if(ground_status == GroundState::Destroyed)
-				{
-					Debug::Log(L"Projectile hits the destroyed ground");
+					break;
 				}
 			}
 		}
@@ -170,15 +152,6 @@ namespace Fortress::Object
 
 	inline void Ground::set_destroyed(const int x, const int y)
 	{
-		for(int i = 0; i < y; ++i)
-		{
-			if(m_destroyed_table[i][x] == GroundState::NotDestroyed)
-			{
-				m_destroyed_table[i][x] = GroundState::Destroyed;
-				
-			}
-		}
-
 		m_destroyed_table[y][x] = GroundState::Destroyed;
 	}
 
@@ -187,16 +160,6 @@ namespace Fortress::Object
 		static Graphics m_ground_gdi(m_ground_hdc);
 		const SolidBrush removal_brush(Color(255,0,255));
 		Rect pixel{0, 0, 1, 1};
-
-		for(int i = 0; i < y; ++i)
-		{
-			if(m_destroyed_table[i][x] == GroundState::Destroyed)
-			{
-				pixel.X = x;
-				pixel.Y = i;
-				m_ground_gdi.FillRectangle(&removal_brush, pixel);	
-			}
-		}
 
 		pixel.X = x;
 		pixel.Y = y;
@@ -227,6 +190,55 @@ namespace Fortress::Object
 				to_right_x++;
 			}
 		}
+	}
+
+	inline bool Ground::is_projectile_hit(
+		const Math::Vector2& local_position,
+		const std::weak_ptr<ObjectBase::projectile>& projectile_ptr)
+	{
+		if(const auto projectile = projectile_ptr.lock())
+		{
+			// OOB check
+			if(!(local_position.get_x() < 0 || local_position.get_x() >= m_hitbox.get_x() || 
+				local_position.get_y() < 0 || local_position.get_y() >= m_hitbox.get_y()))
+			{
+				const GroundState ground_status = is_destroyed(
+					std::floorf(local_position.get_x()), 
+					std::floorf(local_position.get_y()));
+
+				if(ground_status == GroundState::NotDestroyed)
+				{
+					const int y = local_position.get_y();
+					const int x = local_position.get_x();
+
+					constexpr float max = Math::PI;
+					const float radius = projectile->get_radius();
+					const float end_point = y + (radius * 2);
+					const float inc = max / (radius * 2);
+					float i = 0;
+
+					for(float height = y - radius; height < end_point; height++)
+					{
+						if (height >= 0)
+						{
+							const int next_n = std::floorf(radius * sinf(i));
+							set_line_destroyed(x, height, next_n);
+						}
+						i += inc;
+					}
+
+					Debug::Log(L"Projectile hits the Ground");
+					return true;
+				}
+				else if(ground_status == GroundState::Destroyed)
+				{
+					Debug::Log(L"Projectile hits the destroyed ground");
+					return false;
+				}
+			}
+		}
+
+		return false;
 	}
 
 	inline void Ground::_debug_draw_destroyed_table() const

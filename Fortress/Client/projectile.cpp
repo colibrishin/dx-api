@@ -16,22 +16,6 @@ namespace Fortress::ObjectBase
 				{
 					unfocus_this();
 				}
-
-				// @todo: if projectile fired from inside of the ground, this should be
-				// @todo: considered as hit.
-				const Math::Vector2 local_position = get_center() - ground->get_top_left();
-				const Object::GroundState ground_check = ground->is_destroyed(
-					std::floorf(local_position.get_x()), 
-					std::floorf(local_position.get_y()));
-
-				if(ground_check == Object::GroundState::NotDestroyed)
-				{
-					Debug::Log(L"Projectile hits the ground");
-				}
-				else if(ground_check == Object::GroundState::Destroyed)
-				{
-					Debug::Log(L"Projectile hits the destroyed ground");
-				}
 			}
 		}
 
@@ -113,6 +97,16 @@ namespace Fortress::ObjectBase
 	void projectile::up_hit_count()
 	{
 		m_curr_hit_count++;
+	}
+
+	int projectile::get_hit_count() const
+	{
+		return m_curr_hit_count;
+	}
+
+	int projectile::get_max_hit_count() const
+	{
+		return m_max_hit_count;
 	}
 
 	const std::weak_ptr<GifWrapper>& projectile::get_current_sprite() const

@@ -178,6 +178,7 @@
     <ClCompile Include="entity.hpp" />
     <ClCompile Include="MissileProjectile.hpp" />
     <ClCompile Include="objectManager.hpp" />
+    <ClCompile Include="PrecisionCannonProjectile.hpp" />
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="resourceManager.hpp" />
     <ClCompile Include="rigidBody.cpp" />

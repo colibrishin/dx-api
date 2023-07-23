@@ -221,6 +221,9 @@
     <ClCompile Include="deltatime.cpp">
       <Filter>Engine\Common</Filter>
     </ClCompile>
+    <ClCompile Include="PrecisionCannonProjectile.hpp">
+      <Filter>Projectiles</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">

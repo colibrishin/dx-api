@@ -4,6 +4,7 @@
 #include "CannonProjectile.hpp"
 #include "character.hpp"
 #include "math.h"
+#include "PrecisionCannonProjectile.hpp"
 
 namespace Fortress::Object
 {
@@ -28,7 +29,7 @@ namespace Fortress::Object
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp,
 				std::make_shared<CannonProjectile>(),
-				std::make_shared<CannonProjectile>())
+				std::make_shared<PrecisionCannonProjectile>())
 		{
 			initialize();
 		}
