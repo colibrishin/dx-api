@@ -49,6 +49,8 @@ namespace Fortress::Abstract
 		__forceinline Math::Vector2 get_bottom_left() const;
 		__forceinline Math::Vector2 get_bottom_right() const;
 		__forceinline Math::Vector2 get_center() const;
+		__forceinline Math::Vector2 get_hit_point(const eHitVector& e_vector) const;
+		__forceinline Math::Vector2 to_local_position(const Math::Vector2& other) const;
 
 		__forceinline float get_mass() const;
 	protected:
@@ -193,6 +195,28 @@ namespace Fortress::Abstract
 	inline Math::Vector2 object::get_center() const
 	{
 		return m_position;
+	}
+
+	inline Math::Vector2 object::get_hit_point(const eHitVector & e_vector) const
+	{
+		switch (e_vector) {
+		case eHitVector::Identical: return get_center();
+		case eHitVector::Top: return get_top();
+		case eHitVector::Bottom: return get_bottom();
+		case eHitVector::Left: return get_left();
+		case eHitVector::Right: return get_right();
+		case eHitVector::TopLeft: return get_top_left();
+		case eHitVector::TopRight: return get_top_right();
+		case eHitVector::BottomLeft: return get_bottom_left();
+		case eHitVector::BottomRight: return get_bottom_right();
+		case eHitVector::Unknown: 
+		default: return {0.0f, 0.0f};  // NOLINT(clang-diagnostic-covered-switch-default)
+		}
+	}
+
+	inline Math::Vector2 object::to_local_position(const Math::Vector2& other) const
+	{
+		return other - get_top_left();
 	}
 
 	inline float object::get_mass() const

@@ -33,4 +33,18 @@ namespace Fortress
 		Item,
 		Dead,
 	};
+
+	enum class eHitVector
+	{
+		Unknown = -1,
+		Identical = 0,
+		Top = 1,
+		Bottom = 2,
+		Left = 4,
+		Right = 8,
+		TopLeft = 5,
+		TopRight = 9,
+		BottomLeft = 6,
+		BottomRight = 10
+	};
 }

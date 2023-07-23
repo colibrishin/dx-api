@@ -46,6 +46,55 @@ namespace Fortress::Math
 	{
 		return 1 / (1 + std::powf(E, -t));
 	}
+
+	static Math::Vector2 to_hit_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right)
+	{
+		return (hit_left - hit_right).normalized();
+	}
+	
+	static eHitVector translate_hit_vector(const Math::Vector2& hit_vector)
+	{
+		const auto abs_vector = hit_vector.abs();
+
+		if(hit_vector == Math::Vector2{0.0f, 0.0f})
+		{
+			return eHitVector::Identical;
+		}
+		if(abs_vector.get_x() < Math::epsilon && hit_vector.get_y() > 0)
+		{
+			return eHitVector::Top;
+		}
+		if(abs_vector.get_x() < Math::epsilon && hit_vector.get_y() < 0)
+		{
+			return eHitVector::Bottom;
+		}
+		if(hit_vector.get_x() > 0 && abs_vector.get_y() < Math::epsilon)
+		{
+			return eHitVector::Left;
+		}
+		if(hit_vector.get_x() < 0 && abs_vector.get_y() < Math::epsilon)
+		{
+			return eHitVector::Right;
+		}
+		if(hit_vector.get_x() > 0 && hit_vector.get_y() > 0)
+		{
+			return eHitVector::TopLeft;
+		}
+		if(hit_vector.get_x() > 0 && hit_vector.get_y() < 0)
+		{
+			return eHitVector::TopRight;
+		}
+		if(hit_vector.get_x() < 0 && hit_vector.get_y() > 0)
+		{
+			return eHitVector::BottomLeft;
+		}
+		if(hit_vector.get_x() < 0 && hit_vector.get_y() > 0)
+		{
+			return eHitVector::BottomRight;
+		}
+
+		return eHitVector::Unknown;
+	}
 }
 
 #endif
