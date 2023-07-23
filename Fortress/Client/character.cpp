@@ -17,6 +17,11 @@ namespace Fortress::ObjectBase
 
 	void character::hit(const std::weak_ptr<projectile>& p)
 	{
+		set_current_sprite(L"hit", m_offset == Math::left ? L"left" : L"right");
+		m_current_sprite.lock()->play([this]()
+		{
+			set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
+		});
 		m_hp -= p.lock()->get_damage();
 	}
 
