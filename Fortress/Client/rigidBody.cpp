@@ -57,7 +57,10 @@ namespace Fortress::Abstract
 			if(code != CollisionCode::None)
 			{
 				collided = true;
-				on_collision(code, rb);
+				on_collision(
+					code,
+					to_hit_vector(get_center(), rb->get_center()),
+					rb);
 			}
 		}
 
@@ -151,9 +154,8 @@ namespace Fortress::Abstract
 		return m_pitch;
 	}
 
-	void rigidBody::on_collision(const CollisionCode& code, const std::shared_ptr<rigidBody>& other)
+	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<rigidBody>& other)
 	{
-		
 	}
 
 
@@ -205,7 +207,7 @@ namespace Fortress::Abstract
 			return CollisionCode::Boundary;
 		}
 
-		Debug::Log(L"None");
+		Debug::Log(L"Identical");
 		return CollisionCode::None;
 	}
 
