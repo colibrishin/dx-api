@@ -9,30 +9,29 @@ namespace Fortress::ObjectBase
 {
 	void character::initialize()
 	{
-		m_hitbox = m_texture.get_image(L"idle", L"left").lock()->get_hitbox();
-		set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
+		set_current_sprite(L"idle");
 		m_current_projectile = m_main_projectile;
 		rigidBody::initialize();
 	}
 
 	void character::hit(const std::weak_ptr<projectile>& p)
 	{
-		set_current_sprite(L"hit", m_offset == Math::left ? L"left" : L"right");
+		set_current_sprite(L"hit");
 		m_current_sprite.lock()->play([this]()
 		{
-			set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
+			set_current_sprite(L"idle");
 		});
 		m_hp -= p.lock()->get_damage();
 	}
 
 	void character::shoot()
 	{
-		set_current_sprite(L"fire", m_offset == Math::left ? L"left" : L"right");
+		set_current_sprite(L"fire");
 
 		// @todo: maybe queue?
 		m_current_sprite.lock()->play([this]()
 		{
-			set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
+			set_current_sprite(L"idle");
 		});
 		m_power = 1.0f;
 	}
@@ -145,7 +144,7 @@ namespace Fortress::ObjectBase
 	{
 		if(get_current_sprite_name().find(L"charging") == std::wstring::npos)
 		{
-			set_current_sprite(L"charging", m_offset == Math::left ? L"left" : L"right");
+			set_current_sprite(L"charging");
 		}
 
 		m_power += 100.0f * DeltaTime::get_deltaTime();
@@ -417,9 +416,9 @@ namespace Fortress::ObjectBase
 		}
 	}
 
-	void character::set_current_sprite(const std::wstring& name, const std::wstring& orientation)
+	void character::set_current_sprite(const std::wstring& name)
 	{
-		m_current_sprite = m_texture.get_image(name, orientation);
+		m_current_sprite = m_texture.get_image(name, m_offset == Math::left ? L"left" : L"right");
 	}
 
 	void character::set_sprite_offset(const std::wstring& name, const std::wstring& orientation,
@@ -441,20 +440,20 @@ namespace Fortress::ObjectBase
 	void character::move_left()
 	{
 		m_offset = Math::left;
-		set_current_sprite(L"move", L"left");
+		set_current_sprite(L"move");
 		rigidBody::move_left();
 	}
 
 	void character::move_right()
 	{
 		m_offset = Math::right;
-		set_current_sprite(L"move", L"right");
+		set_current_sprite(L"move");
 		rigidBody::move_right();
 	}
 
 	void character::stop()
 	{
-		set_current_sprite(L"idle", m_offset == Math::left ? L"left" : L"right");
+		set_current_sprite(L"idle");
 		rigidBody::stop();
 	}
 	void character::prerender()

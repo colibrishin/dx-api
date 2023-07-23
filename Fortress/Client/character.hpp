@@ -45,7 +45,7 @@ namespace Fortress::ObjectBase
 		void firing_state();
 		void fire_state();
 
-		void set_current_sprite(const std::wstring& name, const std::wstring& orientation);
+		void set_current_sprite(const std::wstring& name);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
 
