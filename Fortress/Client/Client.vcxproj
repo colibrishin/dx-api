@@ -153,6 +153,7 @@
     <ClInclude Include="resource.hpp" />
     <ClInclude Include="rigidBody.hpp" />
     <ClInclude Include="RoomScene.h" />
+    <ClInclude Include="Round.hpp" />
     <ClInclude Include="scene.hpp" />
     <ClInclude Include="sound.hpp" />
     <ClInclude Include="targetver.h" />

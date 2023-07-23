@@ -30,6 +30,7 @@ namespace Fortress
 		Move,
 		Firing,
 		Fire,
-		Item
+		Item,
+		Dead,
 	};
 }

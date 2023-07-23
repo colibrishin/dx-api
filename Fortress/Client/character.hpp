@@ -50,10 +50,15 @@ namespace Fortress::ObjectBase
 		virtual void on_nocollison() override;
 
 		eCharacterState get_state() const;
+		void default_state();
 		void idle_state();
 		void move_state();
 		void firing_state();
 		void fire_state();
+		virtual void dead_state() const;
+
+		void set_unmovable();
+		void set_movable();
 
 		void set_current_sprite(const std::wstring& name);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
@@ -75,6 +80,7 @@ namespace Fortress::ObjectBase
 		float m_mp;
 		float m_power;
 		bool m_bGrounded;
+		bool m_bMovable;
 		eCharacterState m_state;
 
 		void render_hp_bar(const Math::Vector2& position);
@@ -110,6 +116,7 @@ namespace Fortress::ObjectBase
 			  m_mp(mp),
 		      m_power(1.0f),
 			  m_bGrounded(false),
+			  m_bMovable(true),
 		      m_state(eCharacterState::Idle),
 			  m_offset(offset),
 			  m_texture(short_name),
