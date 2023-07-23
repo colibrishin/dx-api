@@ -112,7 +112,7 @@ namespace Fortress::ObjectBase
 						continue;
 					}
 
-					if(ground->is_destroyed(
+					if(ground->safe_is_destroyed(
 						new_pos.get_x(),
 						new_pos.get_y()) == Object::GroundState::NotDestroyed)
 					{
@@ -221,46 +221,46 @@ namespace Fortress::ObjectBase
 		return m_current_projectile;
 	}
 
-	void character::on_collision(const CollisionCode& collision, const std::shared_ptr<rigidBody>& other)
+	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<Abstract::rigidBody>& other)
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other))
 		{
 			if(ground)
 			{
-				const Math::Vector2 local_position_bottom = get_bottom() - ground->get_top_left();
+				const Math::Vector2 ground_local_position = ground->to_local_position(get_bottom());
 
-				const Object::GroundState ground_check_bottom = ground->is_destroyed(
-					local_position_bottom.get_x(),local_position_bottom.get_y());
+				const Object::GroundState ground_check = ground->safe_is_destroyed(
+					ground_local_position.get_x(),ground_local_position.get_y());
 
 				if(collision == CollisionCode::Inside)
 				{
-					if(ground_check_bottom == Object::GroundState::NotDestroyed &&
+					if(ground_check == Object::GroundState::NotDestroyed &&
 						m_velocity != Math::Vector2{0, 0})
 					{
 						// @todo: if offset is opposite, character climbs the ground automatically.
-						calculating_next_climbing(local_position_bottom, ground);
+						calculating_next_climbing(ground_local_position, ground);
 					}
 				}
 
-				if(ground_check_bottom == Object::GroundState::NotDestroyed)
+				if(ground_check == Object::GroundState::NotDestroyed)
 				{
 					Debug::Log(L"Character hits the ground");
 					reset_current_gravity_speed();
 					disable_gravity();
 					m_bGrounded = true;
 				}
-				else if (ground_check_bottom == Object::GroundState::Destroyed)
+				else if (ground_check == Object::GroundState::Destroyed)
 				{
 					enable_gravity();
 					m_bGrounded = false;
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
-				set_pitch(ground->get_top_left().local_inner_angle(get_bottom()));
+				set_pitch(ground->get_top_left().local_inner_angle(get_center()));
 			}
 		}
 
-		rigidBody::on_collision(collision, other);
+		rigidBody::on_collision(collision, hit_vector, other);
 	}
 
 	void character::on_nocollison()
