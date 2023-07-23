@@ -134,10 +134,10 @@ namespace Fortress::Abstract
 			{
 				if(ptr->is_active())
 				{
-					if (ptr->m_position.get_x() <= mid_point.get_x() + radius &&
-						ptr->m_position.get_x() >= mid_point.get_x() - radius &&
-						ptr->m_position.get_y() <= mid_point.get_y() + radius &&
-						ptr->m_position.get_y() >= mid_point.get_y() - radius)
+					if (ptr->get_top_left().get_x() <= mid_point.get_x() + radius &&
+						ptr->get_top_left().get_x() >= mid_point.get_x() - radius &&
+						ptr->get_top_left().get_y() <= mid_point.get_y() + radius &&
+						ptr->get_top_left().get_y() >= mid_point.get_y() - radius)
 					{
 						ret.push_back(ptr);
 					}
