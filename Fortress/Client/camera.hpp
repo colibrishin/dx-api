@@ -15,6 +15,7 @@ namespace Fortress
 		void restore_object();
 		Math::Vector2 get_relative_position(const std::weak_ptr<Abstract::object>& obj) const;
 		Math::Vector2 get_offset() const;
+		Math::Vector2 get_offset(const Math::Vector2& hitbox) const;
 		std::weak_ptr<Abstract::object> get_locked_object() const;
 
 	private:
@@ -54,8 +55,8 @@ namespace Fortress
 	{
 		if(const auto target_ptr = m_lock_target.lock())
 		{
-			const auto diff = target_ptr->get_top_left() - obj.lock()->get_top_left();
-			return m_center_position - diff;
+			const auto diff = target_ptr->get_center() - obj.lock()->get_center();
+			return (m_center_position - diff) - (obj.lock()->m_hitbox / 2);
 		}
 
 		return m_center_position;
@@ -64,6 +65,11 @@ namespace Fortress
 	inline Math::Vector2 Camera::get_offset() const
 	{
 		return m_center_position;
+	}
+
+	inline Math::Vector2 Camera::get_offset(const Math::Vector2& hitbox) const
+	{
+		return m_center_position - hitbox / 2;
 	}
 
 	inline std::weak_ptr<Abstract::object> Camera::get_locked_object() const

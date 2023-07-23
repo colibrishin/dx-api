@@ -9,6 +9,8 @@
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
+
+#include "debug.hpp"
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
@@ -24,7 +26,7 @@ namespace Fortress
 
 		void cleanup();
 		virtual void render(
-			const Math::Vector2& position, 
+			const Math::Vector2& center_position, 
 			const Math::Vector2& hitbox, 
 			const Math::Vector2& scaling = {1.0f, 1.0f},
 			const float rotate_degree = 0.0f);
@@ -51,7 +53,7 @@ namespace Fortress
 	}
 
 	inline void ImageWrapper::render(
-		const Math::Vector2& position,
+		const Math::Vector2& center_position,
 		const Math::Vector2& hitbox,
 		const Math::Vector2& scaling,
 		const float rotate_degree)
@@ -60,24 +62,26 @@ namespace Fortress
 		{
 			const Math::Vector2 scaled_m_size = m_size * scaling;
 			const Math::Vector2 hitbox_diff = hitbox - scaled_m_size;
-			const Math::Vector2 offset = hitbox_diff + m_offset;
+
+			const Math::Vector2 top_left = center_position + hitbox_diff + m_offset;
+			const Math::Vector2 image_mid = top_left + scaled_m_size / 2;
+			Debug::draw_dot(top_left);
+			Debug::draw_dot(image_mid);
 
 			if(rotate_degree != 0.0f)
 			{
 				m_gdi_handle->TranslateTransform(
-					position.get_x() + offset.get_x() + (hitbox.get_x() / 2), 
-					position.get_y() + offset.get_y() + (hitbox.get_y() / 2));
+					image_mid.get_x(), image_mid.get_y());
 				m_gdi_handle->RotateTransform(rotate_degree);
 				m_gdi_handle->TranslateTransform(
-					-(position.get_x() + offset.get_x() + (hitbox.get_x() / 2)),
-					-(position.get_y() + offset.get_y() + (hitbox.get_y() / 2)));
+					-image_mid.get_x(), -image_mid.get_y());
 			}
 
 			m_gdi_handle->DrawImage(
 				m_image.get(),
 				RectF{
-				position.get_x() + offset.get_x(),
-				position.get_y() + offset.get_y(),
+				top_left.get_x(),
+				top_left.get_y(),
 				scaled_m_size.get_x(),
 				scaled_m_size.get_y()},
 				0,
@@ -90,12 +94,10 @@ namespace Fortress
 			if(rotate_degree != 0.0f)
 			{
 				m_gdi_handle->TranslateTransform(
-					position.get_x() + offset.get_x() + (hitbox.get_x() / 2), 
-					position.get_y() + offset.get_y() + (hitbox.get_y() / 2));
+					image_mid.get_x(), image_mid.get_y());
 				m_gdi_handle->RotateTransform(-rotate_degree);
 				m_gdi_handle->TranslateTransform(
-					-(position.get_x() + offset.get_x() + (hitbox.get_x() / 2)),
-					-(position.get_y() + offset.get_y() + (hitbox.get_y() / 2)));
+					-image_mid.get_x(), -image_mid.get_y());
 			}
 		}
 	}

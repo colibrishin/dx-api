@@ -152,47 +152,47 @@ namespace Fortress::Abstract
 
 	inline Math::Vector2 object::get_top() const
 	{
-		return m_position - Math::Vector2{m_hitbox.get_x() / 2, 0};
+		return m_position - Math::Vector2{0, m_hitbox.get_y() / 2};
 	}
 
 	inline Math::Vector2 object::get_bottom() const
 	{
-		return m_position + Math::Vector2{m_hitbox.get_x() / 2, m_hitbox.get_y()};
+		return m_position + Math::Vector2{0, m_hitbox.get_y() / 2};
 	}
 
 	inline Math::Vector2 object::get_left() const
 	{
-		return m_position + Math::left;
+		return m_position - Math::Vector2{m_hitbox.get_x() / 2, 0};
 	}
 
 	inline Math::Vector2 object::get_right() const
 	{
-		return m_position + Math::Vector2{m_hitbox.get_x(), 0};
+		return m_position + Math::Vector2{m_hitbox.get_x() / 2, 0};
 	}
 
 	inline Math::Vector2 object::get_top_left() const
 	{
-		return m_position;
+		return m_position - m_hitbox / 2;
 	}
 
 	inline Math::Vector2 object::get_top_right() const
 	{
-		return m_position + Math::Vector2{m_hitbox.get_x(), 0};
+		return m_position + Math::Vector2{m_hitbox.get_x() / 2, -m_hitbox.get_y() / 2};
 	}
 
 	inline Math::Vector2 object::get_bottom_left() const
 	{
-		return m_position + Math::Vector2{0, m_hitbox.get_y()};
+		return m_position + Math::Vector2{-m_hitbox.get_x() / 2, m_hitbox.get_y() / 2};
 	}
 
 	inline Math::Vector2 object::get_bottom_right() const
 	{
-		return m_position + Math::Vector2{m_hitbox.get_x(), m_hitbox.get_y()};
+		return m_position + Math::Vector2{m_hitbox.get_x() / 2, m_hitbox.get_y() / 2};
 	}
 
 	inline Math::Vector2 object::get_center() const
 	{
-		return m_position + m_hitbox / 2;
+		return m_position;
 	}
 
 	inline float object::get_mass() const

@@ -17,9 +17,9 @@ namespace Fortress::ObjectBase
 					unfocus_this();
 				}
 
-				const auto x_velocity = m_velocity * Math::Vector2{1, 0};
-				const Math::Vector2 local_position = 
-					x_velocity == Math::left ? get_bottom_left() : get_bottom_right() - ground->get_top_left();
+				// @todo: if projectile fired from inside of the ground, this should be
+				// @todo: considered as hit.
+				const Math::Vector2 local_position = get_center() - ground->get_top_left();
 				const Object::GroundState ground_check = ground->is_destroyed(
 					std::floorf(local_position.get_x()), 
 					std::floorf(local_position.get_y()));
@@ -81,7 +81,7 @@ namespace Fortress::ObjectBase
 
 			if(camera_ptr->get_locked_object().lock() == shared_from_this())
 			{
-				pos = camera_ptr->get_offset();
+				pos = camera_ptr->get_offset(m_hitbox);
 			}
 			else
 			{
@@ -155,17 +155,15 @@ namespace Fortress::ObjectBase
 		if(x_velocity.get_x() < 0)
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"left");
-			const Math::Vector2 next_pos = position - m_hitbox;
-			m_position = Math::Vector2{next_pos.get_x() - 5.0f, next_pos.get_y() - 5.0f};
+			m_position = position - Math::Vector2{m_hitbox.get_x(), 0};
 		}
 		else if (x_velocity.get_x() > 0)
 		{
 			m_current_sprite = m_texture.get_image(L"projectile", L"right");
-			m_position = Math::Vector2{position.get_x() + 5.0f, position.get_y() - 5.0f};
+			m_position = position + Math::Vector2{m_hitbox.get_x(), 0};
 		}
 
 		m_current_sprite.lock()->play();
-		m_hitbox = m_current_sprite.lock()->get_hitbox();
 		m_fired_position = m_position ;
 		m_velocity = velocity;
 		focus_this();

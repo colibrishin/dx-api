@@ -88,6 +88,43 @@ namespace Fortress::ObjectBase
 		DeleteObject(brush);
 	}
 
+	void character::calculating_next_climbing(
+		const Math::Vector2& local_position_bottom,
+		const std::weak_ptr<Object::Ground>& ground_ptr)
+	{
+		if (const auto ground = ground_ptr.lock())
+		{
+			for(int i = 0; i < 10; i++)
+			{
+				for(int j = 0; j < 100; ++j)
+				{
+					Math::Vector2 new_pos = {
+						local_position_bottom.get_x() + 
+							(m_velocity == Math::left ?  -i : i),
+						local_position_bottom.get_y() - j
+					};
+
+					const auto diff = new_pos - local_position_bottom;
+					const auto unit = diff.normalized();
+
+					if(isnan(unit.get_x()) || isnan(unit.get_y()))
+					{
+						continue;
+					}
+
+					if(ground->is_destroyed(
+						new_pos.get_x(),
+						new_pos.get_y()) == Object::GroundState::NotDestroyed)
+					{
+						// @todo: if angle is too stiff, then don't climb.
+						m_velocity = unit;
+						return;
+					}
+				}	
+			}
+		}
+	}
+
 	void character::update()
 	{
 		rigidBody::update();
@@ -103,7 +140,7 @@ namespace Fortress::ObjectBase
 
 			if(camera_ptr->get_locked_object().lock() == std::dynamic_pointer_cast<object>(shared_from_this()))
 			{
-				pos = camera_ptr->get_offset();
+				pos = camera_ptr->get_offset(m_hitbox);
 			}
 			else
 			{
@@ -118,7 +155,7 @@ namespace Fortress::ObjectBase
 
 			Debug::Log(m_name + L" pos " + std::to_wstring(pos.get_x()) + L", " + std::to_wstring(pos.get_y()));
 			Debug::draw_rect(pos, m_hitbox);
-			Debug::draw_dot(pos);
+			Debug::draw_dot(camera_ptr->get_offset(m_hitbox));
 
 			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(get_pitch())));
 
@@ -195,86 +232,13 @@ namespace Fortress::ObjectBase
 				const Object::GroundState ground_check_bottom = ground->is_destroyed(
 					local_position_bottom.get_x(),local_position_bottom.get_y());
 
-				// @todo: find the nearest point that can character move and change the
-				// @todo: velocity to there?
-
 				if(collision == CollisionCode::Inside)
 				{
 					if(ground_check_bottom == Object::GroundState::NotDestroyed &&
 						m_velocity != Math::Vector2{0, 0})
 					{
-						bool found = false;
-
-						if(m_offset == Math::right)
-						{
-							for(int i = 0; i < 10; i++)
-							{
-								if(found)
-								{
-									break;
-								}
-
-								for(int j = 0; j < 100; ++j)
-								{
-									Math::Vector2 new_pos = {
-										local_position_bottom.get_x() + i,
-										local_position_bottom.get_y() - j
-									};
-
-									const auto diff = new_pos - local_position_bottom;
-									const auto unit = diff.normalized();
-
-									if(isnan(unit.get_x()) || isnan(unit.get_y()))
-									{
-										continue;
-									}
-
-									if(ground->is_destroyed(
-										new_pos.get_x(),
-										new_pos.get_y()) == Object::GroundState::NotDestroyed)
-									{
-										m_velocity = unit;
-										found = true;
-										break;
-									}
-								}
-							}
-						}
-						else if(m_velocity == Math::left)
-						{
-							for(int i = 0; i < 10; i++)
-							{
-								if(found)
-								{
-									break;
-								}
-
-								for(int j = 0; j < 100; ++j)
-								{
-									Math::Vector2 new_pos = {
-										local_position_bottom.get_x() - i,
-										local_position_bottom.get_y() - j
-									};
-
-									const auto diff = new_pos - local_position_bottom;
-									const auto unit = diff.normalized();
-
-									if(isnan(unit.get_x()) || isnan(unit.get_y()))
-									{
-										continue;
-									}
-
-									if(ground->is_destroyed(
-										new_pos.get_x(),
-										new_pos.get_y()) == Object::GroundState::NotDestroyed)
-									{
-										m_velocity = unit;
-										found = true;
-										break;
-									}
-								}	
-							}
-						}
+						// @todo: if offset is opposite, character climbs the ground automatically.
+						calculating_next_climbing(local_position_bottom, ground);
 					}
 				}
 
@@ -289,8 +253,9 @@ namespace Fortress::ObjectBase
 				{
 					enable_gravity();
 					m_bGrounded = false;
+					// @todo: this should be somehow moving smoothly.
+					m_velocity = {0, 1};
 					Debug::Log(L"Character hits the destroyed ground");
-					
 				}
 
 				set_pitch(ground->get_top_left().local_inner_angle(get_bottom()));
