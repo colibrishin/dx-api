@@ -4,9 +4,9 @@
 
 namespace Fortress::ObjectBase
 {
-	void projectile::on_collision(const CollisionCode& collision, const std::shared_ptr<Abstract::rigidBody>& other)
+	void projectile::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<Abstract::rigidBody>& other)
 	{
-		rigidBody::on_collision(collision, other);
+		rigidBody::on_collision(collision, hit_vector, other);
 
 		if(m_curr_hit_count == m_max_hit_count)
 		{
@@ -16,21 +16,28 @@ namespace Fortress::ObjectBase
 		if (const auto character = 
 				std::dynamic_pointer_cast<ObjectBase::character>(other))
 		{
+			const auto shared_this = std::dynamic_pointer_cast<projectile>(shared_from_this());
 			Debug::Log(L"Projectile hits the character");
-			character->hit(std::dynamic_pointer_cast<projectile>(shared_from_this()));
+			character->hit(shared_this);
+			up_hit_count();
 
 			if(const auto active_scene = 
 				Scene::SceneManager::get_active_scene().lock())
 			{
-				const auto grounds = active_scene->is_in_range<Object::Ground>(m_position, m_radius);
+				const auto grounds = active_scene->is_in_range<Object::Ground>(
+					get_hit_point(translate_hit_vector(hit_vector)),
+					m_radius);
 
 				for(const auto& ptr : grounds)
 				{
 					if(const auto ground = ptr.lock())
 					{
-						ground->on_collision(
-							collision, 
-							std::dynamic_pointer_cast<rigidBody>(shared_from_this()));
+						const eHitVector e_vector = translate_hit_vector(
+							to_hit_vector(get_center(), ground->get_center()));
+
+						ground->safe_projectile_exploded(
+							ground->to_local_position(get_hit_point(e_vector)),
+							shared_this);
 					}
 				}
 			}
