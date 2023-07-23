@@ -22,7 +22,7 @@ namespace Fortress::ObjectBase
 		void initialize() override;
 		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
 		__forceinline virtual void update() override;
-		virtual void on_collision(const CollisionCode& collison, const std::shared_ptr<rigidBody>& other) override;
+		virtual void on_collision(const CollisionCode& collision, const std::shared_ptr<rigidBody>& other) override;
 		virtual void focus_this();
 		virtual void unfocus_this();
 		virtual void render() override;

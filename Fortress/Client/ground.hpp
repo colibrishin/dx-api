@@ -39,7 +39,7 @@ namespace Fortress::Object
 		Ground& operator=(const Ground& other) = default;
 		Ground& operator=(Ground&& other) = default;
 
-		virtual void on_collision(const CollisionCode& collison, const std::shared_ptr<rigidBody>& other) override;
+		virtual void on_collision(const CollisionCode& collision, const std::shared_ptr<rigidBody>& other) override;
 
 		~Ground() override
 		{
@@ -68,7 +68,7 @@ namespace Fortress::Object
 		HBITMAP m_ground_bitmap;
 	};
 
-	inline void Ground::on_collision(const CollisionCode& collison, const std::shared_ptr<rigidBody>& other)
+	inline void Ground::on_collision(const CollisionCode& collision, const std::shared_ptr<rigidBody>& other)
 	{
 		if (auto const projectile = 
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
@@ -82,6 +82,8 @@ namespace Fortress::Object
 				projectile->get_top() - get_top_left(),
 			};
 
+			// @todo: explosion radius check
+
 			for(const auto& position : local_positions)
 			{
 				if(is_projectile_hit(position, projectile) ||
@@ -93,7 +95,7 @@ namespace Fortress::Object
 			}
 		}
 
-		rigidBody::on_collision(collison, other);
+		rigidBody::on_collision(collision, other);
 	}
 
 	inline void Ground::initialize()

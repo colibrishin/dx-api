@@ -135,9 +135,7 @@
     <ClInclude Include="GuidedMissileProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClInclude>
-    <ClInclude Include="Round.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
+    <ClInclude Include="Round.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">

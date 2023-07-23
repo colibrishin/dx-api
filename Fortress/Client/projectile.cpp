@@ -4,19 +4,13 @@
 
 namespace Fortress::ObjectBase
 {
-	void projectile::on_collision(const CollisionCode& collison, const std::shared_ptr<Abstract::rigidBody>& other)
+	void projectile::on_collision(const CollisionCode& collision, const std::shared_ptr<Abstract::rigidBody>& other)
 	{
-		rigidBody::on_collision(collison, other);
+		rigidBody::on_collision(collision, other);
 
-		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other))
+		if(m_curr_hit_count == m_max_hit_count)
 		{
-			if(ground)
-			{
-				if(m_curr_hit_count == m_max_hit_count)
-				{
-					unfocus_this();
-				}
-			}
+			unfocus_this();
 		}
 
 		if (const auto character = 
@@ -24,7 +18,22 @@ namespace Fortress::ObjectBase
 		{
 			Debug::Log(L"Projectile hits the character");
 			character->hit(std::dynamic_pointer_cast<projectile>(shared_from_this()));
-			unfocus_this();
+
+			if(const auto active_scene = 
+				Scene::SceneManager::get_active_scene().lock())
+			{
+				const auto grounds = active_scene->is_in_range<Object::Ground>(m_position, m_radius);
+
+				for(const auto& ptr : grounds)
+				{
+					if(const auto ground = ptr.lock())
+					{
+						ground->on_collision(
+							collision, 
+							std::dynamic_pointer_cast<rigidBody>(shared_from_this()));
+					}
+				}
+			}
 		}
 	}
 
