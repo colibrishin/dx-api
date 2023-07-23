@@ -54,7 +54,10 @@ namespace Fortress::Object
 			{
 				if(const auto nearest = characters[0].lock())
 				{
-					const auto diff = get_top_left() - nearest->get_top_left();
+					const auto diff = 
+						x_velocity.get_x() < 0 ? 
+							get_bottom_left() - nearest->get_top_left() :
+							get_bottom_right() - nearest->get_top_right();
 					m_velocity = -diff.normalized();
 					m_locked_target = nearest;
 				}
