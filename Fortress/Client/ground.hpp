@@ -54,14 +54,14 @@ namespace Fortress::Object
 
 		void initialize() override;
 		void render() override;
-		GroundState safe_is_destroyed(const int x, const int y) const;
-		void safe_projectile_exploded(const Math::Vector2& local_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr);
+		GroundState safe_is_destroyed(const Math::Vector2& local_position) const;
+		void safe_projectile_exploded(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr);
 
 	private:
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
-		void safe_set_line_destroyed(const int mid_x, const int mid_y, const int n);
-		bool safe_is_projectile_hit(const Math::Vector2& local_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
+		void safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius);
+		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
 		void _debug_draw_destroyed_table() const;
 
 		std::vector<std::vector<GroundState>> m_destroyed_table;
@@ -78,12 +78,12 @@ namespace Fortress::Object
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
 		{
 			const eHitVector e_vector = translate_hit_vector(hit_vector);
-			const Math::Vector2 local_position = to_local_position(projectile->get_hit_point(e_vector));
+			const auto hit_position = projectile->get_hit_point(e_vector);
 
 			if(projectile->get_max_hit_count() > projectile->get_hit_count() &&
-				safe_is_projectile_hit(local_position, projectile))
+				safe_is_projectile_hit(hit_position, projectile))
 			{
-				safe_projectile_exploded(local_position, projectile);
+				safe_projectile_exploded(hit_position, projectile);
 				projectile->up_hit_count();
 			}
 		}
@@ -135,11 +135,14 @@ namespace Fortress::Object
 		}
 	}
 
-	inline GroundState Ground::safe_is_destroyed(const int x, const int y) const
+	inline GroundState Ground::safe_is_destroyed(const Math::Vector2& local_position) const
 	{
-		if(x >= 0 && x < m_hitbox.get_x() && y >= 0 && y < m_hitbox.get_y())
+		if(local_position.get_x() >= 0 && local_position.get_x() < m_hitbox.get_x() && 
+			local_position.get_y() >= 0 && local_position.get_y() < m_hitbox.get_y())
 		{
-			return m_destroyed_table[y][x];
+			return m_destroyed_table
+				[static_cast<int>(local_position.get_y())]
+				[static_cast<int>(local_position.get_x())];
 		}
 
 		return GroundState::OutOfBound;
@@ -162,40 +165,44 @@ namespace Fortress::Object
 		m_destroyed_table[y][x] = GroundState::Destroyed;
 	}
 
-	inline void Ground::safe_set_line_destroyed(const int mid_x, const int mid_y, const int n)
+	inline void Ground::safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius)
 	{
-		int left_x = mid_x - (n / 2);
-		int to_right_x = mid_x;
+		const Math::Vector2 start_pos = {center_position.get_x() - radius, center_position.get_y()};
+		Math::Vector2 curr_pos = start_pos;
+		const Math::Vector2 end_pos = {center_position.get_x() + radius, center_position.get_y()};
 
-		for(int i = 0; i < n / 2; ++i)
+		float radian = 0.0f;
+		const float sin_max = Math::to_radian(180.0f);
+		const float sin_iter = sin_max / radius;
+
+		while(curr_pos != end_pos)
 		{
-			if(left_x >= 0 && mid_y < static_cast<int>(m_hitbox.get_y()))
+			const int column_n = static_cast<int>(std::sinf(radian) * static_cast<float>(radius / 2));
+			for(int i = 0; i < column_n; ++i)
 			{
-				unsafe_set_destroyed(left_x, mid_y);
-				unsafe_set_destroyed_visual(left_x, mid_y);
-				left_x++;
+				if(curr_pos.get_x() >= 0 && 
+					curr_pos.get_x() < m_hitbox.get_x() && 
+					curr_pos.get_y() >= 0 && 
+					curr_pos.get_y() < m_hitbox.get_y())
+				{
+					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() + i);
+					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() + i);
+				}
 			}
-		}
-		for(int i = n / 2; i < n; ++i)
-		{
-			if(to_right_x < m_hitbox.get_x() && mid_y < static_cast<int>(m_hitbox.get_y()))
-			{
-				unsafe_set_destroyed(to_right_x, mid_y);
-				unsafe_set_destroyed_visual(to_right_x, mid_y);
-				to_right_x++;
-			}
+
+			radian += sin_iter;
+			curr_pos = {curr_pos.get_x() + 1, curr_pos.get_y()};
 		}
 	}
 
 	inline bool Ground::safe_is_projectile_hit(
-		const Math::Vector2& local_position,
+		const Math::Vector2& hit_position,
 		const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const
 	{
 		if(const auto projectile = projectile_ptr.lock())
 		{
-			const GroundState ground_status = safe_is_destroyed(
-					std::floorf(local_position.get_x()), 
-					std::floorf(local_position.get_y()));
+			const auto local_position = to_local_position(hit_position);
+			const GroundState ground_status = safe_is_destroyed(local_position);
 
 			if(ground_status == GroundState::NotDestroyed)
 			{
@@ -213,29 +220,14 @@ namespace Fortress::Object
 	}
 
 	inline void Ground::safe_projectile_exploded(
-		const Math::Vector2& local_position,
+		const Math::Vector2& hit_position,
 		const std::weak_ptr<ObjectBase::projectile>& projectile_ptr)
 	{
 		if(const auto projectile = projectile_ptr.lock())
 		{
-			const int y = local_position.get_y();
-			const int x = local_position.get_x();
-
-			constexpr float max = Math::PI;
+			const auto local_position = to_local_position(hit_position);
 			const float radius = projectile->get_radius();
-			const float end_point = y + (radius * 2);
-			const float inc = max / (radius * 2);
-			float i = 0;
-
-			for(float height = y - radius; height < end_point; height++)
-			{
-				if (height >= 0)
-				{
-					const int next_n = std::floorf(radius * sinf(i));
-					safe_set_line_destroyed(x, height, next_n);
-				}
-				i += inc;
-			}
+			safe_set_circle_destroyed(local_position, radius);
 		}
 	}
 

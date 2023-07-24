@@ -112,9 +112,7 @@ namespace Fortress::ObjectBase
 						continue;
 					}
 
-					if(ground->safe_is_destroyed(
-						new_pos.get_x(),
-						new_pos.get_y()) == Object::GroundState::NotDestroyed)
+					if(ground->safe_is_destroyed(local_position_bottom) == Object::GroundState::NotDestroyed)
 					{
 						// @todo: if angle is too stiff, then don't climb.
 						m_velocity = unit;
@@ -229,8 +227,7 @@ namespace Fortress::ObjectBase
 			{
 				const Math::Vector2 ground_local_position = ground->to_local_position(get_bottom());
 
-				const Object::GroundState ground_check = ground->safe_is_destroyed(
-					ground_local_position.get_x(),ground_local_position.get_y());
+				const Object::GroundState ground_check = ground->safe_is_destroyed(ground_local_position);
 
 				if(collision == CollisionCode::Inside)
 				{
