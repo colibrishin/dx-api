@@ -253,9 +253,12 @@ namespace Fortress::Abstract
 
 		Debug::Log(L"Object is floating");
 
-		m_gravity_speed += m_gravity_acceleration * DeltaTime::get_deltaTime() * 0.5f;
-		*this += {0.0f, get_mass() * m_gravity_speed * DeltaTime::get_deltaTime()};
-		m_gravity_speed += m_gravity_acceleration * DeltaTime::get_deltaTime() * 0.5f;
+		if (m_gravity_speed <= max_gravity_speed) 
+		{
+			m_gravity_speed += m_gravity_acceleration * DeltaTime::get_deltaTime() * 0.5f;
+			*this += {0.0f, m_gravity_speed * DeltaTime::get_deltaTime()};
+			m_gravity_speed += m_gravity_acceleration * DeltaTime::get_deltaTime() * 0.5f;
+		}
 	}
 
 	void rigidBody::move()
