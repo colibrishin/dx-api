@@ -323,7 +323,7 @@ namespace Fortress::ObjectBase
 			}
 			else if (Input::getKey(firing_key))
 			{
-				set_state(eCharacterState::Move);
+				set_state(eCharacterState::Firing);
 				firing();
 			}
 			else if (Input::getKeyDown(swap_key))
@@ -389,7 +389,7 @@ namespace Fortress::ObjectBase
 				set_state(eCharacterState::Firing);
 				firing();
 			}
-			else if(Input::getKeyUp(firing_key))
+			if(Input::getKeyUp(firing_key))
 			{
 				set_state(eCharacterState::Fire);
 				shoot();
