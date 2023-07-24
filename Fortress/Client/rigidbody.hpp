@@ -8,7 +8,7 @@
 
 namespace Fortress::Abstract
 {
-	constexpr float max_gravity_speed = 100.0f;
+	constexpr float max_gravity_speed = 5000.0f;
 
 	class rigidBody : public object
 	{
