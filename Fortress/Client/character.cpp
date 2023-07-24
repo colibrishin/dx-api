@@ -51,6 +51,11 @@ namespace Fortress::ObjectBase
 		return m_mp / static_cast<float>(character_full_mp);
 	}
 
+	void character::set_state(const eCharacterState& state)
+	{
+		m_state = state;
+	}
+
 	void character::render_hp_bar(const Math::Vector2& position)
 	{
 		// white box
@@ -252,6 +257,7 @@ namespace Fortress::ObjectBase
 				{
 					enable_gravity();
 					m_bGrounded = false;
+					set_state(eCharacterState::Falling);
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
@@ -266,6 +272,7 @@ namespace Fortress::ObjectBase
 	{
 		enable_gravity();
 		m_bGrounded = false;
+		set_state(eCharacterState::Falling);
 	}
 
 	eCharacterState character::get_state() const
@@ -296,27 +303,27 @@ namespace Fortress::ObjectBase
 
 			if (Input::getKey(up_key))
 			{
-				m_state = eCharacterState::Move;
+				set_state(eCharacterState::Move);
 				move_up();
 			}
 			else if (Input::getKey(left_key))
 			{
-				m_state = eCharacterState::Move;
+				set_state(eCharacterState::Move);
 				move_left();
 			}
 			else if (Input::getKey(down_key))
 			{
-				m_state = eCharacterState::Move;
+				set_state(eCharacterState::Move);
 				move_down();
 			}
 			else if (Input::getKey(right_key))
 			{
-				m_state = eCharacterState::Move;
+				set_state(eCharacterState::Move);
 				move_right();
 			}
 			else if (Input::getKey(firing_key))
 			{
-				m_state = eCharacterState::Firing;
+				set_state(eCharacterState::Move);
 				firing();
 			}
 			else if (Input::getKeyDown(swap_key))
@@ -325,7 +332,7 @@ namespace Fortress::ObjectBase
 			}
 			else if (Input::getKeyUp(left_key) || Input::getKeyUp(right_key) || Input::getKeyUp(up_key) || Input::getKeyUp(down_key))
 			{
-				m_state = eCharacterState::Idle;
+				set_state(eCharacterState::Idle);
 				stop();
 			}
 		}
@@ -344,27 +351,27 @@ namespace Fortress::ObjectBase
 
 			if (Input::getKey(up))
 			{
-				m_state = eCharacterState::Move;
+				set_state(eCharacterState::Move);
 				move_up();
 			}
 			else if (Input::getKey(left))
 			{
-				m_state = eCharacterState::Move;
+				set_state(eCharacterState::Move);
 				move_left();
 			}
 			else if (Input::getKey(down))
 			{
-				m_state = eCharacterState::Move;
+				set_state(eCharacterState::Move);
 				move_down();
 			}
 			else if (Input::getKey(right))
 			{
-				m_state = eCharacterState::Move;
+				set_state(eCharacterState::Move);
 				move_right();
 			}
 			else if (Input::getKeyUp(left) || Input::getKeyUp(right) || Input::getKeyUp(up) || Input::getKeyUp(down))
 			{
-				m_state = eCharacterState::Idle;
+				set_state(eCharacterState::Idle);
 				stop();
 			}
 		}
@@ -379,12 +386,12 @@ namespace Fortress::ObjectBase
 			const eKeyCode firing_key = m_player_id == 0 ? eKeyCode::SPACE : eKeyCode::ENTER;
 			if (Input::getKey(firing_key))
 			{
-				m_state = eCharacterState::Firing;
+				set_state(eCharacterState::Firing);
 				firing();
 			}
 			else if(Input::getKeyUp(firing_key))
 			{
-				m_state = eCharacterState::Fire;
+				set_state(eCharacterState::Fire);
 				shoot();
 			}
 		}
@@ -398,13 +405,25 @@ namespace Fortress::ObjectBase
 		{
 			if(!prj->is_active())
 			{
-				m_state = eCharacterState::Idle;
+				set_state(eCharacterState::Idle);
 			}
 		}
 	}
 
 	void character::dead_state() const
 	{
+	}
+
+	void character::falling_state()
+	{
+		if (!m_bGrounded) 
+		{
+			stop();
+		}
+		if (m_bGrounded) 
+		{
+			set_state(eCharacterState::Idle);
+		}
 	}
 
 	void character::set_unmovable()
