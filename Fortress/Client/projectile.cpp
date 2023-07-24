@@ -36,7 +36,7 @@ namespace Fortress::ObjectBase
 							to_hit_vector(get_center(), ground->get_center()));
 
 						ground->safe_projectile_exploded(
-							ground->to_local_position(get_hit_point(e_vector)),
+							get_hit_point(e_vector),
 							shared_this);
 					}
 				}
