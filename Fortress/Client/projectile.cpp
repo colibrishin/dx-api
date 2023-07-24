@@ -11,6 +11,7 @@ namespace Fortress::ObjectBase
 		if(m_curr_hit_count == m_max_hit_count)
 		{
 			unfocus_this();
+			return;
 		}
 
 		if (const auto character = 
