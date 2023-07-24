@@ -221,9 +221,9 @@ namespace Fortress::Object
 			const int y = local_position.get_y();
 			const int x = local_position.get_x();
 
-			constexpr float max = Math::PI;
+			const float max = Math::to_radian(180.0f);
 			const float radius = projectile->get_radius();
-			const float end_point = y + (radius * 2);
+			const float end_point = y + radius;
 			const float inc = max / (radius * 2);
 			float i = 0;
 
@@ -231,7 +231,7 @@ namespace Fortress::Object
 			{
 				if (height >= 0)
 				{
-					const int next_n = std::floorf(radius * sinf(i));
+					const int next_n = std::floorf(2 * radius * sinf(i));
 					safe_set_line_destroyed(x, height, next_n);
 				}
 				i += inc;
