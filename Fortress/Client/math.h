@@ -80,15 +80,15 @@ namespace Fortress::Math
 		{
 			return eHitVector::TopLeft;
 		}
-		if(hit_vector.get_x() > 0 && hit_vector.get_y() < 0)
+		if(hit_vector.get_x() < 0 && hit_vector.get_y() > 0)
 		{
 			return eHitVector::TopRight;
 		}
-		if(hit_vector.get_x() < 0 && hit_vector.get_y() > 0)
+		if(hit_vector.get_x() > 0 && hit_vector.get_y() < 0)
 		{
 			return eHitVector::BottomLeft;
 		}
-		if(hit_vector.get_x() < 0 && hit_vector.get_y() > 0)
+		if(hit_vector.get_x() < 0 && hit_vector.get_y() < 0)
 		{
 			return eHitVector::BottomRight;
 		}
