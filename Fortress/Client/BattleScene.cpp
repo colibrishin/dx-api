@@ -60,6 +60,9 @@ namespace Fortress::Scene
 			case eCharacterState::Move:
 				obj->move_state();
 				break;
+			case eCharacterState::Falling:
+				obj->falling_state();
+				break;
 			default:
 				break;
 			}
@@ -82,6 +85,9 @@ namespace Fortress::Scene
 				break;
 			case eCharacterState::Move:
 				obj->move_state();
+				break;
+			case eCharacterState::Falling:
+				obj->falling_state();
 				break;
 			default:
 				break;
