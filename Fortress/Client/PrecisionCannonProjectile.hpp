@@ -13,7 +13,8 @@ namespace Fortress::Object
 	class PrecisionCannonProjectile final : public ObjectBase::projectile
 	{
 	public:
-		PrecisionCannonProjectile() : projectile(
+		PrecisionCannonProjectile(const ObjectBase::character* shooter) : projectile(
+			shooter,
 			L"Precision Cannon Projectile",
 			L"cannon",
 			{}, 

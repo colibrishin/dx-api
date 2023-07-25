@@ -27,6 +27,7 @@ namespace Fortress::ObjectBase
 		virtual void unfocus_this();
 		virtual void render() override;
 		virtual void prerender();
+		const character* get_origin() const;
 
 		void up_hit_count();
 		int get_hit_count() const;
@@ -39,6 +40,7 @@ namespace Fortress::ObjectBase
 
 	protected:
 		projectile(
+			const character* shooter,
 			const std::wstring& name,
 			const std::wstring& short_name,
 			const Math::Vector2& position,
@@ -54,6 +56,7 @@ namespace Fortress::ObjectBase
 			m_radius(radius),
 			m_max_hit_count(hit_count),
 			m_curr_hit_count(0),
+			m_shooter(shooter),
 			m_texture(short_name)
 		{
 			projectile::initialize();
@@ -64,6 +67,7 @@ namespace Fortress::ObjectBase
 		int m_radius;
 		const int m_max_hit_count;
 		int m_curr_hit_count;
+		const character* m_shooter;
 		Texture<GifWrapper> m_texture;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 		Math::Vector2 m_fired_position;

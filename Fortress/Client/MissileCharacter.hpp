@@ -31,8 +31,8 @@ namespace Fortress::Object
 				0.0f,
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp,
-				std::make_shared<MissileProjectile>(),
-				std::make_shared<GuidedMissileProjectile>())
+				std::make_shared<MissileProjectile>(this),
+				std::make_shared<GuidedMissileProjectile>(this))
 		{
 			initialize();
 		}

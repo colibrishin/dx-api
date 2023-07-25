@@ -111,6 +111,11 @@ namespace Fortress::ObjectBase
 		set_pitch(angle);
 	}
 
+	const character* projectile::get_origin() const
+	{
+		return m_shooter;
+	}
+
 	void projectile::up_hit_count()
 	{
 		m_curr_hit_count++;
