@@ -93,38 +93,105 @@ namespace Fortress::ObjectBase
 		DeleteObject(brush);
 	}
 
-	void character::calculating_next_climbing(
+	void character::get_next_position(
 		const Math::Vector2& local_position_bottom,
 		const std::weak_ptr<Object::Ground>& ground_ptr)
 	{
+		bool angle_check = false;
+		bool climable = false;
+
 		if (const auto ground = ground_ptr.lock())
 		{
+			// check up-hilling condition
 			for(int i = 0; i < 10; i++)
 			{
-				for(int j = 0; j < 100; ++j)
+				if (angle_check && climable) 
 				{
-					Math::Vector2 new_pos = {
+					break;
+				}
+
+				angle_check = false;
+
+				for(int j = 99; j >= 0; --j)
+				{
+					Math::Vector2 local_new_pos = {
 						local_position_bottom.get_x() + 
 							(m_offset == Math::left ?  -i : i),
 						local_position_bottom.get_y() - j
 					};
 
-					const auto diff = new_pos - local_position_bottom;
+					const auto diff = local_new_pos - local_position_bottom;
 					const auto unit = diff.normalized();
+					const auto ground_check = ground->safe_is_destroyed(local_new_pos);
 
-					if(isnan(unit.get_x()) || isnan(unit.get_y()))
+					if (isnan(unit.get_x()) || isnan(unit.get_y()))
 					{
 						continue;
 					}
 
-					if(ground->safe_is_destroyed(local_position_bottom) == Object::GroundState::NotDestroyed)
+					if (ground_check == Object::GroundState::OutOfBound) 
 					{
-						// @todo: if angle is too stiff, then don't climb.
+						continue;
+					}
+
+					if (ground_check == Object::GroundState::NotDestroyed)
+					{
+						if (!angle_check)
+						{
+							if (Math::to_degree(local_position_bottom.local_inner_angle(local_new_pos)) >= 60.0f) 
+							{
+								angle_check = false;
+								climable = false;
+								break;
+							}
+							
+							climable = true;
+							angle_check = true;
+						}
+						else 
+						{
+							m_velocity = unit;
+						}
+					}
+				}
+			}
+
+			if(climable)
+			{
+				return;
+		}
+
+			for(int i = 0; i < 10; i++)
+			{
+				for(int j = 0; j < 100; ++j)
+				{
+					Math::Vector2 local_new_pos = {
+						local_position_bottom.get_x() + 
+							(m_offset == Math::left ?  -i : i),
+						local_position_bottom.get_y() + j
+					};
+
+					const auto diff = local_new_pos - local_position_bottom;
+					const auto unit = diff.normalized();
+					const auto ground_check = ground->safe_is_destroyed(local_new_pos);
+
+					if (isnan(unit.get_x()) || isnan(unit.get_y()))
+					{
+						continue;
+					}
+
+					if (ground_check == Object::GroundState::NotDestroyed)
+					{
 						m_velocity = unit;
 						return;
 					}
 				}
 			}
+		}
+
+		if (!angle_check || !climable) 
+		{
+			m_velocity = {};
 		}
 	}
 
@@ -231,15 +298,22 @@ namespace Fortress::ObjectBase
 			if(ground)
 			{
 				const Math::Vector2 ground_local_position = ground->to_local_position(get_bottom());
-
 				const Object::GroundState ground_check = ground->safe_is_destroyed(ground_local_position);
 
 				if(collision == CollisionCode::Inside)
 				{
-					if(ground_check == Object::GroundState::NotDestroyed &&
-						m_state == eCharacterState::Move)
+					if (ground_check == Object::GroundState::NotDestroyed)
 					{
-						calculating_next_climbing(ground_local_position, ground);
+						if (ground->safe_is_object_stuck(get_bottom())) 
+						{
+							move_upto_boundary();
+						}
+					}
+					if(ground_check == Object::GroundState::NotDestroyed &&
+						m_state == eCharacterState::Move &&
+						m_bGrounded)
+					{
+						uphilling(ground_local_position, ground);
 					}
 				}
 
