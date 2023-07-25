@@ -79,11 +79,17 @@ namespace Fortress
 	{
 		m_render_queue.push([point, size]()
 		{
-			// transparent rectangle is pain.
-			draw_line(point, point + Math::Vector2{size.get_x(), 0});
-			draw_line(point + Math::Vector2{size.get_x(), 0}, point + size);
-			draw_line(point + size, point + Math::Vector2{0, size.get_y()});
-			draw_line(point + Math::Vector2{0, size.get_y()}, point);
+			const HBRUSH transparent = static_cast<HBRUSH>(GetStockObject(NULL_BRUSH));
+			const HBRUSH previous = static_cast<HBRUSH>(SelectObject(m_hdc, transparent));
+			Rectangle(
+				m_hdc, 
+				point.get_x(),
+				point.get_y(),
+				point.get_x() + size.get_x(),
+				point.get_y() + size.get_y());
+
+			SelectObject(m_hdc, previous);
+			DeleteObject(transparent);
 		});
 	}
 }

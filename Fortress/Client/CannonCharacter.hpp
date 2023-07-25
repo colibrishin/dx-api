@@ -67,14 +67,15 @@ namespace Fortress::Object
 		character::shoot();
 
 		Math::Vector2 angle{};
+		const auto rotated = get_center().rotate(Math::to_radian(45.0f)).normalized().abs();
 
 		if(get_offset() == Math::left)
 		{
-			angle = {-std::cosf(Math::to_radian(45.0f)), -std::cosf(Math::to_radian(45.0f))};
+			angle = {-rotated.get_x(), -rotated.get_y()};
 		}
 		else
 		{
-			angle = {std::cosf(Math::to_radian(45.0f)), -std::cosf(Math::to_radian(45.0f))};
+			angle = {rotated.get_x(), -rotated.get_y()};
 		}
 
 		get_current_projectile().lock()->fire(

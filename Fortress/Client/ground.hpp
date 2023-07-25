@@ -183,10 +183,19 @@ namespace Fortress::Object
 				if(curr_pos.get_x() >= 0 && 
 					curr_pos.get_x() < m_hitbox.get_x() && 
 					curr_pos.get_y() >= 0 && 
-					curr_pos.get_y() < m_hitbox.get_y())
+					curr_pos.get_y() + i < m_hitbox.get_y())
 				{
 					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() + i);
 					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() + i);
+				}
+
+				if(curr_pos.get_x() >= 0 && 
+					curr_pos.get_x() < m_hitbox.get_x() && 
+					curr_pos.get_y() - i >= 0 && 
+					curr_pos.get_y() < m_hitbox.get_y())
+				{
+					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() - i);
+					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() - i);
 				}
 			}
 

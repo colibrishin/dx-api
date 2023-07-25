@@ -49,6 +49,8 @@ namespace Fortress::Object
 			set_sprite_offset(L"charging", L"right", {0, 10.0f});
 			set_sprite_offset(L"charging", L"left", {0, 10.0f});
 			set_sprite_offset(L"idle", L"left", {15.0f, 0.0f});
+			// @todo: if renderer replaces the negative hitbox as abs, this might be not needed.
+			set_sprite_offset(L"projectile", L"left", {40.0f, 0.0f});
 
 			character::initialize();
 		}
@@ -71,14 +73,15 @@ namespace Fortress::Object
 		character::shoot();
 
 		Math::Vector2 angle{};
+		const auto rotated = get_center().rotate(Math::to_radian(45.0f)).normalized().abs();
 
 		if(get_offset() == Math::left)
 		{
-			angle = {-std::cosf(Math::to_radian(45.0f)), -std::cosf(Math::to_radian(45.0f))};
+			angle = {-rotated.get_x(), -rotated.get_y()};
 		}
 		else
 		{
-			angle = {std::cosf(Math::to_radian(45.0f)), -std::cosf(Math::to_radian(45.0f))};
+			angle = {rotated.get_x(), -rotated.get_y()};
 		}
 
 		get_current_projectile().lock()->fire(
