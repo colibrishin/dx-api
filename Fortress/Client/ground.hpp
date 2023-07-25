@@ -56,7 +56,8 @@ namespace Fortress::Object
 		void render() override;
 		GroundState safe_is_destroyed(const Math::Vector2& local_position) const;
 		void safe_projectile_exploded(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr);
-
+		bool safe_is_object_stuck(const Math::Vector2& position) const;
+		Math::Vector2 safe_nearest_surface(const Math::Vector2& position) const;
 	private:
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
@@ -77,13 +78,10 @@ namespace Fortress::Object
 		if (auto const projectile = 
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
 		{
-			const eHitVector e_vector = translate_hit_vector(hit_vector);
-			const auto hit_position = projectile->get_hit_point(e_vector);
-
 			if(projectile->get_max_hit_count() > projectile->get_hit_count() &&
-				safe_is_projectile_hit(hit_position, projectile))
+				safe_is_projectile_hit(projectile->get_bottom(), projectile))
 			{
-				safe_projectile_exploded(hit_position, projectile);
+				safe_projectile_exploded(projectile->get_bottom(), projectile);
 				projectile->up_hit_count();
 			}
 		}
@@ -137,8 +135,10 @@ namespace Fortress::Object
 
 	inline GroundState Ground::safe_is_destroyed(const Math::Vector2& local_position) const
 	{
-		if(local_position.get_x() >= 0 && local_position.get_x() < m_hitbox.get_x() && 
-			local_position.get_y() >= 0 && local_position.get_y() < m_hitbox.get_y())
+		if(static_cast<int>(local_position.get_x()) >= 0 && 
+			static_cast<int>(local_position.get_x()) < m_hitbox.get_x() && 
+			static_cast<int>(local_position.get_y()) >= 0 && 
+			static_cast<int>(local_position.get_y()) < m_hitbox.get_y())
 		{
 			return m_destroyed_table
 				[static_cast<int>(local_position.get_y())]
@@ -180,19 +180,19 @@ namespace Fortress::Object
 			const int column_n = static_cast<int>(std::sinf(radian) * static_cast<float>(radius / 2));
 			for(int i = 0; i < column_n; ++i)
 			{
-				if(curr_pos.get_x() >= 0 && 
-					curr_pos.get_x() < m_hitbox.get_x() && 
-					curr_pos.get_y() >= 0 && 
-					curr_pos.get_y() + i < m_hitbox.get_y())
+				if(static_cast<int>(curr_pos.get_x()) >= 0 && 
+					static_cast<int>(curr_pos.get_x()) < m_hitbox.get_x() && 
+					static_cast<int>(curr_pos.get_y()) >= 0 && 
+					static_cast<int>(curr_pos.get_y() + i) < m_hitbox.get_y())
 				{
 					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() + i);
 					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() + i);
 				}
 
-				if(curr_pos.get_x() >= 0 && 
-					curr_pos.get_x() < m_hitbox.get_x() && 
-					curr_pos.get_y() - i >= 0 && 
-					curr_pos.get_y() < m_hitbox.get_y())
+				if(static_cast<int>(curr_pos.get_x()) >= 0 && 
+					static_cast<int>(curr_pos.get_x()) < m_hitbox.get_x() && 
+					static_cast<int>(curr_pos.get_y()) - i >= 0 && 
+					static_cast<int>(curr_pos.get_y()) < m_hitbox.get_y())
 				{
 					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() - i);
 					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() - i);
@@ -226,6 +226,53 @@ namespace Fortress::Object
 		}
 
 		return false;
+	}
+
+	inline bool Ground::safe_is_object_stuck(const Math::Vector2& position) const
+	{
+		const auto local_position = to_local_position(position);
+
+		// @todo: proper oob definition
+		Math::Vector2 offsets[4] =
+		{
+			{-1.0f, 0.0f},
+			{1.0f, 0.0f},
+			{0.0f, -1.0f},
+			{0.0f, 1.0f}
+		};
+
+		int count = 0;
+
+		for (const auto& offset : offsets) 
+		{
+			count += GroundState::NotDestroyed == safe_is_destroyed(local_position + offset);
+		}
+
+		return count == 4;
+	}
+
+	inline Math::Vector2 Ground::safe_nearest_surface(const Math::Vector2& position) const
+	{
+		const auto o_local_position = to_local_position(position);
+		auto local_position = to_local_position(position);
+
+		if(local_position.get_y() <= 0)
+		{
+			return {0, -local_position.get_y()};
+		}
+
+		while(local_position.get_y() > 0)
+		{
+			if(safe_is_destroyed(local_position) == GroundState::Destroyed)
+			{
+				auto delta = o_local_position - local_position;
+				return delta;
+			}
+
+			local_position = {local_position.get_x(), local_position.get_y() - 1};
+		}
+
+		return {0, -local_position.get_y()};
 	}
 
 	inline void Ground::safe_projectile_exploded(

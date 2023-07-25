@@ -60,35 +60,35 @@ namespace Fortress::Math
 		{
 			return eHitVector::Identical;
 		}
-		if(abs_vector.get_x() < Math::epsilon && hit_vector.get_y() > 0)
+		if(abs_vector.get_x() < Math::epsilon && hit_vector.get_y() < 0)
 		{
 			return eHitVector::Top;
 		}
-		if(abs_vector.get_x() < Math::epsilon && hit_vector.get_y() < 0)
+		if(abs_vector.get_x() < Math::epsilon && hit_vector.get_y() > 0)
 		{
 			return eHitVector::Bottom;
 		}
-		if(hit_vector.get_x() > 0 && abs_vector.get_y() < Math::epsilon)
+		if(hit_vector.get_x() < 0 && abs_vector.get_y() < Math::epsilon)
 		{
 			return eHitVector::Left;
 		}
-		if(hit_vector.get_x() < 0 && abs_vector.get_y() < Math::epsilon)
+		if(hit_vector.get_x() > 0 && abs_vector.get_y() < Math::epsilon)
 		{
 			return eHitVector::Right;
 		}
-		if(hit_vector.get_x() > 0 && hit_vector.get_y() > 0)
+		if(hit_vector.get_x() < 0 && hit_vector.get_y() < 0)
 		{
 			return eHitVector::TopLeft;
 		}
-		if(hit_vector.get_x() < 0 && hit_vector.get_y() > 0)
+		if(hit_vector.get_x() > 0 && hit_vector.get_y() < 0)
 		{
 			return eHitVector::TopRight;
 		}
-		if(hit_vector.get_x() > 0 && hit_vector.get_y() < 0)
+		if(hit_vector.get_x() < 0 && hit_vector.get_y() > 0)
 		{
 			return eHitVector::BottomLeft;
 		}
-		if(hit_vector.get_x() < 0 && hit_vector.get_y() < 0)
+		if(hit_vector.get_x() > 0 && hit_vector.get_y() > 0)
 		{
 			return eHitVector::BottomRight;
 		}

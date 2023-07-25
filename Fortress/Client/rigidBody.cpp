@@ -198,22 +198,18 @@ namespace Fortress::Abstract
 
 		if(right_inside_check && left_inside_check && bottom_inside_check && top_inside_check)
 		{
-			Debug::Log(left_locked_ptr->get_name() + L" inside collision");
 			return CollisionCode::Inside;
 		}
 		if(right_boundary_check && left_boundary_check && bottom_boundary_check && top_boundary_check)
 		{
-			Debug::Log(left_locked_ptr->get_name() + L" boundary collision");
 			return CollisionCode::Boundary;
 		}
 
-		Debug::Log(L"Identical");
 		return CollisionCode::None;
 	}
 
 	void rigidBody::reset_current_speed()
 	{
-		Debug::Log(L"Speed reset at " + get_name());
 		m_curr_speed = 0;
 	}
 
@@ -246,12 +242,9 @@ namespace Fortress::Abstract
 
 		if (diff.abs().get_y() <= Math::epsilon)
 		{
-			Debug::Log(L"Object grounded");
 			m_gravity_speed = 0.0f;
 			return;
 		}
-
-		Debug::Log(L"Object is floating");
 
 		if (m_gravity_speed <= max_gravity_speed) 
 		{
@@ -278,7 +271,5 @@ namespace Fortress::Abstract
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
 		*this += m_velocity * m_curr_speed * DeltaTime::get_deltaTime();
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
-
-		Debug::Log(L"Moving " + get_name() + std::to_wstring(m_curr_speed));
 	}
 }
