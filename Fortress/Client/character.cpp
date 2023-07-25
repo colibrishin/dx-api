@@ -159,7 +159,7 @@ namespace Fortress::ObjectBase
 			if(climable)
 			{
 				return;
-		}
+			}
 
 			for(int i = 0; i < 10; i++)
 			{
@@ -306,14 +306,15 @@ namespace Fortress::ObjectBase
 					{
 						if (ground->safe_is_object_stuck(get_bottom())) 
 						{
-							move_upto_boundary();
+							const auto delta = ground->safe_nearest_surface(get_bottom());
+							m_position -= delta;
 						}
 					}
 					if(ground_check == Object::GroundState::NotDestroyed &&
 						m_state == eCharacterState::Move &&
 						m_bGrounded)
 					{
-						uphilling(ground_local_position, ground);
+						get_next_position(ground_local_position, ground);
 					}
 				}
 

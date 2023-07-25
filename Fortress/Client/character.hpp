@@ -85,7 +85,7 @@ namespace Fortress::ObjectBase
 
 		void set_state(const eCharacterState& state);
 		void render_hp_bar(const Math::Vector2& position);
-		void uphilling(const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr);
+		void get_next_position(const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr);
 
 		Math::Vector2 m_offset;
 
