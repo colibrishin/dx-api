@@ -56,11 +56,9 @@ namespace Fortress::ObjectBase
 		void firing_state();
 		void fire_state();
 		virtual void dead_state() const;
-		virtual void falling_state();
 
 		void set_unmovable();
 		void set_movable();
-
 
 		void set_current_sprite(const std::wstring& name);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);

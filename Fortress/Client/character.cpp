@@ -255,7 +255,6 @@ namespace Fortress::ObjectBase
 					enable_gravity();
 					m_bGrounded = false;
 					set_pitch(0.0f);
-					set_state(eCharacterState::Falling);
 					// @todo: reroute velocity to nearest ground point
 					Debug::Log(L"Character hits the destroyed ground");
 				}
@@ -275,7 +274,6 @@ namespace Fortress::ObjectBase
 	{
 		enable_gravity();
 		m_bGrounded = false;
-		set_state(eCharacterState::Falling);
 	}
 
 	eCharacterState character::get_state() const
@@ -415,14 +413,6 @@ namespace Fortress::ObjectBase
 
 	void character::dead_state() const
 	{
-	}
-
-	void character::falling_state()
-	{
-		if (m_bGrounded) 
-		{
-			set_state(eCharacterState::Idle);
-		}
 	}
 
 	void character::set_unmovable()

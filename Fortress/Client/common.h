@@ -32,7 +32,6 @@ namespace Fortress
 		Fire,
 		Item,
 		Dead,
-		Falling,
 	};
 
 	enum class eHitVector
