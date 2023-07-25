@@ -258,6 +258,7 @@ namespace Fortress::ObjectBase
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
+				// @todo: this should be replaced with degree
 				set_pitch(ground->get_top_left().local_inner_angle(get_center()));
 			}
 		}
