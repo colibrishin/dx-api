@@ -138,8 +138,10 @@ namespace Fortress::Object
 
 	inline GroundState Ground::safe_is_destroyed(const Math::Vector2& local_position) const
 	{
-		if(local_position.get_x() >= 0 && local_position.get_x() < m_hitbox.get_x() && 
-			local_position.get_y() >= 0 && local_position.get_y() < m_hitbox.get_y())
+		if(static_cast<int>(local_position.get_x()) >= 0 && 
+			static_cast<int>(local_position.get_x()) < m_hitbox.get_x() && 
+			static_cast<int>(local_position.get_y()) >= 0 && 
+			static_cast<int>(local_position.get_y()) < m_hitbox.get_y())
 		{
 			return m_destroyed_table
 				[static_cast<int>(local_position.get_y())]
@@ -181,19 +183,19 @@ namespace Fortress::Object
 			const int column_n = static_cast<int>(std::sinf(radian) * static_cast<float>(radius / 2));
 			for(int i = 0; i < column_n; ++i)
 			{
-				if(curr_pos.get_x() >= 0 && 
-					curr_pos.get_x() < m_hitbox.get_x() && 
-					curr_pos.get_y() >= 0 && 
-					curr_pos.get_y() + i < m_hitbox.get_y())
+				if(static_cast<int>(curr_pos.get_x()) >= 0 && 
+					static_cast<int>(curr_pos.get_x()) < m_hitbox.get_x() && 
+					static_cast<int>(curr_pos.get_y()) >= 0 && 
+					static_cast<int>(curr_pos.get_y() + i) < m_hitbox.get_y())
 				{
 					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() + i);
 					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() + i);
 				}
 
-				if(curr_pos.get_x() >= 0 && 
-					curr_pos.get_x() < m_hitbox.get_x() && 
-					curr_pos.get_y() - i >= 0 && 
-					curr_pos.get_y() < m_hitbox.get_y())
+				if(static_cast<int>(curr_pos.get_x()) >= 0 && 
+					static_cast<int>(curr_pos.get_x()) < m_hitbox.get_x() && 
+					static_cast<int>(curr_pos.get_y()) - i >= 0 && 
+					static_cast<int>(curr_pos.get_y()) < m_hitbox.get_y())
 				{
 					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() - i);
 					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() - i);
