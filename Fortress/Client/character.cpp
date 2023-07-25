@@ -254,12 +254,17 @@ namespace Fortress::ObjectBase
 				{
 					enable_gravity();
 					m_bGrounded = false;
+					set_pitch(0.0f);
 					set_state(eCharacterState::Falling);
+					// @todo: reroute velocity to nearest ground point
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
-				// @todo: this should be replaced with degree
-				set_pitch(ground->get_top_left().local_inner_angle(get_center()));
+				// @todo: maybe rotation is too gradual.
+				const float rotate_radian = ground->get_top_left().local_inner_angle(get_bottom());
+				set_pitch(
+					m_offset == Math::left ? 
+					-Math::to_degree(rotate_radian) : Math::to_degree(rotate_radian));
 			}
 		}
 
@@ -414,11 +419,6 @@ namespace Fortress::ObjectBase
 
 	void character::falling_state()
 	{
-		if (!m_bGrounded) 
-		{
-			// @todo: control is too stiff.
-			stop();
-		}
 		if (m_bGrounded) 
 		{
 			set_state(eCharacterState::Idle);
