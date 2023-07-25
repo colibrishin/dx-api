@@ -159,10 +159,11 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="vector2.hpp" />
+    <ClInclude Include="deltatime.hpp" />
+    <ClInclude Include="application.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp" />
-    <ClCompile Include="application.h" />
     <ClCompile Include="BulletinBoardScene.cpp" />
     <ClCompile Include="cameraManager.hpp" />
     <ClCompile Include="CannonCharacter.hpp" />
@@ -174,7 +175,6 @@
     <ClCompile Include="MissileCharacter.hpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="BattleScene.cpp" />
-    <ClCompile Include="deltatime.hpp" />
     <ClCompile Include="object.hpp" />
     <ClCompile Include="entity.hpp" />
     <ClCompile Include="MissileProjectile.hpp" />
