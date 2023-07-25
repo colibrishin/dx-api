@@ -56,7 +56,7 @@ namespace Fortress::Object
 		void render() override;
 		GroundState safe_is_destroyed(const Math::Vector2& local_position) const;
 		void safe_projectile_exploded(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr);
-
+		bool safe_is_object_stuck(const Math::Vector2& position) const;
 	private:
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
@@ -226,6 +226,29 @@ namespace Fortress::Object
 		}
 
 		return false;
+	}
+
+	inline bool Ground::safe_is_object_stuck(const Math::Vector2& position) const
+	{
+		const auto local_position = to_local_position(position);
+
+		// @todo: proper oob definition
+		Math::Vector2 offsets[4] =
+		{
+			{-1.0f, 0.0f},
+			{1.0f, 0.0f},
+			{0.0f, -1.0f},
+			{0.0f, 1.0f}
+		};
+
+		int count = 0;
+
+		for (const auto& offset : offsets) 
+		{
+			count += GroundState::NotDestroyed == safe_is_destroyed(local_position + offset);
+		}
+
+		return count == 4;
 	}
 
 	inline void Ground::safe_projectile_exploded(
