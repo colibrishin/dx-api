@@ -13,7 +13,8 @@ namespace Fortress::Object
 	class CannonProjectile final : public ObjectBase::projectile
 	{
 	public:
-		CannonProjectile() : projectile(
+		CannonProjectile(const ObjectBase::character* shooter) : projectile(
+			shooter,
 			L"Cannon Projectile",
 			L"cannon",
 			{}, 
@@ -35,9 +36,6 @@ namespace Fortress::Object
 		~CannonProjectile() override = default;
 
 		void initialize() override;
-
-	private:
-		Math::Vector2 m_fired_position;
 	};
 
 	inline void CannonProjectile::initialize()

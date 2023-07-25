@@ -11,7 +11,8 @@ namespace Fortress::Object
 	class MissileProjectile final : public ObjectBase::projectile
 	{
 	public:
-		MissileProjectile() : projectile(
+		MissileProjectile(const ObjectBase::character* shooter) : projectile(
+			shooter,
 			L"Precision Projectile",
 			L"missile",
 			{}, 
@@ -33,9 +34,6 @@ namespace Fortress::Object
 		~MissileProjectile() override = default;
 
 		void initialize() override;
-
-	private:
-		Math::Vector2 m_fired_position;
 	};
 
 	inline void MissileProjectile::initialize()

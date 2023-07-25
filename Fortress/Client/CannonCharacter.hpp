@@ -28,8 +28,8 @@ namespace Fortress::Object
 				0.0f,
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp,
-				std::make_shared<CannonProjectile>(),
-				std::make_shared<PrecisionCannonProjectile>())
+				std::make_shared<CannonProjectile>(this),
+				std::make_shared<PrecisionCannonProjectile>(this))
 		{
 			initialize();
 		}

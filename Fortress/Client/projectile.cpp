@@ -11,6 +11,7 @@ namespace Fortress::ObjectBase
 		if(m_curr_hit_count == m_max_hit_count)
 		{
 			unfocus_this();
+			return;
 		}
 
 		if (const auto character = 
@@ -108,6 +109,11 @@ namespace Fortress::ObjectBase
 		const auto angle = m_position.local_inner_angle(m_fired_position);
 
 		set_pitch(angle);
+	}
+
+	const character* projectile::get_origin() const
+	{
+		return m_shooter;
 	}
 
 	void projectile::up_hit_count()

@@ -134,10 +134,9 @@ namespace Fortress::Abstract
 			{
 				if(ptr->is_active())
 				{
-					if (ptr->get_top_left().get_x() <= mid_point.get_x() + radius &&
-						ptr->get_top_left().get_x() >= mid_point.get_x() - radius ||
-						ptr->get_top_left().get_y() <= mid_point.get_y() + radius &&
-						ptr->get_top_left().get_y() >= mid_point.get_y() - radius)
+					const Math::Vector2 local_position = (ptr->to_local_position(mid_point)).abs();
+
+					if (local_position.get_x() <= radius || local_position.get_y() <= radius)
 					{
 						ret.push_back(ptr);
 					}
@@ -151,7 +150,7 @@ namespace Fortress::Abstract
 			[mid_point](
 				const std::weak_ptr<T>& left, const std::weak_ptr<T>& right)
 		{
-			return Math::Vector2(left.lock()->m_position - mid_point).magnitude() >
+			return Math::Vector2(left.lock()->m_position - mid_point).magnitude() <
 				Math::Vector2(right.lock()->m_position - mid_point).magnitude();
 		});
 
