@@ -416,6 +416,7 @@ namespace Fortress::ObjectBase
 	{
 		if (!m_bGrounded) 
 		{
+			// @todo: control is too stiff.
 			stop();
 		}
 		if (m_bGrounded) 
