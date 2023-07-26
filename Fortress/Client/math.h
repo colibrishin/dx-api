@@ -55,40 +55,46 @@ namespace Fortress::Math
 	static eHitVector translate_hit_vector(const Math::Vector2& hit_vector)
 	{
 		const auto abs_vector = hit_vector.abs();
+		const auto orthogonal = abs_vector.get_x() < 1.0f - Math::epsilon;
+		const auto parallel = abs_vector.get_y() < 1.0f - Math::epsilon;
+		const auto left_check = hit_vector.get_x() < 0;
+		const auto right_check = hit_vector.get_x() > 0;
+		const auto top_check = hit_vector.get_y() < 0;
+		const auto bottom_check = hit_vector.get_y() > 0;
 
 		if(hit_vector == Math::Vector2{0.0f, 0.0f})
 		{
 			return eHitVector::Identical;
 		}
-		if(abs_vector.get_x() < Math::epsilon && hit_vector.get_y() < 0)
+		if(orthogonal && top_check)
 		{
 			return eHitVector::Top;
 		}
-		if(abs_vector.get_x() < Math::epsilon && hit_vector.get_y() > 0)
+		if(orthogonal && bottom_check)
 		{
 			return eHitVector::Bottom;
 		}
-		if(hit_vector.get_x() < 0 && abs_vector.get_y() < Math::epsilon)
+		if(left_check < 0 && parallel)
 		{
 			return eHitVector::Left;
 		}
-		if(hit_vector.get_x() > 0 && abs_vector.get_y() < Math::epsilon)
+		if(right_check > 0 && parallel)
 		{
 			return eHitVector::Right;
 		}
-		if(hit_vector.get_x() < 0 && hit_vector.get_y() < 0)
+		if(left_check < 0 && top_check)
 		{
 			return eHitVector::TopLeft;
 		}
-		if(hit_vector.get_x() > 0 && hit_vector.get_y() < 0)
+		if(right_check > 0 && top_check)
 		{
 			return eHitVector::TopRight;
 		}
-		if(hit_vector.get_x() < 0 && hit_vector.get_y() > 0)
+		if(left_check < 0 && bottom_check)
 		{
 			return eHitVector::BottomLeft;
 		}
-		if(hit_vector.get_x() > 0 && hit_vector.get_y() > 0)
+		if(right_check > 0 && bottom_check)
 		{
 			return eHitVector::BottomRight;
 		}

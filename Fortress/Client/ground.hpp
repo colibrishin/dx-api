@@ -78,11 +78,16 @@ namespace Fortress::Object
 		if (auto const projectile = 
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
 		{
-			if(projectile->get_max_hit_count() > projectile->get_hit_count() &&
-				safe_is_projectile_hit(projectile->get_bottom(), projectile))
+			const eHitVector e_vec = Math::translate_hit_vector(hit_vector);
+			Debug::Log(std::to_wstring(hit_vector.get_x()) + L", " + std::to_wstring(hit_vector.get_y()));
+			if (e_vec == eHitVector::Bottom) 
 			{
-				safe_projectile_exploded(projectile->get_bottom(), projectile);
-				projectile->up_hit_count();
+				if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
+					safe_is_projectile_hit(projectile->get_bottom(), projectile))
+				{
+					safe_projectile_exploded(projectile->get_bottom(), projectile);
+					projectile->up_hit_count();
+				}
 			}
 		}
 
@@ -177,12 +182,12 @@ namespace Fortress::Object
 
 		while(curr_pos != end_pos)
 		{
-			const int column_n = static_cast<int>(std::sinf(radian) * static_cast<float>(radius / 2));
+			const int column_n = static_cast<int>(std::sinf(radian) * static_cast<float>(radius));
 			for(int i = 0; i < column_n; ++i)
 			{
 				if(static_cast<int>(curr_pos.get_x()) >= 0 && 
 					static_cast<int>(curr_pos.get_x()) < m_hitbox.get_x() && 
-					static_cast<int>(curr_pos.get_y()) >= 0 && 
+					static_cast<int>(curr_pos.get_y() + i) >= 0 && 
 					static_cast<int>(curr_pos.get_y() + i) < m_hitbox.get_y())
 				{
 					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() + i);
@@ -191,8 +196,8 @@ namespace Fortress::Object
 
 				if(static_cast<int>(curr_pos.get_x()) >= 0 && 
 					static_cast<int>(curr_pos.get_x()) < m_hitbox.get_x() && 
-					static_cast<int>(curr_pos.get_y()) - i >= 0 && 
-					static_cast<int>(curr_pos.get_y()) < m_hitbox.get_y())
+					static_cast<int>(curr_pos.get_y() - i) >= 0 && 
+					static_cast<int>(curr_pos.get_y() - i) < m_hitbox.get_y())
 				{
 					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() - i);
 					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() - i);
