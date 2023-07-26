@@ -221,13 +221,13 @@ namespace Fortress::ObjectBase
 			prerender();
 			render_hp_bar(pos);
 			
-			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(get_pitch()));
+			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(get_movement_pitch_radian()));
 
 			Debug::Log(m_name + L" pos " + std::to_wstring(pos.get_x()) + L", " + std::to_wstring(pos.get_y()));
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(camera_ptr->get_offset(m_hitbox));
 
-			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(get_pitch())));
+			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(get_movement_pitch_radian())));
 
 			Debug::Log(m_name + L" projectile : " + m_current_projectile.lock()->get_name());
 
@@ -329,16 +329,19 @@ namespace Fortress::ObjectBase
 				{
 					enable_gravity();
 					m_bGrounded = false;
-					set_pitch(0.0f);
+					set_movement_pitch_radian(0.0f);
 					// @todo: reroute velocity to nearest ground point
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
 				// @todo: maybe rotation is too gradual.
 				const float rotate_radian = ground->get_top_left().local_inner_angle(get_bottom());
-				set_pitch(
+
+				Debug::Log(std::to_wstring(rotate_radian));
+				
+				set_movement_pitch_radian(
 					m_offset == Math::left ? 
-					-Math::to_degree(rotate_radian) : Math::to_degree(rotate_radian));
+					-rotate_radian : rotate_radian);
 			}
 		}
 

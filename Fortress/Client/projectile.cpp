@@ -95,7 +95,7 @@ namespace Fortress::ObjectBase
 				pos,
 				m_hitbox, 
 				{1, 1},
-				Math::to_degree(get_pitch()));
+				Math::to_degree(get_movement_pitch_radian()));
 
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(pos);
@@ -108,7 +108,7 @@ namespace Fortress::ObjectBase
 	{
 		const auto angle = m_position.local_inner_angle(m_fired_position);
 
-		set_pitch(angle);
+		set_movement_pitch_radian(angle);
 	}
 
 	const character* projectile::get_origin() const

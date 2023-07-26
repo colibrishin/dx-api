@@ -11,7 +11,7 @@ namespace Fortress::Abstract
 								const bool& gravity) :
 		object(name, position, hitbox, mass),
 		m_velocity(velocity),
-		m_pitch(0.0f),
+		m_movement_pitch_radian(0.0f),
 		m_speed(speed),
 		m_acceleration(acceleration),
 		m_curr_speed(0.0f),
@@ -144,14 +144,24 @@ namespace Fortress::Abstract
 		m_velocity = {0, 0};
 	}
 
-	void rigidBody::set_pitch(const float pitch)
+	void rigidBody::set_movement_pitch_radian(const float pitch)
 	{
-		m_pitch = pitch;
+		m_movement_pitch_radian = pitch;
 	}
 
-	float rigidBody::get_pitch()
+	void rigidBody::set_user_pitch_radian(const float pitch)
 	{
-		return m_pitch;
+		m_user_pitch_radian = pitch;
+	}
+
+	float rigidBody::get_movement_pitch_radian()
+	{
+		return m_movement_pitch_radian;
+	}
+
+	float rigidBody::get_user_pitch_radian()
+	{
+		return m_user_pitch_radian;
 	}
 
 	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<rigidBody>& other)

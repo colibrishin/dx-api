@@ -41,10 +41,13 @@ namespace Fortress::Abstract
 		void move_up() override;
 		virtual void stop();
 
-		void set_pitch(const float pitch);
-		float get_pitch();
+		void set_movement_pitch_radian(const float pitch);
+		void set_user_pitch_radian(const float pitch);
+		float get_movement_pitch_radian();
+		float get_user_pitch_radian();
 	private:
-		float m_pitch;
+		float m_movement_pitch_radian;
+		float m_user_pitch_radian;
 		float m_speed;
 		float m_curr_speed;
 		bool m_bGravity{};

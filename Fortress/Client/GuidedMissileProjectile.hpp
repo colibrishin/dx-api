@@ -84,11 +84,11 @@ namespace Fortress::Object
 	{
 		if (const auto target = m_locked_target.lock())
 		{
-			set_pitch(m_position.local_inner_angle(target->get_position()));
+			set_movement_pitch_radian(m_position.local_inner_angle(target->get_position()));
 		}
 		else
 		{
-			set_pitch(m_position.local_inner_angle(get_fired_position()));
+			set_movement_pitch_radian(m_position.local_inner_angle(get_fired_position()));
 		}
 	}
 	
