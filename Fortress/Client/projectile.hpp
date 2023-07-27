@@ -37,7 +37,6 @@ namespace Fortress::ObjectBase
 		int get_radius() const;
 		float get_damage() const;
 		const Math::Vector2& get_fired_position() const;
-
 	protected:
 		projectile(
 			const character* shooter,
@@ -63,6 +62,8 @@ namespace Fortress::ObjectBase
 		}
 
 	private:
+		void explosion_near_ground(const Math::Vector2& hit_vector);
+
 		float m_damage;
 		int m_radius;
 		const int m_max_hit_count;

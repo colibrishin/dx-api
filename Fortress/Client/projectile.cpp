@@ -22,26 +22,7 @@ namespace Fortress::ObjectBase
 			character->hit(shared_this);
 			up_hit_count();
 
-			if(const auto active_scene = 
-				Scene::SceneManager::get_active_scene().lock())
-			{
-				const auto grounds = active_scene->is_in_range<Object::Ground>(
-					get_hit_point(translate_hit_vector(hit_vector)),
-					m_radius);
-
-				for(const auto& ptr : grounds)
-				{
-					if(const auto ground = ptr.lock())
-					{
-						const eHitVector e_vector = translate_hit_vector(
-							to_hit_vector(get_center(), ground->get_center()));
-
-						ground->safe_projectile_exploded(
-							get_hit_point(e_vector),
-							shared_this);
-					}
-				}
-			}
+			explosion_near_ground(hit_vector);
 		}
 	}
 
@@ -90,6 +71,7 @@ namespace Fortress::ObjectBase
 			}
 
 			prerender();
+			Debug::draw_circle(pos - 25.0f, 50.0f);
 
 			m_current_sprite.lock()->render(
 				pos,
@@ -149,6 +131,30 @@ namespace Fortress::ObjectBase
 	const Math::Vector2& projectile::get_fired_position() const
 	{
 		return m_fired_position;
+	}
+
+	void projectile::explosion_near_ground(const Math::Vector2& victim_hit_vector)
+	{
+		if (const auto active_scene =
+			Scene::SceneManager::get_active_scene().lock())
+		{
+			// reverse the hit vector because hit vector is based on victim.
+			const eHitVector e_vec = translate_hit_vector(-victim_hit_vector);
+			const auto hit_point = get_hit_point(e_vec);
+
+			const auto grounds = active_scene->is_in_range<Object::Ground>(
+				hit_point,
+				m_radius);
+
+			for (const auto& ptr : grounds)
+			{
+				if (const auto ground = ptr.lock())
+				{
+					// using origin collision point of projectile as explosion mid point.
+					ground->safe_set_destroyed_global(hit_point, get_radius());
+				}
+			}
+		}
 	}
 
 	void projectile::initialize()

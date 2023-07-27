@@ -134,9 +134,10 @@ namespace Fortress::Abstract
 			{
 				if(ptr->is_active())
 				{
-					const Math::Vector2 local_position = (ptr->to_local_position(mid_point)).abs();
+					const Math::Vector2 local_position = ptr->to_nearest_local_position(mid_point);
+					const float distance = local_position.magnitude();
 
-					if (local_position.get_x() <= radius || local_position.get_y() <= radius)
+					if (distance <= radius)
 					{
 						ret.push_back(ptr);
 					}

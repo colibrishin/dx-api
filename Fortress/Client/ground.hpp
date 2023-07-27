@@ -55,7 +55,7 @@ namespace Fortress::Object
 		void initialize() override;
 		void render() override;
 		GroundState safe_is_destroyed(const Math::Vector2& local_position) const;
-		void safe_projectile_exploded(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr);
+		void safe_set_destroyed_global(const Math::Vector2& hit_position, const float radius);
 		bool safe_is_object_stuck(const Math::Vector2& position) const;
 		Math::Vector2 safe_nearest_surface(const Math::Vector2& position) const;
 	private:
@@ -79,10 +79,25 @@ namespace Fortress::Object
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
 		{
 			const eHitVector e_vec = Math::translate_hit_vector(hit_vector);
+			const auto hit_point = projectile->get_hit_point(e_vec);
+
 			if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
-				safe_is_projectile_hit(projectile->get_hit_point(e_vec), projectile))
+				safe_is_projectile_hit(hit_point, projectile))
 			{
-				safe_projectile_exploded(projectile->get_hit_point(e_vec), projectile);
+				safe_set_destroyed_global(hit_point, projectile->get_radius());
+
+				if (const auto scene = Scene::SceneManager::get_active_scene().lock()) 
+				{
+					const auto near_objects = scene->is_in_range<ObjectBase::character>(
+						hit_point, projectile->get_radius());
+
+					for (const auto character : near_objects) 
+					{
+						const auto diff = character.lock()->get_center() - hit_point;
+						character.lock()->hit(diff.magnitude() / projectile->get_radius());
+					}
+				}
+
 				projectile->up_hit_count();
 			}
 		}
@@ -218,7 +233,7 @@ namespace Fortress::Object
 	{
 		if(const auto projectile = projectile_ptr.lock())
 		{
-			const auto local_position = to_local_position(hit_position);
+			const auto local_position = to_top_left_local_position(hit_position);
 			const GroundState ground_status = safe_is_destroyed(local_position);
 
 			if(ground_status == GroundState::NotDestroyed)
@@ -238,7 +253,7 @@ namespace Fortress::Object
 
 	inline bool Ground::safe_is_object_stuck(const Math::Vector2& position) const
 	{
-		const auto local_position = to_local_position(position);
+		const auto local_position = to_top_left_local_position(position);
 
 		// @todo: proper oob definition
 		Math::Vector2 offsets[4] =
@@ -261,8 +276,8 @@ namespace Fortress::Object
 
 	inline Math::Vector2 Ground::safe_nearest_surface(const Math::Vector2& position) const
 	{
-		const auto o_local_position = to_local_position(position);
-		auto local_position = to_local_position(position);
+		const auto o_local_position = to_top_left_local_position(position);
+		auto local_position = to_top_left_local_position(position);
 
 		if(local_position.get_y() <= 0)
 		{
@@ -283,16 +298,12 @@ namespace Fortress::Object
 		return {0, -local_position.get_y()};
 	}
 
-	inline void Ground::safe_projectile_exploded(
+	inline void Ground::safe_set_destroyed_global(
 		const Math::Vector2& hit_position,
-		const std::weak_ptr<ObjectBase::projectile>& projectile_ptr)
+		const float radius)
 	{
-		if(const auto projectile = projectile_ptr.lock())
-		{
-			const auto local_position = to_local_position(hit_position);
-			const float radius = projectile->get_radius();
-			safe_set_circle_destroyed(local_position, radius);
-		}
+		const auto local_position = to_top_left_local_position(hit_position);
+		safe_set_circle_destroyed(local_position, radius);
 	}
 
 	inline void Ground::_debug_draw_destroyed_table() const

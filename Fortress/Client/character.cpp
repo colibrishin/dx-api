@@ -24,6 +24,16 @@ namespace Fortress::ObjectBase
 		m_hp -= p.lock()->get_damage();
 	}
 
+	void character::hit(const float damage)
+	{
+		set_current_sprite(L"hit");
+		m_current_sprite.lock()->play([this]()
+		{
+			set_current_sprite(L"idle");
+		});
+		m_hp -= damage;
+	}
+
 	void character::shoot()
 	{
 		set_current_sprite(L"fire");
@@ -297,7 +307,7 @@ namespace Fortress::ObjectBase
 		{
 			if(ground)
 			{
-				const Math::Vector2 ground_local_position = ground->to_local_position(get_bottom());
+				const Math::Vector2 ground_local_position = ground->to_top_left_local_position(get_bottom());
 				const Object::GroundState ground_check = ground->safe_is_destroyed(ground_local_position);
 
 				if(collision == CollisionCode::Inside)

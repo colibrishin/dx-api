@@ -50,7 +50,9 @@ namespace Fortress::Abstract
 		__forceinline Math::Vector2 get_bottom_right() const;
 		__forceinline Math::Vector2 get_center() const;
 		__forceinline Math::Vector2 get_hit_point(const eHitVector& e_vector) const;
-		__forceinline Math::Vector2 to_local_position(const Math::Vector2& other) const;
+		__forceinline Math::Vector2 to_top_left_local_position(const Math::Vector2& other) const;
+		__forceinline Math::Vector2 to_nearest_local_position(const Math::Vector2& other) const;
+		__forceinline Math::Vector2 get_nearst_point(const Math::Vector2& other) const;
 
 		__forceinline float get_mass() const;
 	protected:
@@ -214,9 +216,38 @@ namespace Fortress::Abstract
 		}
 	}
 
-	inline Math::Vector2 object::to_local_position(const Math::Vector2& other) const
+	inline Math::Vector2 object::to_top_left_local_position(const Math::Vector2& other) const
 	{
 		return other - get_top_left();
+	}
+
+	inline Math::Vector2 object::to_nearest_local_position(const Math::Vector2& other) const
+	{
+		return other - get_nearst_point(other);
+	}
+
+	inline Math::Vector2 object::get_nearst_point(const Math::Vector2& other) const
+	{
+		std::vector<std::pair<float, Math::Vector2>> distances = 
+		{
+			std::make_pair((other - get_top()).magnitude(), get_top()),
+			std::make_pair((other - get_bottom()).magnitude(), get_bottom()),
+			std::make_pair((other - get_left()).magnitude(), get_left()),
+			std::make_pair((other - get_right()).magnitude(), get_right()),
+			std::make_pair((other - get_top_left()).magnitude(), get_top_left()),
+			std::make_pair((other - get_top_right()).magnitude(), get_top_right()),
+			std::make_pair((other - get_bottom_left()).magnitude(), get_bottom_left()),
+			std::make_pair((other - get_bottom_right()).magnitude(), get_bottom_right()),
+		};
+
+		std::sort(distances.begin(), distances.end(), [](
+			const std::pair<float, Math::Vector2>& left,
+			const std::pair<float, Math::Vector2>& right)
+			{
+				return left.first < right.first;
+			});
+
+		return distances.front().second;
 	}
 
 	inline float object::get_mass() const
