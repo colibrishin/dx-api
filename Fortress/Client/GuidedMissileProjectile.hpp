@@ -37,7 +37,6 @@ namespace Fortress::Object
 
 		void update() override;
 		void initialize() override;
-		virtual void prerender() override;
 		void unfocus_this() override;
 
 	private:
@@ -53,7 +52,7 @@ namespace Fortress::Object
 		{
 			// @todo: if radius is big enough to contains shooter itself then missile is moving back and forth.
 			const auto characters = scene_ptr->is_in_range<ObjectBase::character>(
-				detection_point, 10.0f);
+				detection_point, 100.0f);
 
 			if (!characters.empty())
 			{
@@ -61,10 +60,11 @@ namespace Fortress::Object
 				{
 					if(nearest.get() != get_origin())
 					{
+						Debug::Log(L"locked on " + nearest->get_name());
 						const auto diff = 
 							x_velocity.get_x() < 0 ? 
-								get_bottom_left() - nearest->get_top_left() :
-								get_bottom_right() - nearest->get_top_right();
+								get_bottom_left() - nearest->get_bottom_left() :
+								get_bottom_right() - nearest->get_bottom_right();
 						m_velocity = -diff.normalized();
 						m_locked_target = nearest;
 					}
@@ -78,18 +78,6 @@ namespace Fortress::Object
 	inline void GuidedMissileProjectile::initialize()
 	{
 		projectile::initialize();
-	}
-
-	inline void GuidedMissileProjectile::prerender()
-	{
-		if (const auto target = m_locked_target.lock())
-		{
-			set_movement_pitch_radian(m_position.local_inner_angle(target->get_position()));
-		}
-		else
-		{
-			set_movement_pitch_radian(m_position.local_inner_angle(get_fired_position()));
-		}
 	}
 	
 	inline void GuidedMissileProjectile::unfocus_this()
