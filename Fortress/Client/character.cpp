@@ -297,7 +297,7 @@ namespace Fortress::ObjectBase
 		{
 			if(ground)
 			{
-				const Math::Vector2 ground_local_position = ground->to_local_position(get_bottom());
+				const Math::Vector2 ground_local_position = ground->to_top_left_local_position(get_bottom());
 				const Object::GroundState ground_check = ground->safe_is_destroyed(ground_local_position);
 
 				if(collision == CollisionCode::Inside)

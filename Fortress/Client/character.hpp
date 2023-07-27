@@ -37,6 +37,7 @@ namespace Fortress::ObjectBase
 
 		virtual void initialize() override;
 		void hit(const std::weak_ptr<projectile>& p);
+		void hit(const float damage);
 		void update() override;
 		void render() override;
 		virtual void firing();
