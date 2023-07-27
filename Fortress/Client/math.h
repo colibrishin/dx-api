@@ -55,8 +55,8 @@ namespace Fortress::Math
 	static eHitVector translate_hit_vector(const Math::Vector2& hit_vector)
 	{
 		const auto abs_vector = hit_vector.abs();
-		const auto orthogonal = abs_vector.get_x() < 1.0f - Math::epsilon;
-		const auto parallel = abs_vector.get_y() < 1.0f - Math::epsilon;
+		const auto orthogonal = abs_vector.get_x() > 1.0f - Math::epsilon || abs_vector.get_x() <= Math::epsilon;
+		const auto parallel = abs_vector.get_y() > 1.0f - Math::epsilon || abs_vector.get_y() <= Math::epsilon;
 		const auto left_check = hit_vector.get_x() < 0;
 		const auto right_check = hit_vector.get_x() > 0;
 		const auto top_check = hit_vector.get_y() < 0;
@@ -74,27 +74,27 @@ namespace Fortress::Math
 		{
 			return eHitVector::Bottom;
 		}
-		if(left_check < 0 && parallel)
+		if(left_check && parallel)
 		{
 			return eHitVector::Left;
 		}
-		if(right_check > 0 && parallel)
+		if(right_check && parallel)
 		{
 			return eHitVector::Right;
 		}
-		if(left_check < 0 && top_check)
+		if(left_check && top_check)
 		{
 			return eHitVector::TopLeft;
 		}
-		if(right_check > 0 && top_check)
+		if(right_check && top_check)
 		{
 			return eHitVector::TopRight;
 		}
-		if(left_check < 0 && bottom_check)
+		if(left_check && bottom_check)
 		{
 			return eHitVector::BottomLeft;
 		}
-		if(right_check > 0 && bottom_check)
+		if(right_check && bottom_check)
 		{
 			return eHitVector::BottomRight;
 		}

@@ -79,15 +79,11 @@ namespace Fortress::Object
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
 		{
 			const eHitVector e_vec = Math::translate_hit_vector(hit_vector);
-			Debug::Log(std::to_wstring(hit_vector.get_x()) + L", " + std::to_wstring(hit_vector.get_y()));
-			if (e_vec == eHitVector::Bottom) 
+			if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
+				safe_is_projectile_hit(projectile->get_hit_point(e_vec), projectile))
 			{
-				if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
-					safe_is_projectile_hit(projectile->get_bottom(), projectile))
-				{
-					safe_projectile_exploded(projectile->get_bottom(), projectile);
-					projectile->up_hit_count();
-				}
+				safe_projectile_exploded(projectile->get_hit_point(e_vec), projectile);
+				projectile->up_hit_count();
 			}
 		}
 
