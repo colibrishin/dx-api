@@ -101,23 +101,6 @@ namespace Fortress::Scene
 			hud_ptr->render({0, hud_position.get_y()}, hud_size);
 
 			// @todo: Text and bar can be made in class
-			// MP bar
-			[this, hud_position]()
-			{
-				const int x = 280;
-				const int y = hud_position.get_y() + 98;
-				
-				// bar inside
-				const HBRUSH brush = CreateSolidBrush(RGB(255, 255,0));
-				const RECT rect = {
-					x,
-					y,
-					static_cast<int>(x + m_home_object.lock()->get_mp_percentage() * 400.0f),
-					y + 20};
-				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
-				DeleteObject(brush);
-			}();
-
 			// HP bar
 			[this, hud_position]()
 			{
@@ -141,6 +124,71 @@ namespace Fortress::Scene
 				swprintf_s(notice, 100, L"Use WASD to move...");
 				const size_t strlen = wcsnlen_s(notice, 100);
 				TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
+			}();
+
+			// Charged power
+			static float cached_charged = m_home_object.lock()->get_charged_power();
+
+			if(m_home_object.lock()->get_state() == eCharacterState::Firing)
+			{
+				cached_charged = m_home_object.lock()->get_charged_power();
+			}
+
+			[this, hud_position]()
+			{
+				const int x = 280;
+				const int y = hud_position.get_y() + 74;
+				
+				// bar inside
+				const HBRUSH brush = CreateSolidBrush(RGB(200,0,100));
+				const RECT rect = {
+					x,
+					y,
+					static_cast<int>(x + ((cached_charged / ObjectBase::character_max_charge) * 400.0f)),
+					y + 20};
+				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+				DeleteObject(brush);
+			}();
+
+			[this, hud_position]()
+			{
+				const int x = 280;
+				const int y = hud_position.get_y() + 74;
+				
+				// bar inside
+				const HBRUSH brush = CreateSolidBrush(RGB(255,0,0));
+				const RECT rect = {
+					x,
+					y,
+					static_cast<int>(x + ((m_home_object.lock()->get_charged_power() / ObjectBase::character_max_charge) * 400.0f)),
+					y + 20};
+				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+				DeleteObject(brush);
+			}();
+
+			[this]()
+			{
+				wchar_t notice[100] = {};
+				swprintf_s(notice, 100, L"Use WASD to move...");
+				const size_t strlen = wcsnlen_s(notice, 100);
+				TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
+			}();
+
+			// MP bar
+			[this, hud_position]()
+			{
+				const int x = 280;
+				const int y = hud_position.get_y() + 98;
+				
+				// bar inside
+				const HBRUSH brush = CreateSolidBrush(RGB(255, 255,0));
+				const RECT rect = {
+					x,
+					y,
+					static_cast<int>(x + m_home_object.lock()->get_mp_percentage() * 400.0f),
+					y + 20};
+				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+				DeleteObject(brush);
 			}();
 		}
 	}

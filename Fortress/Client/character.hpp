@@ -24,6 +24,7 @@ namespace Fortress::ObjectBase
 
 	constexpr float character_full_hp = 100.0f;
 	constexpr float character_full_mp = 1000.0f;
+	constexpr float character_max_charge = 250.0f;
 
 	class character : public Abstract::rigidBody
 	{

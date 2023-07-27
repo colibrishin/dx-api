@@ -269,8 +269,11 @@ namespace Fortress::ObjectBase
 			set_current_sprite(L"charging");
 		}
 
-		m_power += 100.0f * DeltaTime::get_deltaTime();
-
+		if(get_charged_power() < character_max_charge)
+		{
+			m_power += 100.0f * DeltaTime::get_deltaTime();
+		}
+		
 		Debug::Log(L"Power : " + std::to_wstring(m_power));
 	}
 
