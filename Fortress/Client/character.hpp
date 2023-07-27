@@ -74,6 +74,7 @@ namespace Fortress::ObjectBase
 
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
+		Math::Vector2 get_forward() const;
 
 	private:
 		int m_player_id;

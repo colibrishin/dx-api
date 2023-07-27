@@ -61,6 +61,11 @@ namespace Fortress::ObjectBase
 		return m_mp / static_cast<float>(character_full_mp);
 	}
 
+	Math::Vector2 character::get_forward() const
+	{
+		return m_offset == Math::left ? get_left() : get_right();
+	}
+
 	void character::set_state(const eCharacterState& state)
 	{
 		m_state = state;
