@@ -344,14 +344,27 @@ namespace Fortress::ObjectBase
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
-				// @todo: maybe rotation is too gradual.
-				const float rotate_radian = ground->get_top_left().local_inner_angle(get_bottom());
+				auto next_surface = m_offset == Math::left ? get_bottom_left() : get_bottom_right();
+				const auto delta = ground->safe_orthogonal_surface(next_surface, m_offset);
+				next_surface += delta;
+
+				auto rotate_radian = next_surface.local_inner_angle(get_bottom());
+				const bool is_surface_lower = next_surface.get_y() > get_bottom().get_y();
+
+				if((is_surface_lower && m_offset == Math::left) ||
+					(!is_surface_lower && m_offset == Math::left))
+				{
+					rotate_radian = -rotate_radian;
+				}
+
+				if(m_offset == Math::left)
+				{
+					rotate_radian = -rotate_radian;
+				}
 
 				Debug::Log(std::to_wstring(rotate_radian));
 				
-				set_movement_pitch_radian(
-					m_offset == Math::left ? 
-					-rotate_radian : rotate_radian);
+				set_movement_pitch_radian(rotate_radian / 2);
 			}
 		}
 

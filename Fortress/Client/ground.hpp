@@ -58,6 +58,7 @@ namespace Fortress::Object
 		void safe_set_destroyed_global(const Math::Vector2& hit_position, const float radius);
 		bool safe_is_object_stuck(const Math::Vector2& position) const;
 		Math::Vector2 safe_nearest_surface(const Math::Vector2& position) const;
+		Math::Vector2 safe_orthogonal_surface(const Math::Vector2& position, const Math::Vector2& forward) const;
 	private:
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
@@ -296,6 +297,34 @@ namespace Fortress::Object
 		}
 
 		return {0, -local_position.get_y()};
+	}
+
+	inline Math::Vector2 Ground::safe_orthogonal_surface(
+		const Math::Vector2& position,
+		const Math::Vector2& forward) const
+	{
+		const auto local_position = to_top_left_local_position(position);
+
+		for(int x = 0; x < 10; ++x)
+		{
+			for(int y = 0; y < m_hitbox.get_y(); ++y)
+			{
+				const float new_x = local_position.get_x() + (forward == Math::left ? x : -x);
+				const Math::Vector2 new_pos_upper = 
+					{new_x, static_cast<float>(y)};
+				const Math::Vector2 new_pos_lower = 
+					{new_x, static_cast<float>(y + 1)};
+
+				const auto upper_check = safe_is_destroyed(new_pos_upper) == GroundState::Destroyed;
+				const auto lower_check = safe_is_destroyed(new_pos_lower) == GroundState::NotDestroyed;
+				if(upper_check && lower_check)
+				{
+					return new_pos_lower - local_position;
+				}
+			}
+		}
+
+		return {};
 	}
 
 	inline void Ground::safe_set_destroyed_global(
