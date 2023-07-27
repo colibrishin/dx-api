@@ -1,5 +1,6 @@
 #include "projectile.hpp"
 #include "character.hpp"
+#include "deltatime.hpp"
 #include "ground.hpp"
 
 namespace Fortress::ObjectBase
@@ -89,16 +90,11 @@ namespace Fortress::ObjectBase
 	void projectile::prerender()
 	{
 		static Math::Vector2 previous_position = m_fired_position;
-		static float interval = 0.0f;
 
-		if(interval >= 1.0f)
-		{
-			const auto unit = (m_position - previous_position).normalized();
-			set_movement_pitch_radian(atan2(unit.get_y(), unit.get_x()));
-			previous_position = m_position;
-			interval = 0.0f;
-		}
-		interval += 1.0f;
+		const auto unit = (m_position - previous_position).normalized();
+		const float radian = atan2(unit.get_y(), unit.get_x());
+		set_movement_pitch_radian(get_forward_unit_vector() == Math::left ? Math::flip_radian(radian) : radian);
+		previous_position = m_position;
 	}
 
 	const character* projectile::get_origin() const
@@ -119,6 +115,12 @@ namespace Fortress::ObjectBase
 	int projectile::get_max_hit_count() const
 	{
 		return m_max_hit_count;
+	}
+
+	Math::Vector2 projectile::get_forward_unit_vector() const
+	{
+		const auto vel = m_velocity * Math::Vector2{1.0f, 0.0f};
+		return vel.get_x() < 0 ? Math::left : Math::right;
 	}
 
 	const std::weak_ptr<GifWrapper>& projectile::get_current_sprite() const

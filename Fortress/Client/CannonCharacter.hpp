@@ -74,7 +74,7 @@ namespace Fortress::Object
 		}
 		else
 		{
-			angle = {cosf(get_movement_pitch_radian()), -sinf(get_movement_pitch_radian())};
+			angle = {cosf(get_movement_pitch_radian()), sinf(get_movement_pitch_radian())};
 		}
 
 		get_current_projectile().lock()->fire(
