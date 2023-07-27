@@ -71,7 +71,7 @@ namespace Fortress::ObjectBase
 			}
 
 			prerender();
-			Debug::draw_circle(pos - 25.0f, 50.0f);
+			Debug::draw_circle(pos - (m_radius / 2), m_radius);
 
 			m_current_sprite.lock()->render(
 				pos,
@@ -79,7 +79,7 @@ namespace Fortress::ObjectBase
 				{1, 1},
 				Math::to_degree(get_movement_pitch_radian()));
 
-			Debug::draw_rect(pos, m_hitbox);
+			Debug::draw_rect(pos - m_hitbox / 2, m_hitbox);
 			Debug::draw_dot(pos);
 		}
 
@@ -88,9 +88,17 @@ namespace Fortress::ObjectBase
 
 	void projectile::prerender()
 	{
-		const auto angle = m_position.local_inner_angle(m_fired_position);
+		static Math::Vector2 previous_position = m_fired_position;
+		static float interval = 0.0f;
 
-		set_movement_pitch_radian(angle);
+		if(interval >= 1.0f)
+		{
+			const auto unit = (m_position - previous_position).normalized();
+			set_movement_pitch_radian(atan2(unit.get_y(), unit.get_x()));
+			previous_position = m_position;
+			interval = 0.0f;
+		}
+		interval += 1.0f;
 	}
 
 	const character* projectile::get_origin() const
