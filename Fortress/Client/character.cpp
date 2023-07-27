@@ -24,6 +24,16 @@ namespace Fortress::ObjectBase
 		m_hp -= p.lock()->get_damage();
 	}
 
+	void character::hit(const float damage)
+	{
+		set_current_sprite(L"hit");
+		m_current_sprite.lock()->play([this]()
+		{
+			set_current_sprite(L"idle");
+		});
+		m_hp -= damage;
+	}
+
 	void character::shoot()
 	{
 		set_current_sprite(L"fire");
