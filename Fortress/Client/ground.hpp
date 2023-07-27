@@ -174,12 +174,16 @@ namespace Fortress::Object
 
 		float radian = 0.0f;
 		const float sin_max = Math::to_radian(180.0f);
-		const float sin_iter = sin_max / radius;
+		const float sin_iter = sin_max / (radius * 2.0f);
 
 		while(curr_pos != end_pos)
 		{
-			const int column_n = static_cast<int>(std::sinf(radian) * static_cast<float>(radius));
-			for(int i = 0; i < column_n; ++i)
+			const int column_n = static_cast<int>(std::sin(radian) * static_cast<float>(radius * 2));
+
+			const int upper_size = column_n / 2 - 1;
+			const int lower_size = column_n / 2;
+
+			for(int i = 0; i < upper_size; ++i)
 			{
 				if(static_cast<int>(curr_pos.get_x()) >= 0 && 
 					static_cast<int>(curr_pos.get_x()) < m_hitbox.get_x() && 
@@ -189,7 +193,10 @@ namespace Fortress::Object
 					unsafe_set_destroyed(curr_pos.get_x(), curr_pos.get_y() + i);
 					unsafe_set_destroyed_visual(curr_pos.get_x(), curr_pos.get_y() + i);
 				}
+			}
 
+			for(int i = 0; i < lower_size; ++i)
+			{
 				if(static_cast<int>(curr_pos.get_x()) >= 0 && 
 					static_cast<int>(curr_pos.get_x()) < m_hitbox.get_x() && 
 					static_cast<int>(curr_pos.get_y() - i) >= 0 && 
