@@ -36,11 +36,13 @@ namespace Fortress::Scene
 
 		m_home_object.lock()->set_disabled();
 		m_ground.lock()->set_disabled();
+		m_round.initialize({m_home_object, m_away_object});
 	}
 
 	void BattleScene::update()
 	{
 		scene::update();
+		m_round.update();
 
 		if (const auto obj = m_home_object.lock())
 		{

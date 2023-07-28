@@ -10,24 +10,37 @@ namespace Fortress
 	class Round
 	{
 	public:
-		constexpr float timeout = 60.0f;
-		void initialize();
-		explicit Round(const std::vector<std::weak_ptr<ObjectBase::character>>& players);
-		void check_countdown();
+		void initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players);
+		void update();
+		float get_current_time() const;
 
 	private:
-		float get_current_time() const;
+		void check_countdown();
+		void check_fired();
 		void next_player();
+		void check_winning_condition();
 
-		float m_curr_timeout;
-		float m_max_time = timeout;
+		float m_curr_timeout = 0.0f;
+		const float m_max_time = 60.0f;
+		bool m_bfired = false;
 
 		// here used vector instead of queue due to un-iterable.
 		std::vector<std::weak_ptr<ObjectBase::character>> m_known_players;
 		std::weak_ptr<ObjectBase::character> m_current_player;
+		std::weak_ptr<ObjectBase::character> m_winner;
+
+		struct safe_weak_comparer {
+		    bool operator() (const std::weak_ptr<ObjectBase::character> &lhs, const std::weak_ptr<ObjectBase::character> &rhs)const {
+		        const auto lptr = lhs.lock();
+		    	const auto rptr = rhs.lock();
+		        if (!rptr) return false; // nothing after expired pointer 
+		        if (!lptr) return true;  // every not expired after expired pointer
+		        return lptr.get() < rptr.get();
+		    }
+		};
 	};
 
-	inline void Round::initialize()
+	inline void Round::initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
 	{
 		for(const auto& ptr : m_known_players)
 		{
@@ -37,31 +50,50 @@ namespace Fortress
 			}
 		}
 
+		m_known_players = players;
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
 		m_known_players.erase(m_known_players.begin());
 	}
 
-	inline Round::Round(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
-		: m_curr_timeout(0.0f)
-	{
-		m_known_players = players;
-		initialize();
-	}
-
 	inline void Round::check_countdown()
 	{
-		m_curr_timeout += DeltaTime::get_deltaTime();
-
-		if(get_current_time() - m_max_time < Math::epsilon)
+		if(get_current_time() >= m_max_time)
 		{
 			next_player();
+			m_curr_timeout = 0.0f;
 		}
+
+		m_curr_timeout += DeltaTime::get_deltaTime();
+	}
+
+	inline void Round::check_fired()
+	{
+		if(const auto current = m_current_player.lock())
+		{
+			if(current->get_state() == eCharacterState::Fire)
+			{
+				m_bfired = true;
+			}
+			if(current->get_state() == eCharacterState::Idle && m_bfired)
+			{
+				m_bfired = false;
+				next_player();
+			}
+		}
+	}
+
+	inline void Round::update()
+	{
+		Debug::Log(std::to_wstring(m_curr_timeout));
+		check_fired();
+		check_countdown();
+		check_winning_condition();
 	}
 
 	inline float Round::get_current_time() const
 	{
-		return m_curr_timeout / 100;
+		return m_curr_timeout;
 	}
 
 	inline void Round::next_player()
@@ -80,6 +112,28 @@ namespace Fortress
 			player->set_movable();
 			const auto camera = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
 			camera->set_object(m_current_player);
+		}
+	}
+
+	inline void Round::check_winning_condition()
+	{
+		static std::set<std::weak_ptr<ObjectBase::character>, safe_weak_comparer> alive_characters;
+
+		for(const auto& alive : m_known_players)
+		{
+			if(alive.lock()->get_state() != eCharacterState::Dead)
+			{
+				alive_characters.insert(alive);
+			}
+			else if(alive.lock()->get_state() == eCharacterState::Dead)
+			{
+				alive_characters.erase(alive);
+			}
+		}
+
+		if(alive_characters.size() == 1)
+		{
+			m_winner = *alive_characters.begin();
 		}
 	}
 }

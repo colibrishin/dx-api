@@ -526,12 +526,12 @@ namespace Fortress::ObjectBase
 
 	void character::set_unmovable()
 	{
-		m_bMovable = true;
+		m_bMovable = false;
 	}
 
 	void character::set_movable()
 	{
-		m_bMovable = false;
+		m_bMovable = true;
 	}
 
 	void character::set_current_sprite(const std::wstring& name)
