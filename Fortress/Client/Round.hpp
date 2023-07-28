@@ -1,6 +1,7 @@
 #ifndef ROUND_HPP
 #define ROUND_HPP
 #include <memory>
+#include <random>
 
 #include "character.hpp"
 #include "deltatime.hpp"
@@ -21,6 +22,8 @@ namespace Fortress
 		void initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players);
 		void update();
 		float get_current_time() const;
+		// @todo: for multi-player, this should not be static or, round unique identifier is needed.
+		static float get_wind_acceleration();
 
 	private:
 		void check_countdown();
@@ -32,6 +35,10 @@ namespace Fortress
 		float m_curr_timeout = 0.0f;
 		const float m_max_time = 60.0f;
 		bool m_bfired = false;
+
+		inline static float m_wind_affect = 0.0f;
+		inline static std::default_random_engine e;
+		inline static std::uniform_real_distribution<float> dis{-20, 20};
 
 		// here used vector instead of queue due to un-iterable.
 		eRoundState m_state;
@@ -61,6 +68,7 @@ namespace Fortress
 			}
 		}
 
+		m_wind_affect = dis(e);
 		m_state = eRoundState::InProgress;
 		m_known_players = players;
 		m_all_players = players;
@@ -99,6 +107,8 @@ namespace Fortress
 	inline void Round::update()
 	{
 		Debug::Log(std::to_wstring(m_curr_timeout));
+		Debug::Log(std::to_wstring(m_wind_affect));
+
 		switch (m_state)
 		{
 		case eRoundState::Start:
@@ -154,6 +164,8 @@ namespace Fortress
 			const auto camera = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
 			camera->set_object(m_current_player);
 		}
+
+		m_wind_affect = dis(e);
 	}
 
 	inline void Round::check_winning_condition()
@@ -178,6 +190,11 @@ namespace Fortress
 			m_winner = *alive_characters.begin();
 			m_state = eRoundState::End;
 		}
+	}
+
+	inline float Round::get_wind_acceleration()
+	{
+		return m_wind_affect;
 	}
 }
 #endif // ROUND_HPP

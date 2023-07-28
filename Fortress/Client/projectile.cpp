@@ -2,6 +2,7 @@
 #include "character.hpp"
 #include "deltatime.hpp"
 #include "ground.hpp"
+#include "Round.hpp"
 
 namespace Fortress::ObjectBase
 {
@@ -194,6 +195,8 @@ namespace Fortress::ObjectBase
 			m_current_sprite = m_texture.get_image(L"projectile", L"right");
 			m_position = position + Math::Vector2{m_hitbox.get_x(), 0};
 		}
+
+		m_acceleration = Round::get_wind_unit_vector();
 
 		m_current_sprite.lock()->play();
 		m_fired_position = m_position ;
