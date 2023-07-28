@@ -96,7 +96,7 @@ namespace Fortress::ObjectBase
 
 		const auto unit = (m_position - previous_position).normalized();
 		const float radian = atan2(unit.get_y(), unit.get_x());
-		set_movement_pitch_radian(get_forward_unit_vector() == Math::left ? Math::flip_radian(radian) : radian);
+		set_movement_pitch_radian(get_velocity_offset() == Math::left ? Math::flip_radian(radian) : radian);
 		previous_position = m_position;
 	}
 
@@ -120,12 +120,6 @@ namespace Fortress::ObjectBase
 		return m_max_hit_count;
 	}
 
-	Math::Vector2 projectile::get_forward_unit_vector() const
-	{
-		const auto vel = m_velocity * Math::Vector2{1.0f, 0.0f};
-		return vel.get_x() < 0 ? Math::left : Math::right;
-	}
-
 	const std::weak_ptr<GifWrapper>& projectile::get_current_sprite() const
 	{
 		return m_current_sprite;
@@ -146,7 +140,7 @@ namespace Fortress::ObjectBase
 		return m_fired_position;
 	}
 
-	void projectile::explosion_near_ground(const Math::Vector2& victim_hit_vector)
+	void projectile::explosion_near_ground(const Math::Vector2& victim_hit_vector) const
 	{
 		if (const auto active_scene =
 			Scene::SceneManager::get_active_scene().lock())
@@ -157,7 +151,7 @@ namespace Fortress::ObjectBase
 
 			const auto grounds = active_scene->is_in_range<Object::Ground>(
 				hit_point,
-				m_radius);
+				get_radius());
 
 			for (const auto& ptr : grounds)
 			{

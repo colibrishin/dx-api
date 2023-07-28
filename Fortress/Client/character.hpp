@@ -65,9 +65,7 @@ namespace Fortress::ObjectBase
 		void set_current_sprite(const std::wstring& name);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
-
-		Math::Vector2 get_offset() const;
-
+		
 		virtual void move_left() override;
 		virtual void move_right() override;
 		virtual void stop() override;
@@ -75,7 +73,6 @@ namespace Fortress::ObjectBase
 
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
-		Math::Vector2 get_forward() const;
 
 	private:
 		int m_player_id;
@@ -89,8 +86,6 @@ namespace Fortress::ObjectBase
 		void set_state(const eCharacterState& state);
 		void render_hp_bar(const Math::Vector2& position);
 		void get_next_position(const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr);
-
-		Math::Vector2 m_offset;
 
 		Texture<GifWrapper> m_texture;
 		std::weak_ptr<GifWrapper> m_current_sprite;
@@ -122,7 +117,6 @@ namespace Fortress::ObjectBase
 			  m_bGrounded(false),
 			  m_bMovable(true),
 		      m_state(eCharacterState::Idle),
-			  m_offset(offset),
 			  m_texture(short_name),
 			  m_main_projectile(main_projectile),
 			  m_secondary_projectile(secondary_projectile)

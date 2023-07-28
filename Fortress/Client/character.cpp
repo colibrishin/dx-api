@@ -61,11 +61,6 @@ namespace Fortress::ObjectBase
 		return m_mp / static_cast<float>(character_full_mp);
 	}
 
-	Math::Vector2 character::get_forward() const
-	{
-		return m_offset == Math::left ? get_left() : get_right();
-	}
-
 	void character::set_state(const eCharacterState& state)
 	{
 		m_state = state;
@@ -131,7 +126,7 @@ namespace Fortress::ObjectBase
 				{
 					Math::Vector2 local_new_pos = {
 						local_position_bottom.get_x() + 
-							(m_offset == Math::left ?  -i : i),
+							(get_offset() == Math::left ?  -i : i),
 						local_position_bottom.get_y() - j
 					};
 
@@ -182,7 +177,7 @@ namespace Fortress::ObjectBase
 				{
 					Math::Vector2 local_new_pos = {
 						local_position_bottom.get_x() + 
-							(m_offset == Math::left ?  -i : i),
+							(get_offset() == Math::left ?  -i : i),
 						local_position_bottom.get_y() + j
 					};
 
@@ -352,20 +347,20 @@ namespace Fortress::ObjectBase
 					Debug::Log(L"Character hits the destroyed ground");
 				}
 
-				auto next_surface = m_offset == Math::left ? get_bottom_left() : get_bottom_right();
-				const auto delta = ground->safe_orthogonal_surface(next_surface, m_offset);
+				auto next_surface = get_offset() == Math::left ? get_bottom_left() : get_bottom_right();
+				const auto delta = ground->safe_orthogonal_surface(next_surface, get_offset());
 				next_surface += delta;
 
 				auto rotate_radian = next_surface.local_inner_angle(get_bottom());
 				const bool is_surface_lower = next_surface.get_y() > get_bottom().get_y();
 
-				if((is_surface_lower && m_offset == Math::left) ||
-					(!is_surface_lower && m_offset == Math::left))
+				if((is_surface_lower && get_offset() == Math::left) ||
+					(!is_surface_lower && get_offset() == Math::left))
 				{
 					rotate_radian = -rotate_radian;
 				}
 
-				if(m_offset == Math::left)
+				if(get_offset() == Math::left)
 				{
 					rotate_radian = -rotate_radian;
 				}
@@ -536,7 +531,7 @@ namespace Fortress::ObjectBase
 
 	void character::set_current_sprite(const std::wstring& name)
 	{
-		m_current_sprite = m_texture.get_image(name, m_offset == Math::left ? L"left" : L"right");
+		m_current_sprite = m_texture.get_image(name, get_offset() == Math::left ? L"left" : L"right");
 	}
 
 	void character::set_sprite_offset(const std::wstring& name, const std::wstring& orientation,
@@ -550,21 +545,14 @@ namespace Fortress::ObjectBase
 		return m_current_sprite.lock()->get_name();
 	}
 
-	Math::Vector2 character::get_offset() const
-	{
-		return m_offset;
-	}
-
 	void character::move_left()
 	{
-		m_offset = Math::left;
 		set_current_sprite(L"move");
 		rigidBody::move_left();
 	}
 
 	void character::move_right()
 	{
-		m_offset = Math::right;
 		set_current_sprite(L"move");
 		rigidBody::move_right();
 	}

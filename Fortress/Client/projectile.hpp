@@ -32,7 +32,6 @@ namespace Fortress::ObjectBase
 		void up_hit_count();
 		int get_hit_count() const;
 		int get_max_hit_count() const;
-		Math::Vector2 get_forward_unit_vector() const;
 
 		const std::weak_ptr<GifWrapper>& get_current_sprite() const;
 		int get_radius() const;
@@ -63,7 +62,7 @@ namespace Fortress::ObjectBase
 		}
 
 	private:
-		void explosion_near_ground(const Math::Vector2& hit_vector);
+		void explosion_near_ground(const Math::Vector2& hit_vector) const;
 
 		float m_damage;
 		int m_radius;

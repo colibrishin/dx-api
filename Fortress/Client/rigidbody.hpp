@@ -12,7 +12,6 @@ namespace Fortress::Abstract
 
 	class rigidBody : public object
 	{
-		
 	public:
 		Math::Vector2 m_velocity;
 		float m_acceleration;
@@ -43,14 +42,24 @@ namespace Fortress::Abstract
 
 		void set_movement_pitch_radian(const float pitch);
 		void set_user_pitch_radian(const float pitch);
-		float get_movement_pitch_radian();
-		float get_user_pitch_radian();
+		float get_movement_pitch_radian() const;
+		float get_user_pitch_radian() const;
+
+		Math::Vector2 get_offset() const;
+		Math::Vector2 get_mixed_offset() const;
+		Math::Vector2 get_velocity_offset() const;
+		Math::Vector2 get_offset_forward_position() const;
+		Math::Vector2 get_velocity_forward_position() const;
+
+		void set_offset(const Math::Vector2& offset);
 	private:
 		float m_movement_pitch_radian;
 		float m_user_pitch_radian;
 		float m_speed;
 		float m_curr_speed;
 		bool m_bGravity{};
+
+		Math::Vector2 m_offset;
 
 		void apply_gravity();
 

@@ -17,7 +17,8 @@ namespace Fortress::Abstract
 		m_curr_speed(0.0f),
 		m_bGravity(gravity),
 		m_gravity_speed(0.0f),
-		m_gravity_acceleration(Math::G_ACC)
+		m_gravity_acceleration(Math::G_ACC),
+		m_offset(Math::forward)
 	{
 		rigidBody::initialize();
 	}
@@ -121,21 +122,25 @@ namespace Fortress::Abstract
 
 	void rigidBody::move_down()
 	{
+		m_offset = Math::bottom;
 		m_velocity = {0, 1.0f};
 	}
 
 	void rigidBody::move_left()
 	{
+		m_offset = Math::left;
 		m_velocity = {-1.0f, 0};
 	}
 
 	void rigidBody::move_right()
 	{
+		m_offset = Math::right;
 		m_velocity = {1.0f, 0};
 	}
 
 	void rigidBody::move_up()
 	{
+		m_offset = Math::top;
 		m_velocity = {0, -1.0f};
 	}
 
@@ -154,14 +159,49 @@ namespace Fortress::Abstract
 		m_user_pitch_radian = pitch;
 	}
 
-	float rigidBody::get_movement_pitch_radian()
+	float rigidBody::get_movement_pitch_radian() const
 	{
 		return m_movement_pitch_radian;
 	}
 
-	float rigidBody::get_user_pitch_radian()
+	float rigidBody::get_user_pitch_radian() const
 	{
 		return m_user_pitch_radian;
+	}
+
+	Math::Vector2 rigidBody::get_offset() const
+	{
+		return m_offset;
+	}
+
+	Math::Vector2 rigidBody::get_mixed_offset() const
+	{
+		if(m_offset != Math::left || m_offset != Math::right)
+		{
+			return get_velocity_offset();
+		}
+
+		return m_offset;
+	}
+
+	Math::Vector2 rigidBody::get_velocity_offset() const
+	{
+		return m_velocity.get_x() < 0 ? Math::left : Math::right;
+	}
+
+	Math::Vector2 rigidBody::get_offset_forward() const
+	{
+		return get_offset() == Math::left ? get_left() : get_right();
+	}
+
+	Math::Vector2 rigidBody::get_velocity_forward() const
+	{
+		return get_velocity_offset() == Math::left ? get_left() : get_right();
+	}
+
+	void rigidBody::set_offset(const Math::Vector2& offset)
+	{
+		m_offset = offset;
 	}
 
 	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other)
