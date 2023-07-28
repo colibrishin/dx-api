@@ -208,4 +208,9 @@ namespace Fortress::Scene
 	{
 		scene::activate();
 	}
+
+	const Round& BattleScene::get_round_status()
+	{
+		return m_round;
+	}
 }

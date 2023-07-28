@@ -1,4 +1,6 @@
 #include "projectile.hpp"
+
+#include "BattleScene.h"
 #include "character.hpp"
 #include "deltatime.hpp"
 #include "ground.hpp"
@@ -196,7 +198,11 @@ namespace Fortress::ObjectBase
 			m_position = position + Math::Vector2{m_hitbox.get_x(), 0};
 		}
 
-		m_acceleration = Round::get_wind_unit_vector();
+		if(const auto battle_scene = 
+			std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock()))
+		{
+			m_acceleration = battle_scene->get_round_status().get_wind_acceleration();
+		}
 
 		m_current_sprite.lock()->play();
 		m_fired_position = m_position ;

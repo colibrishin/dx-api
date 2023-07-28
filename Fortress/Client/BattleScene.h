@@ -22,6 +22,7 @@ namespace Fortress::Scene
 		void render() override;
 		void deactivate() override;
 		void activate() override;
+		const Round& get_round_status();
 
 	private:
 		std::weak_ptr<ObjectBase::character> m_home_object;

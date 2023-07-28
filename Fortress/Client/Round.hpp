@@ -22,8 +22,7 @@ namespace Fortress
 		void initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players);
 		void update();
 		float get_current_time() const;
-		// @todo: for multi-player, this should not be static or, round unique identifier is needed.
-		static float get_wind_acceleration();
+		float get_wind_acceleration() const;
 
 	private:
 		void check_countdown();
@@ -36,7 +35,7 @@ namespace Fortress
 		const float m_max_time = 60.0f;
 		bool m_bfired = false;
 
-		inline static float m_wind_affect = 0.0f;
+		float m_wind_affect = 0.0f;
 		inline static std::default_random_engine e;
 		inline static std::uniform_real_distribution<float> dis{-20, 20};
 
@@ -192,7 +191,7 @@ namespace Fortress
 		}
 	}
 
-	inline float Round::get_wind_acceleration()
+	inline float Round::get_wind_acceleration() const
 	{
 		return m_wind_affect;
 	}
