@@ -7,6 +7,11 @@
 #include "projectile.hpp"
 #include "sceneManager.hpp"
 
+namespace Fortress
+{
+	class Radar;
+}
+
 namespace Fortress::Object
 {
 	enum class GroundState
@@ -54,18 +59,21 @@ namespace Fortress::Object
 
 		void initialize() override;
 		void render() override;
+
 		GroundState safe_is_destroyed(const Math::Vector2& local_position) const;
 		void safe_set_destroyed_global(const Math::Vector2& hit_position, const float radius);
 		bool safe_is_object_stuck(const Math::Vector2& position) const;
 		Math::Vector2 safe_nearest_surface(const Math::Vector2& position) const;
 		Math::Vector2 safe_orthogonal_surface(const Math::Vector2& position, const Math::Vector2& forward) const;
 	private:
+		HDC get_ground_hdc() const;
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
 		void safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius);
 		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
 		void _debug_draw_destroyed_table() const;
 
+		friend Radar;
 		std::vector<std::vector<GroundState>> m_destroyed_table;
 		HDC m_ground_hdc;
 		HBITMAP m_ground_bitmap;
@@ -325,6 +333,11 @@ namespace Fortress::Object
 		}
 
 		return {};
+	}
+
+	inline HDC Ground::get_ground_hdc() const
+	{
+		return m_ground_hdc;
 	}
 
 	inline void Ground::safe_set_destroyed_global(

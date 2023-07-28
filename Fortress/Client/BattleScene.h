@@ -4,6 +4,7 @@
 
 #include "character.hpp"
 #include "ground.hpp"
+#include "Radar.hpp"
 #include "Round.hpp"
 #include "sceneManager.hpp"
 
@@ -12,7 +13,7 @@ namespace Fortress::Scene
 	class BattleScene final : public Abstract::scene
 	{
 	public:
-		BattleScene() : scene(L"Character Scene"), m_round()
+		BattleScene() : scene(L"Character Scene"), m_round(), m_radar()
 		{
 		}
 
@@ -29,6 +30,7 @@ namespace Fortress::Scene
 		std::weak_ptr<ImageWrapper> m_hud;
 		std::weak_ptr<ImageWrapper> m_background;
 		Round m_round;
+		Radar m_radar;
 	};
 }
 

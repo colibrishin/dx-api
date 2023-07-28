@@ -136,19 +136,20 @@
       <Filter>Projectiles</Filter>
     </ClInclude>
     <ClInclude Include="Round.hpp" />
+    <ClInclude Include="deltatime.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="application.h">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Radar.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
       <Filter>Windows\소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="application.h">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="application.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="deltatime.hpp">
-      <Filter>Engine\Common</Filter>
     </ClCompile>
     <ClCompile Include="sceneManager.hpp">
       <Filter>Scene</Filter>
