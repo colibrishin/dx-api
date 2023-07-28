@@ -103,9 +103,24 @@ namespace Fortress
 			player->set_unmovable();
 		}
 
-		m_known_players.push_back(m_current_player);
-		m_current_player = m_known_players.front();
-		m_known_players.erase(m_known_players.begin());
+		const auto previous_character = m_current_player;
+
+		while (previous_character.lock().get() != m_current_player.lock().get())
+		{
+			m_known_players.push_back(m_current_player);
+
+			if(m_known_players.front().lock()->get_state() == eCharacterState::Dead)
+			{
+				m_known_players.push_back(*m_known_players.begin());
+				m_known_players.erase(m_known_players.begin());
+				continue;
+			}
+			
+			m_current_player = m_known_players.front();
+			m_known_players.erase(m_known_players.begin());
+			break;
+		}
+
 
 		if(const auto player = m_current_player.lock())
 		{
