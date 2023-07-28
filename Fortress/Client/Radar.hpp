@@ -90,13 +90,16 @@ namespace Fortress
 					}
 					else if(const auto gr = std::dynamic_pointer_cast<Object::Ground>(obj))
 					{
-						const auto obj_rect = RECT{
-							static_cast<int>(position.get_x()),
-							static_cast<int>(position.get_y()),
-							static_cast<int>(position.get_x() + size.get_x()),
-							static_cast<int>(position.get_y() + size.get_y())};
-
-						FillRect(m_radar_hdc, &obj_rect, white);
+						BitBlt(
+							m_radar_hdc,
+							position.get_x(),
+							position.get_y(),
+							size.get_x(),
+							size.get_y(),
+							gr->get_ground_hdc(),
+							0,
+							0,
+							SRCCOPY);
 					}
 				}
 			}
