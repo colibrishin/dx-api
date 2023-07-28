@@ -36,6 +36,7 @@ namespace Fortress
 		// here used vector instead of queue due to un-iterable.
 		eRoundState m_state;
 		std::vector<std::weak_ptr<ObjectBase::character>> m_known_players;
+		std::vector<std::weak_ptr<ObjectBase::character>> m_all_players;
 		std::weak_ptr<ObjectBase::character> m_current_player;
 		std::weak_ptr<ObjectBase::character> m_winner;
 
@@ -62,6 +63,7 @@ namespace Fortress
 
 		m_state = eRoundState::InProgress;
 		m_known_players = players;
+		m_all_players = players;
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
 		m_known_players.erase(m_known_players.begin());
@@ -158,7 +160,7 @@ namespace Fortress
 	{
 		static std::set<std::weak_ptr<ObjectBase::character>, safe_weak_comparer> alive_characters;
 
-		for(const auto& alive : m_known_players)
+		for(const auto& alive : m_all_players)
 		{
 			if(alive.lock()->get_state() != eCharacterState::Dead)
 			{
