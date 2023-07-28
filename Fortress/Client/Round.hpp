@@ -7,9 +7,17 @@
 
 namespace Fortress
 {
+	enum class eRoundState
+	{
+		Start = 0,
+		InProgress,
+		End,
+	};
+
 	class Round
 	{
 	public:
+		Round() : m_state(eRoundState::Start) {}
 		void initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players);
 		void update();
 		float get_current_time() const;
@@ -19,12 +27,14 @@ namespace Fortress
 		void check_fired();
 		void next_player();
 		void check_winning_condition();
+		void winner();
 
 		float m_curr_timeout = 0.0f;
 		const float m_max_time = 60.0f;
 		bool m_bfired = false;
 
 		// here used vector instead of queue due to un-iterable.
+		eRoundState m_state;
 		std::vector<std::weak_ptr<ObjectBase::character>> m_known_players;
 		std::weak_ptr<ObjectBase::character> m_current_player;
 		std::weak_ptr<ObjectBase::character> m_winner;
@@ -50,6 +60,7 @@ namespace Fortress
 			}
 		}
 
+		m_state = eRoundState::InProgress;
 		m_known_players = players;
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
@@ -86,9 +97,22 @@ namespace Fortress
 	inline void Round::update()
 	{
 		Debug::Log(std::to_wstring(m_curr_timeout));
-		check_fired();
-		check_countdown();
-		check_winning_condition();
+		switch (m_state)
+		{
+		case eRoundState::Start:
+			// @todo: scrolling to the map start to end.
+			break;
+		case eRoundState::InProgress:
+			// @todo: arrow man
+			check_fired();
+			check_countdown();
+			check_winning_condition();
+			break;
+		case eRoundState::End:
+			Debug::Log(m_winner.lock()->get_name() + L" won the match!");
+			// @todo: move to battle summary.
+		default: break;
+		}
 	}
 
 	inline float Round::get_current_time() const
@@ -105,7 +129,7 @@ namespace Fortress
 
 		const auto previous_character = m_current_player;
 
-		// @todo: if every player is dead except current player then this will run forever.
+		// @todo: if every player is dead except current player then this will run indefinitely.
 		while (previous_character.lock().get() == m_current_player.lock().get())
 		{
 			m_known_players.push_back(m_current_player);
@@ -148,7 +172,9 @@ namespace Fortress
 
 		if(alive_characters.size() == 1)
 		{
+			(*alive_characters.begin()).lock()->set_unmovable();
 			m_winner = *alive_characters.begin();
+			m_state = eRoundState::End;
 		}
 	}
 }
