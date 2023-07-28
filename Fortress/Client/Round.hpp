@@ -105,7 +105,8 @@ namespace Fortress
 
 		const auto previous_character = m_current_player;
 
-		while (previous_character.lock().get() != m_current_player.lock().get())
+		// @todo: if every player is dead except current player then this will run forever.
+		while (previous_character.lock().get() == m_current_player.lock().get())
 		{
 			m_known_players.push_back(m_current_player);
 
@@ -118,7 +119,6 @@ namespace Fortress
 			
 			m_current_player = m_known_players.front();
 			m_known_players.erase(m_known_players.begin());
-			break;
 		}
 
 
