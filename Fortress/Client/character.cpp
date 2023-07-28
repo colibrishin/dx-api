@@ -309,9 +309,9 @@ namespace Fortress::ObjectBase
 		return m_current_projectile;
 	}
 
-	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<Abstract::rigidBody>& other)
+	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
-		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other))
+		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
 			if(ground)
 			{

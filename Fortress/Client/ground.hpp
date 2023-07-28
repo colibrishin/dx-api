@@ -44,7 +44,7 @@ namespace Fortress::Object
 		Ground& operator=(const Ground& other) = default;
 		Ground& operator=(Ground&& other) = default;
 
-		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<rigidBody>& other);
+		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other);
 
 		~Ground() override
 		{
@@ -82,10 +82,10 @@ namespace Fortress::Object
 	inline void Ground::on_collision(
 		const CollisionCode& collision, 
 		const Math::Vector2& hit_vector, 
-		const std::shared_ptr<Abstract::rigidBody>& other)
+		const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		if (auto const projectile = 
-			std::dynamic_pointer_cast<ObjectBase::projectile>(other))
+			std::dynamic_pointer_cast<ObjectBase::projectile>(other.lock()))
 		{
 			const eHitVector e_vec = Math::translate_hit_vector(hit_vector);
 			const auto hit_point = projectile->get_hit_point(e_vec);

@@ -8,7 +8,7 @@
 
 namespace Fortress::ObjectBase
 {
-	void projectile::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<Abstract::rigidBody>& other)
+	void projectile::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		rigidBody::on_collision(collision, hit_vector, other);
 
@@ -19,7 +19,7 @@ namespace Fortress::ObjectBase
 		}
 
 		if (const auto character = 
-				std::dynamic_pointer_cast<ObjectBase::character>(other))
+				std::dynamic_pointer_cast<ObjectBase::character>(other.lock()))
 		{
 			const auto shared_this = std::dynamic_pointer_cast<projectile>(shared_from_this());
 			Debug::Log(L"Projectile hits the character");

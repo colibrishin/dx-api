@@ -42,7 +42,7 @@ namespace Fortress::Abstract
 			// @todo: performance degrading. objects could contain others.
 			// check if object is rigid body.
 			const auto locked_ptr = right_r.lock();
-			std::shared_ptr<rigidBody> rb = std::dynamic_pointer_cast<rigidBody>(locked_ptr);
+			std::shared_ptr rb = std::dynamic_pointer_cast<rigidBody>(locked_ptr);
 
 			if (!rb || shared_from_this() == locked_ptr || !this->is_active() || !rb->is_active())
 			{
@@ -164,7 +164,7 @@ namespace Fortress::Abstract
 		return m_user_pitch_radian;
 	}
 
-	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<rigidBody>& other)
+	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other)
 	{
 	}
 

@@ -48,7 +48,7 @@ namespace Fortress::ObjectBase
 		void change_projectile();
 		std::weak_ptr<projectile> get_current_projectile();
 
-		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::shared_ptr<Abstract::rigidBody>& other) override;
+		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other) override;
 		virtual void on_nocollison() override;
 
 		eCharacterState get_state() const;
