@@ -448,6 +448,13 @@ namespace Fortress::ObjectBase
 		if(m_bMovable)
 		{
 			default_state();
+			static bool is_initial = true;
+
+			if(is_initial)
+			{
+				m_sound_pack.get_sound(L"move").lock()->play(true);
+				is_initial = false;
+			}
 
 			const eKeyCode left = m_player_id == 0 ? eKeyCode::A : eKeyCode::LEFT;
 			const eKeyCode right = m_player_id == 0 ? eKeyCode::D : eKeyCode::RIGHT;
@@ -476,6 +483,8 @@ namespace Fortress::ObjectBase
 			}
 			else if (Input::getKeyUp(left) || Input::getKeyUp(right) || Input::getKeyUp(up) || Input::getKeyUp(down))
 			{
+				m_sound_pack.get_sound(L"move").lock()->stop(true);
+				is_initial = true;
 				set_state(eCharacterState::Idle);
 				stop();
 			}
@@ -506,10 +515,20 @@ namespace Fortress::ObjectBase
 	{
 		default_state();
 
+		static bool is_initial = true;
+
+		if(is_initial)
+		{
+			// @todo: main/sub consideration
+			m_sound_pack.get_sound(L"main-fire").lock()->play(false);
+			is_initial = false;
+		}
+
 		if(const auto prj = m_current_projectile.lock())
 		{
 			if(!prj->is_active())
 			{
+				is_initial = true;
 				set_state(eCharacterState::Idle);
 			}
 		}

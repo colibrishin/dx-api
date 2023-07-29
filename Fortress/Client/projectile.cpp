@@ -51,6 +51,7 @@ namespace Fortress::ObjectBase
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 		scene_ptr->get_camera().lock()->restore_object();
 
+		m_sound_pack.get_sound(L"main-explosion").lock()->play(false);
 		m_curr_hit_count = 0;
 		m_current_sprite.lock()->reset_transfrom();
 		reset_current_gravity_speed();
@@ -75,7 +76,6 @@ namespace Fortress::ObjectBase
 			}
 
 			prerender();
-			Debug::draw_circle(pos - (m_radius / 2), m_radius);
 
 			m_current_sprite.lock()->render(
 				pos,

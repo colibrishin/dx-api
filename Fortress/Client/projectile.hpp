@@ -56,7 +56,8 @@ namespace Fortress::ObjectBase
 			m_max_hit_count(hit_count),
 			m_curr_hit_count(0),
 			m_shooter(shooter),
-			m_texture(short_name)
+			m_texture(short_name),
+			m_sound_pack(short_name)
 		{
 			projectile::initialize();
 		}
@@ -70,6 +71,7 @@ namespace Fortress::ObjectBase
 		int m_curr_hit_count;
 		const character* m_shooter;
 		Texture<GifWrapper> m_texture;
+		SoundPack m_sound_pack;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 		Math::Vector2 m_fired_position;
 	};
