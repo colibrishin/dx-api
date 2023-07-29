@@ -9,6 +9,7 @@
 #include "LobbyScene.h"
 #include "RoomScene.h"
 #include "sceneManager.hpp"
+#include "SoundManager.hpp"
 #include "titleScene.h"
 #include "winapihandles.hpp"
 
@@ -22,6 +23,7 @@ namespace Fortress
 		DeltaTime::initialize();
 
 		WinAPIHandles::initialize(hwnd, hdc);
+		SoundManager::initialize();
 		m_buffer_hdc = WinAPIHandles::get_buffer_dc();
 		Debug::initialize(m_buffer_hdc);
 

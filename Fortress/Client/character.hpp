@@ -6,6 +6,8 @@
 #include "rigidBody.hpp"
 #include "common.h"
 #include "sceneManager.hpp"
+#include "sound.hpp"
+#include "SoundPack.hpp"
 #include "Texture.hpp"
 
 
@@ -88,6 +90,7 @@ namespace Fortress::ObjectBase
 		void get_next_position(const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr);
 
 		Texture<GifWrapper> m_texture;
+		SoundPack m_sound_pack;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 
 		std::weak_ptr<projectile> m_current_projectile;
@@ -118,6 +121,7 @@ namespace Fortress::ObjectBase
 			  m_bMovable(true),
 		      m_state(eCharacterState::Idle),
 			  m_texture(short_name),
+		      m_sound_pack(short_name),
 			  m_main_projectile(main_projectile),
 			  m_secondary_projectile(secondary_projectile)
 		{

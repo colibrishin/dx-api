@@ -8,11 +8,8 @@
 #include "winapihandles.hpp"
 
 #include <windows.h>
-#include <MMSystem.h>
-
 #include "objectManager.hpp"
 
-#pragma comment (lib,"winmm.lib")
 
 namespace Fortress::Scene
 {
@@ -27,6 +24,8 @@ namespace Fortress::Scene
 			0, L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right);
 		m_away_object = ObjectBase::ObjectManager::create_object<Object::CannonCharacter>(
 			1, L"Cannon", Math::Vector2{300.0f, 1.0f}, Math::left);
+		m_bgm = Resource::ResourceManager::load<Resource::Sound>(
+			L"TSAS", "./resources/sounds/stages/Stage00008.wav");
 
 		add_game_object(Abstract::LayerType::Character, m_home_object);
 		add_game_object(Abstract::LayerType::Character, m_away_object);
@@ -202,11 +201,13 @@ namespace Fortress::Scene
 	void BattleScene::deactivate()
 	{
 		scene::deactivate();
+		m_bgm.lock()->stop(true);
 	}
 
 	void BattleScene::activate()
 	{
 		scene::activate();
+		m_bgm.lock()->play(true);
 	}
 
 	const Round& BattleScene::get_round_status()

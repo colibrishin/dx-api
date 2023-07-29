@@ -19,7 +19,7 @@ namespace Fortress
 	class GifWrapper : public ImageWrapper
 	{
 	public:
-		GifWrapper(const std::wstring& name, const std::filesystem::path& path, const Math::Vector2& offset);
+		GifWrapper(const std::wstring& name, const std::filesystem::path& path);
 		GifWrapper& operator=(const GifWrapper& other) = default;
 		GifWrapper& operator=(GifWrapper&& other) = default;
 		GifWrapper(const GifWrapper& other) = default;
@@ -158,9 +158,8 @@ namespace Fortress
 
 	inline GifWrapper::GifWrapper(
 		const std::wstring& name,
-		const std::filesystem::path& path, 
-		const Math::Vector2& offset) :
-		ImageWrapper(name, path, offset),
+		const std::filesystem::path& path) :
+		ImageWrapper(name, path),
 		m_dimension_count(0),
 		m_frame_count(0),
 		m_total_buffer(0),
