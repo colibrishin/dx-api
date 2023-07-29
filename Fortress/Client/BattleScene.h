@@ -7,6 +7,7 @@
 #include "Radar.hpp"
 #include "Round.hpp"
 #include "sceneManager.hpp"
+#include "sound.hpp"
 
 namespace Fortress::Scene
 {
@@ -28,6 +29,7 @@ namespace Fortress::Scene
 		std::weak_ptr<ObjectBase::character> m_home_object;
 		std::weak_ptr<ObjectBase::character> m_away_object;
 		std::weak_ptr<Object::Ground> m_ground;
+		std::weak_ptr<Resource::Sound> m_bgm;
 		std::weak_ptr<ImageWrapper> m_hud;
 		std::weak_ptr<ImageWrapper> m_background;
 		Round m_round;
