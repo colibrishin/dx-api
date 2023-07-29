@@ -99,9 +99,6 @@
     <ClInclude Include="difficulty.hpp">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="sound.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="ImageWrapper.hpp">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
@@ -143,6 +140,18 @@
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Radar.hpp" />
+    <ClInclude Include="sound.hpp">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.hpp">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="SupertankBGMSound.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundPack.hpp">
+      <Filter>Engine\Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
