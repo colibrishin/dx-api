@@ -19,7 +19,7 @@ namespace Fortress
 	class ImageWrapper : public Abstract::Resource
 	{
 	public:
-		ImageWrapper(const std::wstring& name, const std::filesystem::path& path, const Math::Vector2& offset);
+		ImageWrapper(const std::wstring& name, const std::filesystem::path& path);
 		ImageWrapper& operator=(const ImageWrapper& other) = default;
 		ImageWrapper& operator=(ImageWrapper&& other) = default;
 		virtual ~ImageWrapper() override;
@@ -107,12 +107,13 @@ namespace Fortress
 		return m_size;
 	}
 
-	inline ImageWrapper::ImageWrapper(const std::wstring& name, const std::filesystem::path& path, const Math::Vector2& offset) :
+	inline ImageWrapper::ImageWrapper(
+		const std::wstring& name, const std::filesystem::path& path) :
 		Resource(name, path),
 		m_image(nullptr),
 		m_gdi_handle(nullptr),
 		m_size{},
-		m_offset(offset)
+		m_offset{}
 	{
 	}
 

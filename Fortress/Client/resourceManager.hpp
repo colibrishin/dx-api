@@ -45,7 +45,7 @@ namespace Fortress::Resource
 			return resource;
 		}
 
-		m_resources[name] = std::make_shared<T>(name, path, Math::Vector2(0.0f, 0.0f));
+		m_resources[name] = std::make_shared<T>(name, path);
 		m_resources[name]->load();
 
 		return std::dynamic_pointer_cast<T>(m_resources[name]);
