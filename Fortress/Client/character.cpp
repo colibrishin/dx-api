@@ -28,8 +28,12 @@ namespace Fortress::ObjectBase
 		}
 		else
 		{
-			set_current_sprite(L"dead");
-			m_current_sprite.lock()->play();
+			set_current_sprite(L"death");
+			m_current_sprite.lock()->play([this]()
+			{
+				set_current_sprite(L"dead");
+				m_current_sprite.lock()->play();
+			});
 
 			m_state = eCharacterState::Dead;
 		}
