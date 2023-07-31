@@ -173,8 +173,10 @@ namespace Fortress::ObjectBase
 					{
 						if (!angle_check)
 						{
-							if (Math::to_degree(local_position_bottom.local_inner_angle(local_new_pos)) >= 60.0f) 
+							if (std::fabs(Math::to_degree(local_position_bottom.local_inner_angle(local_new_pos)))
+								>= 60.0f) 
 							{
+								// @todo: fixed animation
 								angle_check = false;
 								climable = false;
 								break;
