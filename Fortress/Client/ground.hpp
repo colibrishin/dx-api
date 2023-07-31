@@ -22,7 +22,7 @@ namespace Fortress::Object
 		OutOfBound,
 	};
 
-	class Ground final : public Abstract::rigidBody
+	class Ground : public Abstract::rigidBody
 	{
 	public:
 		Ground(const std::wstring& name, const Math::Vector2& position, const Math::Vector2& size) :
@@ -65,8 +65,8 @@ namespace Fortress::Object
 		bool safe_is_object_stuck_global(const Math::Vector2& position) const;
 		bool safe_is_object_stuck_local(const Math::Vector2& position) const;
 		Math::Vector2 safe_nearest_surface(const Math::Vector2& position) const;
-		Math::Vector2 safe_orthogonal_surface(const Math::Vector2& position, const Math::Vector2& forward) const;
-	private:
+		Math::Vector2 safe_orthogonal_surface(const Math::Vector2& global_position, const Math::Vector2& forward) const;
+	protected:
 		HDC get_ground_hdc() const;
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
@@ -270,16 +270,15 @@ namespace Fortress::Object
 		Math::Vector2 offsets[4] =
 		{
 			{-1.0f, 0.0f},
-			{1.0f, 0.0f},
-			{0.0f, -1.0f},
-			{0.0f, 1.0f}
+			{1.0f, 0.0f}
 		};
 
 		int count = 0;
 
 		for (const auto& offset : offsets) 
 		{
-			count += GroundState::NotDestroyed == safe_is_destroyed(local_position + offset);
+			const auto results = safe_is_destroyed(local_position + offset);
+			count += results == GroundState::NotDestroyed;
 		}
 
 		return count == 4;
@@ -310,26 +309,23 @@ namespace Fortress::Object
 	}
 
 	inline Math::Vector2 Ground::safe_orthogonal_surface(
-		const Math::Vector2& position,
+		const Math::Vector2& global_position,
 		const Math::Vector2& forward) const
 	{
-		const auto local_position = to_top_left_local_position(position);
+		const auto local_position = to_top_left_local_position(global_position);
 
 		for(int x = 0; x < 10; ++x)
 		{
 			for(int y = 0; y < m_hitbox.get_y(); ++y)
 			{
 				const float new_x = local_position.get_x() + (forward == Math::left ? x : -x);
-				const Math::Vector2 new_pos_upper = 
-					{new_x, static_cast<float>(y)};
-				const Math::Vector2 new_pos_lower = 
-					{new_x, static_cast<float>(y + 1)};
 
-				const auto upper_check = safe_is_destroyed(new_pos_upper) == GroundState::Destroyed;
-				const auto lower_check = safe_is_destroyed(new_pos_lower) == GroundState::NotDestroyed;
-				if(upper_check && lower_check)
+				const Math::Vector2 new_pos = 
+					{new_x, static_cast<float>(y)};
+
+				if(safe_is_destroyed(new_pos) == GroundState::NotDestroyed)
 				{
-					return new_pos_lower - local_position;
+					return new_pos - local_position;
 				}
 			}
 		}

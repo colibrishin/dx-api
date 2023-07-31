@@ -158,6 +158,12 @@
     <ClInclude Include="SkyValleyMap.hpp">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="Catwalk.hpp">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="DesertMap.hpp">
+      <Filter>Map</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -240,9 +246,6 @@
     </ClCompile>
     <ClCompile Include="PrecisionCannonProjectile.hpp">
       <Filter>Projectiles</Filter>
-    </ClCompile>
-    <ClCompile Include="DesertMap.hpp">
-      <Filter>Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
