@@ -573,6 +573,11 @@ namespace Fortress::ObjectBase
 		m_bMovable = true;
 	}
 
+	void character::reset_mp()
+	{
+		m_mp = character_full_mp;
+	}
+
 	void character::set_current_sprite(const std::wstring& name)
 	{
 		m_current_sprite = m_texture.get_image(name, get_offset() == Math::left ? L"left" : L"right");

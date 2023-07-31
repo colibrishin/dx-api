@@ -41,6 +41,7 @@ namespace Fortress::ObjectBase
 		virtual void initialize() override;
 		void hit(const std::weak_ptr<projectile>& p);
 		void hit(const float damage);
+		void post_hit();
 		void update() override;
 		void render() override;
 		virtual void firing();
@@ -63,6 +64,7 @@ namespace Fortress::ObjectBase
 
 		void set_unmovable();
 		void set_movable();
+		void reset_mp();
 
 		void set_current_sprite(const std::wstring& name);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);

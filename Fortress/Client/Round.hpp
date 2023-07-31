@@ -37,6 +37,7 @@ namespace Fortress
 		bool m_bfired = false;
 
 		float m_wind_affect = 0.0f;
+		// @todo: random seed should be different every round
 		inline static std::default_random_engine e;
 		inline static std::uniform_real_distribution<float> dis{-20, 20};
 
@@ -60,7 +61,7 @@ namespace Fortress
 
 	inline void Round::initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
 	{
-		for(const auto& ptr : m_known_players)
+		for(const auto& ptr : m_all_players)
 		{
 			if(const auto player = ptr.lock())
 			{
@@ -75,6 +76,8 @@ namespace Fortress
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
 		m_known_players.erase(m_known_players.begin());
+
+		m_current_player.lock()->set_movable();
 	}
 
 	inline void Round::check_countdown()
@@ -167,6 +170,7 @@ namespace Fortress
 			player->set_movable();
 			const auto camera = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
 			camera->set_object(m_current_player);
+			player->reset_mp();
 		}
 
 		m_wind_affect = dis(e);
