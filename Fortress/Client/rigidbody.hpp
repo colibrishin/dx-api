@@ -49,6 +49,7 @@ namespace Fortress::Abstract
 		Math::Vector2 get_mixed_offset() const;
 		Math::Vector2 get_velocity_offset() const;
 		Math::Vector2 get_offset_forward_position() const;
+		Math::Vector2 get_offset_bottom_forward_position() const;
 		Math::Vector2 get_velocity_forward_position() const;
 
 		void set_offset(const Math::Vector2& offset);
