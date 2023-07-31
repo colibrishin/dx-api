@@ -336,9 +336,7 @@ namespace Fortress::ObjectBase
 
 			const Object::GroundState bottom_check = ground->safe_is_destroyed(bottom_local_position);
 			// @todo: delta checks valid but this collision starts from right side it has the negative values, and considered as oob.
-			// check should be done in reverse. right side check should be fine.
-			// e.g., from -301 to -300 ... -301 + 300 = -1, but if collision is smaller than 1, (like 0.33...)
-			// by dropping the floating point, it would work as intended.
+			// check should be done in reverse. use the positive side only is probably the best way for avoiding any problem.
 			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position + ground->m_hitbox);
 			const Object::GroundState right_check = ground->safe_is_destroyed(right_local_position);
 
