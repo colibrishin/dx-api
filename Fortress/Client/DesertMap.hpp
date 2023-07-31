@@ -42,11 +42,11 @@ namespace Fortress::Map
 	inline void DesertMap::set_characters()
 	{
 		m_characters.emplace_back(
-			ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
-				0, L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right));
-		m_characters.emplace_back(
 			ObjectBase::ObjectManager::create_object<Object::CannonCharacter>(
-				1, L"Cannon", Math::Vector2{300.0f, 1.0f}, Math::left));
+				0, L"Cannon", Math::Vector2{300.0f, 1.0f}, Math::left));
+		m_characters.emplace_back(
+			ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
+				1, L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right));
 	}
 
 	inline void DesertMap::set_client_character()
