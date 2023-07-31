@@ -156,6 +156,7 @@
     <ClInclude Include="RoomScene.h" />
     <ClInclude Include="Round.hpp" />
     <ClInclude Include="scene.hpp" />
+    <ClInclude Include="SkyValleyMap.hpp" />
     <ClInclude Include="sound.hpp" />
     <ClInclude Include="SoundManager.hpp" />
     <ClInclude Include="SoundPack.hpp" />

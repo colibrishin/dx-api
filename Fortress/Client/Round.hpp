@@ -25,6 +25,7 @@ namespace Fortress
 		void update();
 		float get_current_time() const;
 		float get_wind_acceleration() const;
+		const std::weak_ptr<ObjectBase::character>& get_current_player() const;
 
 	private:
 		void check_countdown();
@@ -198,6 +199,11 @@ namespace Fortress
 			m_winner = *alive_characters.begin();
 			m_state = eRoundState::End;
 		}
+	}
+
+	inline const std::weak_ptr<ObjectBase::character>& Round::get_current_player() const
+	{
+		return m_current_player;
 	}
 
 	inline float Round::get_wind_acceleration() const

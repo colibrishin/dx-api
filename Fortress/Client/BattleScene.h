@@ -11,24 +11,31 @@
 
 namespace Fortress::Scene
 {
-	class BattleScene final : public Abstract::scene
+	class BattleScene : public Abstract::scene
 	{
 	public:
-		BattleScene() : scene(L"Character Scene"), m_round(), m_radar()
+		BattleScene(const std::wstring& name) : scene(L"Battle Scene " + name), m_round(), m_radar()
 		{
 		}
 
-		void initialize() override;
+		virtual void initialize() override;
+		virtual void pre_initialize() = 0;
 		void update() override;
 		void render() override;
 		void deactivate() override;
 		void activate() override;
 		const Round& get_round_status();
 
-	private:
-		std::weak_ptr<ObjectBase::character> m_home_object;
-		std::weak_ptr<ObjectBase::character> m_away_object;
-		std::weak_ptr<Object::Ground> m_ground;
+		virtual void set_bgm() = 0;
+		virtual void set_background_img() = 0;
+		virtual void set_grounds() = 0;
+		virtual void set_characters() = 0;
+		virtual void set_client_character() = 0;
+
+	protected:
+		std::weak_ptr<ObjectBase::character> m_self;
+		std::vector<std::weak_ptr<ObjectBase::character>> m_characters;
+		std::vector<std::weak_ptr<Object::Ground>> m_grounds;
 		std::weak_ptr<Resource::Sound> m_bgm;
 		std::weak_ptr<ImageWrapper> m_hud;
 		std::weak_ptr<ImageWrapper> m_background;

@@ -16,26 +16,30 @@ namespace Fortress::Scene
 	void BattleScene::initialize()
 	{
 		scene::initialize();
-		m_hud = Resource::ResourceManager::load<ImageWrapper>(L"HUD", "./resources/images/hud.gif");
-		m_background = Resource::ResourceManager::load<ImageWrapper>(
-			L"valley", "./resources/images/wirestock_valley.jpg");
-		m_ground = ObjectBase::ObjectManager::create_object<Object::Ground>();
-		m_home_object = ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
-			0, L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right);
-		m_away_object = ObjectBase::ObjectManager::create_object<Object::CannonCharacter>(
-			1, L"Cannon", Math::Vector2{300.0f, 1.0f}, Math::left);
-		m_bgm = Resource::ResourceManager::load<Resource::Sound>(
-			L"TSAS", "./resources/sounds/stages/Stage00008.wav");
+		pre_initialize();
 
-		add_game_object(Abstract::LayerType::Character, m_home_object);
-		add_game_object(Abstract::LayerType::Character, m_away_object);
-		add_game_object(Abstract::LayerType::Ground, m_ground);
+		m_hud = Resource::ResourceManager::load<ImageWrapper>(
+			L"HUD", "./resources/images/hud.gif");
+		set_grounds();
+		set_background_img();
+		set_bgm();
+		set_characters();
+		set_client_character();
 
-		get_camera().lock()->set_object(m_home_object);
+		for (const auto& ch : m_characters)
+		{
+			add_game_object(Abstract::LayerType::Character, ch);
+			ch.lock()->set_disabled();
+		}
 
-		m_home_object.lock()->set_disabled();
-		m_ground.lock()->set_disabled();
-		m_round.initialize({m_home_object, m_away_object});
+		for (const auto& gr : m_grounds)
+		{
+			add_game_object(Abstract::LayerType::Ground, gr);
+			gr.lock()->set_disabled();
+		}
+
+		get_camera().lock()->set_object(m_self);
+		m_round.initialize(m_characters);
 		m_radar.initialize();
 	}
 
@@ -45,7 +49,8 @@ namespace Fortress::Scene
 		m_round.update();
 		m_radar.update();
 
-		if (const auto obj = m_home_object.lock())
+		// @todo: this should be fixed in client side.
+		if (const auto& obj = m_round.get_current_player().lock())
 		{
 			switch(obj->get_state())
 			{
@@ -63,29 +68,8 @@ namespace Fortress::Scene
 			case eCharacterState::Move:
 				obj->move_state();
 				break;
-			default:
-				break;
-			}
-		}
-
-		if (const auto obj = m_away_object.lock())
-		{
-			switch(obj->get_state())
-			{
-			case eCharacterState::Idle:
-				obj->idle_state();
-				break;
-			case eCharacterState::Firing:
-				obj->firing_state();
-				break;
-			case eCharacterState::Fire:
-				obj->fire_state();
-				break;
-			case eCharacterState::Item:
-				break;
-			case eCharacterState::Move:
-				obj->move_state();
-				break;
+			case eCharacterState::Dead:
+				obj->dead_state();
 			default:
 				break;
 			}
@@ -115,7 +99,7 @@ namespace Fortress::Scene
 				const RECT rect = {
 					x,
 					y,
-					static_cast<int>(x + m_home_object.lock()->get_hp_percentage() * 400.0f),
+					static_cast<int>(x + m_self.lock()->get_hp_percentage() * 400.0f),
 					y + 20};
 				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 				DeleteObject(brush);
@@ -143,11 +127,11 @@ namespace Fortress::Scene
 			}();
 
 			// Charged power
-			static float cached_charged = m_home_object.lock()->get_charged_power();
+			static float cached_charged = m_self.lock()->get_charged_power();
 
-			if(m_home_object.lock()->get_state() == eCharacterState::Firing)
+			if(m_self.lock()->get_state() == eCharacterState::Firing)
 			{
-				cached_charged = m_home_object.lock()->get_charged_power();
+				cached_charged = m_self.lock()->get_charged_power();
 			}
 
 			[this, hud_position]()
@@ -176,7 +160,7 @@ namespace Fortress::Scene
 				const RECT rect = {
 					x,
 					y,
-					static_cast<int>(x + ((m_home_object.lock()->get_charged_power() / ObjectBase::character_max_charge) * 400.0f)),
+					static_cast<int>(x + ((m_self.lock()->get_charged_power() / ObjectBase::character_max_charge) * 400.0f)),
 					y + 20};
 				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 				DeleteObject(brush);
@@ -201,7 +185,7 @@ namespace Fortress::Scene
 				const RECT rect = {
 					x,
 					y,
-					static_cast<int>(x + m_home_object.lock()->get_mp_percentage() * 400.0f),
+					static_cast<int>(x + m_self.lock()->get_mp_percentage() * 400.0f),
 					y + 20};
 				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 				DeleteObject(brush);

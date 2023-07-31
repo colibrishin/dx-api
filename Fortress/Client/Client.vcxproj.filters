@@ -46,6 +46,9 @@
     <Filter Include="Engine\Resource">
       <UniqueIdentifier>{67164768-64d4-4ec6-a330-756e252d4f33}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{13dea890-eb8b-4ba8-b1b0-ed23b6c5e2e2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -151,6 +154,9 @@
     </ClInclude>
     <ClInclude Include="SoundPack.hpp">
       <Filter>Engine\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="SkyValleyMap.hpp">
+      <Filter>Map</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

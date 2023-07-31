@@ -4,6 +4,7 @@
 #include "input.hpp"
 
 #include "resourceManager.hpp"
+#include "SkyValleyMap.hpp"
 
 void Fortress::Scene::RoomScene::initialize()
 {
@@ -21,7 +22,8 @@ void Fortress::Scene::RoomScene::update()
 
 	if (Input::getKey(eKeyCode::ENTER))
 	{
-		SceneManager::SetActive(L"Character Scene");
+		SceneManager::CreateScene<Map::SkyValleyMap>();
+		SceneManager::SetActive(L"Battle Scene SkyValley");
 	}
 }
 

@@ -29,7 +29,6 @@ namespace Fortress
 
 		Scene::SceneManager::initialize();
 		Scene::SceneManager::CreateScene<Scene::TitleScene>();
-		Scene::SceneManager::CreateScene<Scene::BattleScene>();
 		Scene::SceneManager::CreateScene<Scene::BulletinBoardScene>();
 		Scene::SceneManager::CreateScene<Scene::LobbyScene>();
 		Scene::SceneManager::CreateScene<Scene::RoomScene>();
