@@ -6,6 +6,7 @@
 
 #include "ImageWrapper.hpp"
 #include "sceneManager.hpp"
+#include "sound.hpp"
 
 namespace Fortress::Scene
 {
@@ -23,6 +24,7 @@ namespace Fortress::Scene
 		void activate() override;
 
 		std::weak_ptr<ImageWrapper> m_imBackground;
+		std::weak_ptr<Resource::Sound> m_bgm;
 	};
 }
 

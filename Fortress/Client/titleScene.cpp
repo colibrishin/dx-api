@@ -26,22 +26,7 @@ namespace Fortress::Scene
 
 		if (Input::getKey(eKeyCode::SPACE))
 		{
-			SceneManager::SetActive(L"Character Scene");
-		}
-
-		if (Input::getKey(eKeyCode::L))
-		{
-			SceneManager::SetActive(L"Lobby Scene");
-		}
-
-		if (Input::getKey(eKeyCode::B))
-		{
 			SceneManager::SetActive(L"Bulletin Board Scene");
-		}
-
-		if (Input::getKey(eKeyCode::R))
-		{
-			SceneManager::SetActive(L"Room Scene");
 		}
 	}
 
