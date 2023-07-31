@@ -335,68 +335,67 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
-			if(ground)
+			const Math::Vector2 ground_local_position = ground->to_top_left_local_position(get_bottom());
+			const Object::GroundState ground_check = ground->safe_is_destroyed(ground_local_position);
+
+			if(collision == CollisionCode::Inside)
 			{
-				const Math::Vector2 ground_local_position = ground->to_top_left_local_position(get_bottom());
-				const Object::GroundState ground_check = ground->safe_is_destroyed(ground_local_position);
-
-				if(collision == CollisionCode::Inside)
+				if (ground_check == Object::GroundState::NotDestroyed)
 				{
-					if (ground_check == Object::GroundState::NotDestroyed)
+					if (ground->safe_is_object_stuck_global(get_bottom())) 
 					{
-						if (ground->safe_is_object_stuck_global(get_bottom())) 
-						{
-							// @todo: character pass through the ground if it is going into left or right side.
-							const auto delta = ground->safe_nearest_surface(get_bottom());
-							m_position -= delta;
-						}
-					}
-					if(ground_check == Object::GroundState::NotDestroyed &&
-						m_state == eCharacterState::Move &&
-						m_bGrounded)
-					{
-						get_next_position(ground_local_position, ground);
+						// @todo: character pass through the ground if it is going into left or right side.
+						const auto delta = ground->safe_nearest_surface(get_bottom());
+						m_position -= delta;
 					}
 				}
-
-				if(ground_check == Object::GroundState::NotDestroyed)
+				if(ground_check == Object::GroundState::NotDestroyed &&
+					m_state == eCharacterState::Move &&
+					m_bGrounded)
 				{
-					Debug::Log(L"Character hits the ground");
-					reset_current_gravity_speed();
-					disable_gravity();
-					m_bGrounded = true;
+					get_next_position(ground_local_position, ground);
 				}
-				else if (ground_check == Object::GroundState::Destroyed)
-				{
-					enable_gravity();
-					m_bGrounded = false;
-					set_movement_pitch_radian(0.0f);
-					// @todo: reroute velocity to nearest ground point
-					Debug::Log(L"Character hits the destroyed ground");
-				}
-
-				auto next_surface = get_offset() == Math::left ? get_bottom_left() : get_bottom_right();
-				const auto delta = ground->safe_orthogonal_surface(next_surface, get_offset());
-				next_surface += delta;
-
-				auto rotate_radian = next_surface.local_inner_angle(get_bottom());
-				const bool is_surface_lower = next_surface.get_y() > get_bottom().get_y();
-
-				if((is_surface_lower && get_offset() == Math::left) ||
-					(!is_surface_lower && get_offset() == Math::left))
-				{
-					rotate_radian = -rotate_radian;
-				}
-
-				if(get_offset() == Math::left)
-				{
-					rotate_radian = -rotate_radian;
-				}
-
-				Debug::Log(std::to_wstring(rotate_radian));
-				
-				set_movement_pitch_radian(rotate_radian / 2);
 			}
+
+			
+
+			if(ground_check == Object::GroundState::NotDestroyed)
+			{
+				Debug::Log(L"Character hits the ground");
+				reset_current_gravity_speed();
+				disable_gravity();
+				m_bGrounded = true;
+			}
+			else if (ground_check == Object::GroundState::Destroyed)
+			{
+				enable_gravity();
+				m_bGrounded = false;
+				set_movement_pitch_radian(0.0f);
+				// @todo: reroute velocity to nearest ground point
+				Debug::Log(L"Character hits the destroyed ground");
+			}
+
+			auto next_surface = get_offset() == Math::left ? get_bottom_left() : get_bottom_right();
+			const auto delta = ground->safe_orthogonal_surface(next_surface, get_offset());
+			next_surface += delta;
+
+			auto rotate_radian = next_surface.local_inner_angle(get_bottom());
+			const bool is_surface_lower = next_surface.get_y() > get_bottom().get_y();
+
+			if((is_surface_lower && get_offset() == Math::left) ||
+				(!is_surface_lower && get_offset() == Math::left))
+			{
+				rotate_radian = -rotate_radian;
+			}
+
+			if(get_offset() == Math::left)
+			{
+				rotate_radian = -rotate_radian;
+			}
+
+			Debug::Log(std::to_wstring(rotate_radian));
+			
+			set_movement_pitch_radian(rotate_radian / 2);
 		}
 
 		rigidBody::on_collision(collision, hit_vector, other);
