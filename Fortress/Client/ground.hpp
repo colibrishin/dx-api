@@ -25,11 +25,11 @@ namespace Fortress::Object
 	class Ground final : public Abstract::rigidBody
 	{
 	public:
-		Ground() :
+		Ground(const Math::Vector2& position, const Math::Vector2& size) :
 			rigidBody(
 				L"Ground", 
-				{0.0f, 300.0f}, 
-				{1000.0f, 100.0f}, 
+				position, 
+				size, 
 				{},
 				10000.0f,
 				{}, 

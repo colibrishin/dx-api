@@ -162,6 +162,7 @@
     <ClInclude Include="SoundPack.hpp" />
     <ClInclude Include="SupertankBGMSound.hpp" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="DesertMap.hpp" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="vector2.hpp" />
     <ClInclude Include="deltatime.hpp" />

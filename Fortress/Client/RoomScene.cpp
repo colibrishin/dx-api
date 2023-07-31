@@ -1,6 +1,7 @@
 #include "RoomScene.h"
 
 #include "BulletinBoardScene.h"
+#include "DesertMap.hpp"
 #include "input.hpp"
 
 #include "resourceManager.hpp"
@@ -20,10 +21,15 @@ void Fortress::Scene::RoomScene::update()
 {
 	scene::update();
 
-	if (Input::getKey(eKeyCode::ENTER))
+	if (Input::getKey(eKeyCode::S))
 	{
 		SceneManager::CreateScene<Map::SkyValleyMap>();
 		SceneManager::SetActive(L"Battle Scene SkyValley");
+	}
+	if (Input::getKey(eKeyCode::D))
+	{
+		SceneManager::CreateScene<Map::DesertMap>();
+		SceneManager::SetActive(L"Battle Scene Desert");
 	}
 }
 

@@ -56,7 +56,9 @@ namespace Fortress::Map
 
 	inline void SkyValleyMap::set_grounds()
 	{
-		m_grounds.push_back(ObjectBase::ObjectManager::create_object<Object::Ground>());
+		m_grounds.push_back(
+			ObjectBase::ObjectManager::create_object<Object::Ground>(
+				Math::Vector2{0.0f, 300.0f}, Math::Vector2{1000.0f, 100.0f}));
 	}
 }
 #endif // SKYVALLEYMAP_HPP
