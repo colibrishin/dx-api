@@ -520,7 +520,7 @@ namespace Fortress::ObjectBase
 		if(is_initial)
 		{
 			// @todo: main/sub consideration
-			m_sound_pack.get_sound(L"main-fire").lock()->play(false);
+			m_current_projectile.lock()->play_fire_sound();
 			is_initial = false;
 		}
 

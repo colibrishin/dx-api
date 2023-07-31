@@ -36,11 +36,23 @@ namespace Fortress::Object
 		~CannonProjectile() override = default;
 
 		void initialize() override;
+		virtual void play_hit_sound() override;
+		virtual void play_fire_sound() override;
 	};
 
 	inline void CannonProjectile::initialize()
 	{
 		projectile::initialize();
+	}
+
+	inline void CannonProjectile::play_hit_sound()
+	{
+		m_sound_pack.get_sound(L"main-explosion").lock()->play(false);
+	}
+
+	inline void CannonProjectile::play_fire_sound()
+	{
+		m_sound_pack.get_sound(L"main-fire").lock()->play(false);
 	}
 }
 #endif // CANNONPROJECTILE_HPP

@@ -38,6 +38,8 @@ namespace Fortress::Object
 		void update() override;
 		void initialize() override;
 		void unfocus_this() override;
+		virtual void play_hit_sound() override;
+		virtual void play_fire_sound() override;
 
 	private:
 		std::weak_ptr<ObjectBase::character> m_locked_target;
@@ -84,6 +86,16 @@ namespace Fortress::Object
 	{
 		m_locked_target.reset();
 		projectile::unfocus_this();
+	}
+
+	inline void GuidedMissileProjectile::play_hit_sound()
+	{
+		m_sound_pack.get_sound(L"sub-explosion").lock()->play(false);
+	}
+
+	inline void GuidedMissileProjectile::play_fire_sound()
+	{
+		m_sound_pack.get_sound(L"sub-fire").lock()->play(false);
 	}
 }
 #endif // GUIDEDMISSILEPROJECTILE_HPP

@@ -18,8 +18,6 @@ namespace Fortress::ObjectBase
 			return;
 		}
 
-		m_sound_pack.get_sound(L"main-explosion").lock()->play(false);
-
 		if (const auto character = 
 				std::dynamic_pointer_cast<ObjectBase::character>(other.lock()))
 		{
@@ -27,6 +25,7 @@ namespace Fortress::ObjectBase
 			Debug::Log(L"Projectile hits the character");
 			character->hit(shared_this);
 			up_hit_count();
+			play_hit_sound();
 
 			explosion_near_ground(hit_vector);
 		}

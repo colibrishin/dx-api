@@ -32,6 +32,8 @@ namespace Fortress::ObjectBase
 		void up_hit_count();
 		int get_hit_count() const;
 		int get_max_hit_count() const;
+		virtual void play_fire_sound() = 0;
+		virtual void play_hit_sound() = 0;
 
 		const std::weak_ptr<GifWrapper>& get_current_sprite() const;
 		int get_radius() const;
@@ -71,9 +73,11 @@ namespace Fortress::ObjectBase
 		int m_curr_hit_count;
 		const character* m_shooter;
 		Texture<GifWrapper> m_texture;
-		SoundPack m_sound_pack;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 		Math::Vector2 m_fired_position;
+
+	protected:
+		SoundPack m_sound_pack;
 	};
 
 	__forceinline void projectile::update()

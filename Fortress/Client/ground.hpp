@@ -108,6 +108,7 @@ namespace Fortress::Object
 				}
 
 				projectile->up_hit_count();
+				projectile->play_hit_sound();
 			}
 		}
 
