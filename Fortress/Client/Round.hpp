@@ -15,6 +15,8 @@ namespace Fortress
 		End,
 	};
 
+	constexpr float max_time = 60.0f;
+
 	class Round
 	{
 	public:
@@ -32,7 +34,6 @@ namespace Fortress
 		void winner();
 
 		float m_curr_timeout = 0.0f;
-		const float m_max_time = 60.0f;
 		bool m_bfired = false;
 
 		float m_wind_affect = 0.0f;
@@ -78,13 +79,16 @@ namespace Fortress
 
 	inline void Round::check_countdown()
 	{
-		if(get_current_time() >= m_max_time)
+		if(get_current_time() >= max_time)
 		{
 			next_player();
 			m_curr_timeout = 0.0f;
 		}
 
-		m_curr_timeout += DeltaTime::get_deltaTime();
+		if(!m_bfired)
+		{
+			m_curr_timeout += DeltaTime::get_deltaTime();
+		}
 	}
 
 	inline void Round::check_fired()
@@ -154,6 +158,7 @@ namespace Fortress
 			
 			m_current_player = m_known_players.front();
 			m_known_players.erase(m_known_players.begin());
+			m_curr_timeout = 0.0f;
 		}
 
 
