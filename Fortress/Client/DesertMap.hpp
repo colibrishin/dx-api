@@ -58,13 +58,13 @@ namespace Fortress::Map
 	{
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::Ground>(
-				Math::Vector2{0.0f, 200.0f}, Math::Vector2{300.0f, 100.0f}));
+				L"left_upper", Math::Vector2{0.0f, 200.0f}, Math::Vector2{300.0f, 100.0f}));
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::Ground>(
-				Math::Vector2{300.0f, 300.0f}, Math::Vector2{300.0f, 100.0f}));
+				L"mid_lower", Math::Vector2{300.0f, 300.0f}, Math::Vector2{300.0f, 100.0f}));
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::Ground>(
-				Math::Vector2{600.0f, 200.0f}, Math::Vector2{300.0f, 100.0f}));
+				L"right_upper", Math::Vector2{600.0f, 200.0f}, Math::Vector2{300.0f, 100.0f}));
 	}
 }
 #endif // DESERTMAP_HPP

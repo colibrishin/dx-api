@@ -174,7 +174,7 @@ namespace Fortress::ObjectBase
 						if (!angle_check)
 						{
 							if (std::fabs(Math::to_degree(local_position_bottom.local_inner_angle(local_new_pos)))
-								>= 60.0f) 
+								>= 60.0f || ground->safe_is_object_stuck_local(local_new_pos)) 
 							{
 								// @todo: fixed animation
 								angle_check = false;
@@ -344,8 +344,9 @@ namespace Fortress::ObjectBase
 				{
 					if (ground_check == Object::GroundState::NotDestroyed)
 					{
-						if (ground->safe_is_object_stuck(get_bottom())) 
+						if (ground->safe_is_object_stuck_global(get_bottom())) 
 						{
+							// @todo: character pass through the ground if it is going into left or right side.
 							const auto delta = ground->safe_nearest_surface(get_bottom());
 							m_position -= delta;
 						}

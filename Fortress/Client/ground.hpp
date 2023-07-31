@@ -25,9 +25,9 @@ namespace Fortress::Object
 	class Ground final : public Abstract::rigidBody
 	{
 	public:
-		Ground(const Math::Vector2& position, const Math::Vector2& size) :
+		Ground(const std::wstring& name, const Math::Vector2& position, const Math::Vector2& size) :
 			rigidBody(
-				L"Ground", 
+				name, 
 				position, 
 				size, 
 				{},
@@ -44,7 +44,7 @@ namespace Fortress::Object
 		Ground& operator=(const Ground& other) = default;
 		Ground& operator=(Ground&& other) = default;
 
-		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other);
+		void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other) override;
 
 		~Ground() override
 		{
@@ -62,7 +62,8 @@ namespace Fortress::Object
 
 		GroundState safe_is_destroyed(const Math::Vector2& local_position) const;
 		void safe_set_destroyed_global(const Math::Vector2& hit_position, const float radius);
-		bool safe_is_object_stuck(const Math::Vector2& position) const;
+		bool safe_is_object_stuck_global(const Math::Vector2& position) const;
+		bool safe_is_object_stuck_local(const Math::Vector2& position) const;
 		Math::Vector2 safe_nearest_surface(const Math::Vector2& position) const;
 		Math::Vector2 safe_orthogonal_surface(const Math::Vector2& position, const Math::Vector2& forward) const;
 	private:
@@ -181,7 +182,7 @@ namespace Fortress::Object
 
 	inline void Ground::unsafe_set_destroyed_visual(const int x, const int y)
 	{
-		static Graphics m_ground_gdi(m_ground_hdc);
+		Graphics m_ground_gdi(m_ground_hdc);
 		const SolidBrush removal_brush(Color(255,0,255));
 		Rect pixel{0, 0, 1, 1};
 
@@ -261,10 +262,14 @@ namespace Fortress::Object
 		return false;
 	}
 
-	inline bool Ground::safe_is_object_stuck(const Math::Vector2& position) const
+	inline bool Ground::safe_is_object_stuck_global(const Math::Vector2& global_position) const
 	{
-		const auto local_position = to_top_left_local_position(position);
+		const auto local_position = to_top_left_local_position(global_position);
+		return safe_is_object_stuck_local(local_position);
+	}
 
+	inline bool Ground::safe_is_object_stuck_local(const Math::Vector2& local_position) const
+	{
 		// @todo: proper oob definition
 		Math::Vector2 offsets[4] =
 		{
