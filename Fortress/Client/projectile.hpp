@@ -47,8 +47,8 @@ namespace Fortress::ObjectBase
 			const Math::Vector2& position,
 			const Math::Vector2& velocity,
 			const float mass,
-			const float speed,
-			const float acceleration,
+			const Math::Vector2& speed,
+			const Math::Vector2& acceleration,
 			const float damage,
 			const float radius,
 			const int hit_count) :
@@ -82,7 +82,9 @@ namespace Fortress::ObjectBase
 
 	__forceinline void projectile::update()
 	{
-		if(m_position.get_y() >= WinAPIHandles::get_actual_max_y() - 50.0f)
+		if(m_position.get_x() <= -50.0f ||
+			m_position.get_x() >= WinAPIHandles::get_window_width() - 50.0f ||
+			m_position.get_y() >= WinAPIHandles::get_actual_max_y() - 50.0f)
 		{
 			unfocus_this();
 		}

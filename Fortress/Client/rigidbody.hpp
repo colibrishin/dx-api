@@ -8,13 +8,13 @@
 
 namespace Fortress::Abstract
 {
-	constexpr float max_gravity_speed = 10000.0f;
+	constexpr float max_gravity_speed = 1000000000.0f;
 
 	class rigidBody : public object
 	{
 	public:
 		Math::Vector2 m_velocity;
-		float m_acceleration;
+		Math::Vector2 m_acceleration;
 
 		// rigidBody should be used with inheritance
 		rigidBody() = delete;
@@ -32,7 +32,7 @@ namespace Fortress::Abstract
 		virtual void on_nocollison();
 		static CollisionCode is_collision(const std::weak_ptr<object>& left, const std::weak_ptr<object>& right) noexcept;
 
-		void set_speed(const float speed);
+		void set_speed(const Math::Vector2& speed);
 
 		void move_down() override;
 		void move_left() override;
@@ -55,8 +55,8 @@ namespace Fortress::Abstract
 	private:
 		float m_movement_pitch_radian;
 		float m_user_pitch_radian;
-		float m_speed;
-		float m_curr_speed;
+		Math::Vector2 m_speed;
+		Math::Vector2 m_curr_speed;
 		bool m_bGravity{};
 
 		Math::Vector2 m_offset;
@@ -70,8 +70,8 @@ namespace Fortress::Abstract
 			const Math::Vector2& hitbox,
 			const Math::Vector2& velocity,
 			const float& mass,
-			const float& speed, 
-			const float& acceleration, 
+			const Math::Vector2& speed, 
+			const Math::Vector2& acceleration, 
 			const bool& gravity);
 		virtual void move();
 

@@ -179,7 +179,7 @@ namespace Fortress::ObjectBase
 	{
 		const auto x_velocity = velocity * Math::Vector2{1, 0};
 
-		set_speed(charged);
+		set_speed({charged, charged});
 
 		if(x_velocity.get_x() < 0)
 		{
@@ -195,7 +195,7 @@ namespace Fortress::ObjectBase
 		if(const auto battle_scene = 
 			std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock()))
 		{
-			m_acceleration = battle_scene->get_round_status().get_wind_acceleration();
+			m_acceleration = {battle_scene->get_round_status().get_wind_acceleration(), 1.0f};
 		}
 
 		m_current_sprite.lock()->play();

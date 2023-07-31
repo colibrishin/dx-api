@@ -17,7 +17,7 @@ void Fortress::Scene::BulletinBoardScene::update()
 {
 	scene::update();
 
-	if (Input::getKey(eKeyCode::SPACE))
+	if (Input::getKey(eKeyCode::ENTER))
 	{
 		SceneManager::SetActive(L"Lobby Scene");
 	}

@@ -7,18 +7,18 @@
 namespace Fortress::Abstract
 {
 	rigidBody::rigidBody(const std::wstring& name, const Math::Vector2& position, const Math::Vector2& hitbox,
-	                            const Math::Vector2& velocity, const float& mass, const float& speed, const float& acceleration, 
+	                            const Math::Vector2& velocity, const float& mass, const Math::Vector2& speed, const Math::Vector2& acceleration, 
 								const bool& gravity) :
 		object(name, position, hitbox, mass),
 		m_velocity(velocity),
+		m_acceleration(acceleration),
 		m_movement_pitch_radian(0.0f),
 		m_speed(speed),
-		m_acceleration(acceleration),
-		m_curr_speed(0.0f),
+		m_curr_speed{},
 		m_bGravity(gravity),
+		m_offset(Math::forward),
 		m_gravity_speed(0.0f),
-		m_gravity_acceleration(Math::G_ACC),
-		m_offset(Math::forward)
+		m_gravity_acceleration(Math::G_ACC)
 	{
 		rigidBody::initialize();
 	}
@@ -260,7 +260,7 @@ namespace Fortress::Abstract
 
 	void rigidBody::reset_current_speed()
 	{
-		m_curr_speed = 0;
+		m_curr_speed = {};
 	}
 
 	void rigidBody::reset_current_gravity_speed()
@@ -278,7 +278,7 @@ namespace Fortress::Abstract
 		m_bGravity = true;
 	}
 
-	void rigidBody::set_speed(const float speed)
+	void rigidBody::set_speed(const Math::Vector2& speed)
 	{
 		m_speed = speed;
 	}
@@ -306,7 +306,7 @@ namespace Fortress::Abstract
 
 	void rigidBody::move()
 	{
-		if (m_curr_speed < Math::epsilon)
+		if (m_curr_speed.magnitude() < Math::epsilon)
 		{
 			m_curr_speed = m_speed;
 		}

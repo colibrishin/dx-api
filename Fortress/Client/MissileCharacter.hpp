@@ -27,8 +27,8 @@ namespace Fortress::Object
 				position,
 				{0.0f, 0.0f},
 				1.0f,
-				20.0f,
-				0.0f,
+				{20.0f, 1.0f},
+				{},
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp,
 				std::make_shared<MissileProjectile>(this),
@@ -76,11 +76,15 @@ namespace Fortress::Object
 
 		if(get_offset() == Math::left)
 		{
-			angle = {-cosf(get_movement_pitch_radian()), -sinf(get_movement_pitch_radian())};
+			angle = {
+				-cosf(get_movement_pitch_radian() + Math::to_radian(45.0f)),
+				-sinf(get_movement_pitch_radian() + Math::to_radian(45.0f))};
 		}
 		else
 		{
-			angle = {cosf(get_movement_pitch_radian()), sinf(get_movement_pitch_radian())};
+			angle = {
+				cosf(get_movement_pitch_radian() - Math::to_radian(45.0f)),
+				sinf(get_movement_pitch_radian() - Math::to_radian(45.0f))};
 		}
 
 		get_current_projectile().lock()->fire(

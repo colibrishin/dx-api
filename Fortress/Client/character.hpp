@@ -59,7 +59,7 @@ namespace Fortress::ObjectBase
 		void move_state();
 		void firing_state();
 		void fire_state();
-		virtual void dead_state() const;
+		virtual void dead_state();
 
 		void set_unmovable();
 		void set_movable();
@@ -106,8 +106,8 @@ namespace Fortress::ObjectBase
 			const Math::Vector2 position,
 			const Math::Vector2 velocity,
 			const float mass,
-			const float speed,
-			const float acceleration,
+			const Math::Vector2& speed,
+			const Math::Vector2& acceleration,
 			const int hp,
 			const int mp,
 			const std::weak_ptr<projectile>& main_projectile,

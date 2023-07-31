@@ -19,7 +19,7 @@ void Fortress::Scene::RoomScene::update()
 {
 	scene::update();
 
-	if (Input::getKey(eKeyCode::SPACE))
+	if (Input::getKey(eKeyCode::ENTER))
 	{
 		SceneManager::SetActive(L"Character Scene");
 	}

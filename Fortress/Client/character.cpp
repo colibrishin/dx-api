@@ -16,12 +16,23 @@ namespace Fortress::ObjectBase
 
 	void character::hit(const std::weak_ptr<projectile>& p)
 	{
-		set_current_sprite(L"hit");
-		m_current_sprite.lock()->play([this]()
-		{
-			set_current_sprite(L"idle");
-		});
 		m_hp -= p.lock()->get_damage();
+
+		if(get_hp_percentage() > 0.0f)
+		{
+			set_current_sprite(L"hit");
+			m_current_sprite.lock()->play([this]()
+			{
+				set_current_sprite(L"idle");
+			});
+		}
+		else
+		{
+			set_current_sprite(L"dead");
+			m_current_sprite.lock()->play();
+
+			m_state = eCharacterState::Dead;
+		}
 	}
 
 	void character::hit(const float damage)
@@ -53,11 +64,21 @@ namespace Fortress::ObjectBase
 
 	float character::get_hp_percentage() const
 	{
+		if(m_hp <= 0.0f)
+		{
+			return 0.0f;
+		}
+
 		return m_hp / static_cast<float>(character_full_hp);
 	}
 
 	float character::get_mp_percentage() const
 	{
+		if(m_hp <= 0.0f)
+		{
+			return 0.0f;
+		}
+
 		return m_mp / static_cast<float>(character_full_mp);
 	}
 
@@ -534,7 +555,7 @@ namespace Fortress::ObjectBase
 		}
 	}
 
-	void character::dead_state() const
+	void character::dead_state()
 	{
 	}
 
