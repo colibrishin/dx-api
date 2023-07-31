@@ -128,7 +128,128 @@ namespace Fortress::ObjectBase
 		DeleteObject(brush);
 	}
 
-	void character::get_next_position(
+	// @todo: refactoring
+	void character::ground_walk(
+		const CollisionCode& collision,
+		const Object::GroundState& left_check,
+		const Object::GroundState& right_check,
+		const Object::GroundState& bottom_check,
+		const std::weak_ptr<Object::Ground>& ptr_ground, 
+		const Math::Vector2& bottom_local_position)
+	{
+		if(const auto ground = ptr_ground.lock())
+		{
+			if(collision == CollisionCode::Boundary)
+			{
+				if(get_state() == eCharacterState::Move && 
+					(left_check == Object::GroundState::NotDestroyed || right_check == Object::GroundState::NotDestroyed))
+				{
+					// @todo: fixed animation
+					m_velocity = {};
+					return;
+				}
+			}
+			else if(collision == CollisionCode::Inside)
+			{
+				if (bottom_check == Object::GroundState::NotDestroyed)
+				{
+					if (ground->safe_is_object_stuck_global(get_bottom())) 
+					{
+						const auto delta = ground->safe_nearest_surface(get_bottom());
+						m_position -= delta;
+					}
+
+					if(m_state == eCharacterState::Move && m_bGrounded)
+					{
+						get_next_position(bottom_local_position, ground);
+					}
+				}
+			}
+		}
+	}
+
+	void character::ground_cross(const Math::Vector2& bottom_local_position, const std::weak_ptr<Object::Ground>& current_ground)
+	{
+		if(const auto ground = current_ground.lock())
+		{
+			if(const auto scene = Scene::SceneManager::get_active_scene().lock())
+			{
+				const auto pivot = get_offset_bottom_forward_position();
+				const auto grounds = scene->is_in_range<Object::Ground>(pivot, 1.0f);
+
+				for(const auto& ptr: grounds)
+				{
+					if(const auto& other_ground = ptr.lock())
+					{
+						if (other_ground == ground)
+						{
+							continue;
+						}
+
+						// @todo: character can trying hard to get a speed from break out from this.
+						// @todo: checking next ground from bottom forward might be better.
+						if (get_next_position(other_ground->to_top_left_local_position(get_offset_bottom_forward_position()), other_ground))
+						{
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	void character::ground_gravity(const CollisionCode& collision, const Object::GroundState& bottom_check, const std::weak_ptr<Object::Ground>& ptr_ground)
+	{
+		if(bottom_check == Object::GroundState::NotDestroyed)
+		{
+			reset_current_gravity_speed();
+			disable_gravity();
+			m_bGrounded = true;
+		}
+		else if (bottom_check == Object::GroundState::Destroyed)
+		{
+			enable_gravity();
+			m_bGrounded = false;
+			set_movement_pitch_radian(0.0f);
+			Debug::Log(L"Character hits the destroyed ground");
+		}
+		else if (collision == CollisionCode::Boundary && bottom_check == Object::GroundState::OutOfBound)
+		{
+			enable_gravity();
+			m_bGrounded = false;
+			set_movement_pitch_radian(0.0f);
+			Debug::Log(L"Character is outside of the ground");
+		}
+	}
+
+	void character::ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground)
+	{
+		if(const auto ground = ptr_ground.lock())
+		{
+			// @todo: need an condition that will block pitching by internal destruction.
+			auto next_surface = get_offset_bottom_forward_position();
+			const auto delta = ground->safe_orthogonal_surface(next_surface, get_offset());
+			next_surface += delta;
+
+			auto rotate_radian = next_surface.local_inner_angle(get_bottom());
+			const bool is_surface_lower = next_surface.get_y() > get_bottom().get_y();
+
+			if((is_surface_lower && get_offset() == Math::left) ||
+				(!is_surface_lower && get_offset() == Math::left))
+			{
+				rotate_radian = -rotate_radian;
+			}
+
+			if(get_offset() == Math::left)
+			{
+				rotate_radian = -rotate_radian;
+			}
+			
+			set_movement_pitch_radian(rotate_radian / 2);
+		}
+	}
+
+	bool character::get_next_position(
 		const Math::Vector2& local_position_bottom,
 		const std::weak_ptr<Object::Ground>& ground_ptr)
 	{
@@ -195,7 +316,7 @@ namespace Fortress::ObjectBase
 
 			if(climable)
 			{
-				return;
+				return true;
 			}
 
 			for(int i = 0; i < 10; i++)
@@ -220,7 +341,7 @@ namespace Fortress::ObjectBase
 					if (ground_check == Object::GroundState::NotDestroyed)
 					{
 						m_velocity = unit;
-						return;
+						return true;
 					}
 				}
 			}
@@ -230,6 +351,8 @@ namespace Fortress::ObjectBase
 		{
 			m_velocity = {};
 		}
+
+		return false;
 	}
 
 	void character::update()
@@ -341,75 +464,12 @@ namespace Fortress::ObjectBase
 			const Object::GroundState right_check = ground->safe_is_destroyed(right_local_position);
 
 			Debug::Log(get_name() + L" " + ground->get_name() + std::to_wstring(left_check == Object::GroundState::NotDestroyed));
-			Debug::Log(get_name() + L" "  + ground->get_name() + std::to_wstring(right_check == Object::GroundState::NotDestroyed));
+			Debug::Log(get_name() + L" " + ground->get_name() + std::to_wstring(right_check == Object::GroundState::NotDestroyed));
 
-			if(collision == CollisionCode::Boundary)
-			{
-				if((get_velocity_offset() == Math::left && 
-					left_check == Object::GroundState::NotDestroyed) ||
-					(get_velocity_offset() == Math::right && 
-					right_check == Object::GroundState::NotDestroyed))
-				{
-					// @todo: fixed animation
-					// @todo: this might block the up/downhilling.
-					m_velocity = {};
-					return;
-				}
-			}
-
-			if(collision == CollisionCode::Inside)
-			{
-				// @todo: climbing from lower side.
-				if (bottom_check == Object::GroundState::NotDestroyed)
-				{
-					if (ground->safe_is_object_stuck_global(get_bottom())) 
-					{
-						const auto delta = ground->safe_nearest_surface(get_bottom());
-						m_position -= delta;
-					}
-				}
-				if(bottom_check == Object::GroundState::NotDestroyed &&
-					m_state == eCharacterState::Move &&
-					m_bGrounded)
-				{
-					get_next_position(bottom_local_position, ground);
-				}
-			}
-
-			if(bottom_check == Object::GroundState::NotDestroyed)
-			{
-				reset_current_gravity_speed();
-				disable_gravity();
-				m_bGrounded = true;
-			}
-			else if (bottom_check == Object::GroundState::Destroyed)
-			{
-				enable_gravity();
-				m_bGrounded = false;
-				set_movement_pitch_radian(0.0f);
-				// @todo: reroute velocity to nearest ground point
-				Debug::Log(L"Character hits the destroyed ground");
-			}
-
-			auto next_surface = get_offset() == Math::left ? get_bottom_left() : get_bottom_right();
-			const auto delta = ground->safe_orthogonal_surface(next_surface, get_offset());
-			next_surface += delta;
-
-			auto rotate_radian = next_surface.local_inner_angle(get_bottom());
-			const bool is_surface_lower = next_surface.get_y() > get_bottom().get_y();
-
-			if((is_surface_lower && get_offset() == Math::left) ||
-				(!is_surface_lower && get_offset() == Math::left))
-			{
-				rotate_radian = -rotate_radian;
-			}
-
-			if(get_offset() == Math::left)
-			{
-				rotate_radian = -rotate_radian;
-			}
-			
-			set_movement_pitch_radian(rotate_radian / 2);
+			ground_walk(collision, left_check, right_check, bottom_check, ground, bottom_local_position);
+			ground_cross(bottom_local_position, ground);
+			ground_gravity(collision, bottom_check, ground);
+			ground_pitching(ground);
 		}
 
 		rigidBody::on_collision(collision, hit_vector, other);
