@@ -259,14 +259,9 @@ namespace Fortress::ObjectBase
 			render_hp_bar(pos);
 			
 			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(get_movement_pitch_radian()));
-
-			Debug::Log(m_name + L" pos " + std::to_wstring(pos.get_x()) + L", " + std::to_wstring(pos.get_y()));
+			
 			Debug::draw_rect(pos, m_hitbox);
 			Debug::draw_dot(camera_ptr->get_offset(m_hitbox));
-
-			Debug::Log(m_name + L" pitch : " +  std::to_wstring(Math::to_degree(get_movement_pitch_radian())));
-
-			Debug::Log(m_name + L" projectile : " + m_current_projectile.lock()->get_name());
 
 			// c
 			Debug::draw_line(pos, camera_ptr->get_offset());
@@ -335,38 +330,61 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
-			const Math::Vector2 ground_local_position = ground->to_top_left_local_position(get_bottom());
-			const Object::GroundState ground_check = ground->safe_is_destroyed(ground_local_position);
+			const Math::Vector2 bottom_local_position = ground->to_top_left_local_position(get_bottom());
+			const Math::Vector2 left_local_position = ground->to_top_left_local_position(get_left());
+			const Math::Vector2 right_local_position = ground->to_top_left_local_position(get_right());
+
+			const Object::GroundState bottom_check = ground->safe_is_destroyed(bottom_local_position);
+			// @todo: delta checks valid but this collision starts from right side it has the negative values, and considered as oob.
+			// check should be done in reverse. right side check should be fine.
+			// e.g., from -301 to -300 ... -301 + 300 = -1, but if collision is smaller than 1, (like 0.33...)
+			// by dropping the floating point, it would work as intended.
+			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position + ground->m_hitbox);
+			const Object::GroundState right_check = ground->safe_is_destroyed(right_local_position);
+
+			Debug::Log(get_name() + L" " + ground->get_name() + std::to_wstring(left_check == Object::GroundState::NotDestroyed));
+			Debug::Log(get_name() + L" "  + ground->get_name() + std::to_wstring(right_check == Object::GroundState::NotDestroyed));
+
+			if(collision == CollisionCode::Boundary)
+			{
+				if((get_velocity_offset() == Math::left && 
+					left_check == Object::GroundState::NotDestroyed) ||
+					(get_velocity_offset() == Math::right && 
+					right_check == Object::GroundState::NotDestroyed))
+				{
+					// @todo: fixed animation
+					// @todo: this might block the up/downhilling.
+					m_velocity = {};
+					return;
+				}
+			}
 
 			if(collision == CollisionCode::Inside)
 			{
-				if (ground_check == Object::GroundState::NotDestroyed)
+				// @todo: climbing from lower side.
+				if (bottom_check == Object::GroundState::NotDestroyed)
 				{
 					if (ground->safe_is_object_stuck_global(get_bottom())) 
 					{
-						// @todo: character pass through the ground if it is going into left or right side.
 						const auto delta = ground->safe_nearest_surface(get_bottom());
 						m_position -= delta;
 					}
 				}
-				if(ground_check == Object::GroundState::NotDestroyed &&
+				if(bottom_check == Object::GroundState::NotDestroyed &&
 					m_state == eCharacterState::Move &&
 					m_bGrounded)
 				{
-					get_next_position(ground_local_position, ground);
+					get_next_position(bottom_local_position, ground);
 				}
 			}
 
-			
-
-			if(ground_check == Object::GroundState::NotDestroyed)
+			if(bottom_check == Object::GroundState::NotDestroyed)
 			{
-				Debug::Log(L"Character hits the ground");
 				reset_current_gravity_speed();
 				disable_gravity();
 				m_bGrounded = true;
 			}
-			else if (ground_check == Object::GroundState::Destroyed)
+			else if (bottom_check == Object::GroundState::Destroyed)
 			{
 				enable_gravity();
 				m_bGrounded = false;
@@ -392,8 +410,6 @@ namespace Fortress::ObjectBase
 			{
 				rotate_radian = -rotate_radian;
 			}
-
-			Debug::Log(std::to_wstring(rotate_radian));
 			
 			set_movement_pitch_radian(rotate_radian / 2);
 		}

@@ -136,10 +136,6 @@ namespace Fortress::Object
 			{
 				const auto pos = camera_ptr->get_relative_position(
 				std::dynamic_pointer_cast<object>(shared_from_this()));
-				Debug::Log(L"Ground pos" + std::to_wstring(pos.get_x()) + std::to_wstring(pos.get_y()));
-
-				const auto char_pos = camera_ptr->get_offset();
-				Debug::Log(L"char diff" + std::to_wstring((pos - char_pos).get_x() ) + std::to_wstring((pos - char_pos).get_y()));
 
 				// Transparent color is the destroyed ground.
 				GdiTransparentBlt(
