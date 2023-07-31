@@ -267,7 +267,7 @@ namespace Fortress::Object
 	inline bool Ground::safe_is_object_stuck_local(const Math::Vector2& local_position) const
 	{
 		// @todo: proper oob definition
-		Math::Vector2 offsets[4] =
+		Math::Vector2 offsets[2] =
 		{
 			{-1.0f, 0.0f},
 			{1.0f, 0.0f}
@@ -281,7 +281,7 @@ namespace Fortress::Object
 			count += results == GroundState::NotDestroyed;
 		}
 
-		return count == 4;
+		return count == std::size(offsets);
 	}
 
 	inline Math::Vector2 Ground::safe_nearest_surface(const Math::Vector2& position) const
