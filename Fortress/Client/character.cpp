@@ -171,14 +171,14 @@ namespace Fortress::ObjectBase
 		}
 	}
 
-	void character::ground_cross(const std::weak_ptr<Object::Ground>& current_ground)
+	std::weak_ptr<Object::Ground> character::ground_cross(const std::weak_ptr<Object::Ground>& current_ground)
 	{
 		if(const auto ground = current_ground.lock())
 		{
 			if(const auto scene = Scene::SceneManager::get_active_scene().lock())
 			{
-				const auto pivot = get_offset_bottom_forward_position();
-				const auto grounds = scene->is_in_range<Object::Ground>(pivot, 1.0f);
+				const auto pivot = get_bottom();
+				const auto grounds = scene->is_in_range<Object::Ground>(pivot, 10.0f);
 
 				for(const auto& ptr: grounds)
 				{
@@ -189,23 +189,33 @@ namespace Fortress::ObjectBase
 							continue;
 						}
 
-						// @todo: character can trying hard to get a speed from break out from this.
-						// @todo: checking next ground from bottom forward might be better.
-						if (get_next_position(other_ground->to_top_left_local_position(get_offset_bottom_forward_position()), other_ground))
+						for(float y = 0; y < 10; ++y)
 						{
-							break;
+							for(float x = 0; x < 10; ++x)
+							{
+								const auto extended_bottom = get_bottom() + Math::Vector2{x, -y};
+								const auto local_position = other_ground->to_top_left_local_position(extended_bottom);
+
+								if (other_ground->safe_is_destroyed(local_position) == Object::GroundState::NotDestroyed)
+								{
+									m_position -= other_ground->safe_nearest_surface(extended_bottom);
+									return other_ground;
+								}
+							}
 						}
 					}
 				}
 			}
 		}
+
+		return {};
 	}
 
 	void character::ground_gravity(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
-			const auto bottom_check = ground->safe_is_destroyed(get_bottom());
+			const auto bottom_check = ground->safe_is_destroyed(ground->to_top_left_local_position(get_bottom()));
 
 			if(bottom_check == Object::GroundState::NotDestroyed)
 			{
@@ -220,7 +230,7 @@ namespace Fortress::ObjectBase
 				set_movement_pitch_radian(0.0f);
 				Debug::Log(L"Character hits the destroyed ground");
 			}
-			else if (collision == CollisionCode::Boundary && bottom_check == Object::GroundState::OutOfBound)
+			else if (bottom_check == Object::GroundState::OutOfBound)
 			{
 				enable_gravity();
 				m_bGrounded = false;
@@ -459,12 +469,15 @@ namespace Fortress::ObjectBase
 
 	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
-		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
+		if(std::shared_ptr<Object::Ground> target = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
-			ground_walk(collision, ground);
-			ground_cross(ground);
-			ground_gravity(collision, ground);
-			ground_pitching(ground);
+			if (const auto next_ground = ground_cross(target).lock())
+			{
+				target = next_ground;
+			}
+			ground_walk(collision, target);
+			ground_gravity(collision, target);
+			ground_pitching(target);
 		}
 
 		rigidBody::on_collision(collision, hit_vector, other);

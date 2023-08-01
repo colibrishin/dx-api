@@ -91,12 +91,9 @@ namespace Fortress::ObjectBase
 		void set_state(const eCharacterState& state);
 		void render_hp_bar(const Math::Vector2& position);
 
-		void ground_walk(const CollisionCode& collision, const Object::GroundState& left_check, const Object::GroundState& right_check, const
-		                 Object::GroundState& bottom_check, const std::weak_ptr<Object::Ground>& ptr_ground, const Math::Vector2&
-		                 bottom_local_position);
-		void ground_cross(const Math::Vector2& bottom_local_position, const std::weak_ptr<Object::Ground>& current_ground);
-		void ground_gravity(const CollisionCode& collision, const Object::GroundState& bottom_check, const std::weak_ptr<Object::Ground>&
-		                    ptr_ground);
+		void ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground);
+		std::weak_ptr<Object::Ground> ground_cross(const std::weak_ptr<Object::Ground>& current_ground);
+		void ground_gravity(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground);
 		void ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground);
 
 		bool get_next_position(const Math::Vector2& local_position_bottom,
