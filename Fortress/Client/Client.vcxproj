@@ -160,7 +160,7 @@
     <ClInclude Include="sound.hpp" />
     <ClInclude Include="SoundManager.hpp" />
     <ClInclude Include="SoundPack.hpp" />
-    <ClInclude Include="Catwalk.hpp" />
+    <ClInclude Include="Stairway.hpp" />
     <ClInclude Include="SupertankBGMSound.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="DesertMap.hpp" />

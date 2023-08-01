@@ -158,7 +158,7 @@
     <ClInclude Include="SkyValleyMap.hpp">
       <Filter>Map</Filter>
     </ClInclude>
-    <ClInclude Include="Catwalk.hpp">
+    <ClInclude Include="Stairway.hpp">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="DesertMap.hpp">
