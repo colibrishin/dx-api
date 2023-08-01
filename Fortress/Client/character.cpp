@@ -144,8 +144,8 @@ namespace Fortress::ObjectBase
 
 			if(collision == CollisionCode::Boundary)
 			{
-				if(get_state() == eCharacterState::Move && 
-					(left_check == Object::GroundState::NotDestroyed || right_check == Object::GroundState::NotDestroyed))
+				if((get_offset() == Math::left && left_check == Object::GroundState::NotDestroyed) ||
+					(get_offset() == Math::right && right_check == Object::GroundState::NotDestroyed))
 				{
 					// @todo: fixed animation
 					m_velocity = {};
