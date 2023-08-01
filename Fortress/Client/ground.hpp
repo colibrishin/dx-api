@@ -64,7 +64,7 @@ namespace Fortress::Object
 		void safe_set_destroyed_global(const Math::Vector2& hit_position, const float radius);
 		bool safe_is_object_stuck_global(const Math::Vector2& position) const;
 		bool safe_is_object_stuck_local(const Math::Vector2& position) const;
-		Math::Vector2 safe_nearest_surface(const Math::Vector2& position) const;
+		Math::Vector2 safe_nearest_surface(const Math::Vector2& global_position) const;
 		Math::Vector2 safe_orthogonal_surface(const Math::Vector2& global_position, const Math::Vector2& forward) const;
 	protected:
 		HDC get_ground_hdc() const;
@@ -284,10 +284,10 @@ namespace Fortress::Object
 		return count == std::size(offsets);
 	}
 
-	inline Math::Vector2 Ground::safe_nearest_surface(const Math::Vector2& position) const
+	inline Math::Vector2 Ground::safe_nearest_surface(const Math::Vector2& global_position) const
 	{
-		const auto o_local_position = to_top_left_local_position(position);
-		auto local_position = to_top_left_local_position(position);
+		const auto o_local_position = to_top_left_local_position(global_position);
+		auto local_position = to_top_left_local_position(global_position);
 
 		if(local_position.get_y() <= 0)
 		{
