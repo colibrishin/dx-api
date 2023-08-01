@@ -177,8 +177,8 @@ namespace Fortress::ObjectBase
 		{
 			if(const auto scene = Scene::SceneManager::get_active_scene().lock())
 			{
-				const auto pivot = get_bottom();
-				const auto grounds = scene->is_in_range<Object::Ground>(pivot, 10.0f);
+				const auto pivot = get_offset_bottom_forward_position();
+				const auto grounds = scene->is_in_range<Object::Ground>(pivot, m_hitbox.get_x() / 2);
 
 				for(const auto& ptr: grounds)
 				{
@@ -189,16 +189,18 @@ namespace Fortress::ObjectBase
 							continue;
 						}
 
-						for(float y = 0; y < 10; ++y)
+						for(float y = 0; y < m_hitbox.get_x() / 2; ++y)
 						{
-							for(float x = 0; x < 10; ++x)
+							for(float x = 0; x < m_hitbox.get_x() / 2; ++x)
 							{
-								const auto extended_bottom = get_bottom() + Math::Vector2{x, -y};
+								const auto extended_bottom = get_bottom()
+									+ Math::Vector2{get_offset() == Math::left ? -x : x, -y};
 								const auto local_position = other_ground->to_top_left_local_position(extended_bottom);
 
 								if (other_ground->safe_is_destroyed(local_position) == Object::GroundState::NotDestroyed)
 								{
-									m_position -= other_ground->safe_nearest_surface(extended_bottom);
+									const auto delta = other_ground->safe_nearest_surface(extended_bottom);
+									m_position -= delta;
 									return other_ground;
 								}
 							}
