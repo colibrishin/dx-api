@@ -71,6 +71,8 @@ namespace Fortress::Object
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
 		void safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius);
+		void unsafe_set_line_destroyed(const Math::Vector2& line, const int n);
+		void unsafe_set_line_destroyed_reverse(const Math::Vector2& line, int n);
 		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
 		void _debug_draw_destroyed_table() const;
 
@@ -231,6 +233,24 @@ namespace Fortress::Object
 
 			radian += sin_iter;
 			curr_pos = {curr_pos.get_x() + 1, curr_pos.get_y()};
+		}
+	}
+
+	inline void Ground::unsafe_set_line_destroyed(const Math::Vector2& line, const int n)
+	{
+		for(int i = 0; i < n; ++i)
+		{
+			unsafe_set_destroyed(line.get_x() + i, line.get_y());
+			unsafe_set_destroyed_visual(line.get_x() + i, line.get_y());
+		}
+	}
+
+	inline void Ground::unsafe_set_line_destroyed_reverse(const Math::Vector2& line, const int n)
+	{
+		for(int i = n - 1; i >= 0 ; --i)
+		{
+			unsafe_set_destroyed(line.get_x() - i, line.get_y());
+			unsafe_set_destroyed_visual(line.get_x() - i, line.get_y());
 		}
 	}
 

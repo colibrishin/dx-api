@@ -27,16 +27,11 @@ namespace Fortress::Object
 
 		if(m_ramp_offset == Math::right)
 		{
-			int start_pos = m_hitbox.get_x() / 4;
+			int start_pos = m_hitbox.get_x() / 4 ;
 
-			for(int i = 1; i < m_hitbox.get_y(); ++i)
+			for(int i = 0; i < m_hitbox.get_y(); ++i)
 			{
-				for(int j = 1; j < start_pos; ++j)
-				{
-					unsafe_set_destroyed(j, i);
-					unsafe_set_destroyed_visual(j, i);
-				}
-
+				unsafe_set_line_destroyed({0, i}, start_pos);
 				start_pos--;
 			}
 		}
@@ -46,12 +41,8 @@ namespace Fortress::Object
 
 			for(int i = 0; i < m_hitbox.get_y(); ++i)
 			{
-				for(int j = 0; j < start_pos; ++j)
-				{
-					unsafe_set_destroyed(m_hitbox.get_x() - 1 - j, i);
-					unsafe_set_destroyed_visual(m_hitbox.get_x() - 1 - j, i);
-				}
-
+				unsafe_set_line_destroyed_reverse(
+					Math::Vector2{m_hitbox.get_x() - 1, i}, start_pos);
 				start_pos--;
 			}
 		}
