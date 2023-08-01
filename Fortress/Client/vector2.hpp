@@ -24,6 +24,18 @@ namespace Fortress::Math
 		{
 		}
 
+		Vector2(const int x, const int y) : m_x(x), m_y(y)
+		{
+		}
+
+		Vector2(const float x, const int y) : m_x(x), m_y(y)
+		{
+		}
+
+		Vector2(const int x, const float y) : m_x(x), m_y(y)
+		{
+		}
+
 		__forceinline Vector2& operator=(const Vector2& other) = default;
 		__forceinline Vector2& operator+=(const Vector2& other);
 		__forceinline Vector2& operator*=(const Vector2& other);
