@@ -10,12 +10,20 @@
 #include "SoundPack.hpp"
 #include "Texture.hpp"
 
+namespace Fortress
+{
+	namespace Item
+	{
+		class DoubleShotItem;
+	}
+}
 
 // forward declaration for avoiding circular reference
 namespace Fortress
 {
 	namespace Object
 	{
+		class item;
 		enum class GroundState;
 		class Ground;
 	}
@@ -51,6 +59,7 @@ namespace Fortress::ObjectBase
 		virtual void move() override;
 		void change_projectile();
 		std::weak_ptr<projectile> get_current_projectile();
+		const std::wstring& get_short_name() const;
 
 		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other) override;
 		virtual void on_nocollison() override;
@@ -61,11 +70,13 @@ namespace Fortress::ObjectBase
 		void move_state();
 		void firing_state();
 		void fire_state();
+		virtual void item_state();
 		virtual void dead_state();
 
 		void set_unmovable();
 		void set_movable();
 		void reset_mp();
+		void set_item_active(int n);
 
 		void set_current_sprite(const std::wstring& name);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
@@ -86,6 +97,7 @@ namespace Fortress::ObjectBase
 		float m_power;
 		bool m_bGrounded;
 		bool m_bMovable;
+		const std::wstring m_shot_name;
 		eCharacterState m_state;
 
 		void set_state(const eCharacterState& state);
@@ -107,6 +119,8 @@ namespace Fortress::ObjectBase
 		std::shared_ptr<projectile> m_main_projectile;
 		std::shared_ptr<projectile> m_secondary_projectile;
 
+		std::map<int, std::shared_ptr<Object::item>> m_available_items;
+		std::weak_ptr<Object::item> m_active_item;
 	protected:
 		character(
 			const int player_id,
@@ -121,19 +135,22 @@ namespace Fortress::ObjectBase
 			const int hp,
 			const int mp,
 			const std::weak_ptr<projectile>& main_projectile,
-			const std::weak_ptr<projectile>& secondary_projectile)
-			: rigidBody(name, position, {50.0f, 50.0f}, velocity, mass, speed, acceleration, true),
-		      m_player_id(player_id),
-			  m_hp(hp),
-			  m_mp(mp),
-		      m_power(1.0f),
-			  m_bGrounded(false),
-			  m_bMovable(true),
-		      m_state(eCharacterState::Idle),
-			  m_texture(short_name),
-		      m_sound_pack(short_name),
-			  m_main_projectile(main_projectile),
-			  m_secondary_projectile(secondary_projectile)
+			const std::weak_ptr<projectile>& secondary_projectile):
+			rigidBody(name, position, {50.0f, 50.0f}, velocity, mass, speed, acceleration, true),
+			m_player_id(player_id),
+			m_hp(hp),
+			m_mp(mp),
+			m_power(1.0f),
+			m_bGrounded(false),
+			m_bMovable(true),
+			m_shot_name(short_name),
+			m_state(eCharacterState::Idle),
+			m_texture(short_name),
+			m_sound_pack(short_name),
+			m_main_projectile(main_projectile),
+			m_secondary_projectile(secondary_projectile),
+			m_available_items{},
+			m_active_item{}
 		{
 			character::initialize();
 		}

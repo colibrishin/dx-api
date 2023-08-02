@@ -164,6 +164,28 @@ namespace Fortress::ObjectBase
 		}
 	}
 
+	Math::Vector2 projectile::projectile_speed_getter(const std::wstring& short_name, const std::wstring& type)
+	{
+		if(short_name == L"cannon" && type == L"main")
+		{
+			return {100.0f, 1.0f};
+		}
+		if(short_name == L"cannon" && type == L"sub")
+		{
+			return {300.0f, 1.0f};
+		}
+		if(short_name == L"missile" && type == L"main")
+		{
+			return {200.0f, 1.0f};
+		}
+		if(short_name == L"missile" && type == L"sub")
+		{
+			return {200.0f, 1.0f};
+		}
+
+		return {};
+	}
+
 	void projectile::initialize()
 	{
 		m_current_sprite = m_texture.get_image(

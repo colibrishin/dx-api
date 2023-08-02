@@ -99,7 +99,8 @@ namespace Fortress
 	{
 		if(const auto current = m_current_player.lock())
 		{
-			if(current->get_state() == eCharacterState::Fire)
+			if(current->get_state() == eCharacterState::Fire || 
+				current->get_state() == eCharacterState::Item)
 			{
 				m_bfired = true;
 			}

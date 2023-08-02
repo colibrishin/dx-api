@@ -1,6 +1,7 @@
 #include "character.hpp"
 
 #include "deltatime.hpp"
+#include "DoubleShotItem.hpp"
 #include "ground.hpp"
 #include "input.hpp"
 #include "projectile.hpp"
@@ -12,6 +13,9 @@ namespace Fortress::ObjectBase
 		set_current_sprite(L"idle");
 		m_current_projectile = m_main_projectile;
 		rigidBody::initialize();
+		m_available_items.emplace(1, std::make_shared<Item::DoubleShotItem>());
+		m_main_projectile->set_disabled();
+		m_secondary_projectile->set_disabled();
 	}
 
 	void character::hit(const std::weak_ptr<projectile>& p)
@@ -52,13 +56,14 @@ namespace Fortress::ObjectBase
 	void character::shoot()
 	{
 		set_current_sprite(L"fire");
+		m_current_projectile.lock()->play_fire_sound();
+		m_current_projectile.lock()->set_enabled();
 
 		// @todo: maybe queue?
 		m_current_sprite.lock()->play([this]()
 		{
 			set_current_sprite(L"idle");
 		});
-		m_power = 1.0f;
 	}
 
 	float character::get_charged_power() const
@@ -433,8 +438,6 @@ namespace Fortress::ObjectBase
 		{
 			m_power += 100.0f * DeltaTime::get_deltaTime();
 		}
-		
-		Debug::Log(L"Power : " + std::to_wstring(m_power));
 	}
 
 	void character::move()
@@ -467,6 +470,11 @@ namespace Fortress::ObjectBase
 	std::weak_ptr<projectile> character::get_current_projectile()
 	{
 		return m_current_projectile;
+	}
+
+	const std::wstring& character::get_short_name() const
+	{
+		return m_shot_name;
 	}
 
 	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
@@ -510,6 +518,8 @@ namespace Fortress::ObjectBase
 		{
 			default_state();
 
+			m_power = 1.0f;
+
 			const eKeyCode left_key = m_player_id == 0 ? eKeyCode::A : eKeyCode::LEFT;
 			const eKeyCode right_key = m_player_id == 0 ? eKeyCode::D : eKeyCode::RIGHT;
 			const eKeyCode up_key = m_player_id == 0 ? eKeyCode::W : eKeyCode::UP;
@@ -542,9 +552,13 @@ namespace Fortress::ObjectBase
 				set_state(eCharacterState::Firing);
 				firing();
 			}
-			else if (Input::getKeyDown(swap_key))
+			else if (Input::getKeyDown(swap_key) && !m_active_item.lock())
 			{
 				change_projectile();
+			}
+			else if (Input::getKeyDown(eKeyCode::One))
+			{
+				set_item_active(1);
 			}
 			else if (Input::getKeyUp(left_key) || Input::getKeyUp(right_key) || Input::getKeyUp(up_key) || Input::getKeyUp(down_key))
 			{
@@ -616,8 +630,15 @@ namespace Fortress::ObjectBase
 			}
 			if(Input::getKeyUp(firing_key))
 			{
-				set_state(eCharacterState::Fire);
-				shoot();
+				if(const auto item = m_active_item.lock())
+				{
+					set_state(eCharacterState::Item);
+				}
+				else
+				{
+					set_state(eCharacterState::Fire);
+					shoot();	
+				}
 			}
 		}
 	}
@@ -626,21 +647,27 @@ namespace Fortress::ObjectBase
 	{
 		default_state();
 
-		static bool is_initial = true;
-
-		if(is_initial)
-		{
-			// @todo: main/sub consideration
-			m_current_projectile.lock()->play_fire_sound();
-			is_initial = false;
-		}
-
 		if(const auto prj = m_current_projectile.lock())
 		{
 			if(!prj->is_active())
 			{
-				is_initial = true;
 				set_state(eCharacterState::Idle);
+			}
+		}
+	}
+
+	void character::item_state()
+	{
+		if(const auto item = m_active_item.lock())
+		{
+			if(item->is_effect_ended())
+			{
+				set_state(eCharacterState::Idle);
+				m_active_item = {};
+			}
+			else
+			{
+				item->update(std::dynamic_pointer_cast<character>(shared_from_this()));	
 			}
 		}
 	}
@@ -662,6 +689,20 @@ namespace Fortress::ObjectBase
 	void character::reset_mp()
 	{
 		m_mp = character_full_mp;
+	}
+
+	void character::set_item_active(const int n)
+	{
+		if(m_available_items.find(n) != m_available_items.end())
+		{
+			set_current_sprite(L"item");
+			m_current_sprite.lock()->play([this]()
+			{
+				set_current_sprite(L"idle");
+			});
+
+			m_active_item = m_available_items[n];
+		}
 	}
 
 	void character::set_current_sprite(const std::wstring& name)
