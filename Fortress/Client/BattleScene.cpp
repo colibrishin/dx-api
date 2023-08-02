@@ -64,6 +64,7 @@ namespace Fortress::Scene
 				obj->fire_state();
 				break;
 			case eCharacterState::Item:
+				obj->item_state();
 				break;
 			case eCharacterState::Move:
 				obj->move_state();
