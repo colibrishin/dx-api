@@ -167,6 +167,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="DesertMap.hpp" />
     <ClInclude Include="TeleportItem.hpp" />
+    <ClInclude Include="RepairItem.hpp" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="vector2.hpp" />
     <ClInclude Include="deltatime.hpp" />

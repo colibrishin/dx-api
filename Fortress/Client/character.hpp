@@ -76,6 +76,7 @@ namespace Fortress::ObjectBase
 		virtual void item_state();
 		virtual void dead_state();
 
+		void set_hp(const float hp);
 		void set_unmovable();
 		void set_movable();
 		void reset_mp();
@@ -92,6 +93,7 @@ namespace Fortress::ObjectBase
 
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
+		float get_hp_raw() const;
 
 	private:
 		int m_player_id;

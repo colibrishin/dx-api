@@ -7,6 +7,7 @@
 #include "projectile.hpp"
 #include "TeleportItem.hpp"
 #include "NutshellProjectile.hpp"
+#include "RepairItem.hpp"
 
 namespace Fortress::ObjectBase
 {
@@ -18,6 +19,7 @@ namespace Fortress::ObjectBase
 		m_nutshell_projectile = std::make_shared<Object::NutShellProjectile>(this);
 		m_available_items.emplace(1, std::make_shared<Item::DoubleShotItem>());
 		m_available_items.emplace(2, std::make_shared<Item::TeleportItem>());
+		m_available_items.emplace(3, std::make_shared<Item::RepairItem>());
 		m_main_projectile->set_disabled();
 		m_secondary_projectile->set_disabled();
 	}
@@ -93,6 +95,11 @@ namespace Fortress::ObjectBase
 		}
 
 		return m_mp / static_cast<float>(character_full_mp);
+	}
+
+	float character::get_hp_raw() const
+	{
+		return m_hp;
 	}
 
 	void character::set_state(const eCharacterState& state)
@@ -574,6 +581,10 @@ namespace Fortress::ObjectBase
 			{
 				set_item_active(2);
 			}
+			else if (Input::getKeyDown(eKeyCode::Three))
+			{
+				set_item_active(3);
+			}
 			else if (Input::getKeyUp(left_key) || Input::getKeyUp(right_key) || Input::getKeyUp(up_key) || Input::getKeyUp(down_key))
 			{
 				set_state(eCharacterState::Idle);
@@ -689,6 +700,18 @@ namespace Fortress::ObjectBase
 
 	void character::dead_state()
 	{
+	}
+
+	void character::set_hp(const float hp)
+	{
+		if(hp >= character_full_hp)
+		{
+			m_hp = character_full_hp;
+		}
+		else
+		{
+			m_hp = hp;
+		}
 	}
 
 	void character::set_unmovable()
