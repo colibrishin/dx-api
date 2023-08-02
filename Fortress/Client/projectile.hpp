@@ -19,6 +19,8 @@ namespace Fortress::ObjectBase
 		projectile(projectile&& other) = default;
 		~projectile() override = default;
 
+		static Math::Vector2 projectile_speed_getter(const std::wstring& short_name, const std::wstring& type);
+
 		void initialize() override;
 		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
 		__forceinline virtual void update() override;

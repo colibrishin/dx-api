@@ -18,7 +18,7 @@ namespace Fortress::Object
 			{}, 
 			Math::identity,
 			5.0f,
-			{200.0f, 1.0f}, 
+			projectile_speed_getter(L"missile", L"main"), 
 			{}, 
 			10.0f,
 			30,
