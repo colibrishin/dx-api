@@ -40,7 +40,7 @@ namespace Fortress
 		float m_wind_affect = 0.0f;
 		// @todo: random seed should be different every round
 		inline static std::default_random_engine e;
-		inline static std::uniform_real_distribution<float> dis{-20, 20};
+		inline static std::uniform_real_distribution<float> dis{-100, 100};
 
 		// here used vector instead of queue due to un-iterable.
 		eRoundState m_state;
