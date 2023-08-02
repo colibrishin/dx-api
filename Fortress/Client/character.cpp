@@ -12,6 +12,9 @@ namespace Fortress::ObjectBase
 		set_current_sprite(L"idle");
 		m_current_projectile = m_main_projectile;
 		rigidBody::initialize();
+		m_available_items.emplace(1, std::make_shared<Item::DoubleShotItem>());
+		m_main_projectile->set_disabled();
+		m_secondary_projectile->set_disabled();
 	}
 
 	void character::hit(const std::weak_ptr<projectile>& p)
