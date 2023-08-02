@@ -149,26 +149,10 @@ namespace Fortress::ObjectBase
 		if(const auto ground = ptr_ground.lock())
 		{
 			const Math::Vector2 bottom_local_position = ground->to_top_left_local_position(get_bottom());
-			const Math::Vector2 left_local_position = ground->to_top_left_local_position(get_left());
-			const Math::Vector2 right_local_position = ground->to_top_left_local_position(get_right());
 
 			const Object::GroundState bottom_check = ground->safe_is_destroyed(bottom_local_position);
-			// @todo: delta checks valid but this collision starts from right side it has the negative values, and considered as oob.
-			// check should be done in reverse. use the positive side only is probably the best way for avoiding any problem.
-			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position + ground->m_hitbox);
-			const Object::GroundState right_check = ground->safe_is_destroyed(right_local_position);
 
-			if(collision == CollisionCode::Boundary)
-			{
-				if((get_offset() == Math::left && left_check == Object::GroundState::NotDestroyed) ||
-					(get_offset() == Math::right && right_check == Object::GroundState::NotDestroyed))
-				{
-					// @todo: fixed animation
-					m_velocity = {};
-					return;
-				}
-			}
-			else if(collision == CollisionCode::Inside)
+			if(collision == CollisionCode::Inside)
 			{
 				if (bottom_check == Object::GroundState::NotDestroyed)
 				{
@@ -227,40 +211,57 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
-			// @todo: need an condition that will block pitching by internal destruction.
 			auto next_surface = get_offset_bottom_forward_position();
-			const auto delta = ground->safe_orthogonal_surface(next_surface, get_offset());
-			next_surface += delta;
+			Math::Vector2 delta{};
 
+			// @todo: this still needs to be fixed. inner destruction affects pitch.
+			for(int x = 0; x < m_hitbox.get_x(); ++x)
+			{
+				delta = ground->safe_orthogonal_surface_zero_global(
+					next_surface + 
+					(get_offset() == Math::left ? Math::right : Math::left) * x);
+
+				if(delta != Math::vector_inf)
+				{
+					delta += (get_offset() == Math::left ? Math::right : Math::left) * x;
+					break;
+				}
+			}
+
+			if(delta == Math::vector_inf)
+			{
+				set_movement_pitch_radian(0);
+				return;
+			}
+
+			// this also means that this is uphilling.
+			if(ground->safe_is_object_stuck_global(get_offset_bottom_forward_position()))
+			{
+				next_surface -= delta;
+			}
+			else
+			{
+				next_surface += delta;
+			}
+
+			Debug::draw_dot(next_surface);
 			auto rotate_radian = next_surface.local_inner_angle(get_bottom());
-			const bool is_surface_lower = next_surface.get_y() > get_bottom().get_y();
 
-			if((is_surface_lower && get_offset() == Math::left) ||
-				(!is_surface_lower && get_offset() == Math::left))
-			{
-				rotate_radian = -rotate_radian;
-			}
-
-			if(get_offset() == Math::left)
-			{
-				rotate_radian = -rotate_radian;
-			}
-			
-			set_movement_pitch_radian(rotate_radian / 2);
+			set_movement_pitch_radian(rotate_radian);
 		}
 	}
 
-	bool character::get_next_position(
-		const Math::Vector2& local_position_bottom,
-		const std::weak_ptr<Object::Ground>& ground_ptr)
+	Math::Vector2 character::get_next_velocity(
+		const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr) const
 	{
 		bool angle_check = false;
 		bool climable = false;
+		Math::Vector2 candidate{};
 
 		if (const auto ground = ground_ptr.lock())
 		{
 			// check up-hilling condition
-			for(int i = 0; i < 10; i++)
+			for(int x = 0; x < 10; x++)
 			{
 				if (angle_check && climable) 
 				{
@@ -269,24 +270,21 @@ namespace Fortress::ObjectBase
 
 				angle_check = false;
 
-				for(int j = 99; j >= 0; --j)
+				// searching in reverse. we need to check whether how stiff the curve is.
+				for(int y = 99; y >= 0; --y)
 				{
 					Math::Vector2 local_new_pos = {
 						local_position_bottom.get_x() + 
-							(get_offset() == Math::left ?  -i : i),
-						local_position_bottom.get_y() - j
+							(get_offset() == Math::left ?  -x : x),
+						local_position_bottom.get_y() - y
 					};
 
 					const auto diff = local_new_pos - local_position_bottom;
 					const auto unit = diff.normalized();
 					const auto ground_check = ground->safe_is_destroyed(local_new_pos);
 
-					if (isnan(unit.get_x()) || isnan(unit.get_y()))
-					{
-						continue;
-					}
-
-					if (ground_check == Object::GroundState::OutOfBound) 
+					if (isnan(unit.get_x()) || isnan(unit.get_y()) || 
+						ground_check == Object::GroundState::OutOfBound)
 					{
 						continue;
 					}
@@ -301,24 +299,24 @@ namespace Fortress::ObjectBase
 								// @todo: fixed animation
 								angle_check = false;
 								climable = false;
-								break;
+								candidate = Math::vector_inf;
 							}
 							
 							climable = true;
 							angle_check = true;
 						}
-						else 
-						{
-							m_velocity = unit;
-						}
+
+						candidate = unit;
 					}
 				}
 			}
 
 			if(climable)
 			{
-				return true;
+				return candidate;
 			}
+
+			candidate = {};
 
 			for(int i = 0; i < 10; i++)
 			{
@@ -341,8 +339,8 @@ namespace Fortress::ObjectBase
 
 					if (ground_check == Object::GroundState::NotDestroyed)
 					{
-						m_velocity = unit;
-						return true;
+						candidate = unit;
+						return candidate;
 					}
 				}
 			}
@@ -350,10 +348,10 @@ namespace Fortress::ObjectBase
 
 		if (!angle_check || !climable) 
 		{
-			m_velocity = {};
+			candidate = Math::vector_inf;
 		}
 
-		return false;
+		return candidate;
 	}
 
 	void character::update()
@@ -461,15 +459,42 @@ namespace Fortress::ObjectBase
 
 	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
-		if(std::shared_ptr<Object::Ground> target = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
+		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
-			if (const auto next_ground = ground_cross(target).lock())
+			const auto left_local_position = ground->to_top_left_local_position(get_left());
+			const auto right_local_position = ground->to_top_left_local_position(get_right());
+
+			// @todo: delta checks valid but this collision starts from right side it has the negative values, and considered as oob.
+			// check should be done in reverse. use the positive side only is probably the best way for avoiding any problem.
+			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position + ground->m_hitbox);
+			const Object::GroundState right_check = ground->safe_is_destroyed(right_local_position);
+			const auto orthogonal_surface = ground->safe_orthogonal_surface_global(get_bottom());
+
+			// This ground is orthogonal surface. it will be treated as "main" ground.
+			if(orthogonal_surface != Math::vector_inf)
 			{
-				target = next_ground;
+				ground_walk(collision, ground);
+				ground_gravity(ground);
+				ground_pitching(ground);
 			}
-			ground_walk(collision, target);
-			ground_gravity(collision, target);
-			ground_pitching(target);
+			else
+			{
+				// If this ground is not orthogonal surface, probably this will exists in left or right, top side.
+				// not-main ground is low enough to pass, then move it to the not-main ground.
+				const Math::Vector2 bottom_local_position = ground->to_top_left_local_position(get_bottom());
+				const auto possible_velocity = get_next_velocity(bottom_local_position, ground);
+
+				if(possible_velocity != Math::vector_inf)
+				{
+					m_velocity = possible_velocity;
+					ground_pitching(ground);
+				}
+				else if((left_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::left) || 
+					(right_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::right))
+				{
+					m_velocity = {};
+				}
+			}
 		}
 
 		rigidBody::on_collision(collision, hit_vector, other);

@@ -110,11 +110,11 @@ namespace Fortress::ObjectBase
 
 		void ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground);
 		std::weak_ptr<Object::Ground> ground_cross(const std::weak_ptr<Object::Ground>& current_ground);
-		void ground_gravity(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground);
+		void ground_gravity(const std::weak_ptr<Object::Ground>& ptr_ground);
 		void ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground);
 
-		bool get_next_position(const Math::Vector2& local_position_bottom,
-		                       const std::weak_ptr<Object::Ground>& ground_ptr);
+		Math::Vector2 get_next_velocity(const Math::Vector2& local_position_bottom,
+		                                const std::weak_ptr<Object::Ground>& ground_ptr) const;
 
 		Texture<GifWrapper> m_texture;
 		SoundPack m_sound_pack;
