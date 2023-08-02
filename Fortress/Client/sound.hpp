@@ -19,14 +19,15 @@ namespace Fortress::Resource
 	{
 	public:
 		Sound(const std::wstring& name, const std::filesystem::path& file_path)
-			: Resource(name, file_path), m_sound_buffer(nullptr), m_buffer_desc{}, m_volume(0)
+			: Resource(name, file_path), m_sound_buffer(nullptr), m_buffer_desc{}, m_volume(0), m_bPlaying(false)
 		{}
 		virtual bool load() override;
-		void play(bool loop) const;
-		void stop(bool reset) const;
-		void set_position(float position, bool loop) const;
+		void play(bool loop);
+		void stop(bool reset);
+		void set_position(float position, bool loop);
 		void set_volume(float volume);
 		int get_decibel(float volume) const;
+		bool is_playing() const;
 
 	private:
 		bool load_wav_file(const std::filesystem::path& path);
@@ -34,6 +35,7 @@ namespace Fortress::Resource
 		LPDIRECTSOUNDBUFFER	m_sound_buffer;
 		DSBUFFERDESC m_buffer_desc;
 		int m_volume;
+		bool m_bPlaying;
 	};
 
 	inline bool Sound::load()
@@ -113,7 +115,7 @@ namespace Fortress::Resource
 		return true;
 	}
 
-	inline void Sound::play(bool loop) const
+	inline void Sound::play(bool loop)
 	{
 		m_sound_buffer->SetCurrentPosition(0);
 
@@ -121,17 +123,21 @@ namespace Fortress::Resource
 			m_sound_buffer->Play(0, 0, DSBPLAY_LOOPING);
 		else
 			m_sound_buffer->Play(0, 0, 0);
+
+		m_bPlaying = true;
 	}
 
-	inline void Sound::stop(bool reset) const
+	inline void Sound::stop(bool reset)
 	{
 		m_sound_buffer->Stop();
 
 		if (reset)
 			m_sound_buffer->SetCurrentPosition(0);
+
+		m_bPlaying = false;
 	}
 
-	inline void Sound::set_position(float position, bool loop) const
+	inline void Sound::set_position(float position, bool loop)
 	{
 		stop(true);
 
@@ -142,6 +148,8 @@ namespace Fortress::Resource
 			m_sound_buffer->Play(0, 0, DSBPLAY_LOOPING);
 		else
 			m_sound_buffer->Play(0, 0, 0);
+
+		m_bPlaying = true;
 	}
 
 	inline void Sound::set_volume(float volume)
@@ -162,6 +170,11 @@ namespace Fortress::Resource
 		if (iVolume < -10000)
 			iVolume = -10000;
 		return iVolume;
+	}
+
+	inline bool Sound::is_playing() const
+	{
+		return m_bPlaying;
 	}
 }
 #endif // SOUND_HPP
