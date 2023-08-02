@@ -49,6 +49,9 @@
     <Filter Include="Map">
       <UniqueIdentifier>{13dea890-eb8b-4ba8-b1b0-ed23b6c5e2e2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Item">
+      <UniqueIdentifier>{085b2b27-ae23-4161-a3a6-1087b370e629}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -164,6 +167,12 @@
     <ClInclude Include="DesertMap.hpp">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="item.hpp">
+      <Filter>Engine\Abstracts</Filter>
+    </ClInclude>
+    <ClInclude Include="DoubleShotItem.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -245,6 +254,9 @@
       <Filter>Engine\Common</Filter>
     </ClCompile>
     <ClCompile Include="PrecisionCannonProjectile.hpp">
+      <Filter>Projectiles</Filter>
+    </ClCompile>
+    <ClCompile Include="NutshellProjectile.cpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
   </ItemGroup>
