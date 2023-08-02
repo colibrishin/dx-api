@@ -762,6 +762,13 @@ namespace Fortress::ObjectBase
 	void character::stop()
 	{
 		set_current_sprite(L"idle");
+		if(const auto move_sound = m_sound_pack.get_sound(L"move").lock())
+		{
+			if(move_sound->is_playing())
+			{
+				move_sound->stop(true);
+			}
+		}
 		rigidBody::stop();
 	}
 	void character::prerender()
