@@ -10,12 +10,20 @@
 #include "SoundPack.hpp"
 #include "Texture.hpp"
 
+namespace Fortress
+{
+	namespace Item
+	{
+		class DoubleShotItem;
+	}
+}
 
 // forward declaration for avoiding circular reference
 namespace Fortress
 {
 	namespace Object
 	{
+		class item;
 		enum class GroundState;
 		class Ground;
 	}
@@ -62,11 +70,13 @@ namespace Fortress::ObjectBase
 		void move_state();
 		void firing_state();
 		void fire_state();
+		virtual void item_state();
 		virtual void dead_state();
 
 		void set_unmovable();
 		void set_movable();
 		void reset_mp();
+		void set_item_active(int n);
 
 		void set_current_sprite(const std::wstring& name);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
@@ -109,6 +119,8 @@ namespace Fortress::ObjectBase
 		std::shared_ptr<projectile> m_main_projectile;
 		std::shared_ptr<projectile> m_secondary_projectile;
 
+		std::map<int, std::shared_ptr<Object::item>> m_available_items;
+		std::weak_ptr<Object::item> m_active_item;
 	protected:
 		character(
 			const int player_id,
