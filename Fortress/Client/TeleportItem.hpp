@@ -9,7 +9,7 @@ namespace Fortress::Item
 	class TeleportItem : public Object::item
 	{
 	public:
-		TeleportItem() : item(L"Teleport")
+		TeleportItem() : item(L"Teleport", false)
 		{
 			TeleportItem::initialize();
 		}
