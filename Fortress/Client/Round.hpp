@@ -143,6 +143,7 @@ namespace Fortress
 	{
 		if(const auto player = m_current_player.lock())
 		{
+			player->stop();
 			player->set_unmovable();
 		}
 
