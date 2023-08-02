@@ -178,58 +178,23 @@ namespace Fortress::ObjectBase
 						m_position -= delta;
 					}
 
-					if(m_state == eCharacterState::Move && m_bGrounded)
+					const auto candidate = get_next_velocity(bottom_local_position, ground);
+
+					if(candidate == Math::Vector2{})
 					{
-						get_next_position(bottom_local_position, ground);
+						return;
+					}
+
+					if (m_state == eCharacterState::Move && candidate != Math::vector_inf)
+					{
+						m_velocity = candidate;
 					}
 				}
 			}
 		}
 	}
 
-	std::weak_ptr<Object::Ground> character::ground_cross(const std::weak_ptr<Object::Ground>& current_ground)
-	{
-		if(const auto ground = current_ground.lock())
-		{
-			if(const auto scene = Scene::SceneManager::get_active_scene().lock())
-			{
-				const auto pivot = get_offset_bottom_forward_position();
-				const auto grounds = scene->is_in_range<Object::Ground>(pivot, m_hitbox.get_x() / 2);
-
-				for(const auto& ptr: grounds)
-				{
-					if(const auto& other_ground = ptr.lock())
-					{
-						if (other_ground == ground)
-						{
-							continue;
-						}
-
-						for(float y = 0; y < m_hitbox.get_x() / 2; ++y)
-						{
-							for(float x = 0; x < m_hitbox.get_x() / 2; ++x)
-							{
-								const auto extended_bottom = get_bottom()
-									+ Math::Vector2{get_offset() == Math::left ? -x : x, -y};
-								const auto local_position = other_ground->to_top_left_local_position(extended_bottom);
-
-								if (other_ground->safe_is_destroyed(local_position) == Object::GroundState::NotDestroyed)
-								{
-									const auto delta = other_ground->safe_nearest_surface(extended_bottom);
-									m_position -= delta;
-									return other_ground;
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		return {};
-	}
-
-	void character::ground_gravity(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground)
+	void character::ground_gravity(const std::weak_ptr<Object::Ground>& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
