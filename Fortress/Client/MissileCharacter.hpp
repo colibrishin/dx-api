@@ -76,19 +76,20 @@ namespace Fortress::Object
 
 		if(get_offset() == Math::left)
 		{
-			angle = {
-				-cosf(get_movement_pitch_radian() + Math::to_radian(45.0f)),
-				-sinf(get_movement_pitch_radian() + Math::to_radian(45.0f))};
+			angle = {-cosf(get_movement_pitch_radian()), -sinf(get_movement_pitch_radian())};
 		}
 		else
 		{
-			angle = {
-				cosf(get_movement_pitch_radian() - Math::to_radian(45.0f)),
-				sinf(get_movement_pitch_radian() - Math::to_radian(45.0f))};
+			angle = {cosf(get_movement_pitch_radian()), sinf(get_movement_pitch_radian())};
 		}
 
+		const auto projectile = get_current_projectile().lock();
+
+		const auto forward = Math::Vector2{get_offset().get_x(), -1} * projectile->m_hitbox.get_x();
+		const auto forward_rotation = forward.rotate(get_movement_pitch_radian());
+
 		get_current_projectile().lock()->fire(
-			get_offset() == Math::left ? get_top_left() : get_top_right(),
+			(get_offset() == Math::left ? get_top_left() : get_top_right()) + forward_rotation,
 			angle, 
 			charged);
 	}
