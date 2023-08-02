@@ -59,7 +59,7 @@ namespace Fortress::Map
 	{
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::Stairway>(
-				L"left_upper", Math::Vector2{0.0f, 200.0f}, Math::Vector2{300.0f, 100.0f}, Math::left));
+				L"left_upper", Math::Vector2{0.0f, 200.0f}, Math::Vector2{400.0f, 100.0f}, Math::left));
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::Ground>(
 				L"mid_lower", Math::Vector2{300.0f, 300.0f}, Math::Vector2{300.0f, 100.0f}));
