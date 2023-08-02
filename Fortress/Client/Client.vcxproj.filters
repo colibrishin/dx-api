@@ -171,6 +171,9 @@
       <Filter>Engine\Abstracts</Filter>
     </ClInclude>
     <ClInclude Include="DoubleShotItem.hpp">
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="TeleportItem.hpp">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -256,7 +259,7 @@
     <ClCompile Include="PrecisionCannonProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
-    <ClCompile Include="NutshellProjectile.cpp">
+    <ClCompile Include="NutshellProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
   </ItemGroup>

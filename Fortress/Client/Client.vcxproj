@@ -166,10 +166,12 @@
     <ClInclude Include="SupertankBGMSound.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="DesertMap.hpp" />
+    <ClInclude Include="TeleportItem.hpp" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="vector2.hpp" />
     <ClInclude Include="deltatime.hpp" />
     <ClInclude Include="application.h" />
+    <ClInclude Include="NutshellProjectile.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp" />
@@ -184,7 +186,6 @@
     <ClCompile Include="MissileCharacter.hpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="BattleScene.cpp" />
-    <ClCompile Include="NutshellProjectile.cpp" />
     <ClCompile Include="object.hpp" />
     <ClCompile Include="entity.hpp" />
     <ClCompile Include="MissileProjectile.hpp" />

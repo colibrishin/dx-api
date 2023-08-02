@@ -23,6 +23,7 @@ namespace Fortress
 {
 	namespace Object
 	{
+		class NutShellProjectile;
 		class item;
 		enum class GroundState;
 		class Ground;
@@ -58,6 +59,8 @@ namespace Fortress::ObjectBase
 		float get_charged_power() const;
 		virtual void move() override;
 		void change_projectile();
+		void equip_nutshell();
+		void unequip_nutshell();
 		std::weak_ptr<projectile> get_current_projectile();
 		const std::wstring& get_short_name() const;
 
@@ -118,6 +121,10 @@ namespace Fortress::ObjectBase
 		std::weak_ptr<projectile> m_current_projectile;
 		std::shared_ptr<projectile> m_main_projectile;
 		std::shared_ptr<projectile> m_secondary_projectile;
+
+		// @todo: nutshell doesn't have to be exist for every character
+		std::shared_ptr<Object::NutShellProjectile> m_nutshell_projectile;
+		std::weak_ptr<projectile> m_tmp_projectile;
 
 		std::map<int, std::shared_ptr<Object::item>> m_available_items;
 		std::weak_ptr<Object::item> m_active_item;

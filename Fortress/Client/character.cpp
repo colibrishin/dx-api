@@ -5,6 +5,8 @@
 #include "ground.hpp"
 #include "input.hpp"
 #include "projectile.hpp"
+#include "TeleportItem.hpp"
+#include "NutshellProjectile.hpp"
 
 namespace Fortress::ObjectBase
 {
@@ -13,7 +15,9 @@ namespace Fortress::ObjectBase
 		set_current_sprite(L"idle");
 		m_current_projectile = m_main_projectile;
 		rigidBody::initialize();
+		m_nutshell_projectile = std::make_shared<Object::NutShellProjectile>(this);
 		m_available_items.emplace(1, std::make_shared<Item::DoubleShotItem>());
+		m_available_items.emplace(2, std::make_shared<Item::TeleportItem>());
 		m_main_projectile->set_disabled();
 		m_secondary_projectile->set_disabled();
 	}
@@ -467,6 +471,12 @@ namespace Fortress::ObjectBase
 		}
 	}
 
+	void character::equip_nutshell()
+	{
+		m_tmp_projectile = m_current_projectile;
+		m_current_projectile = std::dynamic_pointer_cast<projectile>(m_nutshell_projectile);
+	}
+
 	std::weak_ptr<projectile> character::get_current_projectile()
 	{
 		return m_current_projectile;
@@ -559,6 +569,10 @@ namespace Fortress::ObjectBase
 			else if (Input::getKeyDown(eKeyCode::One))
 			{
 				set_item_active(1);
+			}
+			else if (Input::getKeyDown(eKeyCode::Two))
+			{
+				set_item_active(2);
 			}
 			else if (Input::getKeyUp(left_key) || Input::getKeyUp(right_key) || Input::getKeyUp(up_key) || Input::getKeyUp(down_key))
 			{
@@ -684,6 +698,14 @@ namespace Fortress::ObjectBase
 	void character::set_movable()
 	{
 		m_bMovable = true;
+	}
+
+	void character::unequip_nutshell()
+	{
+		if(m_current_projectile.lock() == m_nutshell_projectile && m_tmp_projectile.lock())
+		{
+			m_current_projectile = m_tmp_projectile;
+		}
 	}
 
 	void character::reset_mp()
