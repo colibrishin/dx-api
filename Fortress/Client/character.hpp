@@ -51,6 +51,7 @@ namespace Fortress::ObjectBase
 		virtual void move() override;
 		void change_projectile();
 		std::weak_ptr<projectile> get_current_projectile();
+		const std::wstring& get_short_name() const;
 
 		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other) override;
 		virtual void on_nocollison() override;
@@ -86,6 +87,7 @@ namespace Fortress::ObjectBase
 		float m_power;
 		bool m_bGrounded;
 		bool m_bMovable;
+		const std::wstring m_shot_name;
 		eCharacterState m_state;
 
 		void set_state(const eCharacterState& state);
@@ -121,19 +123,22 @@ namespace Fortress::ObjectBase
 			const int hp,
 			const int mp,
 			const std::weak_ptr<projectile>& main_projectile,
-			const std::weak_ptr<projectile>& secondary_projectile)
-			: rigidBody(name, position, {50.0f, 50.0f}, velocity, mass, speed, acceleration, true),
-		      m_player_id(player_id),
-			  m_hp(hp),
-			  m_mp(mp),
-		      m_power(1.0f),
-			  m_bGrounded(false),
-			  m_bMovable(true),
-		      m_state(eCharacterState::Idle),
-			  m_texture(short_name),
-		      m_sound_pack(short_name),
-			  m_main_projectile(main_projectile),
-			  m_secondary_projectile(secondary_projectile)
+			const std::weak_ptr<projectile>& secondary_projectile):
+			rigidBody(name, position, {50.0f, 50.0f}, velocity, mass, speed, acceleration, true),
+			m_player_id(player_id),
+			m_hp(hp),
+			m_mp(mp),
+			m_power(1.0f),
+			m_bGrounded(false),
+			m_bMovable(true),
+			m_shot_name(short_name),
+			m_state(eCharacterState::Idle),
+			m_texture(short_name),
+			m_sound_pack(short_name),
+			m_main_projectile(main_projectile),
+			m_secondary_projectile(secondary_projectile),
+			m_available_items{},
+			m_active_item{}
 		{
 			character::initialize();
 		}

@@ -472,6 +472,11 @@ namespace Fortress::ObjectBase
 		return m_current_projectile;
 	}
 
+	const std::wstring& character::get_short_name() const
+	{
+		return m_shot_name;
+	}
+
 	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		if(std::shared_ptr<Object::Ground> target = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
