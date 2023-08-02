@@ -33,6 +33,7 @@ namespace Fortress::Item
 			{
 				if (!ch->get_current_projectile().lock()->is_active())
 				{
+					// @todo: teleport to the outside of the map should be handled.
 					ch->m_position = ch->get_current_projectile().lock()->m_position;
 					ch->unequip_nutshell();
 					set_ended();
