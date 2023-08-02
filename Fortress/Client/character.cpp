@@ -731,6 +731,15 @@ namespace Fortress::ObjectBase
 			});
 
 			m_active_item = m_available_items[n];
+
+			if(const auto item = m_active_item.lock())
+			{
+				if(item->is_instant())
+				{
+					set_state(eCharacterState::Item);
+				}
+			} 
+			
 		}
 	}
 
