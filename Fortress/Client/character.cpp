@@ -715,6 +715,12 @@ namespace Fortress::ObjectBase
 
 	void character::set_item_active(const int n)
 	{
+		// item is applied to character only one.
+		if(m_active_item.lock())
+		{
+			return;
+		}
+
 		if(m_available_items.find(n) != m_available_items.end())
 		{
 			set_current_sprite(L"item");
