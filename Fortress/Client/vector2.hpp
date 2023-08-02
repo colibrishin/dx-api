@@ -176,6 +176,14 @@ namespace Fortress::Math
 
 	__forceinline bool Vector2::operator==(const Vector2& other) const
 	{
+		if(m_x == INFINITY &&
+			m_y == INFINITY &&
+			other.m_x == INFINITY && 
+			other.m_y == INFINITY)
+		{
+			return true;
+		}
+
 		// rather safe comparison for float.
 		return fabs(m_x - other.m_x) <= epsilon &&
 			fabs(m_y - other.m_y) <= epsilon;

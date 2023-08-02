@@ -34,6 +34,7 @@ namespace Fortress::Math
 	
 	const Vector2 forward = {1.0f, 0.0f};
 	const Vector2 up = {0.0f, -1.0f};
+	const Vector2 vector_inf = {INFINITY, INFINITY};
 
 	inline float flip_radian(const float radian)
 	{
