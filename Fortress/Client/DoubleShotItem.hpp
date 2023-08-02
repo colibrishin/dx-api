@@ -16,6 +16,7 @@ namespace Fortress::Item
 		void initialize() override;
 		virtual void update(const std::weak_ptr<ObjectBase::character> owner) override;
 		~DoubleShotItem() override = default;
+		virtual void reset() override;
 
 	private:
 		int m_fire_count;
@@ -42,6 +43,12 @@ namespace Fortress::Item
 				item::update(owner);
 			}
 		}
+	}
+
+	inline void DoubleShotItem::reset()
+	{
+		m_fire_count = 0;
+		item::reset();
 	}
 }
 #endif // DOUBLESHOTITEM_HPP

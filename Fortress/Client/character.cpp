@@ -677,6 +677,7 @@ namespace Fortress::ObjectBase
 			if(item->is_effect_ended())
 			{
 				set_state(eCharacterState::Idle);
+				item->reset();
 				m_active_item = {};
 			}
 			else

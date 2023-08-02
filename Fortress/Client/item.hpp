@@ -16,6 +16,7 @@ namespace Fortress::Object
 		virtual void initialize() = 0;
 		virtual void update(const std::weak_ptr<ObjectBase::character> owner);
 		virtual bool is_effect_ended();
+		virtual void reset();
 		void set_ended();
 
 	private:
@@ -32,6 +33,12 @@ namespace Fortress::Object
 	inline bool item::is_effect_ended()
 	{
 		return m_is_ended;
+	}
+
+	inline void item::reset()
+	{
+		m_is_used = false;
+		m_is_ended = false;
 	}
 
 	inline void item::set_ended()
