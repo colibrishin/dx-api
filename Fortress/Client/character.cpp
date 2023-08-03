@@ -154,22 +154,25 @@ namespace Fortress::ObjectBase
 
 			if(collision == CollisionCode::Inside)
 			{
-				if (bottom_check == Object::GroundState::NotDestroyed)
+				if (get_state() == eCharacterState::Move) 
 				{
-					if (ground->safe_is_object_stuck_global(get_bottom())) 
+					if (bottom_check == Object::GroundState::NotDestroyed)
 					{
-						const auto delta = ground->safe_nearest_surface(get_bottom());
-						m_position -= delta;
+						if (ground->safe_is_object_stuck_global(get_bottom()))
+						{
+							const auto delta = ground->safe_nearest_surface(get_bottom());
+							m_position -= delta;
+						}
 					}
 
 					const auto candidate = get_next_velocity(bottom_local_position, ground);
 
-					if(candidate == Math::Vector2{})
+					if (candidate == Math::Vector2{})
 					{
 						return;
 					}
 
-					if (m_state == eCharacterState::Move && candidate != Math::vector_inf)
+					if (m_bGrounded && candidate != Math::vector_inf)
 					{
 						m_velocity = candidate;
 					}
