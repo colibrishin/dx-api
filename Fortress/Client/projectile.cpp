@@ -11,7 +11,7 @@ namespace Fortress::ObjectBase
 	void projectile::post_hit()
 	{
 		m_curr_hit_count = 0;
-		m_current_sprite.lock()->reset_transfrom();
+		m_current_sprite.lock()->reset_transform();
 		reset_current_gravity_speed();
 		reset_current_speed();
 		set_disabled();

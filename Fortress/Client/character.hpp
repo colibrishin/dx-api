@@ -2,6 +2,7 @@
 #ifndef CHARACTER_HPP
 #define CHARACTER_HPP
 
+#include "AnimationQueue.hpp"
 #include "GifWrapper.hpp"
 #include "rigidBody.hpp"
 #include "common.h"
@@ -37,6 +38,35 @@ namespace Fortress::ObjectBase
 	constexpr float character_full_hp = 100.0f;
 	constexpr float character_full_mp = 1000.0f;
 	constexpr float character_max_charge = 250.0f;
+
+	enum class eCharacterAnimation
+	{
+		// order is priority of animation.
+		Dead = 0,
+		Item,
+		Hit,
+		Fire,
+		Death,
+		Charging,
+		Move,
+		Idle
+	};
+
+	static std::wstring get_animation_name(const eCharacterAnimation& anim)
+	{
+		switch(anim)
+		{
+		case eCharacterAnimation::Dead: return L"dead";
+		case eCharacterAnimation::Item: return L"item";
+		case eCharacterAnimation::Hit: return L"hit";
+		case eCharacterAnimation::Death: return L"death";
+		case eCharacterAnimation::Charging: return L"charging";
+		case eCharacterAnimation::Move: return L"move";
+		case eCharacterAnimation::Idle: return L"idle";
+		case eCharacterAnimation::Fire: return L"fire";
+		default: return L"";
+		}
+	}
 
 	class character : public Abstract::rigidBody
 	{
@@ -82,7 +112,7 @@ namespace Fortress::ObjectBase
 		void reset_mp();
 		void set_item_active(int n);
 
-		void set_current_sprite(const std::wstring& name);
+		void push_sprite(const eCharacterAnimation& animation, bool override);
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
 		
@@ -116,6 +146,8 @@ namespace Fortress::ObjectBase
 		                                const std::weak_ptr<Object::Ground>& ground_ptr) const;
 
 		Texture<GifWrapper> m_texture;
+		Resource::AnimationQueue m_animation_queue;
+
 		SoundPack m_sound_pack;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 

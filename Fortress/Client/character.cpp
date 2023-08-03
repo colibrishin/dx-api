@@ -13,7 +13,7 @@ namespace Fortress::ObjectBase
 {
 	void character::initialize()
 	{
-		set_current_sprite(L"idle");
+		push_sprite(eCharacterAnimation::Idle, false);
 		m_current_projectile = m_main_projectile;
 		rigidBody::initialize();
 		m_nutshell_projectile = std::make_shared<Object::NutShellProjectile>(this);
@@ -40,36 +40,23 @@ namespace Fortress::ObjectBase
 	{
 		if(get_hp_percentage() > 0.0f)
 		{
-			set_current_sprite(L"hit");
-			m_current_sprite.lock()->play([this]()
-			{
-				set_current_sprite(L"idle");
-			});
+			push_sprite(eCharacterAnimation::Hit, true);
+			push_sprite(eCharacterAnimation::Idle, false);
 		}
 		else
 		{
-			set_current_sprite(L"death");
-			m_current_sprite.lock()->play([this]()
-			{
-				set_current_sprite(L"dead");
-				m_current_sprite.lock()->play();
-			});
-
+			push_sprite(eCharacterAnimation::Death, true);
+			push_sprite(eCharacterAnimation::Dead, false);
 			set_state(eCharacterState::Dead);
 		}
 	}
 
 	void character::shoot()
 	{
-		set_current_sprite(L"fire");
+		push_sprite(eCharacterAnimation::Fire, false);
 		m_current_projectile.lock()->play_fire_sound();
 		m_current_projectile.lock()->set_enabled();
-
-		// @todo: maybe queue?
-		m_current_sprite.lock()->play([this]()
-		{
-			set_current_sprite(L"idle");
-		});
+		push_sprite(eCharacterAnimation::Idle, false);
 	}
 
 	float character::get_charged_power() const
@@ -359,6 +346,14 @@ namespace Fortress::ObjectBase
 
 	void character::update()
 	{
+		if(!m_animation_queue.empty())
+		{
+			if(const auto next = m_animation_queue.update().lock())
+			{
+				m_current_sprite = next;
+			}
+		}
+
 		rigidBody::update();
 	}
 
@@ -408,7 +403,7 @@ namespace Fortress::ObjectBase
 	{
 		if(get_current_sprite_name().find(L"charging") == std::wstring::npos)
 		{
-			set_current_sprite(L"charging");
+			push_sprite(eCharacterAnimation::Charging, false);
 		}
 
 		if(get_charged_power() < character_max_charge)
@@ -740,11 +735,8 @@ namespace Fortress::ObjectBase
 
 		if(m_available_items.find(n) != m_available_items.end())
 		{
-			set_current_sprite(L"item");
-			m_current_sprite.lock()->play([this]()
-			{
-				set_current_sprite(L"idle");
-			});
+			push_sprite(eCharacterAnimation::Item, true);
+			push_sprite(eCharacterAnimation::Idle, false);
 
 			m_active_item = m_available_items[n];
 
@@ -759,9 +751,25 @@ namespace Fortress::ObjectBase
 		}
 	}
 
-	void character::set_current_sprite(const std::wstring& name)
+	void character::push_sprite(const eCharacterAnimation& animation, bool override)
 	{
-		m_current_sprite = m_texture.get_image(name, get_offset() == Math::left ? L"left" : L"right");
+		const std::wstring offset = get_offset() == Math::left ? L"left" : L"right";
+		const std::wstring anim_name = get_animation_name(animation);
+		const auto anim = m_texture.get_image(anim_name, offset);
+
+		if(!m_current_sprite.lock())
+		{
+			m_current_sprite = anim;
+			return;
+		}
+
+		if (override)
+		{
+			m_animation_queue.push(-1, anim);
+			return;
+		}
+
+		m_animation_queue.push(static_cast<int>(animation), anim);
 	}
 
 	void character::set_sprite_offset(const std::wstring& name, const std::wstring& orientation,
@@ -777,19 +785,19 @@ namespace Fortress::ObjectBase
 
 	void character::move_left()
 	{
-		set_current_sprite(L"move");
+		push_sprite(eCharacterAnimation::Move, false);
 		rigidBody::move_left();
 	}
 
 	void character::move_right()
 	{
-		set_current_sprite(L"move");
+		push_sprite(eCharacterAnimation::Move, false);
 		rigidBody::move_right();
 	}
 
 	void character::stop()
 	{
-		set_current_sprite(L"idle");
+		push_sprite(eCharacterAnimation::Idle, false);
 		if(const auto move_sound = m_sound_pack.get_sound(L"move").lock())
 		{
 			if(move_sound->is_playing())
