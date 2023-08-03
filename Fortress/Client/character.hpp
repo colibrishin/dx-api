@@ -109,7 +109,6 @@ namespace Fortress::ObjectBase
 		void render_hp_bar(const Math::Vector2& position);
 
 		void ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground);
-		std::weak_ptr<Object::Ground> ground_cross(const std::weak_ptr<Object::Ground>& current_ground);
 		void ground_gravity(const std::weak_ptr<Object::Ground>& ptr_ground);
 		void ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground);
 
