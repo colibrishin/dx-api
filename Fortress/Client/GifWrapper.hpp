@@ -9,6 +9,7 @@
 #include "ImageWrapper.hpp"
 #include <objidl.h>
 #include <gdiplus.h>
+#include <numeric>
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
@@ -35,7 +36,9 @@ namespace Fortress
 		void OnTimer();
 		virtual void flip() override;
 		virtual void rotate(const float angle);
-		void reset_transfrom();
+		void reset_transform();
+		void cancel_reservation();
+		unsigned int get_total_play_time();
 
 		inline static std::map<UINT_PTR, GifWrapper*> registered_gifs = {};
 	private:
@@ -75,7 +78,7 @@ namespace Fortress
 	    // copy the delay values into an std::vector while converting to milliseconds.
 		m_frame_delays.assign(m_frame_count, 0);
 	    std::transform(frame_delay_array, frame_delay_array + m_frame_count, m_frame_delays.begin(),
-	        [](unsigned int n) {return n; }
+	        [](unsigned int n) {return n * 10; }
 	    );
 
 		return true;
@@ -127,7 +130,7 @@ namespace Fortress
 		const GUID guid = FrameDimensionTime;
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
-		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[m_current_frame] * 10, nullptr);
+		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[m_current_frame], nullptr);
 
 		if(m_current_frame == m_frame_count - 1)
 		{
@@ -152,9 +155,22 @@ namespace Fortress
 		m_gdi_handle->RotateTransform(angle);
 	}
 
-	inline void GifWrapper::reset_transfrom()
+	inline void GifWrapper::reset_transform()
 	{
 		m_gdi_handle->ResetTransform();
+	}
+
+	inline void GifWrapper::cancel_reservation()
+	{
+		m_reserved_function = {};
+	}
+
+	inline unsigned int GifWrapper::get_total_play_time()
+	{
+		return std::accumulate(
+			m_frame_delays.begin(), 
+			m_frame_delays.end(), 
+			static_cast<unsigned int>(0));
 	}
 
 	inline GifWrapper::GifWrapper(
