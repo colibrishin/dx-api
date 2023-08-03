@@ -109,6 +109,7 @@ namespace Fortress
 
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
+		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
 		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[0], nullptr);
 
 		++m_current_frame;
