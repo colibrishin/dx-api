@@ -10,6 +10,10 @@ namespace Fortress::ObjectBase
 {
 	void projectile::post_hit()
 	{
+		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
+		scene_ptr->remove_game_object(
+			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
+
 		m_curr_hit_count = 0;
 		m_current_sprite.lock()->reset_transfrom();
 		reset_current_gravity_speed();
@@ -44,8 +48,10 @@ namespace Fortress::ObjectBase
 		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
 
 		scene_ptr->add_game_object(
-			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
-		scene_ptr->get_camera().lock()->set_object(std::dynamic_pointer_cast<object>(shared_from_this()));
+			Abstract::LayerType::Character, 
+			std::dynamic_pointer_cast<object>(shared_from_this()));
+		scene_ptr->get_camera().lock()->set_object(
+			std::dynamic_pointer_cast<object>(shared_from_this()));
 
 		reset_current_gravity_speed();
 		reset_current_speed();
@@ -55,9 +61,6 @@ namespace Fortress::ObjectBase
 	void projectile::unfocus_this()
 	{
 		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
-
-		scene_ptr->remove_game_object(
-			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 		scene_ptr->get_camera().lock()->restore_object();
 
 		post_hit();
