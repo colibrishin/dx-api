@@ -247,10 +247,11 @@ namespace Fortress::Abstract
 		const auto diff = Math::to_dir_vector(get_top_left(), other);
 		const auto dir = Math::translate_dir_vector(diff);
 
-		if(dir == eDirVector::Top ||
+		if(dir == eDirVector::TopRight ||
+			dir == eDirVector::Top ||
 			dir == eDirVector::TopLeft || 
 			dir == eDirVector::Left ||
-			dir == eDirVector::BottomLeft ||
+			dir == eDirVector::BottomLeft || 
 			dir == eDirVector::Bottom)
 		{
 			return true;
