@@ -34,7 +34,7 @@ namespace Fortress
 		Dead,
 	};
 
-	enum class eHitVector
+	enum class eDirVector
 	{
 		Unknown = -1,
 		Identical = 0,

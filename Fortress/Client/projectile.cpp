@@ -59,6 +59,7 @@ namespace Fortress::ObjectBase
 		scene_ptr->remove_game_object(
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 		scene_ptr->get_camera().lock()->restore_object();
+
 		post_hit();
 	}
 
@@ -149,8 +150,8 @@ namespace Fortress::ObjectBase
 			Scene::SceneManager::get_active_scene().lock())
 		{
 			// reverse the hit vector because hit vector is based on victim.
-			const eHitVector e_vec = translate_hit_vector(-victim_hit_vector);
-			const auto hit_point = get_hit_point(e_vec);
+			const eDirVector e_vec = translate_dir_vector(-victim_hit_vector);
+			const auto hit_point = get_dir_point(e_vec);
 
 			const auto grounds = active_scene->is_in_range<Object::Ground>(
 				hit_point,

@@ -60,7 +60,7 @@ namespace Fortress::Abstract
 				collided = true;
 				on_collision(
 					code,
-					to_hit_vector(get_center(), rb->get_center()),
+					to_dir_vector(get_center(), rb->get_center()),
 					rb);
 			}
 		}

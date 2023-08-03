@@ -94,8 +94,8 @@ namespace Fortress::Object
 		if (auto const projectile = 
 			std::dynamic_pointer_cast<ObjectBase::projectile>(other.lock()))
 		{
-			const eHitVector e_vec = Math::translate_hit_vector(hit_vector);
-			const auto hit_point = projectile->get_hit_point(e_vec);
+			const eDirVector e_vec = Math::translate_dir_vector(hit_vector);
+			const auto hit_point = projectile->get_dir_point(e_vec);
 
 			if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
 				safe_is_projectile_hit(hit_point, projectile))
@@ -114,11 +114,11 @@ namespace Fortress::Object
 					}
 				}
 
-				projectile->up_hit_count();
-				projectile->play_hit_sound();
 				// explosion near ground converts hitter from victim vector.
 				// victim vector should be converted to hitter vector.
 				projectile->explosion_near_ground(-hit_vector);
+				projectile->up_hit_count();
+				projectile->play_hit_sound();
 			}
 		}
 
@@ -267,7 +267,7 @@ namespace Fortress::Object
 	{
 		if(const auto projectile = projectile_ptr.lock())
 		{
-			const auto local_position = to_top_left_local_position(hit_position);
+			const auto local_position = to_local_position(hit_position);
 			const GroundState ground_status = safe_is_destroyed(local_position);
 
 			if(ground_status == GroundState::NotDestroyed)
@@ -287,7 +287,7 @@ namespace Fortress::Object
 
 	inline bool Ground::safe_is_object_stuck_global(const Math::Vector2& global_position) const
 	{
-		const auto local_position = to_top_left_local_position(global_position);
+		const auto local_position = to_local_position(global_position);
 		return safe_is_object_stuck_local(local_position);
 	}
 
@@ -315,8 +315,8 @@ namespace Fortress::Object
 
 	inline Math::Vector2 Ground::safe_nearest_surface(const Math::Vector2& global_position) const
 	{
-		const auto o_local_position = to_top_left_local_position(global_position);
-		auto local_position = to_top_left_local_position(global_position);
+		const auto o_local_position = to_local_position(global_position);
+		auto local_position = to_local_position(global_position);
 
 		if(local_position.get_y() <= 0)
 		{
@@ -339,7 +339,7 @@ namespace Fortress::Object
 
 	inline Math::Vector2 Ground::safe_orthogonal_surface_global(const Math::Vector2& global_position) const
 	{
-		const auto local_position = to_top_left_local_position(global_position);
+		const auto local_position = to_local_position(global_position);
 		return safe_orthogonal_surface_local(local_position);
 	}
 
@@ -361,7 +361,7 @@ namespace Fortress::Object
 
 	inline Math::Vector2 Ground::safe_orthogonal_surface_zero_global(const Math::Vector2& global_position) const
 	{
-		const auto local_position = to_top_left_local_position(global_position);
+		const auto local_position = to_local_position(global_position);
 		return safe_orthogonal_surface_local({local_position.get_x(), 0.0f});
 	}
 
@@ -374,7 +374,7 @@ namespace Fortress::Object
 		const Math::Vector2& hit_position,
 		const float radius)
 	{
-		const auto local_position = to_top_left_local_position(hit_position);
+		const auto local_position = to_local_position(hit_position);
 		safe_set_circle_destroyed(local_position, radius);
 	}
 
