@@ -71,8 +71,6 @@ namespace Fortress::Resource
 				m_last_animation_code = next.first;
 				m_last_pop_duration = static_cast<float>(next.second.lock()->get_total_play_time()) / 1000;
 				m_pop_elapsed = 0.0f;
-				// restart the animation.
-				next.second.lock()->play();
 				m_set.erase(m_set.begin());
 				return next.second;
 			}
