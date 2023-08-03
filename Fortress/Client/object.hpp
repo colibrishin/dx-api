@@ -244,11 +244,14 @@ namespace Fortress::Abstract
 	// this is just wild guess.
 	inline bool object::is_arithmetic_ascending(const Math::Vector2& other) const
 	{
-		const auto diff = Math::to_dir_vector(other, get_top_left());
+		const auto diff = Math::to_dir_vector(get_top_left(), other);
 		const auto dir = Math::translate_dir_vector(diff);
 
-		if(static_cast<int>(dir) & static_cast<int>(eDirVector::Right) || 
-			static_cast<int>(dir) & static_cast<int>(eDirVector::Bottom))
+		if(dir == eDirVector::Top ||
+			dir == eDirVector::TopLeft || 
+			dir == eDirVector::Left ||
+			dir == eDirVector::BottomLeft ||
+			dir == eDirVector::Bottom)
 		{
 			return true;
 		}
