@@ -15,7 +15,7 @@ namespace Fortress::ObjectBase
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 
 		m_curr_hit_count = 0;
-		m_current_sprite.lock()->reset_transfrom();
+		m_current_sprite.lock()->reset_transform();
 		reset_current_gravity_speed();
 		reset_current_speed();
 		set_disabled();
