@@ -31,6 +31,8 @@ namespace Fortress::ObjectBase
 		virtual void prerender();
 		const character* get_origin() const;
 
+		void explosion_near_ground(const Math::Vector2& hit_vector) const;
+
 		void up_hit_count();
 		int get_hit_count() const;
 		int get_max_hit_count() const;
@@ -67,8 +69,6 @@ namespace Fortress::ObjectBase
 		}
 
 	private:
-		void explosion_near_ground(const Math::Vector2& hit_vector) const;
-
 		float m_damage;
 		int m_radius;
 		const int m_max_hit_count;

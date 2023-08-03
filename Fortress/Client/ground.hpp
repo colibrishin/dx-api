@@ -116,6 +116,9 @@ namespace Fortress::Object
 
 				projectile->up_hit_count();
 				projectile->play_hit_sound();
+				// explosion near ground converts hitter from victim vector.
+				// victim vector should be converted to hitter vector.
+				projectile->explosion_near_ground(-hit_vector);
 			}
 		}
 
@@ -291,10 +294,12 @@ namespace Fortress::Object
 	inline bool Ground::safe_is_object_stuck_local(const Math::Vector2& local_position) const
 	{
 		// @todo: proper oob definition
-		Math::Vector2 offsets[2] =
+		Math::Vector2 offsets[4] =
 		{
 			{-1.0f, 0.0f},
-			{1.0f, 0.0f}
+			{1.0f, 0.0f},
+			{0.0f, -1.0f},
+			{0.0f, 1.0f},
 		};
 
 		int count = 0;
