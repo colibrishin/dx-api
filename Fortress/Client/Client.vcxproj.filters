@@ -52,6 +52,9 @@
     <Filter Include="Item">
       <UniqueIdentifier>{085b2b27-ae23-4161-a3a6-1087b370e629}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Round">
+      <UniqueIdentifier>{f4b210bc-87ac-4022-a08a-6986f8a21e86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -74,9 +77,6 @@
     </ClInclude>
     <ClInclude Include="input.hpp">
       <Filter>Engine\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="manager.hpp">
-      <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="titleScene.h">
       <Filter>Scene</Filter>
@@ -101,9 +101,6 @@
     </ClInclude>
     <ClInclude Include="projectile.hpp">
       <Filter>Engine\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="difficulty.hpp">
-      <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="ImageWrapper.hpp">
       <Filter>Engine\Resource</Filter>
@@ -138,22 +135,11 @@
     <ClInclude Include="GuidedMissileProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClInclude>
-    <ClInclude Include="Round.hpp" />
-    <ClInclude Include="deltatime.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="application.h">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Radar.hpp" />
     <ClInclude Include="sound.hpp">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="SoundManager.hpp">
       <Filter>Engine\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="SupertankBGMSound.hpp">
-      <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="SoundPack.hpp">
       <Filter>Engine\Resource</Filter>
@@ -173,8 +159,32 @@
     <ClInclude Include="DoubleShotItem.hpp">
       <Filter>Item</Filter>
     </ClInclude>
+    <ClInclude Include="NutshellProjectile.hpp">
+      <Filter>Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="deltatime.hpp">
+      <Filter>Engine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="RepairItem.hpp">
+      <Filter>Item</Filter>
+    </ClInclude>
     <ClInclude Include="TeleportItem.hpp">
-      <Filter>Windows\헤더 파일</Filter>
+      <Filter>Item</Filter>
+    </ClInclude>
+    <ClInclude Include="application.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.hpp">
+      <Filter>Engine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Radar.hpp">
+      <Filter>Round</Filter>
+    </ClInclude>
+    <ClInclude Include="Round.hpp">
+      <Filter>Round</Filter>
+    </ClInclude>
+    <ClInclude Include="NextPlayerTimer.hpp">
+      <Filter>Round</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -210,9 +220,6 @@
     </ClCompile>
     <ClCompile Include="MissileProjectile.hpp">
       <Filter>Projectiles</Filter>
-    </ClCompile>
-    <ClCompile Include="shootEstimation.cpp">
-      <Filter>Windows\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="resourceManager.hpp">
       <Filter>Engine\Resource</Filter>
@@ -257,9 +264,6 @@
       <Filter>Engine\Common</Filter>
     </ClCompile>
     <ClCompile Include="PrecisionCannonProjectile.hpp">
-      <Filter>Projectiles</Filter>
-    </ClCompile>
-    <ClCompile Include="NutshellProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
   </ItemGroup>

@@ -155,6 +155,7 @@
     <ClInclude Include="rigidBody.hpp" />
     <ClInclude Include="RoomScene.h" />
     <ClInclude Include="Round.hpp" />
+    <ClInclude Include="NextPlayerTimer.hpp" />
     <ClInclude Include="scene.hpp" />
     <ClInclude Include="SkyValleyMap.hpp" />
     <ClInclude Include="sound.hpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="DesertMap.hpp" />
     <ClInclude Include="TeleportItem.hpp" />
     <ClInclude Include="RepairItem.hpp" />
+    <ClInclude Include="Timer.hpp" />
     <ClInclude Include="titleScene.h" />
     <ClInclude Include="vector2.hpp" />
     <ClInclude Include="deltatime.hpp" />
