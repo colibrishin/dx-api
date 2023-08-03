@@ -5,6 +5,7 @@
 
 #include "character.hpp"
 #include "deltatime.hpp"
+#include "NextPlayerTimer.hpp"
 
 namespace Fortress
 {
@@ -30,12 +31,15 @@ namespace Fortress
 	private:
 		void check_countdown();
 		void check_fired();
+		void pre_next_player();
 		void next_player();
 		void check_winning_condition();
 		void winner();
 
 		float m_curr_timeout = 0.0f;
 		bool m_bfired = false;
+
+		NextPlayerTimer m_timer_next_player;
 
 		float m_wind_affect = 0.0f;
 		// @todo: random seed should be different every round
@@ -85,7 +89,7 @@ namespace Fortress
 	{
 		if(get_current_time() >= max_time)
 		{
-			next_player();
+			pre_next_player();
 			m_curr_timeout = 0.0f;
 		}
 
@@ -107,14 +111,29 @@ namespace Fortress
 			if(current->get_state() == eCharacterState::Idle && m_bfired)
 			{
 				m_bfired = false;
-				next_player();
+				pre_next_player();
 			}
 		}
 	}
 
+	inline void Round::pre_next_player()
+	{
+		if(const auto player = m_current_player.lock())
+		{
+			player->stop();
+			player->set_unmovable();
+		}
+
+		if(m_timer_next_player.is_started())
+		{
+			return;
+		}
+
+		m_timer_next_player.start([this](){ next_player(); });
+	}
+
 	inline void Round::update()
 	{
-		Debug::Log(std::to_wstring(m_curr_timeout));
 		Debug::Log(std::to_wstring(m_wind_affect));
 
 		switch (m_state)
@@ -140,12 +159,14 @@ namespace Fortress
 		return m_curr_timeout;
 	}
 
+	// this will run on another thread, by win api.
 	inline void Round::next_player()
 	{
 		if(const auto player = m_current_player.lock())
 		{
 			player->stop();
 			player->set_unmovable();
+			player->get_current_projectile().lock()->unfocus_this();
 		}
 
 		const auto previous_character = m_current_player;

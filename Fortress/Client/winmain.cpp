@@ -5,6 +5,7 @@
 #include "Client.h"
 #include "application.h"
 #include "GifWrapper.hpp"
+#include "Timer.hpp"
 
 static Fortress::Application application;
 
@@ -189,7 +190,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	case WM_TIMER:
-		if(wParam >= 8000)
+		if((wParam >= Fortress::timer_id))
+		{
+			Fortress::Timer::registered_timer[wParam]->on_timer();
+		}
+		else if(wParam >= 8000)
 		{
 			Fortress::GifWrapper::registered_gifs[wParam]->OnTimer();
 		}

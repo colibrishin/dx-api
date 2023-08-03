@@ -8,13 +8,22 @@
 
 namespace Fortress::ObjectBase
 {
+	void projectile::post_hit()
+	{
+		m_curr_hit_count = 0;
+		m_current_sprite.lock()->reset_transfrom();
+		reset_current_gravity_speed();
+		reset_current_speed();
+		set_disabled();
+	}
+
 	void projectile::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		rigidBody::on_collision(collision, hit_vector, other);
 
 		if(m_curr_hit_count == m_max_hit_count)
 		{
-			unfocus_this();
+			post_hit();
 			return;
 		}
 
@@ -26,7 +35,6 @@ namespace Fortress::ObjectBase
 			character->hit(shared_this);
 			up_hit_count();
 			play_hit_sound();
-
 			explosion_near_ground(hit_vector);
 		}
 	}
@@ -51,12 +59,7 @@ namespace Fortress::ObjectBase
 		scene_ptr->remove_game_object(
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 		scene_ptr->get_camera().lock()->restore_object();
-
-		m_curr_hit_count = 0;
-		m_current_sprite.lock()->reset_transfrom();
-		reset_current_gravity_speed();
-		reset_current_speed();
-		set_disabled();
+		post_hit();
 	}
 
 	void projectile::render()
