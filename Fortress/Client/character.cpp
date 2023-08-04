@@ -135,7 +135,7 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
-			const Math::Vector2 bottom_local_position = ground->to_local_position(get_bottom());
+			const Math::Vector2 bottom_local_position = ground->to_top_left_local_position(get_bottom());
 
 			const Object::GroundState bottom_check = ground->safe_is_destroyed(bottom_local_position);
 
@@ -172,7 +172,7 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
-			const auto bottom_check = ground->safe_is_destroyed(ground->to_local_position(get_bottom()));
+			const auto bottom_check = ground->safe_is_destroyed(ground->to_top_left_local_position(get_bottom()));
 
 			if(bottom_check == Object::GroundState::NotDestroyed)
 			{
@@ -459,13 +459,14 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
-			const auto left_local_position = ground->to_local_position(get_left());
-			const auto right_local_position = ground->to_local_position(get_right());
+			const auto left_local_position = ground->to_top_left_local_position(get_left());
+			const auto right_local_position = ground->to_top_left_local_position(get_right());
 
-			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position);
+			// @todo: delta checks valid but this collision starts from right side it has the negative values, and considered as oob.
+			// check should be done in reverse. use the positive side only is probably the best way for avoiding any problem.
+			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position + ground->m_hitbox);
 			const Object::GroundState right_check = ground->safe_is_destroyed(right_local_position);
-			const auto orthogonal_surface = ground->safe_orthogonal_surface_global(
-				get_bottom());
+			const auto orthogonal_surface = ground->safe_orthogonal_surface_global(get_bottom());
 
 			// This ground is orthogonal surface. it will be treated as "main" ground.
 			if(orthogonal_surface != Math::vector_inf)
@@ -478,7 +479,7 @@ namespace Fortress::ObjectBase
 			{
 				// If this ground is not orthogonal surface, probably this will exists in left or right, top side.
 				// not-main ground is low enough to pass, then move it to the not-main ground.
-				const Math::Vector2 bottom_local_position = ground->to_local_position(get_bottom());
+				const Math::Vector2 bottom_local_position = ground->to_top_left_local_position(get_bottom());
 				const auto possible_velocity = get_next_velocity(bottom_local_position, ground);
 
 				if(possible_velocity != Math::vector_inf)

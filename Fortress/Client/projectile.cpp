@@ -62,7 +62,6 @@ namespace Fortress::ObjectBase
 	{
 		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
 		scene_ptr->get_camera().lock()->restore_object();
-
 		post_hit();
 	}
 
@@ -153,8 +152,8 @@ namespace Fortress::ObjectBase
 			Scene::SceneManager::get_active_scene().lock())
 		{
 			// reverse the hit vector because hit vector is based on victim.
-			const eDirVector e_vec = translate_dir_vector(-victim_hit_vector);
-			const auto hit_point = get_dir_point(e_vec);
+			const eHitVector e_vec = translate_hit_vector(-victim_hit_vector);
+			const auto hit_point = get_hit_point(e_vec);
 
 			const auto grounds = active_scene->is_in_range<Object::Ground>(
 				hit_point,

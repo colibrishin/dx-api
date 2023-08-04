@@ -56,12 +56,12 @@ namespace Fortress::Math
 		return 1 / (1 + std::powf(E, -t));
 	}
 
-	static Math::Vector2 to_dir_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right)
+	static Math::Vector2 to_hit_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right)
 	{
 		return (hit_left - hit_right).normalized();
 	}
 	
-	static eDirVector translate_dir_vector(const Math::Vector2& hit_vector)
+	static eHitVector translate_hit_vector(const Math::Vector2& hit_vector)
 	{
 		const auto abs_vector = hit_vector.abs();
 		const auto orthogonal = abs_vector.get_x() > 1.0f - Math::epsilon || abs_vector.get_x() <= Math::epsilon;
@@ -73,42 +73,42 @@ namespace Fortress::Math
 
 		if(hit_vector == Math::Vector2{0.0f, 0.0f})
 		{
-			return eDirVector::Identical;
+			return eHitVector::Identical;
 		}
 		if(orthogonal && top_check)
 		{
-			return eDirVector::Top;
+			return eHitVector::Top;
 		}
 		if(orthogonal && bottom_check)
 		{
-			return eDirVector::Bottom;
+			return eHitVector::Bottom;
 		}
 		if(left_check && parallel)
 		{
-			return eDirVector::Left;
+			return eHitVector::Left;
 		}
 		if(right_check && parallel)
 		{
-			return eDirVector::Right;
+			return eHitVector::Right;
 		}
 		if(left_check && top_check)
 		{
-			return eDirVector::TopLeft;
+			return eHitVector::TopLeft;
 		}
 		if(right_check && top_check)
 		{
-			return eDirVector::TopRight;
+			return eHitVector::TopRight;
 		}
 		if(left_check && bottom_check)
 		{
-			return eDirVector::BottomLeft;
+			return eHitVector::BottomLeft;
 		}
 		if(right_check && bottom_check)
 		{
-			return eDirVector::BottomRight;
+			return eHitVector::BottomRight;
 		}
 
-		return eDirVector::Unknown;
+		return eHitVector::Unknown;
 	}
 }
 

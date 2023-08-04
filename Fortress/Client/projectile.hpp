@@ -3,7 +3,6 @@
 #define PROJECTILE_HPP
 
 #include "character.hpp"
-#include "deltatime.hpp"
 #include "rigidBody.hpp"
 
 namespace Fortress::ObjectBase
@@ -24,7 +23,7 @@ namespace Fortress::ObjectBase
 
 		void initialize() override;
 		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
-		__forceinline void update() override;
+		__forceinline virtual void update() override;
 		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other);
 		virtual void unfocus_this();
 		virtual void render() override;
@@ -36,7 +35,6 @@ namespace Fortress::ObjectBase
 		void up_hit_count();
 		int get_hit_count() const;
 		int get_max_hit_count() const;
-
 		virtual void play_fire_sound() = 0;
 		virtual void play_hit_sound() = 0;
 
@@ -77,7 +75,7 @@ namespace Fortress::ObjectBase
 		const character* m_shooter;
 		Texture<GifWrapper> m_texture;
 		std::weak_ptr<GifWrapper> m_current_sprite;
-		Math::Vector2 m_fired_position{};
+		Math::Vector2 m_fired_position;
 
 		virtual void focus_this();
 		void post_hit();

@@ -49,11 +49,11 @@ namespace Fortress::Abstract
 		__forceinline Math::Vector2 get_bottom_left() const;
 		__forceinline Math::Vector2 get_bottom_right() const;
 		__forceinline Math::Vector2 get_center() const;
-
-		__forceinline Math::Vector2 get_dir_point(const eDirVector& dir_vector) const;
-		__forceinline Math::Vector2 to_local_position(const Math::Vector2& other) const;
+		__forceinline Math::Vector2 get_hit_point(const eHitVector& e_vector) const;
+		__forceinline Math::Vector2 to_top_left_local_position(const Math::Vector2& other) const;
+		Math::Vector2 to_top_right_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 to_nearest_local_position(const Math::Vector2& other) const;
-		__forceinline Math::Vector2 get_nearest_point(const Math::Vector2& other) const;
+		__forceinline Math::Vector2 get_nearst_point(const Math::Vector2& other) const;
 
 		__forceinline float get_mass() const;
 	protected:
@@ -68,10 +68,6 @@ namespace Fortress::Abstract
 	private:
 		float m_mass;
 		bool m_bActive;
-
-		__forceinline Math::Vector2 to_top_left_local_position(const Math::Vector2& other) const;
-		__forceinline Math::Vector2 to_top_left_inverse_local_position(const Math::Vector2& other) const;
-		__forceinline bool is_arithmetic_ascending(const Math::Vector2& other) const;
 	};
 }
 
@@ -204,31 +200,21 @@ namespace Fortress::Abstract
 		return m_position;
 	}
 
-	inline Math::Vector2 object::get_dir_point(const eDirVector& dir_vector) const
+	inline Math::Vector2 object::get_hit_point(const eHitVector & e_vector) const
 	{
-		switch (dir_vector) {
-		case eDirVector::Identical: return get_center();
-		case eDirVector::Top: return get_top();
-		case eDirVector::Bottom: return get_bottom();
-		case eDirVector::Left: return get_left();
-		case eDirVector::Right: return get_right();
-		case eDirVector::TopLeft: return get_top_left();
-		case eDirVector::TopRight: return get_top_right();
-		case eDirVector::BottomLeft: return get_bottom_left();
-		case eDirVector::BottomRight: return get_bottom_right();
-		case eDirVector::Unknown: 
+		switch (e_vector) {
+		case eHitVector::Identical: return get_center();
+		case eHitVector::Top: return get_top();
+		case eHitVector::Bottom: return get_bottom();
+		case eHitVector::Left: return get_left();
+		case eHitVector::Right: return get_right();
+		case eHitVector::TopLeft: return get_top_left();
+		case eHitVector::TopRight: return get_top_right();
+		case eHitVector::BottomLeft: return get_bottom_left();
+		case eHitVector::BottomRight: return get_bottom_right();
+		case eHitVector::Unknown: 
 		default: return {0.0f, 0.0f};  // NOLINT(clang-diagnostic-covered-switch-default)
 		}
-	}
-
-	inline Math::Vector2 object::to_local_position(const Math::Vector2& other) const
-	{
-		if(is_arithmetic_ascending(other))
-		{
-			return to_top_left_local_position(other);
-		}
-
-		return to_top_left_inverse_local_position(other);
 	}
 
 	inline Math::Vector2 object::to_top_left_local_position(const Math::Vector2& other) const
@@ -236,41 +222,17 @@ namespace Fortress::Abstract
 		return other - get_top_left();
 	}
 
-	inline Math::Vector2 object::to_top_left_inverse_local_position(const Math::Vector2& other) const
+	inline Math::Vector2 object::to_top_right_local_position(const Math::Vector2& other) const
 	{
-		return (other - get_top_left()) + m_hitbox;
-	}
-
-	// this is just wild guess.
-	inline bool object::is_arithmetic_ascending(const Math::Vector2& other) const
-	{
-		const auto diff = Math::to_dir_vector(get_top_left(), other);
-		const auto dir = Math::translate_dir_vector(diff);
-
-		if(dir == eDirVector::TopRight ||
-			dir == eDirVector::Top ||
-			dir == eDirVector::TopLeft || 
-			dir == eDirVector::Left ||
-			dir == eDirVector::BottomLeft || 
-			dir == eDirVector::Bottom)
-		{
-			return true;
-		}
-
-		return false;
+		return get_top_right() - other;
 	}
 
 	inline Math::Vector2 object::to_nearest_local_position(const Math::Vector2& other) const
 	{
-		if(is_arithmetic_ascending(other))
-		{
-			return other - get_nearest_point(other);
-		}
-
-		return other - get_nearest_point(other) + m_hitbox;
+		return other - get_nearst_point(other);
 	}
 
-	inline Math::Vector2 object::get_nearest_point(const Math::Vector2& other) const
+	inline Math::Vector2 object::get_nearst_point(const Math::Vector2& other) const
 	{
 		std::vector<std::pair<float, Math::Vector2>> distances = 
 		{
