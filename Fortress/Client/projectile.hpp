@@ -32,6 +32,8 @@ namespace Fortress::ObjectBase
 
 		void explosion_near_ground(const Math::Vector2& hit_vector) const;
 
+		void reset_cooldown();
+		bool is_cooldown() const;
 		void up_hit_count();
 		int get_hit_count() const;
 		int get_max_hit_count() const;
@@ -72,6 +74,9 @@ namespace Fortress::ObjectBase
 		int m_radius;
 		const int m_max_hit_count;
 		int m_curr_hit_count;
+
+		float m_hit_cooldown;
+
 		const character* m_shooter;
 		Texture<GifWrapper> m_texture;
 		std::weak_ptr<GifWrapper> m_current_sprite;
@@ -85,6 +90,8 @@ namespace Fortress::ObjectBase
 
 	__forceinline void projectile::update()
 	{
+		m_hit_cooldown += DeltaTime::get_deltaTime();
+
 		if(m_position.get_x() <= -50.0f ||
 			m_position.get_x() >= WinAPIHandles::get_window_width() - 50.0f ||
 			m_position.get_y() >= WinAPIHandles::get_actual_max_y() - 50.0f)

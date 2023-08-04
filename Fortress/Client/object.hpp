@@ -53,7 +53,7 @@ namespace Fortress::Abstract
 		__forceinline Math::Vector2 to_top_left_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 to_top_left_inverse_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 to_nearest_local_position(const Math::Vector2& other) const;
-		__forceinline Math::Vector2 get_nearst_point(const Math::Vector2& other) const;
+		__forceinline Math::Vector2 get_nearest_point(const Math::Vector2& other) const;
 
 		__forceinline float get_mass() const;
 	protected:
@@ -68,7 +68,7 @@ namespace Fortress::Abstract
 	private:
 		float m_mass;
 		bool m_bActive;
-	};
+		};
 }
 
 namespace Fortress::Abstract
@@ -229,10 +229,10 @@ namespace Fortress::Abstract
 
 	inline Math::Vector2 object::to_nearest_local_position(const Math::Vector2& other) const
 	{
-		return other - get_nearst_point(other);
+		return other - get_nearest_point(other);
 	}
 
-	inline Math::Vector2 object::get_nearst_point(const Math::Vector2& other) const
+	inline Math::Vector2 object::get_nearest_point(const Math::Vector2& other) const
 	{
 		std::vector<std::pair<float, Math::Vector2>> distances = 
 		{

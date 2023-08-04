@@ -15,6 +15,7 @@ namespace Fortress::ObjectBase
 			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
 
 		m_curr_hit_count = 0;
+		reset_cooldown();
 		m_current_sprite.lock()->reset_transform();
 		reset_current_gravity_speed();
 		reset_current_speed();
@@ -34,12 +35,16 @@ namespace Fortress::ObjectBase
 		if (const auto character = 
 				std::dynamic_pointer_cast<ObjectBase::character>(other.lock()))
 		{
-			const auto shared_this = std::dynamic_pointer_cast<projectile>(shared_from_this());
-			Debug::Log(L"Projectile hits the character");
-			character->hit(shared_this);
-			up_hit_count();
-			play_hit_sound();
-			explosion_near_ground(hit_vector);
+			if(!is_cooldown())
+			{
+				const auto shared_this = std::dynamic_pointer_cast<projectile>(shared_from_this());
+				Debug::Log(L"Projectile hits the character");
+				character->hit(shared_this);
+				up_hit_count();
+				play_hit_sound();
+				reset_cooldown();
+				explosion_near_ground(hit_vector);
+			}
 		}
 	}
 
@@ -168,6 +173,21 @@ namespace Fortress::ObjectBase
 				}
 			}
 		}
+	}
+
+	void projectile::reset_cooldown()
+	{
+		m_hit_cooldown = 0.0f;
+	}
+
+	bool projectile::is_cooldown() const
+	{
+		if(m_curr_hit_count == 0)
+		{
+			return false;
+		}
+
+		return (m_hit_cooldown < 0.5f);
 	}
 
 	Math::Vector2 projectile::projectile_speed_getter(const std::wstring& short_name, const std::wstring& type)
