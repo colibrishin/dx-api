@@ -269,11 +269,7 @@ namespace Fortress::ObjectBase
 						local_position_bottom.get_y() - y
 					};
 
-					auto diff = local_new_pos - local_position_bottom;
-					if(get_offset() == Math::left)
-					{
-						diff += ground->m_hitbox;
-					}
+					const auto diff = local_new_pos - local_position_bottom;
 					const auto unit = diff.normalized();
 					const auto ground_check = ground->safe_is_destroyed(local_new_pos);
 
@@ -322,11 +318,7 @@ namespace Fortress::ObjectBase
 						local_position_bottom.get_y() + j
 					};
 
-					auto diff = local_new_pos - local_position_bottom;
-					if(get_offset() == Math::left)
-					{
-						diff += ground->m_hitbox;
-					}
+					const auto diff = local_new_pos - local_position_bottom;
 					const auto unit = diff.normalized();
 					const auto ground_check = ground->safe_is_destroyed(local_new_pos);
 
@@ -467,12 +459,12 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
-			const auto left_local_position = ground->to_top_left_inverse_local_position(get_left());
+			const auto left_local_position = ground->to_top_left_local_position(get_left());
 			const auto right_local_position = ground->to_top_left_local_position(get_right());
 
 			// @todo: delta checks valid but this collision starts from right side it has the negative values, and considered as oob.
 			// check should be done in reverse. use the positive side only is probably the best way for avoiding any problem.
-			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position);
+			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position + ground->m_hitbox);
 			const Object::GroundState right_check = ground->safe_is_destroyed(right_local_position);
 			const auto orthogonal_surface = ground->safe_orthogonal_surface_global(get_bottom());
 
