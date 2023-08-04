@@ -51,7 +51,7 @@ namespace Fortress::Abstract
 		__forceinline Math::Vector2 get_center() const;
 		__forceinline Math::Vector2 get_hit_point(const eHitVector& e_vector) const;
 		__forceinline Math::Vector2 to_top_left_local_position(const Math::Vector2& other) const;
-		Math::Vector2 to_top_right_local_position(const Math::Vector2& other) const;
+		__forceinline Math::Vector2 to_top_left_inverse_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 to_nearest_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 get_nearst_point(const Math::Vector2& other) const;
 
@@ -222,9 +222,9 @@ namespace Fortress::Abstract
 		return other - get_top_left();
 	}
 
-	inline Math::Vector2 object::to_top_right_local_position(const Math::Vector2& other) const
+	inline Math::Vector2 object::to_top_left_inverse_local_position(const Math::Vector2& other) const
 	{
-		return get_top_right() - other;
+		return other - get_top_left() + m_hitbox;
 	}
 
 	inline Math::Vector2 object::to_nearest_local_position(const Math::Vector2& other) const
