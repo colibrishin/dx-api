@@ -35,7 +35,7 @@ namespace Fortress
 		void OnTimer();
 		virtual void flip() override;
 		virtual void rotate(const float angle);
-		void reset_transfrom();
+		void reset_transform();
 
 		inline static std::map<UINT_PTR, GifWrapper*> registered_gifs = {};
 	private:
@@ -152,7 +152,7 @@ namespace Fortress
 		m_gdi_handle->RotateTransform(angle);
 	}
 
-	inline void GifWrapper::reset_transfrom()
+	inline void GifWrapper::reset_transform()
 	{
 		m_gdi_handle->ResetTransform();
 	}
