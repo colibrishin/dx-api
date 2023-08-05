@@ -266,9 +266,6 @@
     <ClCompile Include="PrecisionCannonProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
-    <ClCompile Include="AnimationQueue.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">
