@@ -786,19 +786,19 @@ namespace Fortress::ObjectBase
 
 	void character::move_left()
 	{
-		push_sprite(eCharacterAnimation::Move, false);
+		push_sprite(eCharacterAnimation::Move, true);
 		rigidBody::move_left();
 	}
 
 	void character::move_right()
 	{
-		push_sprite(eCharacterAnimation::Move, false);
+		push_sprite(eCharacterAnimation::Move, true);
 		rigidBody::move_right();
 	}
 
 	void character::stop()
 	{
-		push_sprite(eCharacterAnimation::Idle, false);
+		push_sprite(eCharacterAnimation::Idle, true);
 		if(const auto move_sound = m_sound_pack.get_sound(L"move").lock())
 		{
 			if(move_sound->is_playing())
