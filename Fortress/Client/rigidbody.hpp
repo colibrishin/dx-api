@@ -26,6 +26,7 @@ namespace Fortress::Abstract
 
 		void initialize() override;
 		void update() override;
+		virtual void prerender();
 		static void block_window_frame(const std::weak_ptr<rigidBody>& target);
 
 		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other);

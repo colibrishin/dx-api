@@ -25,6 +25,7 @@ namespace Fortress::Abstract
 		~object() override = default;
 
 		__forceinline virtual void render();
+		__forceinline virtual void prerender();
 		virtual void update();
 		__forceinline virtual void move_left();
 		__forceinline virtual void move_right();
@@ -78,6 +79,10 @@ namespace Fortress::Abstract
 	}
 
 	void object::render()
+	{
+	}
+
+	inline void object::prerender()
 	{
 	}
 

@@ -79,6 +79,10 @@ namespace Fortress::Abstract
 		}
 	}
 
+	void rigidBody::prerender()
+	{
+	}
+
 	void rigidBody::block_window_frame(const std::weak_ptr<rigidBody>& target)
 	{
 		const auto locked_ptr = target.lock();
