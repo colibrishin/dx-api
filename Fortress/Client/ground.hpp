@@ -66,15 +66,18 @@ namespace Fortress::Object
 		bool safe_is_object_stuck_local(const Math::Vector2& position) const;
 		Math::Vector2 safe_nearest_surface(const Math::Vector2& global_position) const;
 		// this starts from given position y
-		Math::Vector2 safe_orthogonal_surface_global(const Math::Vector2& global_position) const;
-		// this starts from 0 y-axis.
-		Math::Vector2 safe_orthogonal_surface_zero_global(const Math::Vector2& global_position) const;
+		Math::Vector2 safe_orthogonal_surface_global(
+			const Math::Vector2& global_position,
+			const int depth = -1,
+			const int start_y = -1) const;
 	protected:
 		HDC get_ground_hdc() const;
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
 		void safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius);
-		Math::Vector2 safe_orthogonal_surface_local(const Math::Vector2& local_position) const;
+		Math::Vector2 safe_orthogonal_surface_local(
+			const Math::Vector2& local_position,
+			const int depth) const;
 		void unsafe_set_line_destroyed(const Math::Vector2& line, const int n);
 		void unsafe_set_line_destroyed_reverse(const Math::Vector2& line, int n);
 		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
@@ -339,18 +342,35 @@ namespace Fortress::Object
 		return {0, -local_position.get_y()};
 	}
 
-	inline Math::Vector2 Ground::safe_orthogonal_surface_global(const Math::Vector2& global_position) const
+	inline Math::Vector2 Ground::safe_orthogonal_surface_global(const Math::Vector2& global_position, const int depth, const int start_y) const
 	{
-		const auto local_position = to_top_left_local_position(global_position);
-		return safe_orthogonal_surface_local(local_position);
+		auto local_position = to_top_left_local_position(global_position);
+
+		if(start_y == -1)
+		{
+			local_position = {local_position.get_x(), local_position.get_y()};
+		}
+		else
+		{
+			local_position = {local_position.get_x(), start_y};
+		}
+
+		return safe_orthogonal_surface_local(local_position, depth);
 	}
 
-	inline Math::Vector2 Ground::safe_orthogonal_surface_local(const Math::Vector2& local_position) const
+	inline Math::Vector2 Ground::safe_orthogonal_surface_local(const Math::Vector2& local_position, const int depth) const
 	{
-		for(int y = 0; y < m_hitbox.get_y(); ++y)
+		const int start_y = local_position.get_y();
+		int end_y = start_y + depth;
+
+		if(depth == -1)
 		{
-			const Math::Vector2 new_pos = 
-				{local_position.get_x(), local_position.get_y() + static_cast<float>(y)};
+			end_y = m_hitbox.get_y();
+		}
+
+		for(int y = start_y; y < end_y; ++y)
+		{
+			const Math::Vector2 new_pos = {local_position.get_x(), y};
 
 			if(safe_is_destroyed(new_pos) == GroundState::NotDestroyed)
 			{
@@ -359,12 +379,6 @@ namespace Fortress::Object
 		}
 
 		return Math::vector_inf;
-	}
-
-	inline Math::Vector2 Ground::safe_orthogonal_surface_zero_global(const Math::Vector2& global_position) const
-	{
-		const auto local_position = to_top_left_local_position(global_position);
-		return safe_orthogonal_surface_local({local_position.get_x(), 0.0f});
 	}
 
 	inline HDC Ground::get_ground_hdc() const
