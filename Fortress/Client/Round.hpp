@@ -66,7 +66,7 @@ namespace Fortress
 
 	inline void Round::initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
 	{
-		for(const auto& ptr : m_all_players)
+		for(const auto& ptr : players)
 		{
 			if(const auto player = ptr.lock())
 			{
