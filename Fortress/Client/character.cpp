@@ -201,21 +201,24 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
-			if(!m_bGrounded)
-			{
-				set_movement_pitch_radian(0);
-				return;
-			}
-
-			auto next_surface = get_offset_bottom_forward_position();
+			const bool uphilling = ground->safe_is_object_stuck_global(get_offset_bottom_forward_position());
 			Math::Vector2 delta{};
 
-			// @todo: this still needs to be fixed. inner destruction affects pitch.
+			// calculate only downhilling from current position. if character is uphilling then calculate downhilling angle and reverse it.
+			auto next_surface = get_offset_bottom_forward_position();
+			Math::Vector2 search_vector = get_offset() == Math::left ? Math::right : Math::left;
+
+			if(uphilling)
+			{
+				next_surface = get_offset() == Math::left ? get_bottom_right() : get_bottom_left();
+				search_vector = get_offset();
+			}
+
 			for(int x = 0; x < m_hitbox.get_x(); ++x)
 			{
 				delta = ground->safe_orthogonal_surface_global(
 					next_surface + 
-					(get_offset() == Math::left ? Math::right : Math::left) * x,
+					search_vector * x,
 					m_hitbox.get_y() / 2);
 
 				if(delta != Math::vector_inf)
@@ -230,16 +233,7 @@ namespace Fortress::ObjectBase
 				set_movement_pitch_radian(0);
 				return;
 			}
-
-			// this also means that this is uphilling.
-			if(ground->safe_is_object_stuck_global(get_offset_bottom_forward_position()))
-			{
-				next_surface -= delta;
-			}
-			else
-			{
-				next_surface += delta;
-			}
+			next_surface += delta;
 
 			Debug::draw_dot(next_surface);
 			auto rotate_radian = next_surface.local_inner_angle(get_bottom());
