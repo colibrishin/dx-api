@@ -34,7 +34,7 @@ namespace Fortress::ObjectBase
 	{
 		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
 		scene_ptr->remove_game_object(
-			Abstract::LayerType::Character, std::dynamic_pointer_cast<object>(shared_from_this()));
+			Abstract::LayerType::Projectile, std::dynamic_pointer_cast<object>(shared_from_this()));
 
 		m_curr_hit_count = 0;
 		reset_cooldown();
@@ -75,7 +75,7 @@ namespace Fortress::ObjectBase
 		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
 
 		scene_ptr->add_game_object(
-			Abstract::LayerType::Character, 
+			Abstract::LayerType::Projectile, 
 			std::dynamic_pointer_cast<object>(shared_from_this()));
 		scene_ptr->get_camera().lock()->set_object(
 			std::dynamic_pointer_cast<object>(shared_from_this()));

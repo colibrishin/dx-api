@@ -14,12 +14,13 @@ namespace Fortress::Abstract
 		Environment,
 		Ground,
 		Character,
+		Projectile,
 		UI,
 		_END
 	};
 
 	inline const wchar_t* str_layer_type [] = {
-	    L"Debug", L"Environment", L"Ground", L"Character", L"UI", L"error",
+	    L"Debug", L"Environment", L"Ground", L"Character", L"Projectile", L"UI", L"error",
 	};
 
 	class Layer final : public entity
