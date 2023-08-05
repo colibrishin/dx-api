@@ -179,6 +179,9 @@
     <ClCompile Include="cameraManager.hpp" />
     <ClCompile Include="CannonCharacter.hpp" />
     <ClCompile Include="CannonProjectile.hpp" />
+    <ClCompile Include="characterAnim.cpp" />
+    <ClCompile Include="characterCollision.cpp" />
+    <ClCompile Include="characterState.cpp" />
     <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="GifWrapper.hpp" />
     <ClCompile Include="LoadingScene.cpp" />

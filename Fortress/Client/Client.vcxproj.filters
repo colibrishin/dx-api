@@ -266,6 +266,15 @@
     <ClCompile Include="PrecisionCannonProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
+    <ClCompile Include="characterAnim.cpp">
+      <Filter>Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="characterState.cpp">
+      <Filter>Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="characterCollision.cpp">
+      <Filter>Engine\Objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">

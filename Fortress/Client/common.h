@@ -30,8 +30,24 @@ namespace Fortress
 		Move,
 		Firing,
 		Fire,
+		Fired,
+		PreItem,
 		Item,
 		Dead,
+		Death,
+		Hit,
+	};
+
+	enum class eCharacterAnim
+	{
+		Idle = 0,
+		Move,
+		Firing,
+		Fire,
+		Fired,
+		Item,
+		Dead,
+		Death,
 		Hit,
 	};
 

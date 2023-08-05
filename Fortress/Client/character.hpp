@@ -73,8 +73,11 @@ namespace Fortress::ObjectBase
 		void move_state();
 		void firing_state();
 		void fire_state();
+		void fired_state();
 		void hit_state();
+		virtual void preitem_state();
 		virtual void item_state();
+		virtual void death_state();
 		virtual void dead_state();
 
 		void set_hp(const float hp);
@@ -83,14 +86,16 @@ namespace Fortress::ObjectBase
 		void reset_mp();
 		void set_item_active(int n);
 
-		void set_current_sprite(const std::wstring& name);
+		void set_current_sprite(const eCharacterAnim& eAnim);
+		bool is_anim_finished() const;
+
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
 		
 		virtual void move_left() override;
 		virtual void move_right() override;
 		virtual void stop() override;
-		virtual void prerender();
+		virtual void prerender() override;
 
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
@@ -105,6 +110,8 @@ namespace Fortress::ObjectBase
 		bool m_bMovable;
 		const std::wstring m_shot_name;
 		eCharacterState m_state;
+
+		float m_anim_elapsed;
 
 		void set_state(const eCharacterState& state);
 		void render_hp_bar(const Math::Vector2& position);
@@ -130,6 +137,24 @@ namespace Fortress::ObjectBase
 
 		std::map<int, std::shared_ptr<Object::item>> m_available_items;
 		std::weak_ptr<Object::item> m_active_item;
+
+		static std::wstring anim_name_getter(const eCharacterAnim& anim)
+		{
+			switch(anim)
+			{
+			case eCharacterAnim::Idle: return L"idle";
+			case eCharacterAnim::Move: return L"move";
+			case eCharacterAnim::Firing: return L"charging";
+			case eCharacterAnim::Fire: return L"fire";
+			case eCharacterAnim::Item: return L"item";
+			case eCharacterAnim::Dead: return L"dead";
+			case eCharacterAnim::Death: return L"death";
+			case eCharacterAnim::Hit: return L"hit";
+			case eCharacterAnim::Fired: break;
+			default: return L"";
+			}
+		}
+
 	protected:
 		character(
 			const int player_id,
@@ -159,7 +184,8 @@ namespace Fortress::ObjectBase
 			m_main_projectile(main_projectile),
 			m_secondary_projectile(secondary_projectile),
 			m_available_items{},
-			m_active_item{}
+			m_active_item{},
+			m_anim_elapsed(0.0f)
 		{
 			character::initialize();
 		}

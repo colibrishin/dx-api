@@ -48,42 +48,6 @@ namespace Fortress::Scene
 		scene::update();
 		m_round.update();
 		m_radar.update();
-
-		// @todo: if we move state change to character update, creating projectile crashes the scene due to sudden change of vector items.
-		// fire state, creating projectile, is dependent with scene.
-		for (const auto& ptr : m_characters)
-		{
-			if(const auto player = ptr.lock())
-			{
-				switch(player->get_state())
-				{
-				case eCharacterState::Idle:
-					player->idle_state();
-					break;
-				case eCharacterState::Firing:
-					player->firing_state();
-					break;
-				case eCharacterState::Fire:
-					player->fire_state();
-					break;
-				case eCharacterState::Item:
-					player->item_state();
-					break;
-				case eCharacterState::Move:
-					player->move_state();
-					break;
-				case eCharacterState::Dead:
-					player->dead_state();
-					break;
-				case eCharacterState::Hit:
-					player->hit_state();
-					break;
-				default:
-					break;
-				}
-			}
-			
-		}
 	}
 
 	void BattleScene::render()
