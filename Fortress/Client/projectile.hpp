@@ -23,8 +23,8 @@ namespace Fortress::ObjectBase
 
 		void initialize() override;
 		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
-		__forceinline virtual void update() override;
-		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other);
+		virtual void update() override;
+		void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other) override;
 		virtual void unfocus_this();
 		virtual void render() override;
 		virtual void prerender();
@@ -62,6 +62,7 @@ namespace Fortress::ObjectBase
 			m_radius(radius),
 			m_max_hit_count(hit_count),
 			m_curr_hit_count(0),
+			m_hit_cooldown(0),
 			m_shooter(shooter),
 			m_texture(short_name),
 			m_sound_pack(short_name)
@@ -87,19 +88,5 @@ namespace Fortress::ObjectBase
 	protected:
 		SoundPack m_sound_pack;
 	};
-
-	__forceinline void projectile::update()
-	{
-		m_hit_cooldown += DeltaTime::get_deltaTime();
-
-		if(m_position.get_x() <= -50.0f ||
-			m_position.get_x() >= WinAPIHandles::get_window_width() - 50.0f ||
-			m_position.get_y() >= WinAPIHandles::get_actual_max_y() - 50.0f)
-		{
-			post_hit();
-		}
-
-		rigidBody::update();
-	}
 }
 #endif // PROJECTILE_HPP

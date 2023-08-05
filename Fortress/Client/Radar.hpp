@@ -15,7 +15,7 @@ namespace Fortress
 	class Radar
 	{
 	public:
-		Radar() = default;
+		Radar(const Math::Vector2& map_size) : m_center(map_size / 2) {}
 		void initialize();
 		void update() const;
 		void render() const;
@@ -35,8 +35,6 @@ namespace Fortress
 		m_radar_bitmap = CreateCompatibleBitmap(m_radar_hdc, 1000, 1000);
 		const auto previousBitmap = static_cast<HBITMAP>(SelectObject(m_radar_hdc, m_radar_bitmap));
 		DeleteObject(previousBitmap);
-
-		m_center = {500, 500};
 
 		m_bf.AlphaFormat = 0;
 		m_bf.BlendFlags = 0;

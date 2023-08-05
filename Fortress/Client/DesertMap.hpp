@@ -11,7 +11,7 @@ namespace Fortress::Map
 	class DesertMap : public Scene::BattleScene
 	{
 	public:
-		DesertMap() : BattleScene(L"Desert") {}
+		DesertMap() : BattleScene(L"Desert", {900.0f, 500.f}) {}
 		void pre_initialize() override;
 		void set_bgm() override;
 		void set_background_img() override;
@@ -44,10 +44,10 @@ namespace Fortress::Map
 	{
 		m_characters.emplace_back(
 			ObjectBase::ObjectManager::create_object<Object::CannonCharacter>(
-				0, L"Cannon", Math::Vector2{500.0f, 1.0f}, Math::left));
+				0, L"Cannon", Math::Vector2{350.0f, 1.0f}, Math::left));
 		m_characters.emplace_back(
 			ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
-				1, L"Missile", Math::Vector2{1.0f, 1.0f}, Math::right));
+				1, L"Missile", Math::Vector2{-150.0f, 1.0f}, Math::right));
 	}
 
 	inline void DesertMap::set_client_character()
@@ -59,13 +59,19 @@ namespace Fortress::Map
 	{
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::Stairway>(
-				L"left_upper", Math::Vector2{0.0f, 200.0f}, Math::Vector2{400.0f, 100.0f}, Math::left));
+				L"left_upper", 
+				Math::Vector2{-150.0f, 200.0f}, 
+				Math::Vector2{400.0f, 100.0f}, Math::left));
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::Ground>(
-				L"mid_lower", Math::Vector2{300.0f, 300.0f}, Math::Vector2{300.0f, 100.0f}));
+				L"mid_lower", 
+				Math::Vector2{50.0f, 300.0f}, 
+				Math::Vector2{300.0f, 100.0f}));
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::Stairway>(
-				L"right_upper", Math::Vector2{600.0f, 200.0f}, Math::Vector2{300.0f, 100.0f}, Math::right));
+				L"right_upper", 
+				Math::Vector2{350.0f, 200.0f},
+				Math::Vector2{300.0f, 100.0f}, Math::right));
 	}
 }
 #endif // DESERTMAP_HPP

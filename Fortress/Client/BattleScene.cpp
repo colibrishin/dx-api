@@ -212,4 +212,9 @@ namespace Fortress::Scene
 	{
 		return m_round;
 	}
+
+	const Math::Vector2& BattleScene::get_map_size() const
+	{
+		return m_map_size;
+	}
 }

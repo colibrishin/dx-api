@@ -10,7 +10,7 @@ namespace Fortress::Map
 	class SkyValleyMap : public Scene::BattleScene
 	{
 	public:
-		SkyValleyMap() : BattleScene(L"SkyValley") {}
+		SkyValleyMap() : BattleScene(L"SkyValley", {1000.0f, 500.0f}) {}
 		void pre_initialize() override;
 		void set_bgm() override;
 		void set_background_img() override;

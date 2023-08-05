@@ -8,6 +8,28 @@
 
 namespace Fortress::ObjectBase
 {
+	void projectile::update()
+	{
+		m_hit_cooldown += DeltaTime::get_deltaTime();
+
+		const auto scene = std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock());
+		const float epsilon = 50.0f;
+		const auto map_size = scene->get_map_size() + epsilon;
+
+		if(scene)
+		{
+			if(m_position.get_x() <= -map_size.get_x() ||
+				m_position.get_x() >= map_size.get_x() ||
+				m_position.get_y() >= map_size.get_y() ||
+				m_position.get_y() <= -map_size.get_y())
+			{
+				post_hit();
+			}	
+		}
+
+		rigidBody::update();
+	}
+
 	void projectile::post_hit()
 	{
 		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();

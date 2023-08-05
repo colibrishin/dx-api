@@ -14,7 +14,11 @@ namespace Fortress::Scene
 	class BattleScene : public Abstract::scene
 	{
 	public:
-		BattleScene(const std::wstring& name) : scene(L"Battle Scene " + name), m_round(), m_radar()
+		BattleScene(const std::wstring& name, const Math::Vector2& map_size) :
+			scene(L"Battle Scene " + name),
+			m_map_size(map_size),
+			m_round(),
+			m_radar(map_size)
 		{
 		}
 
@@ -25,6 +29,7 @@ namespace Fortress::Scene
 		void deactivate() override;
 		void activate() override;
 		const Round& get_round_status();
+		const Math::Vector2& get_map_size() const;
 
 		virtual void set_bgm() = 0;
 		virtual void set_background_img() = 0;
@@ -33,6 +38,7 @@ namespace Fortress::Scene
 		virtual void set_client_character() = 0;
 
 	protected:
+		Math::Vector2 m_map_size;
 		std::weak_ptr<ObjectBase::character> m_self;
 		std::vector<std::weak_ptr<ObjectBase::character>> m_characters;
 		std::vector<std::weak_ptr<Object::Ground>> m_grounds;
