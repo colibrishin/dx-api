@@ -101,8 +101,7 @@ namespace Fortress::Object
 			const auto hit_point = projectile->get_hit_point(e_vec);
 
 			if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
-				safe_is_projectile_hit(hit_point, projectile) &&
-				!projectile->is_cooldown())
+				safe_is_projectile_hit(hit_point, projectile))
 			{
 				safe_set_destroyed_global(hit_point, projectile->get_radius());
 
@@ -123,7 +122,6 @@ namespace Fortress::Object
 				// explosion near ground converts hitter from victim vector.
 				// victim vector should be converted to hitter vector.
 				projectile->explosion_near_ground(-hit_vector);
-				projectile->reset_cooldown();
 			}
 		}
 
