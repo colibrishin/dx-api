@@ -38,25 +38,7 @@ namespace Fortress::ObjectBase
 
 	void character::post_hit()
 	{
-		if(get_hp_percentage() > 0.0f)
-		{
-			set_current_sprite(L"hit");
-			m_current_sprite.lock()->play([this]()
-			{
-				set_current_sprite(L"idle");
-			});
-		}
-		else
-		{
-			set_current_sprite(L"death");
-			m_current_sprite.lock()->play([this]()
-			{
-				set_current_sprite(L"dead");
-				m_current_sprite.lock()->play();
-			});
-
-			set_state(eCharacterState::Dead);
-		}
+		set_state(eCharacterState::Hit);
 	}
 
 	void character::shoot()
@@ -673,6 +655,40 @@ namespace Fortress::ObjectBase
 				set_state(eCharacterState::Idle);
 			}
 		}
+	}
+
+	void character::hit_state()
+	{
+		set_current_sprite(L"hit");
+
+		if(get_hp_percentage() > 0.0f)
+		{
+			m_current_sprite.lock()->play([this]()
+			{
+				set_current_sprite(L"idle");
+			});
+		}
+		else
+		{
+			set_current_sprite(L"death");
+			m_current_sprite.lock()->play([this]()
+			{
+				set_current_sprite(L"dead");
+			});
+			set_state(eCharacterState::Dead);
+		}
+
+		// case where hit by self.
+		if(const auto prj = m_current_projectile.lock())
+		{
+			if(prj->is_active())
+			{
+				set_state(eCharacterState::Fire);
+				return;
+			}
+		}
+
+		set_state(eCharacterState::Idle);
 	}
 
 	void character::item_state()
