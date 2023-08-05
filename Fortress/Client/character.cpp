@@ -201,15 +201,22 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
+			if(!m_bGrounded)
+			{
+				set_movement_pitch_radian(0);
+				return;
+			}
+
 			auto next_surface = get_offset_bottom_forward_position();
 			Math::Vector2 delta{};
 
 			// @todo: this still needs to be fixed. inner destruction affects pitch.
 			for(int x = 0; x < m_hitbox.get_x(); ++x)
 			{
-				delta = ground->safe_orthogonal_surface_zero_global(
+				delta = ground->safe_orthogonal_surface_global(
 					next_surface + 
-					(get_offset() == Math::left ? Math::right : Math::left) * x);
+					(get_offset() == Math::left ? Math::right : Math::left) * x,
+					m_hitbox.get_y() / 2);
 
 				if(delta != Math::vector_inf)
 				{
@@ -466,7 +473,7 @@ namespace Fortress::ObjectBase
 			// check should be done in reverse. use the positive side only is probably the best way for avoiding any problem.
 			const Object::GroundState left_check = ground->safe_is_destroyed(left_local_position + ground->m_hitbox);
 			const Object::GroundState right_check = ground->safe_is_destroyed(right_local_position);
-			const auto orthogonal_surface = ground->safe_orthogonal_surface_global(get_bottom());
+			const auto orthogonal_surface = ground->safe_orthogonal_surface_global(get_bottom(), -1, -1);
 
 			// This ground is orthogonal surface. it will be treated as "main" ground.
 			if(orthogonal_surface != Math::vector_inf)
@@ -479,13 +486,13 @@ namespace Fortress::ObjectBase
 			{
 				// If this ground is not orthogonal surface, probably this will exists in left or right, top side.
 				// not-main ground is low enough to pass, then move it to the not-main ground.
+				// remaining gravity or pitching control will be handled when the not-main becomes main.
 				const Math::Vector2 bottom_local_position = ground->to_top_left_local_position(get_bottom());
 				const auto possible_velocity = get_next_velocity(bottom_local_position, ground);
 
 				if(possible_velocity != Math::vector_inf)
 				{
 					m_velocity = possible_velocity;
-					ground_pitching(ground);
 				}
 				else if((left_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::left) || 
 					(right_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::right))
