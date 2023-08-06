@@ -162,11 +162,13 @@ namespace Fortress
 	// this will run on another thread, by win api.
 	inline void Round::next_player()
 	{
+		const auto scene = Scene::SceneManager::get_active_scene().lock();
+		const auto camera = scene->get_camera().lock();
+
 		if(const auto player = m_current_player.lock())
 		{
 			player->stop();
 			player->set_unmovable();
-			player->get_current_projectile().lock()->unfocus_this();
 		}
 
 		const auto previous_character = m_current_player;

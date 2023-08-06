@@ -25,7 +25,6 @@ namespace Fortress::ObjectBase
 		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
 		virtual void update() override;
 		void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other) override;
-		virtual void unfocus_this();
 		virtual void render() override;
 		virtual void prerender();
 		const character* get_origin() const;
@@ -94,9 +93,9 @@ namespace Fortress::ObjectBase
 		std::weak_ptr<GifWrapper> m_current_sprite;
 		Math::Vector2 m_fired_position;
 
-		virtual void focus_this();
-		void post_hit();
 	protected:
+		virtual void post_hit();
+
 		SoundPack m_sound_pack;
 	};
 }

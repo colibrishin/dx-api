@@ -12,7 +12,6 @@ namespace Fortress
 		void update();
 		void initialize();
 		void set_object(const std::weak_ptr<Abstract::object>& obj);
-		void restore_object();
 		Math::Vector2 get_relative_position(const std::weak_ptr<Abstract::object>& obj) const;
 		Math::Vector2 get_offset() const;
 		Math::Vector2 get_offset(const Math::Vector2& hitbox) const;
@@ -22,7 +21,6 @@ namespace Fortress
 		Math::Vector2 m_window_size = {};
 		Math::Vector2 m_center_position = {};
 		std::weak_ptr<Abstract::object> m_lock_target;
-		std::weak_ptr<Abstract::object> m_backup_target;
 	};
 
 	inline void Camera::update()
@@ -42,13 +40,7 @@ namespace Fortress
 
 	inline void Camera::set_object(const std::weak_ptr<Abstract::object>& obj)
 	{
-		m_backup_target = m_lock_target;
 		m_lock_target = obj;
-	}
-
-	inline void Camera::restore_object()
-	{
-		m_lock_target = m_backup_target;
 	}
 
 	inline Math::Vector2 Camera::get_relative_position(const std::weak_ptr<Abstract::object>& obj) const

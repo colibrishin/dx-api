@@ -72,28 +72,6 @@ namespace Fortress::ObjectBase
 		}
 	}
 
-	void projectile::focus_this()
-	{
-		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
-
-		scene_ptr->add_game_object(
-			Abstract::LayerType::Projectile, 
-			std::dynamic_pointer_cast<object>(shared_from_this()));
-		scene_ptr->get_camera().lock()->set_object(
-			std::dynamic_pointer_cast<object>(shared_from_this()));
-
-		reset_current_gravity_speed();
-		reset_current_speed();
-		set_enabled();
-	}
-
-	void projectile::unfocus_this()
-	{
-		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
-		scene_ptr->get_camera().lock()->restore_object();
-		post_hit();
-	}
-
 	void projectile::render()
 	{
 		if(is_active())
