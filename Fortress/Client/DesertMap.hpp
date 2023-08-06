@@ -5,6 +5,7 @@
 #include "Stairway.hpp"
 #include "MissileCharacter.hpp"
 #include "objectManager.hpp"
+#include "SecwindCharacter.hpp"
 
 namespace Fortress::Map
 {
@@ -43,8 +44,8 @@ namespace Fortress::Map
 	inline void DesertMap::set_characters()
 	{
 		m_characters.emplace_back(
-			ObjectBase::ObjectManager::create_object<Object::CannonCharacter>(
-				0, L"Cannon", Math::Vector2{350.0f, 1.0f}, Math::left));
+			ObjectBase::ObjectManager::create_object<Object::SecwindCharacter>(
+				0, L"Secwind", Math::Vector2{350.0f, 1.0f}, Math::left));
 		m_characters.emplace_back(
 			ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
 				1, L"Missile", Math::Vector2{-150.0f, 1.0f}, Math::right));

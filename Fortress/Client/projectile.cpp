@@ -232,6 +232,14 @@ namespace Fortress::ObjectBase
 		{
 			return {200.0f, 1.0f};
 		}
+		if(short_name == L"secwind" && type == L"main")
+		{
+			return {200.0f, 1.0f};
+		}
+		if(short_name == L"secwind" && type == L"sub")
+		{
+			return {500.0f, 1.0f};
+		}
 
 		return {};
 	}

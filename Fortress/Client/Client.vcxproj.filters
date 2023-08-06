@@ -186,6 +186,12 @@
     <ClInclude Include="NextPlayerTimer.hpp">
       <Filter>Round</Filter>
     </ClInclude>
+    <ClInclude Include="SecwindCharacter.hpp">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="EnergyBallProjectile.hpp">
+      <Filter>Projectiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -274,6 +280,9 @@
     </ClCompile>
     <ClCompile Include="characterCollision.cpp">
       <Filter>Engine\Objects</Filter>
+    </ClCompile>
+    <ClCompile Include="MultiEnergyBallProjectile.hpp">
+      <Filter>Projectiles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
