@@ -27,7 +27,9 @@ namespace Fortress::ObjectBase
 			}	
 		}
 
+		*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
 		rigidBody::update();
+		*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
 	}
 
 	void projectile::post_hit()
@@ -265,7 +267,7 @@ namespace Fortress::ObjectBase
 		if(const auto battle_scene = 
 			std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock()))
 		{
-			m_acceleration = {battle_scene->get_round_status().get_wind_acceleration(), 1.0f};
+			m_wind_acceleration = {battle_scene->get_round_status().get_wind_acceleration(), 0.0f};
 		}
 
 		m_current_sprite.lock()->play();

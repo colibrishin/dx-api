@@ -63,6 +63,7 @@ namespace Fortress::ObjectBase
 			m_max_hit_count(hit_count),
 			m_curr_hit_count(0),
 			m_hit_cooldown(0),
+			m_wind_acceleration(),
 			m_shooter(shooter),
 			m_texture(short_name),
 			m_sound_pack(short_name)
@@ -77,6 +78,8 @@ namespace Fortress::ObjectBase
 		int m_curr_hit_count;
 
 		float m_hit_cooldown;
+
+		Math::Vector2 m_wind_acceleration;
 
 		const character* m_shooter;
 		Texture<GifWrapper> m_texture;
