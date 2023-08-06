@@ -56,12 +56,14 @@ namespace Fortress::ObjectBase
 			const Math::Vector2& acceleration,
 			const float damage,
 			const float radius,
-			const int hit_count) :
+			const int hit_count,
+			const int fire_count) :
 			rigidBody(name, position, {30.0f, 30.0f}, velocity, mass, speed, acceleration, true),
 			m_damage(damage),
 			m_radius(radius),
 			m_max_hit_count(hit_count),
 			m_curr_hit_count(0),
+			m_fire_count(fire_count),
 			m_hit_cooldown(0),
 			m_wind_acceleration(),
 			m_shooter(shooter),
@@ -76,6 +78,7 @@ namespace Fortress::ObjectBase
 		int m_radius;
 		const int m_max_hit_count;
 		int m_curr_hit_count;
+		int m_fire_count;
 
 		float m_hit_cooldown;
 

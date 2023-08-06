@@ -24,6 +24,7 @@ namespace Fortress::Object
 			{}, 
 			10.0f,
 			50,
+			1,
 			1)
 		{
 			CannonProjectile::initialize();
