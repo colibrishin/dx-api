@@ -3,6 +3,8 @@
 #include "projectile.hpp"
 #include "item.hpp"
 
+#undef max
+
 namespace Fortress::ObjectBase
 {
 	void character::update()
@@ -40,6 +42,9 @@ namespace Fortress::ObjectBase
 			break;
 		case eCharacterState::Item: 
 			item_state();
+			break;
+		case eCharacterState::TurnEnd: 
+			turn_end_state();
 			break;
 		default:
 			break;
@@ -197,7 +202,7 @@ namespace Fortress::ObjectBase
 				else
 				{
 					set_state(eCharacterState::Fire);
-					shoot();	
+					shoot();
 				}
 			}
 		}
@@ -207,23 +212,28 @@ namespace Fortress::ObjectBase
 	{
 		default_state();
 
-		if(const auto projectile = m_current_projectile.lock())
+		const auto scene = Scene::SceneManager::get_active_scene().lock();
+		const auto projectile_list = scene->get_objects<projectile>();
+
+		if(projectile_list.empty())
 		{
-			if(projectile->is_active())
-			{
-				set_state(eCharacterState::Fired);
-			}
+			return;
+		}
+
+		const auto initial_prj = (*projectile_list.begin()).lock();
+
+		if(initial_prj->get_origin() == this && 
+			(initial_prj->is_active() || initial_prj->is_exploded()))
+		{
+			set_state(eCharacterState::Fired);
 		}
 	}
 
 	void character::fired_state()
 	{
-		if(const auto projectile = m_current_projectile.lock())
+		if(!is_projectile_fire_counted() && !is_projectile_active())
 		{
-			if(!projectile->is_active())
-			{
-				set_state(eCharacterState::Idle);
-			}
+			set_state(eCharacterState::TurnEnd);
 		}
 	}
 
@@ -237,13 +247,25 @@ namespace Fortress::ObjectBase
 			return;
 		}
 
-		if(const auto projectile = m_current_projectile.lock())
+		if(is_projectile_fire_counted())
 		{
-			if(projectile->is_active())
-			{
-				set_state(eCharacterState::Fired);
-				return;
-			}
+			set_state(eCharacterState::Fired);
+			return;
+		}
+
+		set_state(eCharacterState::Idle);
+	}
+
+	void character::turn_end_state()
+	{
+		default_state();
+
+		const auto scene = Scene::SceneManager::get_active_scene().lock();
+		const auto projectiles = get_projectiles();
+
+		for(const auto& prj : projectiles)
+		{
+			scene->remove_game_object(Abstract::LayerType::Projectile, prj);
 		}
 
 		set_state(eCharacterState::Idle);
@@ -263,7 +285,7 @@ namespace Fortress::ObjectBase
 		{
 			if(item->is_effect_ended())
 			{
-				set_state(eCharacterState::Idle);
+				set_state(eCharacterState::TurnEnd);
 				item->reset();
 				m_active_item = {};
 			}

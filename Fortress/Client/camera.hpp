@@ -12,22 +12,26 @@ namespace Fortress
 		void update();
 		void initialize();
 		void set_object(const std::weak_ptr<Abstract::object>& obj);
-		void restore_object();
 		Math::Vector2 get_relative_position(const std::weak_ptr<Abstract::object>& obj) const;
 		Math::Vector2 get_offset() const;
 		Math::Vector2 get_offset(const Math::Vector2& hitbox) const;
 		std::weak_ptr<Abstract::object> get_locked_object() const;
 
 	private:
+		Math::Vector2 m_target_center = {};
 		Math::Vector2 m_window_size = {};
 		Math::Vector2 m_center_position = {};
 		std::weak_ptr<Abstract::object> m_lock_target;
-		std::weak_ptr<Abstract::object> m_backup_target;
 	};
 
 	inline void Camera::update()
 	{
 		m_center_position = m_window_size / 2;
+
+		if(const auto target_ptr = m_lock_target.lock())
+		{
+			m_target_center = target_ptr->get_center();
+		}
 	}
 
 	inline void Camera::initialize()
@@ -42,24 +46,13 @@ namespace Fortress
 
 	inline void Camera::set_object(const std::weak_ptr<Abstract::object>& obj)
 	{
-		m_backup_target = m_lock_target;
 		m_lock_target = obj;
-	}
-
-	inline void Camera::restore_object()
-	{
-		m_lock_target = m_backup_target;
 	}
 
 	inline Math::Vector2 Camera::get_relative_position(const std::weak_ptr<Abstract::object>& obj) const
 	{
-		if(const auto target_ptr = m_lock_target.lock())
-		{
-			const auto diff = target_ptr->get_center() - obj.lock()->get_center();
-			return (m_center_position - diff) - (obj.lock()->m_hitbox / 2);
-		}
-
-		return m_center_position;
+		const auto diff = m_target_center - obj.lock()->get_center();
+		return (m_center_position - diff) - (obj.lock()->m_hitbox / 2);
 	}
 
 	inline Math::Vector2 Camera::get_offset() const

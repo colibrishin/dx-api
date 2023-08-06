@@ -9,20 +9,18 @@
 #include "NutshellProjectile.hpp"
 #include "RepairItem.hpp"
 
+#undef max
+
 namespace Fortress::ObjectBase
 {
 	void character::initialize()
 	{
 		set_current_sprite(eCharacterAnim::Idle);
 		set_state(eCharacterState::Idle);
-		m_current_projectile = m_main_projectile;
 		rigidBody::initialize();
-		m_nutshell_projectile = std::make_shared<Object::NutShellProjectile>(this);
 		m_available_items.emplace(1, std::make_shared<Item::DoubleShotItem>());
 		m_available_items.emplace(2, std::make_shared<Item::TeleportItem>());
 		m_available_items.emplace(3, std::make_shared<Item::RepairItem>());
-		m_main_projectile->set_disabled();
-		m_secondary_projectile->set_disabled();
 	}
 
 	void character::hit(const std::weak_ptr<projectile>& p)
@@ -44,8 +42,53 @@ namespace Fortress::ObjectBase
 
 	void character::shoot()
 	{
-		m_current_projectile.lock()->play_fire_sound();
-		m_current_projectile.lock()->set_enabled();
+		float charged = get_charged_power();
+
+		if(charged <= 0.0f)
+		{
+			charged = 10.0f;
+		}
+
+		Math::Vector2 angle{};
+
+		if(get_offset() == Math::left)
+		{
+			angle = {-cosf(get_movement_pitch_radian()), -sinf(get_movement_pitch_radian())};
+		}
+		else
+		{
+			angle = {cosf(get_movement_pitch_radian()), sinf(get_movement_pitch_radian())};
+		}
+
+		std::weak_ptr<projectile> instantiated;
+
+		if(m_projectile_type == eProjectileType::Main)
+		{
+			instantiated = get_main_projectile();
+		}
+		else if(m_projectile_type == eProjectileType::Sub)
+		{
+			instantiated = get_sub_projectile();
+		}
+		else
+		{
+			instantiated = ObjectManager::create_object<Object::NutShellProjectile>(this);
+		}
+
+		const auto projectile = instantiated.lock();
+
+		const auto forward = Math::Vector2{get_offset().get_x(), -1} * projectile->m_hitbox.get_x();
+		const auto forward_rotation = forward.rotate(get_movement_pitch_radian());
+
+		projectile->fire(
+			(get_offset() == Math::left ? get_top_left() : get_top_right()) + forward_rotation, 
+			angle, 
+			charged);
+
+		if(const auto scene = Scene::SceneManager::get_active_scene().lock())
+		{
+			scene->add_game_object(Abstract::LayerType::Projectile, projectile);
+		}
 	}
 
 	float character::get_charged_power() const
@@ -182,25 +225,20 @@ namespace Fortress::ObjectBase
 
 	void character::change_projectile()
 	{
-		if(m_current_projectile.lock() == m_main_projectile)
+		if(m_projectile_type == eProjectileType::Main)
 		{
-			m_current_projectile = m_secondary_projectile;
+			m_projectile_type = eProjectileType::Sub;
 		}
-		else
+		else if(m_projectile_type == eProjectileType::Sub)
 		{
-			m_current_projectile = m_main_projectile;
+			m_projectile_type = eProjectileType::Main;
 		}
 	}
 
 	void character::equip_nutshell()
 	{
-		m_tmp_projectile = m_current_projectile;
-		m_current_projectile = std::dynamic_pointer_cast<projectile>(m_nutshell_projectile);
-	}
-
-	std::weak_ptr<projectile> character::get_current_projectile()
-	{
-		return m_current_projectile;
+		m_tmp_projectile_type = m_projectile_type;
+		m_projectile_type = eProjectileType::Nutshell;
 	}
 
 	const std::wstring& character::get_short_name() const
@@ -232,9 +270,9 @@ namespace Fortress::ObjectBase
 
 	void character::unequip_nutshell()
 	{
-		if(m_current_projectile.lock() == m_nutshell_projectile && m_tmp_projectile.lock())
+		if(m_tmp_projectile_type != eProjectileType::Nutshell && m_projectile_type == eProjectileType::Nutshell)
 		{
-			m_current_projectile = m_tmp_projectile;
+			m_projectile_type = m_tmp_projectile_type;
 		}
 	}
 
@@ -252,6 +290,110 @@ namespace Fortress::ObjectBase
 	const std::wstring& character::get_current_sprite_name() const
 	{
 		return m_current_sprite.lock()->get_name();
+	}
+
+	eProjectileType character::get_projectile_type() const
+	{
+		return m_projectile_type;
+	}
+
+	bool character::is_projectile_fire_counted() const
+	{
+		const auto scene = Scene::SceneManager::get_active_scene().lock();
+		const auto projectile_list = scene->get_objects<projectile>();
+
+		if(projectile_list.empty())
+		{
+			return false;
+		}
+
+		int exploded = 0;
+		int fire_count = 0;
+
+		for(const auto& prj : projectile_list)
+		{
+			if(const auto projectile = prj.lock())
+			{
+				fire_count = std::max(fire_count, projectile->get_fire_count());
+
+				if(projectile->is_exploded() && projectile->get_origin() == this)
+				{
+					exploded++;
+				}
+			}
+		}
+
+		return fire_count != exploded;
+	}
+
+	bool character::is_projectile_active() const
+	{
+		const auto scene = Scene::SceneManager::get_active_scene().lock();
+		const auto projectile_list = scene->get_objects<projectile>();
+
+		if(projectile_list.empty())
+		{
+			return false;
+		}
+
+		int active_count = 0;
+
+		for(const auto& prj : projectile_list)
+		{
+			if(const auto projectile = prj.lock())
+			{
+				if(projectile->is_active() && projectile->get_origin() == this)
+				{
+					active_count++;
+				}
+			}
+		}
+
+		return active_count != 0;
+	}
+
+	std::weak_ptr<projectile> character::get_one_active_projectile() const
+	{
+		const auto scene = Scene::SceneManager::get_active_scene().lock();
+		const auto projectile_list = scene->get_objects<projectile>();
+
+		if(projectile_list.empty())
+		{
+			return {};
+		}
+
+		for(const auto& prj : projectile_list)
+		{
+			if(const auto projectile = prj.lock())
+			{
+				if(projectile->is_active() && projectile->get_origin() == this)
+				{
+					return prj;
+				}
+			}
+		}
+
+		return {};
+	}
+
+	std::vector<std::weak_ptr<projectile>> character::get_projectiles() const
+	{
+		const auto scene = Scene::SceneManager::get_active_scene().lock();
+		const auto projectile_list = scene->get_objects<projectile>();
+		std::vector<std::weak_ptr<projectile>> ret = {};
+
+		for(const auto& cand : projectile_list)
+		{
+			if(const auto prj = cand.lock())
+			{
+				if(prj->get_origin() == this)
+				{
+					ret.push_back(cand);
+				}
+			}
+		}
+
+		return ret;
 	}
 
 	void character::move_left()

@@ -34,6 +34,8 @@ namespace Fortress::ObjectBase
 
 		switch(get_state())
 		{
+		case eCharacterState::Fired:
+		case eCharacterState::TurnEnd:
 		case eCharacterState::Item:
 		case eCharacterState::Idle: 
 			if(is_anim_finished())
@@ -64,12 +66,6 @@ namespace Fortress::ObjectBase
 			break;
 		case eCharacterState::Death: 
 			set_current_sprite(eCharacterAnim::Death);
-			break;
-		case eCharacterState::Fired:
-			if(is_anim_finished())
-			{
-				set_current_sprite(eCharacterAnim::Idle);
-			}
 			break;
 		default: ;
 		}

@@ -33,9 +33,17 @@ namespace Fortress
 		Fired,
 		PreItem,
 		Item,
+		TurnEnd,
 		Dead,
 		Death,
 		Hit,
+	};
+
+	enum class eProjectileType
+	{
+		Main = 0,
+		Sub,
+		Nutshell
 	};
 
 	enum class eCharacterAnim

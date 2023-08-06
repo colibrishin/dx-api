@@ -4,6 +4,7 @@
 #include "CannonProjectile.hpp"
 #include "character.hpp"
 #include "math.h"
+#include "objectManager.hpp"
 #include "PrecisionCannonProjectile.hpp"
 
 namespace Fortress::Object
@@ -27,9 +28,7 @@ namespace Fortress::Object
 				{20.0f, 1.0f},
 				{},
 				ObjectBase::character_full_hp,
-				ObjectBase::character_full_mp,
-				std::make_shared<CannonProjectile>(this),
-				std::make_shared<PrecisionCannonProjectile>(this))
+				ObjectBase::character_full_mp)
 		{
 			initialize();
 		}
@@ -49,43 +48,31 @@ namespace Fortress::Object
 			character::initialize();
 		}
 
-		void shoot() override;
+	protected:
+		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
+		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
+		const std::type_info& get_main_projectile_type() override;
+		const std::type_info& get_sub_projectile_type() override;
 	};
-}
 
-namespace Fortress::Object
-{
-	inline void CannonCharacter::shoot()
+	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_main_projectile()
 	{
-		float charged = get_charged_power();
+		return ObjectBase::ObjectManager::create_object<CannonProjectile>(this).lock();
+	}
 
-		if(charged <= 0.0f)
-		{
-			charged = 10.0f;
-		}
+	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_sub_projectile()
+	{
+		return ObjectBase::ObjectManager::create_object<PrecisionCannonProjectile>(this).lock();
+	}
 
-		character::shoot();
+	inline const std::type_info& CannonCharacter::get_main_projectile_type()
+	{
+		return typeid(CannonProjectile);
+	}
 
-		Math::Vector2 angle{};
-
-		if(get_offset() == Math::left)
-		{
-			angle = {-cosf(get_movement_pitch_radian()), -sinf(get_movement_pitch_radian())};
-		}
-		else
-		{
-			angle = {cosf(get_movement_pitch_radian()), sinf(get_movement_pitch_radian())};
-		}
-
-		const auto projectile = get_current_projectile().lock();
-
-		const auto forward = Math::Vector2{get_offset().get_x(), -1} * projectile->m_hitbox.get_x();
-		const auto forward_rotation = forward.rotate(get_movement_pitch_radian());
-
-		get_current_projectile().lock()->fire(
-			(get_offset() == Math::left ? get_top_left() : get_top_right()) + forward_rotation,
-			angle, 
-			charged);
+	inline const std::type_info& CannonCharacter::get_sub_projectile_type()
+	{
+		return typeid(PrecisionCannonProjectile);
 	}
 }
 

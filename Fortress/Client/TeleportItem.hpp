@@ -27,19 +27,19 @@ namespace Fortress::Item
 	{
 		if (const auto ch = owner.lock())
 		{
-			if(const auto nutshell_check = 
-				std::dynamic_pointer_cast<Object::NutShellProjectile>(
-					ch->get_current_projectile().lock()))
+			if (ch->get_projectile_type() == eProjectileType::Nutshell)
 			{
-				if (!ch->get_current_projectile().lock()->is_active())
+				if(!ch->is_projectile_active())
 				{
+					const auto prj = *ch->get_projectiles().begin();
+
 					// @todo: teleport to the outside of the map should be handled.
-					ch->m_position = ch->get_current_projectile().lock()->m_position;
+					ch->m_position = prj.lock()->m_position;
 					ch->unequip_nutshell();
 					set_ended();
 					item::update(owner);
-				}	
-			}
+				}
+			}	
 			else
 			{
 				ch->equip_nutshell();

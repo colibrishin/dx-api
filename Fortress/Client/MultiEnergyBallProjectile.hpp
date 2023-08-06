@@ -24,7 +24,8 @@ namespace Fortress::Object
 			{}, 
 			10.0f,
 			30,
-			1)
+			1,
+			3)
 		{
 			MultiEnergyBallProjectile::initialize();
 		}

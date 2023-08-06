@@ -31,12 +31,14 @@ namespace Fortress::Item
 	{
 		if (const auto ch = owner.lock())
 		{
-			if (!ch->get_current_projectile().lock()->is_active() && m_fire_count != 2)
+			const auto prjs = ch->get_projectiles();
+
+			if (!ch->is_projectile_active() && m_fire_count != 2)
 			{
 				ch->shoot();
 				m_fire_count++;
 			}
-			else if(!ch->get_current_projectile().lock()->is_active() && m_fire_count == 2)
+			else if(!ch->is_projectile_active() && m_fire_count == 2)
 			{
 				// does this really need to be separated with used count?
 				set_ended();
