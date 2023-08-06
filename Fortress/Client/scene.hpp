@@ -7,6 +7,7 @@
 #include "cameraManager.hpp"
 #include "entity.hpp"
 #include "layer.hpp"
+#include "objectManager.hpp"
 
 namespace Fortress::Abstract
 {
@@ -52,6 +53,7 @@ namespace Fortress::Abstract
 
 	inline void scene::remove_game_object(LayerType layer_type, const std::weak_ptr<object>& obj)
 	{
+		ObjectBase::ObjectManager::remove_object(obj);
 		m_layers[static_cast<unsigned int>(layer_type)].remove_game_object(obj);
 		m_objects.erase(
 			std::remove_if(m_objects.begin(), m_objects.end(),
