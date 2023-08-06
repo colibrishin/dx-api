@@ -34,8 +34,10 @@ namespace Fortress::ObjectBase
 
 		void reset_cooldown();
 		bool is_cooldown() const;
+		bool is_exploded() const;
 		void up_hit_count();
 		int get_hit_count() const;
+		int get_fire_count() const;
 		int get_max_hit_count() const;
 		virtual void play_fire_sound() = 0;
 		virtual void play_hit_sound() = 0;
@@ -65,6 +67,7 @@ namespace Fortress::ObjectBase
 			m_curr_hit_count(0),
 			m_fire_count(fire_count),
 			m_hit_cooldown(0),
+			m_bExploded(false),
 			m_wind_acceleration(),
 			m_shooter(shooter),
 			m_texture(short_name),
@@ -81,6 +84,8 @@ namespace Fortress::ObjectBase
 		int m_fire_count;
 
 		float m_hit_cooldown;
+
+		bool m_bExploded;
 
 		Math::Vector2 m_wind_acceleration;
 

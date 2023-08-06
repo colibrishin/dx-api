@@ -150,6 +150,11 @@ namespace Fortress::ObjectBase
 		return m_curr_hit_count;
 	}
 
+	int projectile::get_fire_count() const
+	{
+		return m_fire_count;
+	}
+
 	int projectile::get_max_hit_count() const
 	{
 		return m_max_hit_count;
@@ -212,6 +217,11 @@ namespace Fortress::ObjectBase
 		}
 
 		return (m_hit_cooldown < 0.5f);
+	}
+
+	bool projectile::is_exploded() const
+	{
+		return m_bExploded;
 	}
 
 	Math::Vector2 projectile::projectile_speed_getter(const std::wstring& short_name, const std::wstring& type)
