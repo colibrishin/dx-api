@@ -3,6 +3,8 @@
 #include "projectile.hpp"
 #include "item.hpp"
 
+#undef max
+
 namespace Fortress::ObjectBase
 {
 	void character::update()
@@ -40,6 +42,9 @@ namespace Fortress::ObjectBase
 			break;
 		case eCharacterState::Item: 
 			item_state();
+			break;
+		case eCharacterState::TurnEnd: 
+			turn_end_state();
 			break;
 		default:
 			break;
@@ -280,7 +285,7 @@ namespace Fortress::ObjectBase
 		{
 			if(item->is_effect_ended())
 			{
-				set_state(eCharacterState::Idle);
+				set_state(eCharacterState::TurnEnd);
 				item->reset();
 				m_active_item = {};
 			}

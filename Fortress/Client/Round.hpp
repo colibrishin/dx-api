@@ -103,12 +103,21 @@ namespace Fortress
 	{
 		if(const auto current = m_current_player.lock())
 		{
+			const auto scene = Scene::SceneManager::get_active_scene().lock();
+			const auto camera = scene->get_camera().lock();
+			const auto projectiles = scene->get_objects<ObjectBase::projectile>();
+
 			if(current->get_state() == eCharacterState::Fire || 
 				current->get_state() == eCharacterState::Item)
 			{
 				m_bfired = true;
+
+				if(const auto prj = current->get_one_active_projectile().lock())
+				{
+					camera->set_object(prj);
+				}
 			}
-			if(current->get_state() == eCharacterState::Idle && m_bfired)
+			if(current->get_state() == eCharacterState::TurnEnd && m_bfired)
 			{
 				m_bfired = false;
 				pre_next_player();
@@ -194,7 +203,6 @@ namespace Fortress
 		if(const auto player = m_current_player.lock())
 		{
 			player->set_movable();
-			const auto camera = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
 			camera->set_object(m_current_player);
 			player->reset_mp();
 		}

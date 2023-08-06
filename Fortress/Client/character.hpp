@@ -74,6 +74,7 @@ namespace Fortress::ObjectBase
 		void fire_state();
 		void fired_state();
 		void hit_state();
+		void turn_end_state();
 		virtual void preitem_state();
 		virtual void item_state();
 		virtual void death_state();
