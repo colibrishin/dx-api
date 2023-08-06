@@ -6,6 +6,7 @@
 #include "GuidedMissileProjectile.hpp"
 #include "math.h"
 #include "MissileProjectile.hpp"
+#include "objectManager.hpp"
 #include "resourceManager.hpp"
 
 namespace Fortress::Object
@@ -30,9 +31,7 @@ namespace Fortress::Object
 				{20.0f, 1.0f},
 				{},
 				ObjectBase::character_full_hp,
-				ObjectBase::character_full_mp,
-				std::make_shared<MissileProjectile>(this),
-				std::make_shared<GuidedMissileProjectile>(this))
+				ObjectBase::character_full_mp)
 		{
 			initialize();
 		}
@@ -54,45 +53,31 @@ namespace Fortress::Object
 
 			character::initialize();
 		}
-
-		void shoot() override;
+	protected:
+		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
+		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
+		const std::type_info& get_main_projectile_type() override;
+		const std::type_info& get_sub_projectile_type() override;
 	};
-}
 
-namespace Fortress::Object
-{
-	inline void MissileCharacter::shoot()
+	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_main_projectile()
 	{
-		float charged = get_charged_power();
+		return ObjectBase::ObjectManager::create_object<MissileProjectile>(this).lock();
+	}
 
-		if(charged <= 0.0f)
-		{
-			charged = 10.0f;
-		}
+	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_sub_projectile()
+	{
+		return ObjectBase::ObjectManager::create_object<GuidedMissileProjectile>(this).lock();
+	}
 
-		character::shoot();
+	inline const std::type_info& MissileCharacter::get_main_projectile_type()
+	{
+		return typeid(MissileProjectile);
+	}
 
-		Math::Vector2 angle{};
-
-		if(get_offset() == Math::left)
-		{
-			angle = {-cosf(get_movement_pitch_radian()), -sinf(get_movement_pitch_radian())};
-		}
-		else
-		{
-			angle = {cosf(get_movement_pitch_radian()), sinf(get_movement_pitch_radian())};
-		}
-
-		const auto projectile = get_current_projectile().lock();
-
-		const auto forward = Math::Vector2{get_offset().get_x(), -1} * projectile->m_hitbox.get_x();
-		const auto forward_rotation = forward.rotate(get_movement_pitch_radian());
-
-		get_current_projectile().lock()->fire(
-			(get_offset() == Math::left ? get_top_left() : get_top_right()) + forward_rotation,
-			angle, 
-			charged);
+	inline const std::type_info& MissileCharacter::get_sub_projectile_type()
+	{
+		return typeid(GuidedMissileProjectile);
 	}
 }
-
 #endif // MISSILECHARACTER_HPP

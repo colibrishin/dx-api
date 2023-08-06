@@ -61,7 +61,6 @@ namespace Fortress::ObjectBase
 		void change_projectile();
 		void equip_nutshell();
 		void unequip_nutshell();
-		std::weak_ptr<projectile> get_current_projectile();
 		const std::wstring& get_short_name() const;
 
 		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other) override;
@@ -91,7 +90,13 @@ namespace Fortress::ObjectBase
 
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
-		
+
+		eProjectileType get_projectile_type() const;
+		bool is_projectile_fire_counted() const;
+		bool is_projectile_active() const;
+		std::weak_ptr<projectile> get_one_active_projectile() const;
+		std::vector<std::weak_ptr<projectile>> get_projectiles() const;
+
 		virtual void move_left() override;
 		virtual void move_right() override;
 		virtual void stop() override;
@@ -127,13 +132,8 @@ namespace Fortress::ObjectBase
 		SoundPack m_sound_pack;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 
-		std::weak_ptr<projectile> m_current_projectile;
-		std::shared_ptr<projectile> m_main_projectile;
-		std::shared_ptr<projectile> m_secondary_projectile;
-
-		// @todo: nutshell doesn't have to be exist for every character
-		std::shared_ptr<Object::NutShellProjectile> m_nutshell_projectile;
-		std::weak_ptr<projectile> m_tmp_projectile;
+		eProjectileType m_projectile_type;
+		eProjectileType m_tmp_projectile_type;
 
 		std::map<int, std::shared_ptr<Object::item>> m_available_items;
 		std::weak_ptr<Object::item> m_active_item;
@@ -156,6 +156,11 @@ namespace Fortress::ObjectBase
 		}
 
 	protected:
+		virtual std::weak_ptr<projectile> get_main_projectile() = 0;
+		virtual std::weak_ptr<projectile> get_sub_projectile() = 0;
+		virtual const std::type_info& get_main_projectile_type() = 0;
+		virtual const std::type_info& get_sub_projectile_type() = 0;
+
 		character(
 			const int player_id,
 			const std::wstring& name,
@@ -167,9 +172,7 @@ namespace Fortress::ObjectBase
 			const Math::Vector2& speed,
 			const Math::Vector2& acceleration,
 			const int hp,
-			const int mp,
-			const std::weak_ptr<projectile>& main_projectile,
-			const std::weak_ptr<projectile>& secondary_projectile):
+			const int mp):
 			rigidBody(name, position, {50.0f, 50.0f}, velocity, mass, speed, acceleration, true),
 			m_player_id(player_id),
 			m_hp(hp),
@@ -181,8 +184,8 @@ namespace Fortress::ObjectBase
 			m_state(eCharacterState::Idle),
 			m_texture(short_name),
 			m_sound_pack(short_name),
-			m_main_projectile(main_projectile),
-			m_secondary_projectile(secondary_projectile),
+			m_projectile_type(eProjectileType::Main),
+			m_tmp_projectile_type(eProjectileType::Main),
 			m_available_items{},
 			m_active_item{},
 			m_anim_elapsed(0.0f)
