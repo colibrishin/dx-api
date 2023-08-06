@@ -9,6 +9,7 @@
 #include "sound.hpp"
 #include "SoundPack.hpp"
 #include "Texture.hpp"
+#include "ProjectileTimer.hpp"
 
 namespace Fortress
 {
@@ -134,6 +135,7 @@ namespace Fortress::ObjectBase
 		SoundPack m_sound_pack;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 
+		ProjectileTimer m_multi_projectile_timer;
 		eProjectileType m_projectile_type;
 		eProjectileType m_tmp_projectile_type;
 
@@ -182,13 +184,13 @@ namespace Fortress::ObjectBase
 			m_bMovable(true),
 			m_shot_name(short_name),
 			m_state(eCharacterState::Idle),
+			m_anim_elapsed(0.0f),
 			m_texture(short_name),
 			m_sound_pack(short_name),
 			m_projectile_type(eProjectileType::Main),
 			m_tmp_projectile_type(eProjectileType::Main),
 			m_available_items{},
-			m_active_item{},
-			m_anim_elapsed(0.0f)
+			m_active_item{}
 		{
 			character::initialize();
 		}

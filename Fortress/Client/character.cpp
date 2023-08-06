@@ -63,11 +63,12 @@ namespace Fortress::ObjectBase
 		const std::weak_ptr<projectile> instantiated = initialize_projectile(angle, charged);
 		instantiated.lock()->play_fire_sound();
 
-		if(m_projectile_type == eProjectileType::Main)
+		const int remaining = instantiated.lock()->get_fire_count() - 1;
 
-		if(const auto scene = Scene::SceneManager::get_active_scene().lock())
+		if(remaining > 0)
 		{
-			scene->add_game_object(Abstract::LayerType::Projectile, projectile);
+			m_multi_projectile_timer.set_count(remaining);
+			m_multi_projectile_timer.start([this, angle, charged](){initialize_projectile(angle, charged);});
 		}
 	}
 
