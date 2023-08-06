@@ -105,12 +105,10 @@ namespace Fortress::ObjectBase
 
 	void projectile::prerender()
 	{
-		static Math::Vector2 previous_position = m_fired_position;
-
-		const auto unit = (m_position - previous_position).normalized();
+		const auto unit = (m_position - m_previous_position).normalized();
 		const float radian = atan2(unit.get_y(), unit.get_x());
 		set_movement_pitch_radian(get_velocity_offset() == Math::left ? Math::flip_radian(radian) : radian);
-		previous_position = m_position;
+		m_previous_position = m_position;
 	}
 
 	const character* projectile::get_origin() const
@@ -266,10 +264,10 @@ namespace Fortress::ObjectBase
 			m_wind_acceleration = {battle_scene->get_round_status().get_wind_acceleration(), 0.0f};
 		}
 
-		play_fire_sound();
 		m_bExploded = false;
 		m_current_sprite.lock()->play();
-		m_fired_position = m_position ;
+		m_fired_position = m_position;
+		m_previous_position = m_fired_position;
 		m_velocity = velocity;
 		reset_current_gravity_speed();
 		reset_current_speed();

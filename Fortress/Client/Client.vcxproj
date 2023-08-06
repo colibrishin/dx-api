@@ -150,6 +150,7 @@
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="projectile.hpp" />
+    <ClInclude Include="ProjectileTimer.hpp" />
     <ClInclude Include="Radar.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="resource.hpp" />

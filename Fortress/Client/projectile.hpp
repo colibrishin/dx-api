@@ -92,6 +92,7 @@ namespace Fortress::ObjectBase
 		Texture<GifWrapper> m_texture;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 		Math::Vector2 m_fired_position;
+		Math::Vector2 m_previous_position;
 
 	protected:
 		virtual void post_hit();

@@ -231,7 +231,7 @@ namespace Fortress::ObjectBase
 
 	void character::fired_state()
 	{
-		if(!is_projectile_fire_counted() && !is_projectile_active())
+		if(is_projectile_fire_counted() && !is_projectile_active())
 		{
 			set_state(eCharacterState::TurnEnd);
 		}
@@ -247,7 +247,7 @@ namespace Fortress::ObjectBase
 			return;
 		}
 
-		if(is_projectile_fire_counted())
+		if(!is_projectile_fire_counted() && !get_projectiles().empty())
 		{
 			set_state(eCharacterState::Fired);
 			return;
@@ -268,12 +268,24 @@ namespace Fortress::ObjectBase
 			scene->remove_game_object(Abstract::LayerType::Projectile, prj);
 		}
 
+		m_multi_projectile_timer.reset();
+
 		set_state(eCharacterState::Idle);
 	}
 
 	void character::preitem_state()
 	{
 		default_state();
+
+		if (const auto item = m_active_item.lock())
+		{
+			if (item->is_instant())
+			{
+				set_state(eCharacterState::Item);
+				return;
+			}
+		}
+
 		set_state(eCharacterState::Idle);
 	}
 
@@ -318,16 +330,6 @@ namespace Fortress::ObjectBase
 			if (m_available_items.find(n) != m_available_items.end())
 			{
 				m_active_item = m_available_items[n];
-
-				if (const auto item = m_active_item.lock())
-				{
-					if (item->is_instant())
-					{
-						set_state(eCharacterState::Item);
-						return;
-					}
-				}
-
 				set_state(eCharacterState::PreItem);
 			}
 		}

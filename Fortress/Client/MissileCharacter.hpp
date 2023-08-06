@@ -56,8 +56,6 @@ namespace Fortress::Object
 	protected:
 		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
 		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
-		const std::type_info& get_main_projectile_type() override;
-		const std::type_info& get_sub_projectile_type() override;
 	};
 
 	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_main_projectile()
@@ -68,16 +66,6 @@ namespace Fortress::Object
 	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_sub_projectile()
 	{
 		return ObjectBase::ObjectManager::create_object<GuidedMissileProjectile>(this).lock();
-	}
-
-	inline const std::type_info& MissileCharacter::get_main_projectile_type()
-	{
-		return typeid(MissileProjectile);
-	}
-
-	inline const std::type_info& MissileCharacter::get_sub_projectile_type()
-	{
-		return typeid(GuidedMissileProjectile);
 	}
 }
 #endif // MISSILECHARACTER_HPP

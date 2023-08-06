@@ -32,7 +32,7 @@ namespace Fortress
 		void start(const std::function<void()>& on_end);
 		bool is_started() const;
 		virtual void on_timer();
-		void reset();
+		virtual void reset();
 
 		inline static std::map<UINT_PTR, Timer*> registered_timer = {};
 
@@ -42,6 +42,7 @@ namespace Fortress
 		inline static int used_timer_id = timer_id;
 		bool m_bStarted;
 
+	protected:
 		std::function<void()> m_reserved_function{};
 	};
 
@@ -78,7 +79,6 @@ namespace Fortress
 		if(m_reserved_function != nullptr)
 		{
 			m_reserved_function();
-			m_reserved_function = nullptr;
 		}
 
 		m_bStarted = false;

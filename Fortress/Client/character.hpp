@@ -9,6 +9,7 @@
 #include "sound.hpp"
 #include "SoundPack.hpp"
 #include "Texture.hpp"
+#include "ProjectileTimer.hpp"
 
 namespace Fortress
 {
@@ -92,6 +93,7 @@ namespace Fortress::ObjectBase
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
 
+		std::weak_ptr<projectile> initialize_projectile(const Math::Vector2& angle, const float charged);
 		eProjectileType get_projectile_type() const;
 		bool is_projectile_fire_counted() const;
 		bool is_projectile_active() const;
@@ -133,6 +135,7 @@ namespace Fortress::ObjectBase
 		SoundPack m_sound_pack;
 		std::weak_ptr<GifWrapper> m_current_sprite;
 
+		ProjectileTimer m_multi_projectile_timer;
 		eProjectileType m_projectile_type;
 		eProjectileType m_tmp_projectile_type;
 
@@ -159,8 +162,6 @@ namespace Fortress::ObjectBase
 	protected:
 		virtual std::weak_ptr<projectile> get_main_projectile() = 0;
 		virtual std::weak_ptr<projectile> get_sub_projectile() = 0;
-		virtual const std::type_info& get_main_projectile_type() = 0;
-		virtual const std::type_info& get_sub_projectile_type() = 0;
 
 		character(
 			const int player_id,
@@ -183,13 +184,13 @@ namespace Fortress::ObjectBase
 			m_bMovable(true),
 			m_shot_name(short_name),
 			m_state(eCharacterState::Idle),
+			m_anim_elapsed(0.0f),
 			m_texture(short_name),
 			m_sound_pack(short_name),
 			m_projectile_type(eProjectileType::Main),
 			m_tmp_projectile_type(eProjectileType::Main),
 			m_available_items{},
-			m_active_item{},
-			m_anim_elapsed(0.0f)
+			m_active_item{}
 		{
 			character::initialize();
 		}
