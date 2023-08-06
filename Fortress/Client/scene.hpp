@@ -26,6 +26,9 @@ namespace Fortress::Abstract
 
 		void add_game_object(LayerType layer_type, const std::weak_ptr<object>& obj);
 		void remove_game_object(LayerType layer_type, const std::weak_ptr<object>& obj);
+
+		template <class T>
+		std::vector<std::weak_ptr<T>> get_objects();
 		std::weak_ptr<Camera> get_camera();
 
 		std::vector<std::weak_ptr<object>> get_objects();
@@ -154,6 +157,22 @@ namespace Fortress::Abstract
 			return Math::Vector2(left.lock()->m_position - mid_point).magnitude() <
 				Math::Vector2(right.lock()->m_position - mid_point).magnitude();
 		});
+
+		return ret;
+	}
+
+	template <class T>
+	std::vector<std::weak_ptr<T>> scene::get_objects()
+	{
+		std::vector<std::weak_ptr<T>> ret = {};
+
+		for(const auto& obj : m_objects)
+		{
+			if(const auto cast = std::dynamic_pointer_cast<T>(obj.lock()))
+			{
+				ret.push_back(cast);
+			}
+		}
 
 		return ret;
 	}
