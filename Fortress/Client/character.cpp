@@ -60,30 +60,10 @@ namespace Fortress::ObjectBase
 			angle = {cosf(get_movement_pitch_radian()), sinf(get_movement_pitch_radian())};
 		}
 
-		std::weak_ptr<projectile> instantiated;
+		const std::weak_ptr<projectile> instantiated = initialize_projectile(angle, charged);
+		instantiated.lock()->play_fire_sound();
 
 		if(m_projectile_type == eProjectileType::Main)
-		{
-			instantiated = get_main_projectile();
-		}
-		else if(m_projectile_type == eProjectileType::Sub)
-		{
-			instantiated = get_sub_projectile();
-		}
-		else
-		{
-			instantiated = ObjectManager::create_object<Object::NutShellProjectile>(this);
-		}
-
-		const auto projectile = instantiated.lock();
-
-		const auto forward = Math::Vector2{get_offset().get_x(), -1} * projectile->m_hitbox.get_x();
-		const auto forward_rotation = forward.rotate(get_movement_pitch_radian());
-
-		projectile->fire(
-			(get_offset() == Math::left ? get_top_left() : get_top_right()) + forward_rotation, 
-			angle, 
-			charged);
 
 		if(const auto scene = Scene::SceneManager::get_active_scene().lock())
 		{
@@ -290,6 +270,41 @@ namespace Fortress::ObjectBase
 	const std::wstring& character::get_current_sprite_name() const
 	{
 		return m_current_sprite.lock()->get_name();
+	}
+
+	std::weak_ptr<projectile> character::initialize_projectile(const Math::Vector2& angle, const float charged)
+	{
+		std::weak_ptr<projectile> instantiated;
+
+		if(m_projectile_type == eProjectileType::Main)
+		{
+			instantiated = get_main_projectile();
+		}
+		else if(m_projectile_type == eProjectileType::Sub)
+		{
+			instantiated = get_sub_projectile();
+		}
+		else
+		{
+			instantiated = ObjectManager::create_object<Object::NutShellProjectile>(this);
+		}
+
+		const auto projectile = instantiated.lock();
+
+		const auto forward = Math::Vector2{get_offset().get_x(), -1} * projectile->m_hitbox.get_x();
+		const auto forward_rotation = forward.rotate(get_movement_pitch_radian());
+
+		projectile->fire(
+			(get_offset() == Math::left ? get_top_left() : get_top_right()) + forward_rotation, 
+			angle, 
+			charged);
+
+		if(const auto scene = Scene::SceneManager::get_active_scene().lock())
+		{
+			scene->add_game_object(Abstract::LayerType::Projectile, projectile);
+		}
+
+		return instantiated;
 	}
 
 	eProjectileType character::get_projectile_type() const

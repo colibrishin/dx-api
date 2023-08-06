@@ -92,6 +92,7 @@ namespace Fortress::ObjectBase
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
 
+		std::weak_ptr<projectile> initialize_projectile(const Math::Vector2& angle, const float charged);
 		eProjectileType get_projectile_type() const;
 		bool is_projectile_fire_counted() const;
 		bool is_projectile_active() const;
