@@ -10,6 +10,7 @@ namespace Fortress::ObjectBase
 		template <typename T, typename... Args>
 		static std::weak_ptr<T> create_object(Args ... args);
 		static void remove_object(const std::weak_ptr<Abstract::object>& obj);
+		static void cleanup();
 
 	private:
 		inline static std::vector<std::shared_ptr<Abstract::object>> m_objects = {};
@@ -31,6 +32,14 @@ namespace Fortress::ObjectBase
 				return v_obj == obj.lock();
 			}),
 			m_objects.end());
+	}
+
+	inline void ObjectManager::cleanup()
+	{
+		for(auto& object : m_objects)
+		{
+			object.reset();
+		}
 	}
 }
 #endif // OBJECTMANAGER_HPP

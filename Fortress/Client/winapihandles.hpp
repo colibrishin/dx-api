@@ -15,18 +15,10 @@ namespace Fortress
 	class WinAPIHandles
 	{
 	public:
-		WinAPIHandles()
-		{
-		    GdiplusStartup(&token, &input, NULL);
-		}
-		~WinAPIHandles()
-		{
-			DeleteObject(m_buffer_bitmap);
-			ReleaseDC(m_hwnd, m_buffer_hdc);
-			DeleteDC(m_buffer_hdc);
-			GdiplusShutdown(token);
-		}
+		WinAPIHandles() = default;
+		~WinAPIHandles() = default;
 
+		static void cleanup();
 		static void initialize(HWND hwnd, HDC hdc);
 		static int get_window_width();
 		static int get_window_height();
@@ -37,8 +29,8 @@ namespace Fortress
 		static RECT& get_window_size();
 
 	private:
-		GdiplusStartupInput input;
-		ULONG_PTR token{};
+		inline static GdiplusStartupInput input;
+		inline static ULONG_PTR token{};
 		inline static RECT m_window_size = {0, 0, 800, 600};
 		inline static RECT m_native_size = {0, 0, 0, 0};
 		inline static HWND m_hwnd = nullptr;
@@ -50,8 +42,18 @@ namespace Fortress
 
 namespace Fortress
 {
+	inline void WinAPIHandles::cleanup()
+	{
+		DeleteObject(m_buffer_bitmap);
+		ReleaseDC(m_hwnd, m_buffer_hdc);
+		DeleteDC(m_buffer_hdc);
+		GdiplusShutdown(token);
+	}
+
 	__forceinline void WinAPIHandles::initialize(const HWND hwnd, const HDC hdc)
 	{
+		GdiplusStartup(&token, &input, NULL);
+
 		m_hwnd = hwnd;
 		m_hdc = hdc;
 

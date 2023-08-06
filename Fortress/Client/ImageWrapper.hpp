@@ -22,7 +22,7 @@ namespace Fortress
 		ImageWrapper(const std::wstring& name, const std::filesystem::path& path);
 		ImageWrapper& operator=(const ImageWrapper& other) = default;
 		ImageWrapper& operator=(ImageWrapper&& other) = default;
-		virtual ~ImageWrapper() override;
+		virtual ~ImageWrapper() override = default;
 
 		void cleanup();
 		virtual void render(
@@ -36,8 +36,8 @@ namespace Fortress
 
 	protected:
 		virtual bool load() override;
-		std::shared_ptr<Image> m_image;
-		std::shared_ptr<Graphics> m_gdi_handle;
+		std::unique_ptr<Image> m_image;
+		std::unique_ptr<Graphics> m_gdi_handle;
 		Math::Vector2 m_size;
 		Math::Vector2 m_offset;
 	};
@@ -117,21 +117,9 @@ namespace Fortress
 	{
 	}
 
-	inline ImageWrapper::~ImageWrapper()
-	{
-		ImageWrapper::cleanup();
-		Resource::~Resource();
-	}
-
-	inline void ImageWrapper::cleanup()
-	{
-		m_image.reset();
-		m_gdi_handle.reset();
-	}
-
 	inline bool ImageWrapper::load()
 	{
-		m_image = std::make_shared<Image>(get_path().native().c_str());
+		m_image = std::make_unique<Image>(get_path().native().c_str());
 
 		if(!m_image)
 		{
@@ -139,7 +127,7 @@ namespace Fortress
 		}
 
 		m_size = {static_cast<float>(m_image->GetWidth()), static_cast<float>(m_image->GetHeight())};
-		m_gdi_handle = std::make_shared<Graphics>(WinAPIHandles::get_buffer_dc());
+		m_gdi_handle = std::make_unique<Graphics>(WinAPIHandles::get_buffer_dc());
 
 		return true;
 	}

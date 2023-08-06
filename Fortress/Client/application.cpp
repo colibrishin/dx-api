@@ -68,4 +68,14 @@ namespace Fortress
 		BitBlt(m_hdc, 0, 0, WinAPIHandles::get_window_width(), WinAPIHandles::get_window_height(), m_buffer_hdc, 0, 0,
 		       SRCCOPY);
 	}
+
+	void Application::cleanup()
+	{
+		Scene::SceneManager::cleanup();
+		CameraManager::cleanup();
+		ObjectBase::ObjectManager::cleanup();
+		Resource::ResourceManager::cleanup();
+		SoundManager::cleanup();
+		WinAPIHandles::cleanup();
+	}
 }

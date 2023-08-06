@@ -14,6 +14,7 @@ namespace Fortress::Scene
 	public:
 		SceneManager() = default;
 		~SceneManager() = default;
+		static void cleanup();
 
 		static void initialize();
 		static void update();
@@ -29,6 +30,14 @@ namespace Fortress::Scene
 		inline static std::map<std::wstring, std::shared_ptr<Abstract::scene>> m_scenes = {};
 		inline static std::weak_ptr<Abstract::scene> m_current_scene;
 	};
+
+	inline void SceneManager::cleanup()
+	{
+		for(auto& scene : m_scenes)
+		{
+			scene.second.reset();
+		}
+	}
 
 	inline void SceneManager::initialize()
 	{

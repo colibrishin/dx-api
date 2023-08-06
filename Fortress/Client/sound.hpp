@@ -21,6 +21,7 @@ namespace Fortress::Resource
 		Sound(const std::wstring& name, const std::filesystem::path& file_path)
 			: Resource(name, file_path), m_sound_buffer(nullptr), m_buffer_desc{}, m_volume(0), m_bPlaying(false)
 		{}
+		~Sound() override;
 		virtual bool load() override;
 		void play(bool loop);
 		void stop(bool reset);
@@ -37,6 +38,12 @@ namespace Fortress::Resource
 		int m_volume;
 		bool m_bPlaying;
 	};
+
+	inline Sound::~Sound()
+	{
+		stop(true);
+		m_sound_buffer->Release();
+	}
 
 	inline bool Sound::load()
 	{

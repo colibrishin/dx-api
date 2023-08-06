@@ -29,8 +29,6 @@ namespace Fortress::Resource
 
 	inline void ResourceManager::cleanup()
 	{
-		GifWrapper::cleanup();
-
 		for(auto& [_, p] : m_resources)
 		{
 			p.reset();

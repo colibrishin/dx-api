@@ -41,6 +41,11 @@ namespace Fortress
 			return true;
 		}
 
+		inline static void cleanup()
+		{
+			m_sound_device->Release();
+		}
+
 	private:
 		inline static LPDIRECTSOUND8 m_sound_device = nullptr;
 	};
