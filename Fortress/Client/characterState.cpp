@@ -274,6 +274,16 @@ namespace Fortress::ObjectBase
 	void character::preitem_state()
 	{
 		default_state();
+
+		if (const auto item = m_active_item.lock())
+		{
+			if (item->is_instant())
+			{
+				set_state(eCharacterState::Item);
+				return;
+			}
+		}
+
 		set_state(eCharacterState::Idle);
 	}
 
@@ -318,16 +328,6 @@ namespace Fortress::ObjectBase
 			if (m_available_items.find(n) != m_available_items.end())
 			{
 				m_active_item = m_available_items[n];
-
-				if (const auto item = m_active_item.lock())
-				{
-					if (item->is_instant())
-					{
-						set_state(eCharacterState::Item);
-						return;
-					}
-				}
-
 				set_state(eCharacterState::PreItem);
 			}
 		}
