@@ -10,35 +10,35 @@ namespace Fortress::ObjectBase
 {
 	void projectile::update()
 	{
-		m_hit_cooldown += DeltaTime::get_deltaTime();
-
-		const auto scene = std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock());
-		const float epsilon = 50.0f;
-		const auto map_size = scene->get_map_size() + epsilon;
-
-		if(scene)
+		if(is_active())
 		{
-			if(m_position.get_x() <= -map_size.get_x() ||
-				m_position.get_x() >= map_size.get_x() ||
-				m_position.get_y() >= map_size.get_y() ||
-				m_position.get_y() <= -map_size.get_y())
-			{
-				post_hit();
-			}	
-		}
+			m_hit_cooldown += DeltaTime::get_deltaTime();
 
-		*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
-		rigidBody::update();
-		*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
+			const auto scene = std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock());
+			const float epsilon = 50.0f;
+			const auto map_size = scene->get_map_size() + epsilon;
+
+			if(scene)
+			{
+				if(m_position.get_x() <= -map_size.get_x() ||
+					m_position.get_x() >= map_size.get_x() ||
+					m_position.get_y() >= map_size.get_y() ||
+					m_position.get_y() <= -map_size.get_y())
+				{
+					post_hit();
+				}	
+			}
+
+			*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
+			rigidBody::update();
+			*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
+		}
 	}
 
 	void projectile::post_hit()
 	{
-		const auto scene_ptr = Scene::SceneManager::get_active_scene().lock();
-		scene_ptr->remove_game_object(
-			Abstract::LayerType::Projectile, std::dynamic_pointer_cast<object>(shared_from_this()));
-
 		m_curr_hit_count = 0;
+		m_bExploded = true;
 		reset_cooldown();
 		m_current_sprite.lock()->reset_transform();
 		reset_current_gravity_speed();
@@ -266,9 +266,13 @@ namespace Fortress::ObjectBase
 			m_wind_acceleration = {battle_scene->get_round_status().get_wind_acceleration(), 0.0f};
 		}
 
+		play_fire_sound();
+		m_bExploded = false;
 		m_current_sprite.lock()->play();
 		m_fired_position = m_position ;
 		m_velocity = velocity;
-		focus_this();
+		reset_current_gravity_speed();
+		reset_current_speed();
+		set_enabled();
 	}
 }
