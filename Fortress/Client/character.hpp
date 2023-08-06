@@ -159,8 +159,6 @@ namespace Fortress::ObjectBase
 	protected:
 		virtual std::weak_ptr<projectile> get_main_projectile() = 0;
 		virtual std::weak_ptr<projectile> get_sub_projectile() = 0;
-		virtual const std::type_info& get_main_projectile_type() = 0;
-		virtual const std::type_info& get_sub_projectile_type() = 0;
 
 		character(
 			const int player_id,
