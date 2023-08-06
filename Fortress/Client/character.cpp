@@ -323,7 +323,7 @@ namespace Fortress::ObjectBase
 			}
 		}
 
-		return fire_count != exploded;
+		return fire_count == exploded;
 	}
 
 	bool character::is_projectile_active() const

@@ -231,7 +231,7 @@ namespace Fortress::ObjectBase
 
 	void character::fired_state()
 	{
-		if(!is_projectile_fire_counted() && !is_projectile_active())
+		if(is_projectile_fire_counted() && !is_projectile_active())
 		{
 			set_state(eCharacterState::TurnEnd);
 		}
@@ -247,7 +247,7 @@ namespace Fortress::ObjectBase
 			return;
 		}
 
-		if(is_projectile_fire_counted())
+		if(!is_projectile_fire_counted() && !get_projectiles().empty())
 		{
 			set_state(eCharacterState::Fired);
 			return;
