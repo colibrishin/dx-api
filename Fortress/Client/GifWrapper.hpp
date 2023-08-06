@@ -29,7 +29,6 @@ namespace Fortress
 
 		virtual bool load() override;
 		virtual void initialize();
-		static void cleanup();
 
 		void play(const std::function<void()>& on_end = {});
 		void stop() const;
@@ -86,17 +85,6 @@ namespace Fortress
 	inline void GifWrapper::initialize()
 	{
 		registered_gifs[m_timer_id] = this;
-	}
-
-	inline void GifWrapper::cleanup()
-	{
-		for(const auto& f : registered_gifs)
-		{
-			f.second->stop();
-			f.second->ImageWrapper::cleanup();
-		}
-
-		registered_gifs.clear();
 	}
 
 	inline void GifWrapper::play(const std::function<void()>& on_end)
@@ -185,7 +173,6 @@ namespace Fortress
 		{
 			registered_gifs.erase(m_timer_id);
 		}
-		ImageWrapper::~ImageWrapper();
 	}
 }
 #endif // GIFWRAPPER_HPP
