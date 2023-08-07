@@ -72,7 +72,7 @@ namespace Fortress::ObjectBase
 				up_hit_count();
 				play_hit_sound();
 				reset_cooldown();
-				explosion_near_ground(hit_vector);
+				explosion_near_ground(h_vec);
 			}
 		}
 	}
@@ -166,14 +166,13 @@ namespace Fortress::ObjectBase
 		return m_fired_position;
 	}
 
-	void projectile::explosion_near_ground(const Math::Vector2& victim_hit_vector) const
+	void projectile::explosion_near_ground(const Math::Vector2& hit_vector) const
 	{
 		if (const auto active_scene =
 			Scene::SceneManager::get_active_scene().lock())
 		{
-			// reverse the hit vector because hit vector is based on victim.
-			const eHitVector e_vec = translate_hit_vector(-victim_hit_vector);
-			const auto hit_point = get_hit_point(e_vec);
+			const auto h_e_vec = translate_hit_vector(hit_vector);
+			const auto hit_point = get_hit_point(h_e_vec);
 
 			const auto grounds = active_scene->is_in_range<Object::Ground>(
 				hit_point,
