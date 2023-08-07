@@ -268,8 +268,6 @@ namespace Fortress::ObjectBase
 			scene->remove_game_object(Abstract::LayerType::Projectile, prj);
 		}
 
-		m_multi_projectile_timer.reset();
-
 		set_state(eCharacterState::Idle);
 	}
 

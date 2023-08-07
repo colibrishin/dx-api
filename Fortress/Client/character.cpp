@@ -42,6 +42,8 @@ namespace Fortress::ObjectBase
 
 	void character::shoot()
 	{
+		m_multi_projectile_timer.reset();
+
 		float charged = get_charged_power();
 
 		if(charged <= 0.0f)
