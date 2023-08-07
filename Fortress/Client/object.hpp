@@ -258,7 +258,7 @@ namespace Fortress::Abstract
 				return left.first < right.first;
 			});
 
-		return distances.front().second;
+		return (*distances.begin()).second;
 	}
 
 	inline float object::get_mass() const

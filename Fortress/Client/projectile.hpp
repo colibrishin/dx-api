@@ -44,6 +44,7 @@ namespace Fortress::ObjectBase
 		const std::weak_ptr<GifWrapper>& get_current_sprite() const;
 		int get_radius() const;
 		float get_damage() const;
+		float get_penetration_rate() const;
 		const Math::Vector2& get_fired_position() const;
 	protected:
 		projectile(
@@ -58,7 +59,8 @@ namespace Fortress::ObjectBase
 			const float damage,
 			const float radius,
 			const int hit_count,
-			const int fire_count) :
+			const int fire_count,
+			const float armor_penetration) :
 			rigidBody(name, position, {30.0f, 30.0f}, velocity, mass, speed, acceleration, true),
 			m_damage(damage),
 			m_radius(radius),
@@ -66,6 +68,7 @@ namespace Fortress::ObjectBase
 			m_curr_hit_count(0),
 			m_fire_count(fire_count),
 			m_hit_cooldown(0),
+			m_armor_penetration(armor_penetration),
 			m_bExploded(false),
 			m_wind_acceleration(),
 			m_shooter(shooter),
@@ -83,6 +86,7 @@ namespace Fortress::ObjectBase
 		int m_fire_count;
 
 		float m_hit_cooldown;
+		float m_armor_penetration;
 
 		bool m_bExploded;
 

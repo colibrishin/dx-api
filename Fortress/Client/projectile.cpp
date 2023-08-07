@@ -63,7 +63,12 @@ namespace Fortress::ObjectBase
 			{
 				const auto shared_this = std::dynamic_pointer_cast<projectile>(shared_from_this());
 				Debug::Log(L"Projectile hits the character");
-				character->hit(shared_this);
+
+				// reverse the vector because the hit_vector is victim side.
+				const auto h_e_vec = translate_hit_vector(-hit_vector);
+				const auto h_vec = get_hit_point(h_e_vec);
+
+				character->hit(shared_this, h_vec);
 				up_hit_count();
 				play_hit_sound();
 				reset_cooldown();
@@ -149,6 +154,11 @@ namespace Fortress::ObjectBase
 	float projectile::get_damage() const
 	{
 		return m_damage;
+	}
+
+	float projectile::get_penetration_rate() const
+	{
+		return m_armor_penetration;
 	}
 
 	const Math::Vector2& projectile::get_fired_position() const

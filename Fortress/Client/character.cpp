@@ -10,6 +10,7 @@
 #include "RepairItem.hpp"
 
 #undef max
+#undef min
 
 namespace Fortress::ObjectBase
 {
@@ -23,15 +24,44 @@ namespace Fortress::ObjectBase
 		m_available_items.emplace(3, std::make_shared<Item::RepairItem>());
 	}
 
-	void character::hit(const std::weak_ptr<projectile>& p)
+	float character::get_damage_pen_dist(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point) const
 	{
-		m_hp -= p.lock()->get_damage();
-		post_hit();
+		// base damage
+		const float damage = p.lock()->get_damage();
+		// armor penetration rate
+		const float penetration_rate = p.lock()->get_penetration_rate();
+		// armor
+		const float armor = get_armor();
+
+		// gets the nearest point from projectile and distance.
+		const Math::Vector2 near_point = get_nearest_point(hit_point);
+		const float distance = (hit_point - near_point).magnitude();
+		// explosion radius
+		const float radius = static_cast<float>(p.lock()->get_radius());
+
+		// pen vs armor. armor gets bigger, value gets smaller.
+		const float pen_armor_rate = penetration_rate / armor;
+
+		if(pen_armor_rate < 0.0f)
+		{
+			Debug::Log(L"Warning: pen_armor_rate is negative value.");
+		}
+
+		// normalize the value to between from 0 to 1.
+		const float normalized_rate = std::min(1.0f, std::fabs(pen_armor_rate));
+		const float pen_damage = damage * normalized_rate;
+
+		// if hit point is further than radius, damage gets smaller.
+		const float dist_ratio = std::fabs((distance - radius) / radius);
+
+		const float dist_pen_damage = pen_damage * dist_ratio;
+
+		return dist_pen_damage;
 	}
 
-	void character::hit(const float damage)
+	void character::hit(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point)
 	{
-		m_hp -= damage;
+		m_hp -= get_damage_pen_dist(p, hit_point);
 		post_hit();
 	}
 
@@ -102,6 +132,11 @@ namespace Fortress::ObjectBase
 	float character::get_hp_raw() const
 	{
 		return m_hp;
+	}
+
+	float character::get_armor() const
+	{
+		return m_armor;
 	}
 
 	void character::render_hp_bar(const Math::Vector2& position)

@@ -110,10 +110,9 @@ namespace Fortress::Object
 					const auto near_objects = scene->is_in_range<ObjectBase::character>(
 						hit_point, projectile->get_radius());
 
-					for (const auto character : near_objects) 
+					for (const auto& character : near_objects) 
 					{
-						const auto diff = character.lock()->get_center() - hit_point;
-						character.lock()->hit(diff.magnitude() / projectile->get_radius());
+						character.lock()->hit(projectile, hit_point);
 					}
 				}
 

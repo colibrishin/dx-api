@@ -25,7 +25,8 @@ namespace Fortress::Object
 			10.0f,
 			10,
 			1,
-			1)
+			1,
+			0.7f)
 		{
 			GuidedMissileProjectile::initialize();
 		}

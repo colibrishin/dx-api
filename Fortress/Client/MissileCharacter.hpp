@@ -31,7 +31,8 @@ namespace Fortress::Object
 				{20.0f, 1.0f},
 				{},
 				ObjectBase::character_full_hp,
-				ObjectBase::character_full_mp)
+				ObjectBase::character_full_mp,
+				1.0f)
 		{
 			initialize();
 		}

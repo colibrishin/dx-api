@@ -50,8 +50,8 @@ namespace Fortress::ObjectBase
 		~character() override = default;
 
 		virtual void initialize() override;
-		void hit(const std::weak_ptr<projectile>& p);
-		void hit(const float damage);
+		float get_damage_pen_dist(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point) const;
+		void hit(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point);
 		void post_hit();
 		void update() override;
 		void render() override;
@@ -108,6 +108,7 @@ namespace Fortress::ObjectBase
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
 		float get_hp_raw() const;
+		float get_armor() const;
 
 	private:
 		int m_player_id;
@@ -120,6 +121,7 @@ namespace Fortress::ObjectBase
 		eCharacterState m_state;
 
 		float m_anim_elapsed;
+		float m_armor;
 
 		void set_state(const eCharacterState& state);
 		void render_hp_bar(const Math::Vector2& position);
@@ -174,7 +176,8 @@ namespace Fortress::ObjectBase
 			const Math::Vector2& speed,
 			const Math::Vector2& acceleration,
 			const int hp,
-			const int mp):
+			const int mp,
+			const float armor):
 			rigidBody(name, position, {50.0f, 50.0f}, velocity, mass, speed, acceleration, true),
 			m_player_id(player_id),
 			m_hp(hp),
@@ -185,6 +188,7 @@ namespace Fortress::ObjectBase
 			m_shot_name(short_name),
 			m_state(eCharacterState::Idle),
 			m_anim_elapsed(0.0f),
+			m_armor(armor),
 			m_texture(short_name),
 			m_sound_pack(short_name),
 			m_projectile_type(eProjectileType::Main),
