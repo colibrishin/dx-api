@@ -44,7 +44,7 @@ namespace Fortress::Scene
 		if(Input::getKeyDown(eKeyCode::ENTER))
 		{
 			SceneManager::SetActive(L"Room Scene");
-			SceneManager::remove_scene<BattleScene>();
+			SceneManager::remove_scene<SummaryScene>();
 		}
 	}
 

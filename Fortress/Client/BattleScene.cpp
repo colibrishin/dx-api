@@ -54,6 +54,7 @@ namespace Fortress::Scene
 		{
 			SceneManager::CreateScene<SummaryScene>(m_round);
 			SceneManager::SetActive(L"Summary Scene");
+			SceneManager::remove_scene<BattleScene>();
 		}
 	}
 
