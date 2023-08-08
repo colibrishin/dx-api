@@ -15,6 +15,7 @@ namespace Fortress::Abstract
 	{
 	public:
 		scene(const std::wstring& name);
+		~scene() override;
 
 		virtual void initialize();
 		virtual void update();
@@ -74,6 +75,14 @@ namespace Fortress::Abstract
 		m_objects(0)
 	{
 		scene::initialize();
+	}
+
+	inline scene::~scene()
+	{
+		for(const auto& obj : m_objects)
+		{
+			ObjectBase::ObjectManager::remove_object(obj);
+		}
 	}
 
 	inline void scene::initialize()
