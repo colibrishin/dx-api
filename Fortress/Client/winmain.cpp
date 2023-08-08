@@ -193,11 +193,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_TIMER:
 		if((wParam >= Fortress::timer_id))
 		{
-			Fortress::Timer::registered_timer[wParam]->on_timer();
+			if(const auto timer = Fortress::Timer::registered_timer[wParam]) 
+			{
+				timer->on_timer();
+			}
 		}
 		else if(wParam >= 8000)
 		{
-			Fortress::GifWrapper::registered_gifs[wParam]->OnTimer();
+			if(const auto gif = Fortress::GifWrapper::registered_gifs[wParam]) 
+			{
+				gif->OnTimer();
+			}
 		}
 		
 		break;
