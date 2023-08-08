@@ -156,7 +156,7 @@
     <ClInclude Include="resource.hpp" />
     <ClInclude Include="rigidBody.hpp" />
     <ClInclude Include="RoomScene.h" />
-    <ClInclude Include="Round.hpp" />
+    <ClInclude Include="Round.h" />
     <ClInclude Include="NextPlayerTimer.hpp" />
     <ClInclude Include="scene.hpp" />
     <ClInclude Include="SecwindCharacter.hpp" />
@@ -203,6 +203,7 @@
     <ClCompile Include="resourceManager.hpp" />
     <ClCompile Include="rigidBody.cpp" />
     <ClCompile Include="RoomScene.cpp" />
+    <ClCompile Include="Round.cpp" />
     <ClCompile Include="sceneManager.hpp" />
     <ClCompile Include="Texture.hpp" />
     <ClCompile Include="titleScene.cpp" />

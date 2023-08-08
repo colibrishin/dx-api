@@ -49,13 +49,6 @@ namespace Fortress::Scene
 		scene::update();
 		m_round->update();
 		m_radar.update();
-
-		if(m_round->get_current_status() == eRoundState::End)
-		{
-			SceneManager::CreateScene<SummaryScene>(m_round);
-			SceneManager::SetActive(L"Summary Scene");
-			SceneManager::remove_scene<BattleScene>();
-		}
 	}
 
 	void BattleScene::render()
