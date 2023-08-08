@@ -20,11 +20,15 @@ namespace Fortress::Scene
 		static void update();
 		static void render();
 
-		template <typename T>
-		static std::weak_ptr<T> CreateScene();
+		template <typename T, typename... Args>
+		static std::weak_ptr<T> CreateScene(Args... args);
+
 		static void SetActive(const std::wstring& name);
 		static std::weak_ptr<Abstract::scene> get_active_scene();
 
+		static void remove_scene_by_name(const std::wstring& name);
+		template <class T>
+		static void remove_scene();
 	private:
 		// @todo: name can be different with scene
 		inline static std::map<std::wstring, std::shared_ptr<Abstract::scene>> m_scenes = {};
@@ -80,15 +84,28 @@ namespace Fortress::Scene
 		return m_current_scene;
 	}
 
-	template <typename T>
-	std::weak_ptr<T> SceneManager::CreateScene()
+	inline void SceneManager::remove_scene_by_name(const std::wstring& name)
 	{
-		std::shared_ptr<T> scene = std::make_shared<T>();
+		m_scenes.erase(name);
+	}
+
+	template <typename T, typename... Args>
+	std::weak_ptr<T> SceneManager::CreateScene(Args... arg)
+	{
+		std::shared_ptr<T> scene = std::make_shared<T>(arg...);
 		m_scenes.emplace(scene->get_name(), scene);
 		scene->initialize();
 		return scene;
 	}
 
+	template <typename T>
+	void SceneManager::remove_scene()
+	{
+		erase_if(m_scenes, [](const auto& scene)
+		{
+			return std::dynamic_pointer_cast<T>(scene.second);
+		});
+	}
 }
 
 #endif
