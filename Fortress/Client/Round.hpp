@@ -213,24 +213,22 @@ namespace Fortress
 
 	inline void Round::check_winning_condition()
 	{
-		static std::set<std::weak_ptr<ObjectBase::character>, safe_weak_comparer> alive_characters;
+		size_t count = 0;
+		std::weak_ptr<ObjectBase::character> alive_one;
 
 		for(const auto& alive : m_all_players)
 		{
 			if(alive.lock()->get_state() != eCharacterState::Dead)
 			{
-				alive_characters.insert(alive);
-			}
-			else if(alive.lock()->get_state() == eCharacterState::Dead)
-			{
-				alive_characters.erase(alive);
+				count++;
+				alive_one = alive;
 			}
 		}
 
-		if(alive_characters.size() == 1)
+		if(count == 1)
 		{
-			(*alive_characters.begin()).lock()->set_unmovable();
-			m_winner = *alive_characters.begin();
+			alive_one.lock()->set_unmovable();
+			m_winner = alive_one;
 			m_state = eRoundState::End;
 		}
 	}
