@@ -9,6 +9,7 @@
 
 #include <windows.h>
 #include "objectManager.hpp"
+#include "SummaryScene.hpp"
 
 
 namespace Fortress::Scene
@@ -39,15 +40,21 @@ namespace Fortress::Scene
 		}
 
 		get_camera().lock()->set_object(m_self);
-		m_round.initialize(m_characters);
+		m_round->initialize(m_characters);
 		m_radar.initialize();
 	}
 
 	void BattleScene::update()
 	{
 		scene::update();
-		m_round.update();
+		m_round->update();
 		m_radar.update();
+
+		if(m_round->get_current_status() == eRoundState::End)
+		{
+			SceneManager::CreateScene<SummaryScene>(m_round);
+			SceneManager::SetActive(L"Summary Scene");
+		}
 	}
 
 	void BattleScene::render()
@@ -90,7 +97,7 @@ namespace Fortress::Scene
 			[this]()
 			{
 				const std::wstring time_remaining = std::to_wstring(
-					static_cast<int>(max_time - m_round.get_current_time()));
+					static_cast<int>(max_time - m_round->get_current_time()));
 
 				TextOut(
 					WinAPIHandles::get_buffer_dc(), 
@@ -181,7 +188,7 @@ namespace Fortress::Scene
 		m_bgm.lock()->play(true);
 	}
 
-	const Round& BattleScene::get_round_status()
+	std::weak_ptr<Round> BattleScene::get_round_status()
 	{
 		return m_round;
 	}

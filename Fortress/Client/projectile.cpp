@@ -270,7 +270,7 @@ namespace Fortress::ObjectBase
 		if(const auto battle_scene = 
 			std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock()))
 		{
-			m_wind_acceleration = {battle_scene->get_round_status().get_wind_acceleration(), 0.0f};
+			m_wind_acceleration = {battle_scene->get_round_status().lock()->get_wind_acceleration(), 0.0f};
 		}
 
 		m_bExploded = false;

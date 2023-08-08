@@ -17,7 +17,7 @@ namespace Fortress::Scene
 		BattleScene(const std::wstring& name, const Math::Vector2& map_size) :
 			scene(L"Battle Scene " + name),
 			m_map_size(map_size),
-			m_round(),
+			m_round(std::make_shared<Round>()),
 			m_radar(map_size)
 		{
 		}
@@ -28,7 +28,7 @@ namespace Fortress::Scene
 		void render() override;
 		void deactivate() override;
 		void activate() override;
-		const Round& get_round_status();
+		std::weak_ptr<Round> get_round_status();
 		const Math::Vector2& get_map_size() const;
 
 		virtual void set_bgm() = 0;
@@ -45,7 +45,7 @@ namespace Fortress::Scene
 		std::weak_ptr<Resource::Sound> m_bgm;
 		std::weak_ptr<ImageWrapper> m_hud;
 		std::weak_ptr<ImageWrapper> m_background;
-		Round m_round;
+		std::shared_ptr<Round> m_round;
 		Radar m_radar;
 	};
 }
