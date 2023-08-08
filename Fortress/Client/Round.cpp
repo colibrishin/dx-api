@@ -1,71 +1,12 @@
-#ifndef ROUND_HPP
-#define ROUND_HPP
-#include <memory>
-#include <random>
+#include "Round.h"
 
-#include "character.hpp"
-#include "deltatime.hpp"
-#include "NextPlayerTimer.hpp"
+#include "BattleScene.h"
+#include "projectile.hpp"
+#include "SummaryScene.hpp"
 
 namespace Fortress
 {
-	enum class eRoundState
-	{
-		Start = 0,
-		InProgress,
-		End,
-	};
-
-	constexpr float max_time = 60.0f;
-
-	class Round
-	{
-	public:
-		Round() : m_state(eRoundState::Start) {}
-		void initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players);
-		void update();
-		float get_current_time() const;
-		float get_wind_acceleration() const;
-		const std::weak_ptr<ObjectBase::character>& get_current_player() const;
-		const eRoundState& get_current_status() const;
-
-	private:
-		void check_countdown();
-		void check_fired();
-		void pre_next_player();
-		void next_player();
-		void check_winning_condition();
-		void winner();
-
-		float m_curr_timeout = 0.0f;
-		bool m_bfired = false;
-
-		NextPlayerTimer m_timer_next_player;
-
-		float m_wind_affect = 0.0f;
-		// @todo: random seed should be different every round
-		inline static std::default_random_engine e;
-		inline static std::uniform_real_distribution<float> dis{-50, 50};
-
-		// here used vector instead of queue due to un-iterable.
-		eRoundState m_state;
-		std::vector<std::weak_ptr<ObjectBase::character>> m_known_players;
-		std::vector<std::weak_ptr<ObjectBase::character>> m_all_players;
-		std::weak_ptr<ObjectBase::character> m_current_player;
-		std::weak_ptr<ObjectBase::character> m_winner;
-
-		struct safe_weak_comparer {
-		    bool operator() (const std::weak_ptr<ObjectBase::character> &lhs, const std::weak_ptr<ObjectBase::character> &rhs)const {
-		        const auto lptr = lhs.lock();
-		    	const auto rptr = rhs.lock();
-		        if (!rptr) return false; // nothing after expired pointer 
-		        if (!lptr) return true;  // every not expired after expired pointer
-		        return lptr.get() < rptr.get();
-		    }
-		};
-	};
-
-	inline void Round::initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
+	void Round::initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
 	{
 		for(const auto& ptr : players)
 		{
@@ -86,7 +27,7 @@ namespace Fortress
 		m_current_player.lock()->set_movable();
 	}
 
-	inline void Round::check_countdown()
+	void Round::check_countdown()
 	{
 		if(get_current_time() >= max_time)
 		{
@@ -100,7 +41,7 @@ namespace Fortress
 		}
 	}
 
-	inline void Round::check_fired()
+	void Round::check_fired()
 	{
 		if(const auto current = m_current_player.lock())
 		{
@@ -126,7 +67,7 @@ namespace Fortress
 		}
 	}
 
-	inline void Round::pre_next_player()
+	void Round::pre_next_player()
 	{
 		if(const auto player = m_current_player.lock())
 		{
@@ -142,7 +83,7 @@ namespace Fortress
 		m_timer_next_player.start([this](){ next_player(); });
 	}
 
-	inline void Round::update()
+	void Round::update()
 	{
 		Debug::Log(std::to_wstring(get_wind_acceleration()));
 
@@ -159,18 +100,20 @@ namespace Fortress
 			break;
 		case eRoundState::End:
 			Debug::Log(m_winner.lock()->get_name() + L" won the match!");
-			// @todo: move to battle summary.
+			Scene::SceneManager::CreateScene<Scene::SummaryScene>(shared_from_this());
+			Scene::SceneManager::SetActive(L"Summary Scene");
+			Scene::SceneManager::remove_scene<Scene::BattleScene>();
 		default: break;
 		}
 	}
 
-	inline float Round::get_current_time() const
+	float Round::get_current_time() const
 	{
 		return m_curr_timeout;
 	}
 
 	// this will run on another thread, by win api.
-	inline void Round::next_player()
+	void Round::next_player()
 	{
 		const auto scene = Scene::SceneManager::get_active_scene().lock();
 		const auto camera = scene->get_camera().lock();
@@ -211,7 +154,7 @@ namespace Fortress
 		m_wind_affect = dis(e);
 	}
 
-	inline void Round::check_winning_condition()
+	void Round::check_winning_condition()
 	{
 		size_t count = 0;
 		std::weak_ptr<ObjectBase::character> alive_one;
@@ -233,19 +176,19 @@ namespace Fortress
 		}
 	}
 
-	inline const std::weak_ptr<ObjectBase::character>& Round::get_current_player() const
+	const std::weak_ptr<ObjectBase::character>& Round::get_current_player() const
 	{
 		return m_current_player;
 	}
 
-	inline const eRoundState& Round::get_current_status() const
+	const eRoundState& Round::get_current_status() const
 	{
 		return m_state;
 	}
 
-	inline float Round::get_wind_acceleration() const
+	float Round::get_wind_acceleration() const
 	{
 		return static_cast<int>(m_wind_affect / 10.0f) * 10.0f;
 	}
 }
-#endif // ROUND_HPP
+

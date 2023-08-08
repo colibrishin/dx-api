@@ -3,7 +3,8 @@
 #define SUMMARYSCENE_H
 
 #include "ImageWrapper.hpp"
-#include "Round.hpp"
+#include "Round.h"
+#include "input.hpp"
 #include "sceneManager.hpp"
 #include "sound.hpp"
 
