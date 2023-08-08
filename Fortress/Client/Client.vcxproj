@@ -165,6 +165,7 @@
     <ClInclude Include="SoundManager.hpp" />
     <ClInclude Include="SoundPack.hpp" />
     <ClInclude Include="Stairway.hpp" />
+    <ClInclude Include="SummaryScene.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="DesertMap.hpp" />
     <ClInclude Include="TeleportItem.hpp" />

@@ -192,6 +192,12 @@
     <ClInclude Include="EnergyBallProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClInclude>
+    <ClInclude Include="SummaryScene.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileTimer.hpp">
+      <Filter>Engine\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
