@@ -46,19 +46,6 @@ namespace Fortress
 		Nutshell
 	};
 
-	enum class eCharacterAnim
-	{
-		Idle = 0,
-		Move,
-		Firing,
-		Fire,
-		Fired,
-		Item,
-		Dead,
-		Death,
-		Hit,
-	};
-
 	enum class eHitVector
 	{
 		Unknown = -1,
