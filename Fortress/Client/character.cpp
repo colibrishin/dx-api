@@ -52,9 +52,10 @@ namespace Fortress::ObjectBase
 		const float pen_damage = damage * normalized_rate;
 
 		// if hit point is further than radius, damage gets smaller.
-		const float dist_ratio = std::fabs((distance - radius) / radius);
+		const float dist_ratio = std::fabs(distance / radius);
+		const float far_dist_ratio = std::min(1.0f, dist_ratio);
 
-		const float dist_pen_damage = pen_damage * dist_ratio;
+		const float dist_pen_damage = pen_damage * (1.0f - far_dist_ratio);
 
 		return dist_pen_damage;
 	}
