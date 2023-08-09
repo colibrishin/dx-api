@@ -71,7 +71,6 @@ namespace Fortress
 	{
 		if(const auto player = m_current_player.lock())
 		{
-			player->stop();
 			player->set_unmovable();
 		}
 
@@ -120,7 +119,6 @@ namespace Fortress
 
 		if(const auto player = m_current_player.lock())
 		{
-			player->stop();
 			player->set_unmovable();
 		}
 
@@ -148,7 +146,6 @@ namespace Fortress
 		{
 			player->set_movable();
 			camera->set_object(m_current_player);
-			player->reset_mp();
 		}
 
 		m_wind_affect = dis(e);
