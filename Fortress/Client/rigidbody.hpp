@@ -46,7 +46,7 @@ namespace Fortress::Abstract
 		float get_movement_pitch_radian() const;
 		float get_user_pitch_radian() const;
 
-		Math::Vector2 get_offset() const;
+		const Math::Vector2& get_offset() const;
 		Math::Vector2 get_mixed_offset() const;
 		Math::Vector2 get_velocity_offset() const;
 		Math::Vector2 get_offset_forward_position() const;

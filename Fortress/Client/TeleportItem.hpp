@@ -15,7 +15,7 @@ namespace Fortress::Item
 		}
 
 		void initialize() override;
-		virtual void update(const std::weak_ptr<ObjectBase::character> owner) override;
+		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) override;
 		~TeleportItem() override = default;
 	};
 
@@ -23,7 +23,7 @@ namespace Fortress::Item
 	{
 	}
 
-	inline void TeleportItem::update(const std::weak_ptr<ObjectBase::character> owner)
+	inline void TeleportItem::update(const std::weak_ptr<ObjectBase::character>& owner)
 	{
 		if (const auto ch = owner.lock())
 		{
@@ -35,15 +35,14 @@ namespace Fortress::Item
 
 					// @todo: teleport to the outside of the map should be handled.
 					ch->m_position = prj.lock()->m_position;
-					ch->unequip_nutshell();
+					unequip_nutshell(owner);
 					set_ended();
-					item::update(owner);
 				}
 			}	
 			else
 			{
-				ch->equip_nutshell();
-				ch->shoot();
+				equip_nutshell(owner);
+				fire(owner);
 			}
 		}
 	}

@@ -14,7 +14,7 @@ namespace Fortress::Item
 		}
 
 		void initialize() override;
-		virtual void update(const std::weak_ptr<ObjectBase::character> owner) override;
+		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) override;
 		~DoubleShotItem() override = default;
 		virtual void reset() override;
 
@@ -27,7 +27,7 @@ namespace Fortress::Item
 		m_fire_count = 0;
 	}
 
-	inline void DoubleShotItem::update(const std::weak_ptr<ObjectBase::character> owner)
+	inline void DoubleShotItem::update(const std::weak_ptr<ObjectBase::character>& owner)
 	{
 		if (const auto ch = owner.lock())
 		{
@@ -35,14 +35,13 @@ namespace Fortress::Item
 
 			if (!ch->is_projectile_active() && m_fire_count != 2)
 			{
-				ch->shoot();
+				fire(owner);
 				m_fire_count++;
 			}
 			else if(!ch->is_projectile_active() && m_fire_count == 2)
 			{
 				// does this really need to be separated with used count?
 				set_ended();
-				item::update(owner);
 			}
 		}
 	}

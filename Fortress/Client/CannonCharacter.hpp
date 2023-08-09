@@ -18,7 +18,6 @@ namespace Fortress::Object
 			const Math::Vector2& position, 
 			const Math::Vector2& orientation)
 			:character(
-				player_id,
 				name,
 				L"cannon",
 				orientation,

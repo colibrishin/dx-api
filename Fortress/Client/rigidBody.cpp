@@ -173,7 +173,7 @@ namespace Fortress::Abstract
 		return m_user_pitch_radian;
 	}
 
-	Math::Vector2 rigidBody::get_offset() const
+	const Math::Vector2& rigidBody::get_offset() const
 	{
 		return m_offset;
 	}
