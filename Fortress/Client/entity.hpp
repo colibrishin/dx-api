@@ -5,12 +5,14 @@
 #include <string>
 #include <memory>
 
+#include "virtual_this.hpp"
+
 namespace Fortress::Abstract
 {
 	/**
 	* \brief The basic information for entity, which includes base object, or scene, etc...
 	*/
-	class entity : public std::enable_shared_from_this<entity>
+	class entity : public Dev::multi_inherit_this<entity>
 	{
 	public:
 		entity() = delete;
