@@ -14,7 +14,7 @@ namespace Fortress::Item
 		}
 
 		void initialize() override;
-		virtual void update(const std::weak_ptr<ObjectBase::character> owner) override;
+		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) override;
 		~RepairItem() override = default;
 	};
 
@@ -22,13 +22,12 @@ namespace Fortress::Item
 	{
 	}
 
-	inline void RepairItem::update(const std::weak_ptr<ObjectBase::character> owner)
+	inline void RepairItem::update(const std::weak_ptr<ObjectBase::character>& owner)
 	{
 		if (const auto ch = owner.lock())
 		{
-			ch->set_hp(ch->get_hp_raw() + 50.0f);
+			set_hp(owner, ch->get_hp_raw() + 50.0f);
 			set_ended();
-			item::update(owner);
 		}
 	}
 }
