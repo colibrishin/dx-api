@@ -23,6 +23,7 @@ namespace Fortress
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
 		m_known_players.erase(m_known_players.begin());
+		m_timer_next_player = ObjectBase::TimerManager::create<NextPlayerTimer>();
 
 		m_current_player.lock()->set_movable();
 	}
@@ -74,12 +75,12 @@ namespace Fortress
 			player->set_unmovable();
 		}
 
-		if(m_timer_next_player.is_started())
+		if(m_timer_next_player.lock()->is_started())
 		{
 			return;
 		}
 
-		m_timer_next_player.start([this](){ next_player(); });
+		m_timer_next_player.lock()->start([this](){ next_player(); });
 	}
 
 	void Round::update()

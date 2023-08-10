@@ -10,12 +10,16 @@
 #include <objidl.h>
 #include <gdiplus.h>
 #include <numeric>
+
 using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
+#include "TimerManager.hpp"
+#include "GifTimer.hpp"
+
 namespace Fortress
 {
-	constexpr int gif_timer_id = 8000;
+	class GifTimer;
 
 	class GifWrapper : public ImageWrapper
 	{
@@ -32,15 +36,15 @@ namespace Fortress
 
 		void play(const std::function<void()>& on_end = {});
 		void stop() const;
-		void OnTimer();
 		virtual void flip() override;
 		virtual void rotate(const float angle);
 		void reset_transform();
 		unsigned int get_total_play_time() const;
-
-		inline static std::map<UINT_PTR, GifWrapper*> registered_gifs = {};
+		
 	private:
-		UINT_PTR m_timer_id;
+		void OnTimer();
+
+		std::weak_ptr<GifTimer> m_timer;
 		UINT m_dimension_count;
 		UINT m_frame_count;
 		UINT m_total_buffer;
@@ -48,10 +52,8 @@ namespace Fortress
 		WCHAR m_str_guid[39];
 
 		std::vector<unsigned int> m_frame_delays;
-
+\
 		std::function<void()> m_reserved_function;
-
-		inline static UINT used_timer_id = gif_timer_id;
 	};
 
 	inline bool GifWrapper::load()
@@ -84,7 +86,7 @@ namespace Fortress
 
 	inline void GifWrapper::initialize()
 	{
-		registered_gifs[m_timer_id] = this;
+		m_timer = ObjectBase::TimerManager::create<GifTimer>();
 	}
 
 	inline void GifWrapper::play(const std::function<void()>& on_end)
@@ -99,25 +101,32 @@ namespace Fortress
 
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
-		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
-		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[0], nullptr);
+		m_timer.lock()->reset();
+		m_timer.lock()->set_duration(m_frame_delays[m_current_frame]);
+		m_timer.lock()->start([this]()
+		{
+			this->OnTimer();
+		});
 
 		++m_current_frame;
 	}
 
 	inline void GifWrapper::stop() const
 	{
-		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
+		m_timer.lock()->reset();
 	}
 
 	inline void GifWrapper::OnTimer()
 	{
-		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
-
 		const GUID guid = FrameDimensionTime;
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
-		m_timer_id = SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_frame_delays[m_current_frame], nullptr);
+		m_timer.lock()->reset();
+		m_timer.lock()->set_duration(m_frame_delays[m_current_frame]);
+		m_timer.lock()->start([this]()
+		{
+			this->OnTimer();
+		});
 
 		if(m_current_frame == m_frame_count - 1)
 		{
@@ -160,8 +169,7 @@ namespace Fortress
 		m_frame_count(0),
 		m_total_buffer(0),
 		m_current_frame(0),
-		m_str_guid{},
-		m_timer_id(used_timer_id++)
+		m_str_guid{}
 	{
 		GifWrapper::initialize();
 	}
@@ -169,10 +177,7 @@ namespace Fortress
 	inline GifWrapper::~GifWrapper()
 	{
 		stop();
-		if(registered_gifs.find(m_timer_id) != registered_gifs.end())
-		{
-			registered_gifs.erase(m_timer_id);
-		}
+		ObjectBase::TimerManager::remove(std::dynamic_pointer_cast<Timer>(m_timer.lock()));
 	}
 }
 #endif // GIFWRAPPER_HPP

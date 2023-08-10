@@ -197,11 +197,11 @@ namespace Fortress::Controller
 		return m_projectile_type;
 	}
 
-	const std::weak_ptr<ObjectBase::projectile>& CharacterController::get_one_active_projectile()
+	std::weak_ptr<ObjectBase::projectile> CharacterController::get_one_active_projectile()
 	{
 		if(m_active_projectiles.empty())
 		{
-			return std::move(std::weak_ptr<ObjectBase::projectile>());
+			return {};
 		}
 
 		for(const auto& prj : m_active_projectiles)
@@ -216,7 +216,7 @@ namespace Fortress::Controller
 			}
 		}
 
-		return std::move(std::weak_ptr<ObjectBase::projectile>());
+		return {};
 	}
 
 	CharacterController::CharacterController(
