@@ -43,7 +43,7 @@ namespace Fortress
 		float m_curr_timeout = 0.0f;
 		bool m_bfired = false;
 
-		NextPlayerTimer m_timer_next_player;
+		std::weak_ptr<NextPlayerTimer> m_timer_next_player;
 
 		float m_wind_affect = 0.0f;
 		// @todo: random seed should be different every round

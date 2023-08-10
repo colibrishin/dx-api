@@ -1,14 +1,19 @@
 #ifndef TIMER_HPP
 #define TIMER_HPP
 #include <map>
-
+#include <functional>
 #include "framework.h"
 #include "entity.hpp"
 #include "winapihandles.hpp"
 
 namespace Fortress
 {
-	constexpr int timer_id = 18000;
+	namespace ObjectBase
+	{
+		class TimerManager;
+	}
+
+	
 
 	/**
 	 * \brief A timer that triggered and operates temporarily in specific duration in WinAPI thread.
@@ -16,12 +21,6 @@ namespace Fortress
 	class Timer : public Abstract::entity
 	{
 	public:
-		Timer(const std::wstring& name, const UINT duration) :
-			entity(name), m_timer_id(0), m_duration(duration), m_bStarted(false)
-		{
-			initialize();
-		}
-
 		Timer& operator=(const Timer& other) = default;
 		Timer& operator=(Timer&& other) = default;
 		Timer(const Timer& other) = default;
@@ -30,32 +29,34 @@ namespace Fortress
 
 		void initialize();
 		void start(const std::function<void()>& on_end);
+		void set_duration(const UINT&);
 		bool is_started() const;
 		virtual void on_timer();
 		virtual void reset();
 
-		inline static std::map<UINT_PTR, Timer*> registered_timer = {};
-
 	private:
+		friend ObjectBase::TimerManager;
 		UINT_PTR m_timer_id;
 		UINT m_duration;
-		inline static int used_timer_id = timer_id;
 		bool m_bStarted;
 
 	protected:
+		Timer(const std::wstring& name, const UINT duration, const WPARAM timer_id) :
+			entity(name), m_timer_id(timer_id), m_duration(duration), m_bStarted(false)
+		{
+			initialize();
+		}
+
 		std::function<void()> m_reserved_function{};
 	};
 
 	inline Timer::~Timer()
 	{
-		registered_timer.erase(m_timer_id);
 		entity::~entity();
 	}
 
 	inline void Timer::initialize()
 	{
-		m_timer_id = used_timer_id++;
-		registered_timer[m_timer_id] = this;
 	}
 
 	inline void Timer::start(const std::function<void()>& on_end)
@@ -66,6 +67,11 @@ namespace Fortress
 			m_bStarted = true;
 			m_reserved_function = on_end;	
 		}
+	}
+
+	inline void Timer::set_duration(const UINT& duration)
+	{
+		m_duration = duration;
 	}
 
 	inline bool Timer::is_started() const

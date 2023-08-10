@@ -35,7 +35,7 @@ namespace Fortress::ObjectBase
 		character& operator=(character&& other) = default;
 		character(const character& other) = default;
 		character(character&& other) = default;
-		~character() override = default;
+		~character() override;
 
 		void initialize() override;
 		void update() override;
@@ -75,7 +75,7 @@ namespace Fortress::ObjectBase
 
 		std::weak_ptr<projectile> initialize_projectile(const Math::Vector2& angle, const float charged);
 
-		ProjectileTimer m_multi_projectile_timer;
+		std::weak_ptr<ProjectileTimer> m_multi_projectile_timer;
 
 	protected:
 		character(

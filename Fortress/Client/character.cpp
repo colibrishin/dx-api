@@ -12,10 +12,16 @@
 
 namespace Fortress::ObjectBase
 {
+	character::~character()
+	{
+		TimerManager::remove(m_multi_projectile_timer);
+	}
+
 	void character::initialize()
 	{
 		rigidBody::initialize();
 		CharacterController::initialize();
+		m_multi_projectile_timer = TimerManager::create<ProjectileTimer>();
 	}
 
 	void character::update()
@@ -73,7 +79,7 @@ namespace Fortress::ObjectBase
 
 	void character::fire()
 	{
-		m_multi_projectile_timer.reset();
+		m_multi_projectile_timer.lock()->reset();
 
 		float charged = get_charged_power();
 
@@ -99,8 +105,8 @@ namespace Fortress::ObjectBase
 
 		if(remaining > 0)
 		{
-			m_multi_projectile_timer.set_count(remaining);
-			m_multi_projectile_timer.start([this, angle, charged](){initialize_projectile(angle, charged);});
+			m_multi_projectile_timer.lock()->set_count(remaining);
+			m_multi_projectile_timer.lock()->start([this, angle, charged](){initialize_projectile(angle, charged);});
 		}
 
 		CharacterController::fire();

@@ -11,8 +11,7 @@ namespace Fortress
 	{
 	public:
 		// @todo: maybe this might be changed.
-		ProjectileTimer() :
-			Timer(L"Next Projectile", 100),
+		ProjectileTimer(WPARAM timer_id) : Timer(L"Next Projectile", 100, timer_id),
 			m_count(0),
 			m_curr_count(0)
 		{

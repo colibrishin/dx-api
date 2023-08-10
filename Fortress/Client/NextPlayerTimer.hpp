@@ -7,7 +7,7 @@ namespace Fortress
 	class NextPlayerTimer : public Timer
 	{
 	public:
-		NextPlayerTimer() : Timer(L"Next Player", 2000) { }
+		NextPlayerTimer(WPARAM timer_id) : Timer(L"Next Player", 2000, timer_id) { }
 		inline void on_timer() override;
 	};
 
