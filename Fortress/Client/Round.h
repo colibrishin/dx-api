@@ -56,16 +56,6 @@ namespace Fortress
 		std::vector<std::weak_ptr<ObjectBase::character>> m_all_players;
 		std::weak_ptr<ObjectBase::character> m_current_player;
 		std::weak_ptr<ObjectBase::character> m_winner;
-
-		struct safe_weak_comparer {
-		    bool operator() (const std::weak_ptr<ObjectBase::character> &lhs, const std::weak_ptr<ObjectBase::character> &rhs)const {
-		        const auto lptr = lhs.lock();
-		    	const auto rptr = rhs.lock();
-		        if (!rptr) return false; // nothing after expired pointer 
-		        if (!lptr) return true;  // every not expired after expired pointer
-		        return lptr.get() < rptr.get();
-		    }
-		};
 	};
 }
 #endif // ROUND_HPP
