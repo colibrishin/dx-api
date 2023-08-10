@@ -94,8 +94,7 @@ namespace Fortress::Object
 		const Math::Vector2& hit_vector, 
 		const std::weak_ptr<Abstract::rigidBody>& other)
 	{
-		if (auto const projectile = 
-			std::dynamic_pointer_cast<ObjectBase::projectile>(other.lock()))
+		if (auto const projectile = other.lock()->downcast_from_this<ObjectBase::projectile>())
 		{
 			const eHitVector e_vec = Math::translate_hit_vector(hit_vector);
 			const auto hit_point = projectile->get_hit_point(e_vec);
@@ -103,28 +102,10 @@ namespace Fortress::Object
 			if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
 				safe_is_projectile_hit(hit_point, projectile))
 			{
+				projectile->stateController::downcast_from_this<Controller::ProjectileController>()->notify_ground_hit();
 				safe_set_destroyed_global(hit_point, projectile->get_radius());
-
-				if (const auto scene = Scene::SceneManager::get_active_scene().lock()) 
-				{
-					const auto near_objects = scene->is_in_range<ObjectBase::character>(
-						hit_point, projectile->get_radius());
-
-					for (const auto& character : near_objects) 
-					{
-						character.lock()->hit(projectile, hit_point);
-					}
-				}
-
-				projectile->up_hit_count();
-				projectile->play_hit_sound();
-				// explosion near ground converts hitter from victim vector.
-				// victim vector should be converted to hitter vector.
-				projectile->explosion_near_ground(-hit_vector);
 			}
 		}
-
-		rigidBody::on_collision(collision, hit_vector, other);
 	}
 
 	inline void Ground::initialize()
