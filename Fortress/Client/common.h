@@ -39,6 +39,15 @@ namespace Fortress
 		Hit,
 	};
 
+	enum class eProjectileState
+	{
+		Fire = 0,
+		Flying,
+		CharacterHit,
+		GroundHit,
+		Destroyed
+	};
+
 	enum class eProjectileType
 	{
 		Main = 0,

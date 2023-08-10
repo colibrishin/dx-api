@@ -252,7 +252,6 @@ namespace Fortress::Controller
 
 	void CharacterController::fire()
 	{
-		m_active_projectiles.begin()->lock()->play_fire_sound();
 	}
 
 	void CharacterController::move_left()
@@ -458,8 +457,6 @@ namespace Fortress::Controller
 		{
 			set_state(eCharacterState::Fired);
 		}
-
-		initial_prj->play_fire_sound();
 	}
 
 	void CharacterController::fired_state()

@@ -44,8 +44,8 @@ namespace Fortress::Object
 
 	private:
 		std::weak_ptr<ObjectBase::character> m_locked_target;
-	protected:
-		virtual void post_hit() override;
+
+		void destroyed() override;
 	};
 
 	inline void GuidedMissileProjectile::update()
@@ -95,10 +95,10 @@ namespace Fortress::Object
 		m_sound_pack.get_sound(L"sub-fire").lock()->play(false);
 	}
 
-	inline void GuidedMissileProjectile::post_hit()
+	inline void GuidedMissileProjectile::destroyed()
 	{
 		m_locked_target.reset();
-		projectile::post_hit();
+		projectile::destroyed();
 	}
 }
 #endif // GUIDEDMISSILEPROJECTILE_HPP

@@ -50,9 +50,10 @@ namespace Fortress::Abstract
 		__forceinline Math::Vector2 get_bottom_left() const;
 		__forceinline Math::Vector2 get_bottom_right() const;
 		__forceinline Math::Vector2 get_center() const;
+		std::vector<Math::Vector2> get_all_hit_points() const;
 		__forceinline Math::Vector2 get_hit_point(const eHitVector& e_vector) const;
 		__forceinline Math::Vector2 to_top_left_local_position(const Math::Vector2& other) const;
-		Math::Vector2 to_top_right_local_position(const Math::Vector2& other) const;
+		__forceinline Math::Vector2 to_top_right_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 to_nearest_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 get_nearest_point(const Math::Vector2& other) const;
 
@@ -203,6 +204,14 @@ namespace Fortress::Abstract
 	inline Math::Vector2 object::get_center() const
 	{
 		return m_position;
+	}
+
+	inline std::vector<Math::Vector2> object::get_all_hit_points() const
+	{
+		return {
+			get_center(), get_top(), get_bottom(), get_left(), get_right(), get_top_left(), get_top_right(),
+			get_bottom_left(), get_bottom_left(), get_bottom_right()
+		};
 	}
 
 	inline Math::Vector2 object::get_hit_point(const eHitVector & e_vector) const
