@@ -55,6 +55,9 @@
     <Filter Include="Round">
       <UniqueIdentifier>{f4b210bc-87ac-4022-a08a-6986f8a21e86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{4e554c30-0fd4-412f-830a-0a6f9c91fe77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -198,6 +201,18 @@
     <ClInclude Include="ProjectileTimer.hpp">
       <Filter>Engine\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="stateController.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="virtual_this.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.hpp">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileController.hpp">
+      <Filter>Controller</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -278,12 +293,6 @@
     <ClCompile Include="PrecisionCannonProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
-    <ClCompile Include="characterAnim.cpp">
-      <Filter>Engine\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="characterState.cpp">
-      <Filter>Engine\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="characterCollision.cpp">
       <Filter>Engine\Objects</Filter>
     </ClCompile>
@@ -292,6 +301,12 @@
     </ClCompile>
     <ClCompile Include="Round.cpp">
       <Filter>Round</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileController.cpp">
+      <Filter>Controller</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
