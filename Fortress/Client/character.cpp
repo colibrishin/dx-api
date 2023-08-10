@@ -3,6 +3,7 @@
 #include "ground.hpp"
 #include "input.hpp"
 #include "projectile.hpp"
+#include "ProjectileController.hpp"
 #include "NutshellProjectile.hpp"
 #include "CharacterController.hpp"
 
