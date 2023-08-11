@@ -193,6 +193,8 @@
     <ClCompile Include="characterCollision.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="deltatime.cpp" />
+    <ClCompile Include="EgyptGround.hpp" />
+    <ClCompile Include="EgyptStairway.hpp" />
     <ClCompile Include="GifTimer.hpp" />
     <ClCompile Include="GifWrapper.hpp" />
     <ClCompile Include="LobbyScene.cpp" />
