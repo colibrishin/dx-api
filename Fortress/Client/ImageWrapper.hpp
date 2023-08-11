@@ -34,6 +34,7 @@ namespace Fortress
 		virtual void flip();
 		void set_offset(const Math::Vector2& offset);
 		void copy_to(HDC) const;
+		void tile_copy_to(const Math::Vector2& size, HDC) const;
 
 	protected:
 		virtual bool load() override;
@@ -58,6 +59,27 @@ namespace Fortress
 		Graphics temp(target);
 
 		temp.DrawImage(m_image.get(), 0.0f, 0.0f);
+	}
+
+	inline void ImageWrapper::tile_copy_to(const Math::Vector2& size, HDC target) const
+	{
+		Graphics temp(target);
+
+		float start_x = 0;
+		float start_y = 0;
+
+		for(; 
+			start_y < size.get_y(); 
+			start_y += m_size.get_y())
+		{
+			for(; 
+				start_x < size.get_x(); 
+				start_x += m_size.get_x())
+			{
+				temp.DrawImage(m_image.get(), start_x, start_y);
+			}
+		}
+
 	}
 
 	inline void ImageWrapper::render(
