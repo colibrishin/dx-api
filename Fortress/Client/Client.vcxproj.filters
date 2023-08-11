@@ -317,6 +317,12 @@
     <ClCompile Include="sceneManager.cpp">
       <Filter>Windows\소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="EgyptGround.hpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="EgyptStairway.hpp">
+      <Filter>Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">

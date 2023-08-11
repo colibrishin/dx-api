@@ -140,14 +140,6 @@ namespace Fortress::Scene
 				DeleteObject(brush);
 			}();
 
-			[this]()
-			{
-				wchar_t notice[100] = {};
-				swprintf_s(notice, 100, L"Use WASD to move...");
-				const size_t strlen = wcsnlen_s(notice, 100);
-				TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
-			}();
-
 			// MP bar
 			[this, hud_position]()
 			{
