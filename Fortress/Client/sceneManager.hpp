@@ -7,6 +7,7 @@
 #include <memory>
 
 #include "common.h"
+#include "scene.hpp"
 
 namespace Fortress
 {
@@ -41,6 +42,22 @@ namespace Fortress::Scene
 		}	
 
 		static void SetActive(const std::wstring& name);
+
+		template <typename T>
+		static void SetActive()
+		{
+			for(const auto& [name, scene] : m_scenes)
+			{
+				if(scene->downcast_from_this<T>())
+				{
+					m_current_scene.lock()->deactivate();
+					m_current_scene = scene;
+					m_current_scene.lock()->activate();
+					return;
+				}
+			}
+		}
+
 		static std::weak_ptr<Abstract::scene> get_active_scene();
 		static std::weak_ptr<BattleScene> get_active_map();
 
