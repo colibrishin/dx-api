@@ -263,9 +263,8 @@ namespace Fortress::ObjectBase
 			CharacterController(
 				short_name, 
 				hp, 
-				mp, 
-				m_velocity,
-				get_offset()),
+				mp,
+				this),
 			m_bGrounded(false),
 			m_short_name(short_name),
 			m_armor(armor)

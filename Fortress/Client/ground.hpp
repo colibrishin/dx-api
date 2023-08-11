@@ -5,6 +5,7 @@
 #include <vector>
 #include "rigidBody.hpp"
 #include "projectile.hpp"
+#include "scene.hpp"
 #include "sceneManager.hpp"
 
 namespace Fortress
@@ -60,6 +61,8 @@ namespace Fortress::Object
 		void initialize() override;
 		void render() override;
 
+		void set_hitbox(const Math::Vector2& hitbox) override;
+
 		GroundState safe_is_destroyed(const Math::Vector2& local_position) const;
 		void safe_set_destroyed_global(const Math::Vector2& hit_position, const float radius);
 		bool safe_is_object_stuck_global(const Math::Vector2& position) const;
@@ -70,6 +73,9 @@ namespace Fortress::Object
 			const Math::Vector2& global_position,
 			const int depth = -1,
 			const int start_y = -1) const;
+
+		Math::Vector2 safe_parallel_surface_global(
+			const Math::Vector2& global_position, const Math::Vector2& offset) const;
 	protected:
 		HDC get_ground_hdc() const;
 		void unsafe_set_destroyed(const int x, const int y);
@@ -82,6 +88,8 @@ namespace Fortress::Object
 		void unsafe_set_line_destroyed_reverse(const Math::Vector2& line, int n);
 		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
 		void _debug_draw_destroyed_table() const;
+
+		void reset_hdc();
 
 		friend Radar;
 		std::vector<std::vector<GroundState>> m_destroyed_table;
@@ -110,12 +118,13 @@ namespace Fortress::Object
 
 	inline void Ground::initialize()
 	{
-		m_ground_hdc = CreateCompatibleDC(WinAPIHandles::get_main_dc());
-		m_ground_bitmap = CreateCompatibleBitmap(WinAPIHandles::get_main_dc(), m_hitbox.get_x(), m_hitbox.get_y());
+		if(m_hitbox != Math::zero)
+		{
+			reset_hdc();
 
-		SelectObject(m_ground_hdc, m_ground_bitmap);
-		// @todo: replace with image or so.
-		Rectangle(m_ground_hdc, 0, 0, m_hitbox.get_x(), m_hitbox.get_y());
+			// @todo: replace with image or so.
+			Rectangle(m_ground_hdc, 0, 0, m_hitbox.get_x(), m_hitbox.get_y());
+		}
 
 		rigidBody::initialize();
 	}
@@ -146,6 +155,16 @@ namespace Fortress::Object
 				Debug::draw_dot(pos);
 			}
 		}
+	}
+
+	inline void Ground::set_hitbox(const Math::Vector2& hitbox)
+	{
+		m_destroyed_table.clear();
+		m_destroyed_table.resize(
+			static_cast<int>(hitbox.get_y()), 
+			std::vector<GroundState>(static_cast<int>(hitbox.get_x())));
+
+		rigidBody::set_hitbox(hitbox);
 	}
 
 	inline GroundState Ground::safe_is_destroyed(const Math::Vector2& local_position) const
@@ -336,6 +355,28 @@ namespace Fortress::Object
 		return safe_orthogonal_surface_local(local_position, depth);
 	}
 
+	inline Math::Vector2 Ground::safe_parallel_surface_global(
+		const Math::Vector2& global_position,
+		const Math::Vector2& offset) const
+	{
+		const auto local_position = to_top_left_local_position(global_position);
+		const int i_offset = offset == Math::left ? -1 : 1;
+
+		for(int i = 0; 
+			i > -m_hitbox.get_x() && i < m_hitbox.get_x(); 
+			i += i_offset)
+		{
+			const Math::Vector2 new_pos = {local_position.get_x() + i, local_position.get_y()};
+
+			if(safe_is_destroyed(new_pos) == GroundState::NotDestroyed)
+			{
+				return new_pos - local_position;
+			}
+		}
+
+		return Math::vector_inf;
+	}
+
 	inline Math::Vector2 Ground::safe_orthogonal_surface_local(const Math::Vector2& local_position, const int depth) const
 	{
 		const int start_y = local_position.get_y();
@@ -393,6 +434,25 @@ namespace Fortress::Object
 					pixel);
 			}
 		}
+	}
+
+	inline void Ground::reset_hdc()
+	{
+		if(m_ground_bitmap)
+		{
+			DeleteObject(m_ground_bitmap);
+		}
+
+		if(m_ground_hdc)
+		{
+			ReleaseDC(nullptr, m_ground_hdc);
+		}
+
+		m_ground_hdc = CreateCompatibleDC(WinAPIHandles::get_main_dc());
+		m_ground_bitmap = CreateCompatibleBitmap(
+			WinAPIHandles::get_main_dc(), m_hitbox.get_x(), m_hitbox.get_y());
+
+		SelectObject(m_ground_hdc, m_ground_bitmap);
 	}
 }
 

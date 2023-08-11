@@ -1,4 +1,7 @@
 #include "CharacterController.hpp"
+
+#include "rigidbody.hpp"
+#include "BattleScene.h"
 #include "character.hpp"
 #include "input.hpp"
 #include "RepairItem.hpp"
@@ -223,15 +226,13 @@ namespace Fortress::Controller
 		const std::wstring& short_name, 
 		const float hp, 
 		const float mp,
-		const Math::Vector2& velocity,
-		const Math::Vector2& offset) :
+		RefOnlyRigidBodyPointer rb) :
 		stateController(short_name, eCharacterState::Idle),
 		m_hp(hp),
 		m_mp(mp),
 		m_power(1.0f),
 		m_bMovable(false),
-		m_ref_velocity(velocity),
-		m_ref_offset(offset),
+		m_rb(rb),
 		m_projectile_type(eProjectileType::Main),
 		m_tmp_projectile_type(eProjectileType::Main),
 		m_active_item()
@@ -289,7 +290,7 @@ namespace Fortress::Controller
 
 	void CharacterController::set_current_sprite(const eCharacterState& state)
 	{
-		const auto offset = m_ref_offset == Math::left ? L"left" : L"right";
+		const auto offset = m_rb->get_offset() == Math::left ? L"left" : L"right";
 		const auto anim_name = anim_name_getter(state);
 		const auto anim = m_texture.get_image(anim_name, offset);
 		const auto curr = m_current_sprite.lock();
@@ -333,6 +334,13 @@ namespace Fortress::Controller
 	void CharacterController::default_state()
 	{
 		if(m_hp <= 0.0f)
+		{
+			set_state(eCharacterState::Death);
+		}
+
+		const auto map =  Scene::SceneManager::get_active_map().lock();
+
+		if(map->predicate_OOB(m_rb->get_offset_bottom_forward_position()))
 		{
 			set_state(eCharacterState::Death);
 		}
@@ -389,6 +397,14 @@ namespace Fortress::Controller
 		if(m_bMovable)
 		{
 			default_state();
+
+			const auto map =  Scene::SceneManager::get_active_map().lock();
+
+			if(!map->movable(m_rb->get_offset_bottom_forward_position()))
+			{
+				// @todo: fixed motion.
+				set_state(eCharacterState::Idle);
+			}
 
 			if (Input::getKey(eKeyCode::A))
 			{
@@ -542,6 +558,7 @@ namespace Fortress::Controller
 
 	void CharacterController::death_state()
 	{
+		set_unmovable();
 		set_state(eCharacterState::Dead);
 	}
 
@@ -586,7 +603,7 @@ namespace Fortress::Controller
 			return;
 		}
 
-		if (std::fabs(m_ref_velocity.get_x()) > Math::epsilon)
+		if (std::fabs(m_rb->get_velocity().get_x()) > Math::epsilon)
 		{
 			m_mp -= 20.0f * DeltaTime::get_deltaTime();
 		}

@@ -4,7 +4,7 @@
 #define LOADINGSCENE_H
 
 #include "ImageWrapper.hpp"
-#include "sceneManager.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Scene
 {

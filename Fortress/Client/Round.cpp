@@ -3,6 +3,7 @@
 #include "BattleScene.h"
 #include "projectile.hpp"
 #include "SummaryScene.hpp"
+#include "sceneManager.hpp"
 
 namespace Fortress
 {

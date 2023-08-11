@@ -70,6 +70,7 @@ namespace Fortress::Math
 		__forceinline Vector2 reflect_y() const noexcept;
 		__forceinline Vector2 abs() const noexcept;
 		__forceinline Vector2 normalized() const noexcept;
+		__forceinline float unit_angle() const noexcept;
 
 	private:
 		float m_x;
@@ -266,6 +267,11 @@ namespace Fortress::Math
 	__forceinline Vector2 Vector2::normalized() const noexcept
 	{
 		return {m_x / magnitude(), m_y / magnitude()};
+	}
+
+	inline float Vector2::unit_angle() const noexcept
+	{
+		return std::atan2(m_y, m_x);
 	}
 
 	__forceinline float Vector2::global_angle() const noexcept

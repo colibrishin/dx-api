@@ -9,8 +9,9 @@
 #include "LobbyScene.h"
 #include "RoomScene.h"
 #include "sceneManager.hpp"
-#include "SoundManager.hpp"
+#include "scene.hpp"
 #include "titleScene.h"
+#include "SoundManager.hpp"
 #include "winapihandles.hpp"
 
 namespace Fortress

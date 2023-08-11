@@ -64,7 +64,7 @@ namespace Fortress::Controller
 		stateController::prerender();
 
 		const auto unit = (m_pc_position - m_previous_position).normalized();
-		m_pitch = atan2(unit.get_y(), unit.get_x());
+		m_pitch = unit.unit_angle();
 		m_previous_position = m_pc_position;
 
 		switch(get_state())
@@ -123,19 +123,12 @@ namespace Fortress::Controller
 	{
 		flying();
 
-		const auto scene = std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock());
-		const float epsilon = 50.0f;
-		const auto map_size = scene->get_map_size() + epsilon;
-
-		if (scene)
+		if (const auto map = Scene::SceneManager::get_active_map().lock())
 		{
-			if(m_pc_position.get_x() <= -map_size.get_x() ||
-				m_pc_position.get_x() >= map_size.get_x() ||
-				m_pc_position.get_y() >= map_size.get_y() ||
-				m_pc_position.get_y() <= -map_size.get_y())
+			if(map->predicate_OOB(m_pc_position))
 			{
 				set_state(eProjectileState::Destroyed);
-			}	
+			}
 		}
 	}
 

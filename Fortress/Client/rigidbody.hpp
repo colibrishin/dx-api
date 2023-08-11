@@ -34,6 +34,7 @@ namespace Fortress::Abstract
 		static CollisionCode is_collision(const std::weak_ptr<object>& left, const std::weak_ptr<object>& right) noexcept;
 
 		void set_speed(const Math::Vector2& speed);
+		virtual void set_hitbox(const Math::Vector2& hitbox);
 
 		void move_down() override;
 		void move_left() override;
@@ -46,10 +47,12 @@ namespace Fortress::Abstract
 		float get_movement_pitch_radian() const;
 		float get_user_pitch_radian() const;
 
+		const Math::Vector2& get_velocity() const;
 		const Math::Vector2& get_offset() const;
 		Math::Vector2 get_mixed_offset() const;
 		Math::Vector2 get_velocity_offset() const;
 		Math::Vector2 get_offset_forward_position() const;
+		Math::Vector2 get_offset_backward_position() const;
 		Math::Vector2 get_offset_bottom_forward_position() const;
 		Math::Vector2 get_velocity_forward_position() const;
 

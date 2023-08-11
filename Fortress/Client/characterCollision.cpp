@@ -3,6 +3,16 @@
 
 namespace Fortress::ObjectBase
 {
+	bool character::check_angle(const GlobalPosition& position) const
+	{
+		const auto unit = (position - get_bottom()).normalized();
+		const auto radian = std::fabs(unit.unit_angle());
+		const auto degree = Math::to_degree(
+			get_offset() == Math::left ? Math::flip_radian(radian) : radian);
+
+		return degree <= 80.0f;
+	}
+
 	void character::ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
@@ -15,13 +25,13 @@ namespace Fortress::ObjectBase
 			{
 				if (get_state() == eCharacterState::Move) 
 				{
-					if (bottom_check == Object::GroundState::NotDestroyed)
+					// check ground stiffness;
+					const auto next_ground = get_forward_near_ground(ground);
+
+					if (!check_angle(next_ground))
 					{
-						if (ground->safe_is_object_stuck_global(get_bottom()))
-						{
-							const auto delta = ground->safe_nearest_surface(get_bottom());
-							m_position -= delta;
-						}
+						m_velocity = {};
+						return;
 					}
 
 					const auto candidate = get_next_velocity(bottom_local_position, ground);
@@ -31,9 +41,18 @@ namespace Fortress::ObjectBase
 						return;
 					}
 
-					if (m_bGrounded && candidate != Math::vector_inf)
+					if (get_state() == eCharacterState::Move && candidate != Math::vector_inf)
 					{
 						m_velocity = candidate;
+					}
+
+					if (candidate != Math::vector_inf && bottom_check == Object::GroundState::NotDestroyed)
+					{
+						if (ground->safe_is_object_stuck_global(get_bottom()))
+						{
+							const auto delta = ground->safe_nearest_surface(get_bottom());
+							m_position -= delta;
+						}
 					}
 				}
 			}
@@ -89,8 +108,7 @@ namespace Fortress::ObjectBase
 			for(int x = 0; x < m_hitbox.get_x(); ++x)
 			{
 				delta = ground->safe_orthogonal_surface_global(
-					next_surface + 
-					search_vector * x,
+					next_surface + search_vector * x,
 					m_hitbox.get_y() / 2);
 
 				if(delta != Math::vector_inf)
@@ -114,27 +132,54 @@ namespace Fortress::ObjectBase
 		}
 	}
 
+	/**
+	 * \brief gets nearest ground in parallel in the perspective of middle forward position.
+	 * \param ground_ptr ground pointer
+	 * \return nearest ground vector, inf if it has found nothing.
+	 */
+	Math::Vector2 character::get_forward_near_ground(const std::weak_ptr<Object::Ground>& ground_ptr) const
+	{
+		if (const auto ground = ground_ptr.lock())
+		{
+			const bool is_uphilling = ground->safe_is_object_stuck_global(get_offset_bottom_forward_position());
+			// flipping is needed because hitbox is inside of the ground if character is moving forward to ground.
+			const auto ray_start_pos = is_uphilling ? get_offset_backward_position() : get_offset_forward_position();
+
+			for(int x = 1; x <= 10; x++)
+			{
+				const auto far_next_position = ground->safe_parallel_surface_global(
+					ray_start_pos, get_offset()) + ray_start_pos;
+
+				const auto unit = (far_next_position - get_bottom()).normalized();
+				const auto radian = std::fabs(unit.unit_angle());
+				const auto degree = Math::to_degree(
+					get_offset() == Math::left ? Math::flip_radian(radian) : radian);
+
+				if(unit == Math::zero || std::isnan(radian))
+				{
+					continue;
+				}
+
+				Debug::Log(L"Degree : " + std::to_wstring(degree));
+				return far_next_position;
+			}
+		}
+
+		return Math::vector_inf;
+	}
+
 	Math::Vector2 character::get_next_velocity(
 		const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr) const
 	{
-		bool angle_check = false;
-		bool climable = false;
-		Math::Vector2 candidate{};
+		Math::Vector2 candidate = Math::vector_inf;
 
 		if (const auto ground = ground_ptr.lock())
 		{
 			// check up-hilling condition
-			for(int x = 0; x < 10; x++)
+			for(int x = 1; x < 100; x++)
 			{
-				if (angle_check && climable) 
-				{
-					break;
-				}
-
-				angle_check = false;
-
 				// searching in reverse. we need to check whether how stiff the curve is.
-				for(int y = 99; y >= 0; --y)
+				for(int y = 99; y >= 1; --y)
 				{
 					Math::Vector2 local_new_pos = {
 						local_position_bottom.get_x() + 
@@ -152,38 +197,28 @@ namespace Fortress::ObjectBase
 						continue;
 					}
 
+					if(unit == Math::Vector2{})
+					{
+						continue;
+					}
+
 					if (ground_check == Object::GroundState::NotDestroyed)
 					{
-						if (!angle_check)
-						{
-							if (std::fabs(Math::to_degree(local_position_bottom.local_inner_angle(local_new_pos)))
-								>= 60.0f || ground->safe_is_object_stuck_local(local_new_pos)) 
-							{
-								// @todo: fixed animation
-								angle_check = false;
-								climable = false;
-								candidate = Math::vector_inf;
-							}
-							
-							climable = true;
-							angle_check = true;
-						}
-
 						candidate = unit;
 					}
 				}
 			}
 
-			if(climable)
+			if(candidate != Math::vector_inf)
 			{
 				return candidate;
 			}
 
-			candidate = {};
+			candidate = Math::vector_inf;
 
-			for(int i = 0; i < 10; i++)
+			for(int i = 1; i < 10; i++)
 			{
-				for(int j = 0; j < 100; ++j)
+				for(int j = 1; j < 100; ++j)
 				{
 					Math::Vector2 local_new_pos = {
 						local_position_bottom.get_x() + 
@@ -200,6 +235,12 @@ namespace Fortress::ObjectBase
 						continue;
 					}
 
+					if(unit == Math::Vector2{} || 
+						ground_check == Object::GroundState::OutOfBound)
+					{
+						continue;
+					}
+
 					if (ground_check == Object::GroundState::NotDestroyed)
 					{
 						candidate = unit;
@@ -207,11 +248,6 @@ namespace Fortress::ObjectBase
 					}
 				}
 			}
-		}
-
-		if (!angle_check || !climable) 
-		{
-			candidate = Math::vector_inf;
 		}
 
 		return candidate;

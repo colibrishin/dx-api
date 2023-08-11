@@ -4,7 +4,7 @@
 
 #include "character.hpp"
 #include "ImageWrapper.hpp"
-#include "sceneManager.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Scene
 {

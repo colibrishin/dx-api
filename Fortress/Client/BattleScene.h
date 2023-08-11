@@ -6,8 +6,8 @@
 #include "ground.hpp"
 #include "Radar.hpp"
 #include "Round.h"
-#include "sceneManager.hpp"
 #include "sound.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Scene
 {
@@ -36,6 +36,8 @@ namespace Fortress::Scene
 		virtual void set_grounds() = 0;
 		virtual void set_characters() = 0;
 		virtual void set_client_character() = 0;
+		virtual bool predicate_OOB(const Math::Vector2& position);
+		virtual bool movable(const Math::Vector2& position);
 
 	protected:
 		Math::Vector2 m_map_size;

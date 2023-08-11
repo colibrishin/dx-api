@@ -31,6 +31,8 @@ namespace Fortress::Math
 	const Vector2 right = {1.0f, 0.0f};
 	const Vector2 top = {0.0f, -1.0f};
 	const Vector2 bottom = {0.0f, 1.0f};
+	const Vector2 zero = {};
+
 	
 	const Vector2 forward = {1.0f, 0.0f};
 	const Vector2 up = {0.0f, -1.0f};
@@ -38,7 +40,12 @@ namespace Fortress::Math
 
 	inline float flip_radian(const float radian)
 	{
-		return radian - Math::PI;
+		if(radian < 0.0f)
+		{
+			return Math::PI + radian;
+		}
+
+		return Math::PI - radian;
 	}
 
 	inline float to_radian(const float degree)

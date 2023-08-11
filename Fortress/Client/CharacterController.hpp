@@ -1,6 +1,7 @@
 #ifndef CHARACTERCONTROLLER_HPP
 #define CHARACTERCONTROLLER_HPP
 #include "common.h"
+#include "rigidBody.hpp"
 #include "stateController.hpp"
 
 namespace Fortress
@@ -23,6 +24,7 @@ namespace Fortress
 namespace Fortress::Controller
 {
 	using ProjectilePointer = std::weak_ptr<ObjectBase::projectile>;
+	using RefOnlyRigidBodyPointer = const Abstract::rigidBody* const;
 
 	class CharacterController : public stateController<eCharacterState>
 	{
@@ -54,8 +56,7 @@ namespace Fortress::Controller
 			const std::wstring& short_name, 
 			float hp,
 			float mp,
-			const Math::Vector2& m_velocity,
-			const Math::Vector2& offset);
+			RefOnlyRigidBodyPointer rb);
 
 		friend class Object::item;
 
@@ -105,8 +106,7 @@ namespace Fortress::Controller
 		float m_power;
 		bool m_bMovable;
 
-		const Math::Vector2& m_ref_velocity;
-		const Math::Vector2& m_ref_offset;
+		const Abstract::rigidBody* const m_rb;
 
 		eProjectileType m_projectile_type;
 		eProjectileType m_tmp_projectile_type;

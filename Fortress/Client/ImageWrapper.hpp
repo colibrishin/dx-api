@@ -33,6 +33,7 @@ namespace Fortress
 		const Math::Vector2& get_hitbox() const;
 		virtual void flip();
 		void set_offset(const Math::Vector2& offset);
+		void copy_to(HDC) const;
 
 	protected:
 		virtual bool load() override;
@@ -50,6 +51,13 @@ namespace Fortress
 	inline void ImageWrapper::set_offset(const Math::Vector2& offset)
 	{
 		m_offset = offset;
+	}
+
+	inline void ImageWrapper::copy_to(HDC target) const
+	{
+		Graphics temp(target);
+
+		temp.DrawImage(m_image.get(), 0.0f, 0.0f);
 	}
 
 	inline void ImageWrapper::render(
