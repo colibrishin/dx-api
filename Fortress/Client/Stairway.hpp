@@ -7,8 +7,17 @@ namespace Fortress::Object
 	class Stairway : public Ground
 	{
 	public:
-		Stairway(const std::wstring& name, const Math::Vector2& position, const Math::Vector2& size, const Math::Vector2& ramp_offset) :
-			Ground(name, position, size),
+		Stairway(
+			const std::wstring& name, 
+			const Math::Vector2& position,
+			const Math::Vector2& size,
+			const Math::Vector2& ramp_offset,
+			const ImagePointer& tile_image = {}) :
+			Ground(
+				name, 
+				position, 
+				size,
+				tile_image),
 			m_ramp_offset(ramp_offset)
 		{
 			Stairway::initialize();

@@ -23,10 +23,16 @@ namespace Fortress::Object
 		OutOfBound,
 	};
 
+	using ImagePointer = std::weak_ptr<ImageWrapper>;
+
 	class Ground : public Abstract::rigidBody
 	{
 	public:
-		Ground(const std::wstring& name, const Math::Vector2& position, const Math::Vector2& size) :
+		Ground(
+			const std::wstring& name, 
+			const Math::Vector2& position, 
+			const Math::Vector2& size,
+			const ImagePointer& tile_image = {}) :
 			rigidBody(
 				name, 
 				position, 
@@ -36,9 +42,10 @@ namespace Fortress::Object
 				{}, 
 				{}, 
 				false),
-			m_destroyed_table(static_cast<int>(m_hitbox.get_y()), std::vector<GroundState>(static_cast<int>(m_hitbox.get_x()), GroundState::NotDestroyed)),
+			m_destroyed_table(static_cast<int>(m_hitbox.get_y()), std::vector(static_cast<int>(m_hitbox.get_x()), GroundState::NotDestroyed)),
 			m_ground_hdc(nullptr),
-			m_ground_bitmap(nullptr)
+			m_ground_bitmap(nullptr),
+			m_tile_image(tile_image)
 		{
 			Ground::initialize();
 		}
@@ -95,6 +102,10 @@ namespace Fortress::Object
 		std::vector<std::vector<GroundState>> m_destroyed_table;
 		HDC m_ground_hdc;
 		HBITMAP m_ground_bitmap;
+
+	private:
+		void set_tile(const std::weak_ptr<ImageWrapper>& tile_image) const;
+		ImagePointer m_tile_image;
 	};
 
 	inline void Ground::on_collision(
@@ -124,6 +135,11 @@ namespace Fortress::Object
 
 			// @todo: replace with image or so.
 			Rectangle(m_ground_hdc, 0, 0, m_hitbox.get_x(), m_hitbox.get_y());
+
+			if(const auto tile_image = m_tile_image.lock())
+			{
+				set_tile(tile_image);
+			}
 		}
 
 		rigidBody::initialize();
@@ -165,6 +181,14 @@ namespace Fortress::Object
 			std::vector<GroundState>(static_cast<int>(hitbox.get_x())));
 
 		rigidBody::set_hitbox(hitbox);
+	}
+
+	inline void Ground::set_tile(const std::weak_ptr<ImageWrapper>& tile_image) const
+	{
+		if(const auto tile = tile_image.lock())
+		{
+			tile->tile_copy_to(m_hitbox, m_ground_hdc);
+		}
 	}
 
 	inline GroundState Ground::safe_is_destroyed(const Math::Vector2& local_position) const
