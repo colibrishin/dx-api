@@ -184,6 +184,11 @@ namespace Fortress::Abstract
 		return m_offset;
 	}
 
+	const Math::Vector2& rigidBody::get_backward_offset() const
+	{
+		return m_offset == Math::left ? Math::right : Math::left;
+	}
+
 	Math::Vector2 rigidBody::get_mixed_offset() const
 	{
 		if(m_offset != Math::left || m_offset != Math::right)
@@ -212,6 +217,11 @@ namespace Fortress::Abstract
 	Math::Vector2 rigidBody::get_offset_bottom_forward_position() const
 	{
 		return get_offset() == Math::left ? get_bottom_left() : get_bottom_right();
+	}
+
+	Math::Vector2 rigidBody::get_offset_bottom_backward_position() const
+	{
+		return get_offset() == Math::left ? get_bottom_right() : get_bottom_left();
 	}
 
 
