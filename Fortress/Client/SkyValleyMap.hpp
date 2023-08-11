@@ -11,7 +11,7 @@ namespace Fortress::Map
 	class SkyValleyMap : public Scene::BattleScene
 	{
 	public:
-		SkyValleyMap() : BattleScene(L"SkyValley", {1000.0f, 800.0f}) {}
+		SkyValleyMap() : BattleScene(L"SkyValley", {1524.0f, 800.0f}) {}
 		void pre_initialize() override;
 		void set_bgm() override;
 		void set_background_img() override;
@@ -79,7 +79,7 @@ namespace Fortress::Map
 	{
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::CloudGround>(
-				L"cloudy", Math::Vector2{0.0f, 600.f}));
+				L"cloudy", Math::Vector2{0.0f, 300.f}));
 	}
 }
 #endif // SKYVALLEYMAP_HPP
