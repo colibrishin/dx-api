@@ -148,7 +148,7 @@
     <ClInclude Include="input.hpp" />
     <ClInclude Include="item.hpp" />
     <ClInclude Include="layer.hpp" />
-    <ClInclude Include="LoadingScene.h" />
+    <ClInclude Include="LoadingScene.hpp" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="math.h" />
     <ClInclude Include="projectile.hpp" />
@@ -195,7 +195,6 @@
     <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="GifTimer.hpp" />
     <ClCompile Include="GifWrapper.hpp" />
-    <ClCompile Include="LoadingScene.cpp" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MissileCharacter.hpp" />
     <ClCompile Include="character.cpp" />

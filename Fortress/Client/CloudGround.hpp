@@ -18,7 +18,7 @@ namespace Fortress::Object
 
 		void initialize() override;
 	private:
-		// 1000 x 365
+		// 1524 x 365
 		std::weak_ptr<ImageWrapper> m_cloud_image;
 	};
 
@@ -39,6 +39,7 @@ namespace Fortress::Object
 		const auto size = cloud->get_hitbox();
 		constexpr auto magenta = RGB(255, 0, 255);
 
+		// @todo: performance bottleneck, optimization is needed.
 		for(int y = 0; y < static_cast<int>(size.get_y()); ++y)
 		{
 			for(int x = 0; x < static_cast<int>(size.get_x()); ++x)
