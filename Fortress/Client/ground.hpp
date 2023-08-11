@@ -5,6 +5,7 @@
 #include <vector>
 #include "rigidBody.hpp"
 #include "projectile.hpp"
+#include "scene.hpp"
 #include "sceneManager.hpp"
 
 namespace Fortress

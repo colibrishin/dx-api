@@ -6,6 +6,7 @@
 #include "Round.h"
 #include "input.hpp"
 #include "sceneManager.hpp"
+#include "scene.hpp"
 #include "sound.hpp"
 
 namespace Fortress::Scene

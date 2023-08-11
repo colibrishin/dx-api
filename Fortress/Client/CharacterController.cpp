@@ -1,4 +1,7 @@
 #include "CharacterController.hpp"
+
+#include "rigidbody.hpp"
+#include "BattleScene.h"
 #include "character.hpp"
 #include "input.hpp"
 #include "RepairItem.hpp"

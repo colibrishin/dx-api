@@ -5,6 +5,7 @@
 #include "GifWrapper.hpp"
 #include "projectile.hpp"
 #include "math.h"
+#include "scene.hpp"
 
 namespace Fortress::Object
 {

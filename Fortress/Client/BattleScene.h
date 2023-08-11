@@ -6,8 +6,8 @@
 #include "ground.hpp"
 #include "Radar.hpp"
 #include "Round.h"
-#include "sceneManager.hpp"
 #include "sound.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Scene
 {

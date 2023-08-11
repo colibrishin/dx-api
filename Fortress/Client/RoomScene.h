@@ -7,6 +7,7 @@
 #include "ImageWrapper.hpp"
 #include "sceneManager.hpp"
 #include "sound.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Scene
 {

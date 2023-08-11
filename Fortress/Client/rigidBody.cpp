@@ -3,6 +3,7 @@
 #include "deltatime.hpp"
 #include "math.h"
 #include "sceneManager.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Abstract
 {
