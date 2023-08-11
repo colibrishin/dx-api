@@ -3,6 +3,7 @@
 #include "BulletinBoardScene.h"
 #include "DesertMap.hpp"
 #include "input.hpp"
+#include "LoadingScene.hpp"
 
 #include "resourceManager.hpp"
 #include "SkyValleyMap.hpp"
@@ -23,13 +24,13 @@ void Fortress::Scene::RoomScene::update()
 
 	if (Input::getKey(eKeyCode::S))
 	{
-		SceneManager::CreateScene<Map::SkyValleyMap>();
-		SceneManager::SetActive(L"Battle Scene SkyValley");
+		SceneManager::CreateScene<LoadingScene<Map::SkyValleyMap>>();
+		SceneManager::SetActive<LoadingScene<Map::SkyValleyMap>>();
 	}
 	if (Input::getKey(eKeyCode::D))
 	{
-		SceneManager::CreateScene<Map::DesertMap>();
-		SceneManager::SetActive(L"Battle Scene Desert");
+		SceneManager::CreateScene<LoadingScene<Map::DesertMap>>();
+		SceneManager::SetActive<LoadingScene<Map::DesertMap>>();
 	}
 }
 
