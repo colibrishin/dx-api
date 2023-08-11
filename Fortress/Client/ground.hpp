@@ -73,6 +73,9 @@ namespace Fortress::Object
 			const Math::Vector2& global_position,
 			const int depth = -1,
 			const int start_y = -1) const;
+
+		Math::Vector2 safe_parallel_surface_global(
+			const Math::Vector2& global_position, const Math::Vector2& offset) const;
 	protected:
 		HDC get_ground_hdc() const;
 		void unsafe_set_destroyed(const int x, const int y);
@@ -350,6 +353,28 @@ namespace Fortress::Object
 		}
 
 		return safe_orthogonal_surface_local(local_position, depth);
+	}
+
+	inline Math::Vector2 Ground::safe_parallel_surface_global(
+		const Math::Vector2& global_position,
+		const Math::Vector2& offset) const
+	{
+		const auto local_position = to_top_left_local_position(global_position);
+		const int i_offset = offset == Math::left ? -1 : 1;
+
+		for(int i = 0; 
+			i > -m_hitbox.get_x() && i < m_hitbox.get_x(); 
+			i += i_offset)
+		{
+			const Math::Vector2 new_pos = {local_position.get_x() + i, local_position.get_y()};
+
+			if(safe_is_destroyed(new_pos) == GroundState::NotDestroyed)
+			{
+				return new_pos - local_position;
+			}
+		}
+
+		return Math::vector_inf;
 	}
 
 	inline Math::Vector2 Ground::safe_orthogonal_surface_local(const Math::Vector2& local_position, const int depth) const
