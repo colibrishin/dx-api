@@ -174,6 +174,11 @@ namespace Fortress::Abstract
 		return m_user_pitch_radian;
 	}
 
+	const Math::Vector2& rigidBody::get_velocity() const
+	{
+		return m_velocity;
+	}
+
 	const Math::Vector2& rigidBody::get_offset() const
 	{
 		return m_offset;
@@ -197,6 +202,11 @@ namespace Fortress::Abstract
 	Math::Vector2 rigidBody::get_offset_forward_position() const
 	{
 		return get_offset() == Math::left ? get_left() : get_right();
+	}
+
+	Math::Vector2 rigidBody::get_offset_backward_position() const
+	{
+		return get_offset() == Math::left ? get_right() : get_left();
 	}
 
 	Math::Vector2 rigidBody::get_offset_bottom_forward_position() const
@@ -292,6 +302,11 @@ namespace Fortress::Abstract
 	void rigidBody::set_speed(const Math::Vector2& speed)
 	{
 		m_speed = speed;
+	}
+
+	void rigidBody::set_hitbox(const Math::Vector2& hitbox)
+	{
+		m_hitbox = hitbox;
 	}
 
 	void rigidBody::apply_gravity()
