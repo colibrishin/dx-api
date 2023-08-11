@@ -49,7 +49,7 @@ namespace Fortress
 		}
 
 	private:
-		inline static bool m_bDebug = false;
+		inline static bool m_bDebug = true;
 		static constexpr int y_movement = 15;
 		static constexpr int y_initial = 30;
 		inline static int x = 100;
