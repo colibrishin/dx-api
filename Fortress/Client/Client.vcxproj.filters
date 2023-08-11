@@ -132,9 +132,6 @@
     <ClInclude Include="resource.hpp">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="LoadingScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="GuidedMissileProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClInclude>
@@ -222,6 +219,9 @@
     <ClInclude Include="CloudGround.hpp">
       <Filter>Object</Filter>
     </ClInclude>
+    <ClInclude Include="LoadingScene.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -274,9 +274,6 @@
     </ClCompile>
     <ClCompile Include="Texture.hpp">
       <Filter>Engine\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadingScene.cpp">
-      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="rigidBody.cpp">
       <Filter>Engine\Abstracts</Filter>
