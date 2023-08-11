@@ -23,6 +23,8 @@ namespace Fortress::ObjectBase
 {
 	class projectile;
 
+	using GlobalPosition = Math::Vector2;
+
 	constexpr float character_full_hp = 100.0f;
 	constexpr float character_full_mp = 1000.0f;
 	constexpr float character_max_charge = 250.0f;
@@ -66,9 +68,13 @@ namespace Fortress::ObjectBase
 
 		void render_hp_bar(const Math::Vector2& position);
 
+		bool check_angle(const GlobalPosition& position) const;
 		void ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground);
 		void ground_gravity(const std::weak_ptr<Object::Ground>& ptr_ground);
 		void ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground);
+
+		Math::Vector2 get_forward_near_ground(
+			const std::weak_ptr<Object::Ground>& ground_ptr) const;
 
 		Math::Vector2 get_next_velocity(const Math::Vector2& local_position_bottom,
 		                                const std::weak_ptr<Object::Ground>& ground_ptr) const;
