@@ -91,6 +91,7 @@ namespace Fortress::Scene
 		}
 
 		SceneManager::SetActive<MapName>();
+		fixed_frame_wait = 0.0f;
 	}
 }
 
