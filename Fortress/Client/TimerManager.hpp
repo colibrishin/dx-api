@@ -42,8 +42,14 @@ namespace Fortress::ObjectBase
 
 	inline void TimerManager::update(const WPARAM& wParam)
 	{
-		const auto designated = m_timers[wParam];
-		designated->on_timer();
+		if(const auto designated = m_timers[wParam])
+		{
+			designated->on_timer();
+		}
+		else
+		{
+			m_timers.erase(wParam);
+		}
 	}
 
 	inline void TimerManager::cleanup()
