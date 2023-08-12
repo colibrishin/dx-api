@@ -7,6 +7,11 @@
 
 namespace Fortress
 {
+	Round::Round(): m_state(eRoundState::Start)
+	{
+		
+	}
+
 	void Round::initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
 	{
 		for(const auto& ptr : players)

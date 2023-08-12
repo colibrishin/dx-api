@@ -17,7 +17,7 @@ namespace Fortress
 	class Round : public std::enable_shared_from_this<Round>
 	{
 	public:
-		Round() : m_state(eRoundState::Start) {}
+		Round();
 		void initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players);
 		void update();
 		float get_current_time() const;
