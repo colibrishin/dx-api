@@ -10,7 +10,6 @@ namespace Fortress
 	class ProjectileTimer : public Timer
 	{
 	public:
-		// @todo: maybe this might be changed.
 		ProjectileTimer(WPARAM timer_id) : Timer(L"Next Projectile", 100, timer_id),
 			m_count(0),
 			m_curr_count(0)
@@ -30,7 +29,6 @@ namespace Fortress
 		if(m_curr_count < m_count)
 		{
 			Timer::on_timer();
-			start(m_reserved_function);
 			m_curr_count++;
 		}
 	}

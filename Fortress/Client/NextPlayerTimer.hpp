@@ -7,12 +7,23 @@ namespace Fortress
 	class NextPlayerTimer : public Timer
 	{
 	public:
-		NextPlayerTimer(WPARAM timer_id) : Timer(L"Next Player", 2000, timer_id) { }
+		NextPlayerTimer(
+			WPARAM timer_id, 
+			NextPlayerTimerFunction func,
+			Round* timer_this) :
+			Timer(L"Next Player", 2000, timer_id),
+			m_on_timer(std::move(func)),
+			m_this(timer_this)
+		{ }
 		inline void on_timer() override;
+	private:
+		NextPlayerTimerFunction m_on_timer;
+		Round* m_this;
 	};
 
 	inline void NextPlayerTimer::on_timer()
 	{
+		m_on_timer(m_this);
 		Timer::on_timer();
 	}
 }

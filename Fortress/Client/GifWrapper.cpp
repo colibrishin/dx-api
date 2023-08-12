@@ -1,62 +1,10 @@
-// yes, include guard is added twice.
-#pragma once
-#ifndef GIFWRAPPER_HPP
-#define GIFWRAPPER_HPP
+#include "GifWrapper.h"
 
-#include <functional>
-#include <map>
-
-#include "ImageWrapper.hpp"
-#include <objidl.h>
-#include <gdiplus.h>
-#include <numeric>
-
-using namespace Gdiplus;
-#pragma comment (lib,"Gdiplus.lib")
-
-#include "TimerManager.hpp"
 #include "GifTimer.hpp"
 
 namespace Fortress
 {
-	class GifTimer;
-
-	class GifWrapper : public ImageWrapper
-	{
-	public:
-		GifWrapper(const std::wstring& name, const std::filesystem::path& path);
-		GifWrapper& operator=(const GifWrapper& other) = default;
-		GifWrapper& operator=(GifWrapper&& other) = default;
-		GifWrapper(const GifWrapper& other) = default;
-		GifWrapper(GifWrapper&& other) = default;
-		virtual ~GifWrapper() override;
-
-		virtual bool load() override;
-		virtual void initialize();
-
-		void play(const std::function<void()>& on_end = {});
-		void stop() const;
-		virtual void flip() override;
-		virtual void rotate(const float angle);
-		void reset_transform();
-		unsigned int get_total_play_time() const;
-		
-	private:
-		void OnTimer();
-
-		std::weak_ptr<GifTimer> m_timer;
-		UINT m_dimension_count;
-		UINT m_frame_count;
-		UINT m_total_buffer;
-		UINT m_current_frame;
-		WCHAR m_str_guid[39];
-
-		std::vector<unsigned int> m_frame_delays;
-\
-		std::function<void()> m_reserved_function;
-	};
-
-	inline bool GifWrapper::load()
+	bool GifWrapper::load()
 	{ 
 		ImageWrapper::load();
 
@@ -84,12 +32,12 @@ namespace Fortress
 		return true;
 	}
 
-	inline void GifWrapper::initialize()
+	void GifWrapper::initialize()
 	{
-		m_timer = ObjectBase::TimerManager::create<GifTimer>();
+		m_timer = ObjectBase::TimerManager::create<GifTimer>(&GifWrapper::OnTimer, this);
 	}
 
-	inline void GifWrapper::play(const std::function<void()>& on_end)
+	void GifWrapper::play(const std::function<void()>& on_end)
 	{
 		if(on_end != nullptr)
 		{
@@ -101,32 +49,24 @@ namespace Fortress
 
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
-		m_timer.lock()->reset();
 		m_timer.lock()->set_duration(m_frame_delays[m_current_frame]);
-		m_timer.lock()->start([this]()
-		{
-			this->OnTimer();
-		});
+		m_timer.lock()->toggle();
 
 		++m_current_frame;
 	}
 
-	inline void GifWrapper::stop() const
+	void GifWrapper::stop() const
 	{
-		m_timer.lock()->reset();
+		m_timer.lock()->stop();
 	}
 
-	inline void GifWrapper::OnTimer()
+	void GifWrapper::OnTimer()
 	{
 		const GUID guid = FrameDimensionTime;
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
-		m_timer.lock()->reset();
 		m_timer.lock()->set_duration(m_frame_delays[m_current_frame]);
-		m_timer.lock()->start([this]()
-		{
-			this->OnTimer();
-		});
+		m_timer.lock()->toggle();
 
 		if(m_current_frame == m_frame_count - 1)
 		{
@@ -140,28 +80,28 @@ namespace Fortress
 		m_current_frame = ++(m_current_frame) % m_frame_count;
 	}
 
-	inline void GifWrapper::flip()
+	void GifWrapper::flip()
 	{
 		ImageWrapper::flip();
 		// @todo: is there anyway to not break the gif property?
 	}
 
-	inline void GifWrapper::rotate(const float angle)
+	void GifWrapper::rotate(const float angle)
 	{
 		m_gdi_handle->RotateTransform(angle);
 	}
 
-	inline void GifWrapper::reset_transform()
+	void GifWrapper::reset_transform()
 	{
 		m_gdi_handle->ResetTransform();
 	}
 
-	inline unsigned GifWrapper::get_total_play_time() const
+	unsigned GifWrapper::get_total_play_time() const
 	{
 		return std::accumulate(m_frame_delays.begin(), m_frame_delays.end(), static_cast<unsigned int>(0));
 	}
 
-	inline GifWrapper::GifWrapper(
+	GifWrapper::GifWrapper(
 		const std::wstring& name,
 		const std::filesystem::path& path) :
 		ImageWrapper(name, path),
@@ -174,10 +114,9 @@ namespace Fortress
 		GifWrapper::initialize();
 	}
 
-	inline GifWrapper::~GifWrapper()
+	GifWrapper::~GifWrapper()
 	{
 		stop();
 		ObjectBase::TimerManager::remove(std::dynamic_pointer_cast<Timer>(m_timer.lock()));
 	}
 }
-#endif // GIFWRAPPER_HPP
