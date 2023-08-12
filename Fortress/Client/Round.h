@@ -12,13 +12,6 @@ namespace Fortress
 		class character;
 	}
 
-	enum class eRoundState
-	{
-		Start = 0,
-		InProgress,
-		End,
-	};
-
 	constexpr float max_time = 60.0f;
 
 	class Round : public std::enable_shared_from_this<Round>
