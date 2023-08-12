@@ -2,7 +2,7 @@
 #ifndef GUIDEDMISSILEPROJECTILE_HPP
 #define GUIDEDMISSILEPROJECTILE_HPP
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "projectile.hpp"
 #include "math.h"
 #include "scene.hpp"

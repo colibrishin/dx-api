@@ -18,7 +18,10 @@
 
 namespace Fortress
 {
+	class GifWrapper;
 	class ImageWrapper;
+	class NextPlayerTimer;
+	class Round;
 
 	namespace Abstract
 	{
@@ -52,6 +55,13 @@ namespace Fortress
 	using RigidBodyPointer = std::weak_ptr<Abstract::rigidBody>;
 	using ImagePointer = std::weak_ptr<ImageWrapper>;
 
+	using SpritePointer = std::weak_ptr<GifWrapper>;
+	using AnimFlag = bool;
+	using AnimElapsedFloat = float;
+
+	using GifOnTimerFunction = std::function<void(GifWrapper*)>;
+	using NextPlayerTimerFunction = std::function<void(Round*)>;
+
 	enum class CollisionCode
 	{
 		None,
@@ -73,6 +83,15 @@ namespace Fortress
 		Dead,
 		Death,
 		Hit,
+	};
+
+	enum class eRoundState
+	{
+		Start = 0,
+		InProgress,
+		Waiting,
+		NextTurn,
+		End,
 	};
 
 	enum class eProjectileState

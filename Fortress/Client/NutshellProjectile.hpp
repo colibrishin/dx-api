@@ -2,7 +2,7 @@
 #ifndef NUTSHELLPROJECTILE_HPP
 #define NUTSHELLPROJECTILE_HPP
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "projectile.hpp"
 #include "math.h"  // NOLINT(modernize-deprecated-headers)
 #include "resourceManager.hpp"

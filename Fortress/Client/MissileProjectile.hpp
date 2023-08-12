@@ -2,7 +2,7 @@
 #ifndef MISSILEPROJECTILE_HPP
 #define MISSILEPROJECTILE_HPP
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "projectile.hpp"
 #include "math.h"
 

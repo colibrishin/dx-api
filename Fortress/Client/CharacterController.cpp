@@ -7,6 +7,7 @@
 #include "RepairItem.hpp"
 #include "TeleportItem.hpp"
 #include "DoubleShotItem.hpp"
+#include "GifWrapper.h"
 
 #undef max
 

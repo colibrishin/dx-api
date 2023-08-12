@@ -2,7 +2,7 @@
 #ifndef CANNONPROJECTILE_HPP
 #define CANNONPROJECTILE_HPP
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "projectile.hpp"
 #include "math.h"  // NOLINT(modernize-deprecated-headers)
 #include "resourceManager.hpp"

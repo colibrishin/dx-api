@@ -1,17 +1,13 @@
 #ifndef STATECONTROLLER_HPP
 #define STATECONTROLLER_HPP
 #include "deltatime.hpp"
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "SoundPack.hpp"
 #include "Texture.hpp"
 #include "virtual_this.hpp"
 
 namespace Fortress::Controller
 {
-	using SpritePointer = std::weak_ptr<GifWrapper>;
-	using AnimFlag = bool;
-	using AnimElapsedFloat = float;
-
 	template <typename StateEnum>
 	class stateController : public Dev::multi_inherit_this<stateController<StateEnum>>
 	{

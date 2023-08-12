@@ -2,7 +2,7 @@
 #ifndef ENERGYBALLPROJECTILE_HPP
 #define ENERGYBALLPROJECTILE_HPP
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "projectile.hpp"
 #include "math.h"  // NOLINT(modernize-deprecated-headers)
 #include "resourceManager.hpp"

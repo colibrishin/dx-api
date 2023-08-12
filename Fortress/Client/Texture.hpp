@@ -2,7 +2,7 @@
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "ImageWrapper.hpp"
 #include "resourceManager.hpp"
 

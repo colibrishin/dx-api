@@ -106,7 +106,7 @@ namespace Fortress::ObjectBase
 		if(remaining > 0)
 		{
 			m_multi_projectile_timer.lock()->set_count(remaining);
-			m_multi_projectile_timer.lock()->start([this, angle, charged](){initialize_projectile(angle, charged);});
+			m_multi_projectile_timer.lock()->toggle();
 		}
 
 		CharacterController::fire();
