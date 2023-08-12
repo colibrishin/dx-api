@@ -505,6 +505,12 @@ namespace Fortress::Controller
 			return;
 		}
 
+		if(is_projectile_fire_counted() && !is_projectile_active())
+		{
+			set_state(eCharacterState::TurnEnd);
+			return;
+		}
+
 		set_state(eCharacterState::Idle);
 	}
 
