@@ -85,7 +85,7 @@ namespace Fortress::ObjectBase
 		UnitVector get_next_velocity(const LocalPosition& local_position_bottom,
 		                             const GroundPointer& ground_ptr) const;
 
-		ProjectilePointer initialize_projectile(const UnitVector& angle, const float charged);
+		ProjectilePointer initialize_projectile(const UnitVector& angle, float charged);
 
 		std::weak_ptr<ProjectileTimer> m_multi_projectile_timer;
 
