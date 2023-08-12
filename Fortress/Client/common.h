@@ -30,6 +30,7 @@ namespace Fortress
 
 	namespace ObjectBase
 	{
+		class character;
 		class projectile;
 	}
 
@@ -61,6 +62,7 @@ namespace Fortress
 
 	using GifOnTimerFunction = std::function<void(GifWrapper*)>;
 	using NextPlayerTimerFunction = std::function<void(Round*)>;
+	using ProjectileInitFunction = std::function<ProjectilePointer(ObjectBase::character*, const UnitVector&, const float)>;
 
 	enum class CollisionCode
 	{

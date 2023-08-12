@@ -21,7 +21,8 @@ namespace Fortress::ObjectBase
 	{
 		rigidBody::initialize();
 		CharacterController::initialize();
-		m_multi_projectile_timer = TimerManager::create<ProjectileTimer>();
+		m_multi_projectile_timer = TimerManager::create<ProjectileTimer>(
+			&character::initialize_projectile, this);
 	}
 
 	void character::update()
@@ -106,6 +107,8 @@ namespace Fortress::ObjectBase
 		if(remaining > 0)
 		{
 			m_multi_projectile_timer.lock()->set_count(remaining);
+			m_multi_projectile_timer.lock()->set_angle(angle);
+			m_multi_projectile_timer.lock()->set_charged(charged);
 			m_multi_projectile_timer.lock()->toggle();
 		}
 
@@ -202,7 +205,7 @@ namespace Fortress::ObjectBase
 		return m_short_name;
 	}
 
-	std::weak_ptr<projectile> character::initialize_projectile(const Math::Vector2& angle, const float charged)
+	ProjectilePointer character::initialize_projectile(const Math::Vector2& angle, const float charged)
 	{
 		std::weak_ptr<projectile> instantiated;
 

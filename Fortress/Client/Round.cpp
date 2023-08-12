@@ -7,6 +7,11 @@
 
 namespace Fortress
 {
+	Round::Round(): m_state(eRoundState::Start)
+	{
+		
+	}
+
 	void Round::initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
 	{
 		for(const auto& ptr : players)
@@ -75,7 +80,9 @@ namespace Fortress
 				camera->set_object(prj);
 			}
 
-			if(current->get_state() == eCharacterState::TurnEnd)
+			if(!current->is_projectile_active() && 
+				current->is_projectile_fire_counted() && 
+				current->get_state() == eCharacterState::Idle)
 			{
 				pre_next_player();
 			}

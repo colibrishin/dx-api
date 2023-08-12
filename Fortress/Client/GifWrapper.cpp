@@ -8,6 +8,11 @@ namespace Fortress
 	{ 
 		ImageWrapper::load();
 
+		if(!m_timer.lock())
+		{
+			initialize();
+		}
+
 		m_dimension_count = m_image->GetFrameDimensionsCount();
 
 		const std::unique_ptr<GUID[]> m_pDimensionsIds (new GUID[m_dimension_count]);
@@ -111,7 +116,6 @@ namespace Fortress
 		m_current_frame(0),
 		m_str_guid{}
 	{
-		GifWrapper::initialize();
 	}
 
 	GifWrapper::~GifWrapper()

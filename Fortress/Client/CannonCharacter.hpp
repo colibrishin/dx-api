@@ -30,7 +30,6 @@ namespace Fortress::Object
 				ObjectBase::character_full_mp,
 				0.5f)
 		{
-			initialize();
 		}
 		CannonCharacter& operator=(const CannonCharacter& other) = default;
 		CannonCharacter& operator=(CannonCharacter&& other) = default;

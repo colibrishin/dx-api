@@ -33,7 +33,6 @@ namespace Fortress::Object
 				ObjectBase::character_full_mp,
 				1.0f)
 		{
-			initialize();
 		}
 		MissileCharacter& operator=(const MissileCharacter& other) = default;
 		MissileCharacter& operator=(MissileCharacter&& other) = default;

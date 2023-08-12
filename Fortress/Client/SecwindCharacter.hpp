@@ -32,7 +32,6 @@ namespace Fortress::Object
 				ObjectBase::character_full_mp,
 				0.7f)
 		{
-			initialize();
 		}
 		SecwindCharacter& operator=(const SecwindCharacter& other) = default;
 		SecwindCharacter& operator=(SecwindCharacter&& other) = default;
@@ -40,10 +39,6 @@ namespace Fortress::Object
 		SecwindCharacter(SecwindCharacter&& other) = default;
 		~SecwindCharacter() override = default;
 
-		void initialize() override
-		{
-			character::initialize();
-		}
 	protected:
 		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
 		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
