@@ -50,7 +50,10 @@ namespace Fortress::Scene
 	{
 		scene::update();
 		// using this as thread might be handy later on.
-		m_initialization_thread.join();
+		if(m_initialization_thread.joinable())
+		{
+			m_initialization_thread.join();
+		}
 	}
 
 	template <typename MapName>
@@ -78,7 +81,15 @@ namespace Fortress::Scene
 	template <typename MapName>
 	void LoadingScene<MapName>::load_scene() const
 	{
+		static float fixed_frame_wait = 0.0f;
+
 		SceneManager::CreateScene<MapName>();
+
+		while(fixed_frame_wait < 20.0f)
+		{
+			fixed_frame_wait += DeltaTime::get_deltaTime();
+		}
+
 		SceneManager::SetActive<MapName>();
 	}
 }
