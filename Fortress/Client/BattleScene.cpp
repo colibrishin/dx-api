@@ -10,9 +10,18 @@
 #include <windows.h>
 #include "objectManager.hpp"
 #include "SummaryScene.hpp"
+#include "Radar.hpp"
 
 namespace Fortress::Scene
 {
+	BattleScene::BattleScene(const std::wstring& name, const Math::Vector2& map_size):
+		scene(L"Battle Scene " + name),
+		m_map_size(map_size),
+		m_round(std::make_shared<Round>()),
+		m_radar(map_size)
+	{
+	}
+
 	void BattleScene::initialize()
 	{
 		scene::initialize();
@@ -20,9 +29,11 @@ namespace Fortress::Scene
 
 		m_hud = Resource::ResourceManager::load<ImageWrapper>(
 			L"HUD", "./resources/images/hud.gif");
+
 		set_grounds();
 		set_background_img();
 		set_bgm();
+
 		set_characters();
 		set_client_character();
 
