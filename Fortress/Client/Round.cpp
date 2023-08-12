@@ -75,7 +75,9 @@ namespace Fortress
 				camera->set_object(prj);
 			}
 
-			if(current->get_state() == eCharacterState::TurnEnd)
+			if(!current->is_projectile_active() && 
+				current->is_projectile_fire_counted() && 
+				current->get_state() == eCharacterState::Idle)
 			{
 				pre_next_player();
 			}
