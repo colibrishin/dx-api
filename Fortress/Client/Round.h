@@ -28,10 +28,10 @@ namespace Fortress
 	private:
 		void check_countdown();
 		void check_fired();
+		void check_explosion();
 		void pre_next_player();
 		void next_player();
 		void check_winning_condition();
-		void winner();
 
 		float m_curr_timeout = 0.0f;
 		bool m_bfired = false;
