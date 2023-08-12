@@ -264,6 +264,8 @@ namespace Fortress::Controller
 				move_sound->play(true);
 			}
 		}
+
+		set_state(eCharacterState::Move);
 	}
 
 	void CharacterController::move_right()
@@ -275,6 +277,8 @@ namespace Fortress::Controller
 				move_sound->play(true);
 			}
 		}
+
+		set_state(eCharacterState::Move);
 	}
 
 	void CharacterController::stop()
@@ -286,6 +290,8 @@ namespace Fortress::Controller
 				move_sound->stop(true);
 			}
 		}
+
+		set_state(eCharacterState::Idle);
 	}
 
 	void CharacterController::set_current_sprite(const eCharacterState& state)

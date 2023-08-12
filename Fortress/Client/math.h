@@ -38,7 +38,7 @@ namespace Fortress::Math
 	const Vector2 up = {0.0f, -1.0f};
 	const Vector2 vector_inf = {INFINITY, INFINITY};
 
-	inline float flip_radian(const float radian)
+	inline float flip_radian_polarity(const float radian)
 	{
 		if(radian < 0.0f)
 		{
@@ -46,6 +46,11 @@ namespace Fortress::Math
 		}
 
 		return Math::PI - radian;
+	}
+
+	inline float flip_radian(const float radian)
+	{
+		return radian - Math::PI;
 	}
 
 	inline float to_radian(const float degree)

@@ -64,7 +64,7 @@ namespace Fortress::Math
 		__forceinline float dot_product(const Vector2& other) const;
 		__forceinline float global_angle() const noexcept;
 		__forceinline float get_x() const noexcept;
-		Vector2 rotate(float radian) const noexcept;
+		__forceinline Vector2 rotate(float radian) const noexcept;
 		__forceinline float get_y() const noexcept;
 		__forceinline Vector2 reflect_x() const noexcept;
 		__forceinline Vector2 reflect_y() const noexcept;

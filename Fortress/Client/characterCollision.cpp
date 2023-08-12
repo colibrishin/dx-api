@@ -3,17 +3,39 @@
 
 namespace Fortress::ObjectBase
 {
-	bool character::check_angle(const GlobalPosition& position) const
+	bool character::is_moving_toward(const GroundPointer& ground_ptr) const
 	{
+		const auto position = 
+			search_ground(ground_ptr, get_offset_bottom_backward_position(), get_offset(), true);
 		const auto unit = (position - get_bottom()).normalized();
-		const auto radian = std::fabs(unit.unit_angle());
-		const auto degree = Math::to_degree(
-			get_offset() == Math::left ? Math::flip_radian(radian) : radian);
 
-		return degree <= 80.0f;
+		const auto velocity_offset = get_velocity_offset();
+		const auto positional_offset = unit.get_x() < 0 ? Math::left : Math::right;
+
+		return velocity_offset == positional_offset;
 	}
 
-	void character::ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground)
+	bool character::check_angle(const GlobalPosition& position, const GroundPointer& ground_ptr) const
+	{
+		if(const auto ground = ground_ptr.lock())
+		{
+			const auto offset = get_velocity_offset();
+
+			const auto unit = (position - get_bottom()).normalized();
+			const auto radian = unit.unit_angle();
+			// if target position is behind of character, add +180.0d
+			const auto positional_radian = unit.get_x() < 0 ? Math::flip_radian_polarity(radian) : radian;
+			const auto reset_polarity = std::fabs(positional_radian);
+			const auto velocity_radian = offset == Math::left ? -reset_polarity : reset_polarity;
+			const auto degree = Math::to_degree(velocity_radian);
+
+			return degree <= 80.0f;
+		}
+
+		return false;
+	}
+
+	void character::ground_walk(const CollisionCode& collision, const GroundPointer& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
@@ -25,15 +47,6 @@ namespace Fortress::ObjectBase
 			{
 				if (get_state() == eCharacterState::Move) 
 				{
-					// check ground stiffness;
-					const auto next_ground = get_forward_near_ground(ground);
-
-					if (!check_angle(next_ground))
-					{
-						m_velocity = {};
-						return;
-					}
-
 					const auto candidate = get_next_velocity(bottom_local_position, ground);
 
 					if (candidate == Math::Vector2{})
@@ -41,7 +54,7 @@ namespace Fortress::ObjectBase
 						return;
 					}
 
-					if (get_state() == eCharacterState::Move && candidate != Math::vector_inf)
+					if (candidate != Math::vector_inf)
 					{
 						m_velocity = candidate;
 					}
@@ -54,12 +67,20 @@ namespace Fortress::ObjectBase
 							m_position -= delta;
 						}
 					}
+
+					// check ground stiffness;
+					const auto mid_ground = get_forward_ground(ground, false);
+
+					if (is_moving_toward(ground) && !check_angle(mid_ground, ground))
+					{
+						m_velocity = {};
+					}
 				}
 			}
 		}
 	}
 
-	void character::ground_gravity(const std::weak_ptr<Object::Ground>& ptr_ground)
+	void character::ground_gravity(const GroundPointer& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
@@ -88,7 +109,7 @@ namespace Fortress::ObjectBase
 		}
 	}
 
-	void character::ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground)
+	void character::ground_pitching(const GroundPointer& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
@@ -133,43 +154,65 @@ namespace Fortress::ObjectBase
 	}
 
 	/**
-	 * \brief gets nearest ground in parallel in the perspective of middle forward position.
+	 * \brief gets nearest ground in parallel, in depth of the half of hitbox of y-axis.
 	 * \param ground_ptr ground pointer
+	 * \param reverse if true, search starts from bottom
 	 * \return nearest ground vector, inf if it has found nothing.
 	 */
-	Math::Vector2 character::get_forward_near_ground(const std::weak_ptr<Object::Ground>& ground_ptr) const
+	Math::Vector2 character::get_forward_ground(
+		const GroundPointer& ground_ptr,
+		const bool& reverse = false) const
 	{
 		if (const auto ground = ground_ptr.lock())
 		{
-			const bool is_uphilling = ground->safe_is_object_stuck_global(get_offset_bottom_forward_position());
+			const bool uphilling = is_moving_toward(ground_ptr);
+
 			// flipping is needed because hitbox is inside of the ground if character is moving forward to ground.
-			const auto ray_start_pos = is_uphilling ? get_offset_backward_position() : get_offset_forward_position();
+			const auto ray_start_pos = uphilling ? get_offset_backward_position() : get_offset_forward_position();
+			// uphilling = shoots ray toward to moving position
+			// downhilling = shoots ray toward to backward position (wall is at the behind of character)
+			const auto offset = uphilling ? get_offset() : get_backward_offset();
 
-			for(int x = 1; x <= 10; x++)
+			return search_ground(ground_ptr, ray_start_pos, offset, reverse);
+		}
+
+		return Math::vector_inf;
+	}
+
+	GlobalPosition character::search_ground(
+		const GroundPointer& ground,
+		const GlobalPosition& start_position, 
+		const UnitVector& offset,
+		bool reverse = false) const
+	{
+		int start_y = reverse ? m_hitbox.get_y() / 2 : 0;
+		int end_y = reverse ? 0 : m_hitbox.get_y();
+
+		for(int y = start_y;
+			reverse ? (y >= end_y) : (y < end_y); 
+			reverse ? y-- : y++)
+		{
+			const auto current_position = start_position + Math::Vector2{0.0f, y};
+			const auto next_position = ground.lock()->safe_parallel_surface_global(
+				current_position, 
+				offset) + current_position;
+
+			const auto unit = (next_position - get_bottom()).normalized();
+			const auto radian = unit.unit_angle();
+
+			if(unit == Math::zero || std::isnan(radian))
 			{
-				const auto far_next_position = ground->safe_parallel_surface_global(
-					ray_start_pos, get_offset()) + ray_start_pos;
-
-				const auto unit = (far_next_position - get_bottom()).normalized();
-				const auto radian = std::fabs(unit.unit_angle());
-				const auto degree = Math::to_degree(
-					get_offset() == Math::left ? Math::flip_radian(radian) : radian);
-
-				if(unit == Math::zero || std::isnan(radian))
-				{
-					continue;
-				}
-
-				Debug::Log(L"Degree : " + std::to_wstring(degree));
-				return far_next_position;
+				continue;
 			}
+
+			return next_position;
 		}
 
 		return Math::vector_inf;
 	}
 
 	Math::Vector2 character::get_next_velocity(
-		const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr) const
+		const Math::Vector2& local_position_bottom, const GroundPointer& ground_ptr) const
 	{
 		Math::Vector2 candidate = Math::vector_inf;
 
@@ -205,6 +248,7 @@ namespace Fortress::ObjectBase
 					if (ground_check == Object::GroundState::NotDestroyed)
 					{
 						candidate = unit;
+						return candidate;
 					}
 				}
 			}
@@ -278,17 +322,29 @@ namespace Fortress::ObjectBase
 				// If this ground is not orthogonal surface, probably this will exists in left or right, top side.
 				// not-main ground is low enough to pass, then move it to the not-main ground.
 				// remaining gravity or pitching control will be handled when the not-main becomes main.
-				const Math::Vector2 bottom_local_position = ground->to_top_left_local_position(get_bottom());
-				const auto possible_velocity = get_next_velocity(bottom_local_position, ground);
 
-				if(possible_velocity != Math::vector_inf)
-				{
-					m_velocity = possible_velocity;
-				}
-				else if((left_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::left) || 
-					(right_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::right))
+				if(get_state() == eCharacterState::Move &&
+					((left_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::left) || 
+					(right_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::right)))
 				{
 					m_velocity = {};
+				}
+				else if (get_state() == eCharacterState::Move)
+				{
+					const auto bottom_local_position = ground->to_top_left_local_position(get_bottom());
+					const auto next_velocity = get_next_velocity(bottom_local_position, ground);
+					const auto is_toward = is_moving_toward(ground);
+
+					Debug::Log(L"Ground : " + ground->get_name());
+					Debug::Log(L"Is Toward:" + std::to_wstring(is_toward));
+					Debug::Log(L"Velocity : " + std::to_wstring(next_velocity.get_x()) + L" , " + 
+						std::to_wstring(next_velocity.get_y()));
+					
+					// @todo : inconsistency, need to find out why this is not working
+					if(!is_toward && next_velocity != Math::vector_inf)
+					{
+						m_velocity = next_velocity;
+					}
 				}
 			}
 		}

@@ -242,9 +242,9 @@ namespace Fortress::ObjectBase
 	character::character(
 			const std::wstring& name,
 			const std::wstring& short_name,
-			const Math::Vector2 offset,
-			const Math::Vector2 position,
-			const Math::Vector2 velocity,
+			const Math::Vector2& offset,
+			const Math::Vector2& position,
+			const Math::Vector2& velocity,
 			const float mass,
 			const Math::Vector2& speed,
 			const Math::Vector2& acceleration,

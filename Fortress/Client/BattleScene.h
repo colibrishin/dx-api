@@ -2,6 +2,7 @@
 #ifndef CHARACTERSCENE_H
 #define CHARACTERSCENE_H
 
+#include "common.h"
 #include "character.hpp"
 #include "ground.hpp"
 #include "Radar.hpp"
@@ -43,7 +44,7 @@ namespace Fortress::Scene
 		Math::Vector2 m_map_size;
 		std::weak_ptr<ObjectBase::character> m_self;
 		std::vector<std::weak_ptr<ObjectBase::character>> m_characters;
-		std::vector<std::weak_ptr<Object::Ground>> m_grounds;
+		std::vector<GroundPointer> m_grounds;
 		std::weak_ptr<Resource::Sound> m_bgm;
 		std::weak_ptr<ImageWrapper> m_hud;
 		std::weak_ptr<ImageWrapper> m_background;

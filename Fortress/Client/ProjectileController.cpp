@@ -64,7 +64,7 @@ namespace Fortress::Controller
 		stateController::prerender();
 
 		const auto unit = (m_pc_position - m_previous_position).normalized();
-		m_pitch = unit.unit_angle();
+		m_pitch = std::fabs(unit.unit_angle());
 		m_previous_position = m_pc_position;
 
 		switch(get_state())

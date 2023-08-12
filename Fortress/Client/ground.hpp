@@ -23,8 +23,6 @@ namespace Fortress::Object
 		OutOfBound,
 	};
 
-	using ImagePointer = std::weak_ptr<ImageWrapper>;
-
 	class Ground : public Abstract::rigidBody
 	{
 	public:
