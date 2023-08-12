@@ -1,27 +1,21 @@
 #pragma once
-#ifndef CHARACTERSCENE_H
-#define CHARACTERSCENE_H
+#ifndef BATTLESCENE_H
+#define BATTLESCENE_H
 
 #include "common.h"
 #include "character.hpp"
 #include "ground.hpp"
-#include "Radar.hpp"
 #include "Round.h"
 #include "sound.hpp"
 #include "scene.hpp"
+#include "Radar.hpp"
 
 namespace Fortress::Scene
 {
 	class BattleScene : public Abstract::scene
 	{
 	public:
-		BattleScene(const std::wstring& name, const Math::Vector2& map_size) :
-			scene(L"Battle Scene " + name),
-			m_map_size(map_size),
-			m_round(std::make_shared<Round>()),
-			m_radar(map_size)
-		{
-		}
+		BattleScene(const std::wstring& name, const Math::Vector2& map_size);
 
 		virtual void initialize() override;
 		virtual void pre_initialize() = 0;

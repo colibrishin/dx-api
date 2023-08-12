@@ -20,6 +20,7 @@ namespace Fortress::Object
 	private:
 		// 1524 x 365
 		std::weak_ptr<ImageWrapper> m_cloud_image;
+		std::weak_ptr<ImageWrapper> m_cloud_mask_image;
 	};
 
 	inline void CloudGround::initialize()
@@ -27,31 +28,38 @@ namespace Fortress::Object
 		Ground::initialize();
 		
 		m_cloud_image = Resource::ResourceManager::load<ImageWrapper>(
-			L"CloudGround", "./resources/misc/tiles/cloud-magenta.png");
+			L"CloudGround", "./resources/misc/tiles/cloud-magenta-v2.png");
+
+		m_cloud_mask_image = Resource::ResourceManager::load<ImageWrapper>(
+			L"CloudGround", "./resources/misc/tiles/cloud-mask-v2.png");
 
 		const auto cloud = m_cloud_image.lock();
+		const auto cloud_mask = m_cloud_mask_image.lock();
 
 		set_hitbox(cloud->get_hitbox());
 		reset_hdc();
 
 		cloud->copy_to(m_ground_hdc);
-
-		const auto size = cloud->get_hitbox();
+		cloud_mask->copy_to(m_mask_hdc);
 		constexpr auto magenta = RGB(255, 0, 255);
 
-		// @todo: performance bottleneck, optimization is needed.
-		for(int y = 0; y < static_cast<int>(size.get_y()); ++y)
-		{
-			for(int x = 0; x < static_cast<int>(size.get_x()); ++x)
+		std::for_each(
+			std::execution::par,
+			m_destroyed_table.begin(),
+			m_destroyed_table.end(),
+			[&](const std::pair<GroundMapKey, GroundState>& pos)
 			{
-				if(const COLORREF pixel = GetPixel(m_ground_hdc, x, y);
-					pixel == magenta)
+				const int y = pos.first.first;
+				const int x = pos.first.second;
+				const COLORREF pixel = get_pixel_threadsafe(x, y);
+
+				if(pixel == magenta)
 				{
 					unsafe_set_destroyed(x, y);
-					unsafe_set_destroyed_visual(x, y);
 				}
-			}
-		}
+		});
+
+		force_update_mask();
 	}
 }
 #endif // CLOUD_HPP

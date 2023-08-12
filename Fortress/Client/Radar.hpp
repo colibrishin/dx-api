@@ -1,21 +1,15 @@
 #ifndef RADAR_HPP
 #define RADAR_HPP
 
-#include "resource.h"
 #include "framework.h"
 #include "ground.hpp"
-
-#include "sceneManager.hpp"
-#include "winapihandles.hpp"
-
-#pragma comment(lib, "msimg32.lib")
 
 namespace Fortress
 {
 	class Radar
 	{
 	public:
-		Radar(const Math::Vector2& map_size) : m_center(map_size / 2) {}
+		Radar(const Math::Vector2& map_size) : m_center(map_size / 2), m_map_size(map_size) {}
 		void initialize();
 		void update() const;
 		void render() const;
@@ -23,6 +17,7 @@ namespace Fortress
 		HDC get_radar_hdc() const;
 	private:
 		Math::Vector2 m_center;
+		Math::Vector2 m_map_size;
 		BLENDFUNCTION m_bf;
 		HDC m_radar_hdc;
 		HBITMAP m_radar_bitmap;
@@ -31,8 +26,10 @@ namespace Fortress
 	inline void Radar::initialize()
 	{
 		m_radar_hdc = CreateCompatibleDC(WinAPIHandles::get_main_dc());
-		// @todo: total size of battle ground should be given.
-		m_radar_bitmap = CreateCompatibleBitmap(m_radar_hdc, 1000, 1000);
+		m_radar_bitmap = CreateCompatibleBitmap(
+			m_radar_hdc, 
+			2000, 
+			2000);
 		const auto previousBitmap = static_cast<HBITMAP>(SelectObject(m_radar_hdc, m_radar_bitmap));
 		DeleteObject(previousBitmap);
 
@@ -44,8 +41,8 @@ namespace Fortress
 
 	inline void Radar::update() const
 	{
-		constexpr auto radar_size = RECT{0, 0, 1000, 1000};
-		const auto black = CreateSolidBrush(BLACK_BRUSH);
+		const auto radar_size = RECT{0, 0, 2000, 2000};
+		const auto black = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
 		FillRect(m_radar_hdc, &radar_size, black);
 		DeleteObject(black);
 
@@ -83,18 +80,18 @@ namespace Fortress
 							static_cast<int>(position.get_y()),
 							static_cast<int>(position.get_x() + 10),
 							static_cast<int>(position.get_y() + 10)};
-						
+
 						FillRect(m_radar_hdc, &obj_rect, green);
 					}
 					else if(const auto gr = std::dynamic_pointer_cast<Object::Ground>(obj))
 					{
 						BitBlt(
 							m_radar_hdc,
-							position.get_x(),
-							position.get_y(),
-							size.get_x(),
-							size.get_y(),
-							gr->get_ground_hdc(),
+							static_cast<int>(position.get_x()),
+							static_cast<int>(position.get_y()),
+							static_cast<int>(size.get_x()),
+							static_cast<int>(size.get_y()),
+							gr->get_ground_mask_hdc(),
 							0,
 							0,
 							SRCCOPY);
@@ -109,7 +106,18 @@ namespace Fortress
 
 	inline void Radar::render() const
 	{
-		AlphaBlend(WinAPIHandles::get_buffer_dc(), 400, 10, 300, 100, m_radar_hdc, 0, 0, 1000, 1000, m_bf);
+		GdiAlphaBlend(
+			WinAPIHandles::get_buffer_dc(), 
+			400, 
+			10, 
+			300, 
+			100, 
+			m_radar_hdc, 
+			0, 
+			0,
+			2000,
+			2000,
+			m_bf);
 	}
 
 	inline HDC Radar::get_radar_hdc() const

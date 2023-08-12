@@ -7,6 +7,7 @@
 
 #include "resourceManager.hpp"
 #include "SkyValleyMap.hpp"
+#include "BattleScene.h"
 
 void Fortress::Scene::RoomScene::initialize()
 {
