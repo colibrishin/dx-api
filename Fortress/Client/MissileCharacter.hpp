@@ -2,7 +2,7 @@
 #ifndef MISSILECHARACTER_HPP
 #define MISSILECHARACTER_HPP
 #include "character.hpp"
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "GuidedMissileProjectile.hpp"
 #include "math.h"
 #include "MissileProjectile.hpp"

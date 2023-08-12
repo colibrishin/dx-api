@@ -7,6 +7,7 @@
 #include "RepairItem.hpp"
 #include "TeleportItem.hpp"
 #include "DoubleShotItem.hpp"
+#include "GifWrapper.h"
 
 #undef max
 
@@ -127,7 +128,7 @@ namespace Fortress::Controller
 		{
 			if(const auto prj = ptr.lock())
 			{
-				if(!prj->is_active() && prj->is_exploded())
+				if(prj->get_state() == eProjectileState::Destroyed)
 				{
 					exploded++;
 				}
@@ -153,7 +154,7 @@ namespace Fortress::Controller
 			{
 				if(const auto prj = ptr.lock())
 				{
-					return prj->is_active();
+;					return prj->get_state() != eProjectileState::Destroyed;
 				}
 
 				return false;
@@ -290,8 +291,6 @@ namespace Fortress::Controller
 				move_sound->stop(true);
 			}
 		}
-
-		set_state(eCharacterState::Idle);
 	}
 
 	void CharacterController::set_current_sprite(const eCharacterState& state)
@@ -474,8 +473,9 @@ namespace Fortress::Controller
 
 		const auto initial_prj = (*projectile_list.begin()).lock();
 
+		// @todo: too broad assumption
 		if(initial_prj->get_origin() == dynamic_cast<ObjectBase::character*>(this) && 
-			(initial_prj->is_active() || initial_prj->is_exploded()))
+			initial_prj->get_state() != eProjectileState::Fire)
 		{
 			set_state(eCharacterState::Fired);
 		}

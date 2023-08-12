@@ -3,6 +3,7 @@
 #include "BattleScene.h"
 #include "math.h"
 #include "stateController.hpp"
+#include "GifWrapper.h"
 
 namespace Fortress::Controller
 {

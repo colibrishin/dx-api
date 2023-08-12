@@ -24,7 +24,7 @@ namespace Fortress
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
 		m_known_players.erase(m_known_players.begin());
-		m_timer_next_player = ObjectBase::TimerManager::create<NextPlayerTimer>();
+		m_timer_next_player = ObjectBase::TimerManager::create<NextPlayerTimer>(&Round::next_player, this);
 
 		m_current_player.lock()->set_movable();
 	}
@@ -49,21 +49,34 @@ namespace Fortress
 		{
 			const auto scene = Scene::SceneManager::get_active_scene().lock();
 			const auto camera = scene->get_camera().lock();
-			const auto projectiles = scene->get_objects<ObjectBase::projectile>();
 
 			if(current->get_state() == eCharacterState::Fire || 
 				current->get_state() == eCharacterState::Item)
 			{
-				m_bfired = true;
+				m_state = eRoundState::Waiting;
 
 				if(const auto prj = current->get_one_active_projectile().lock())
 				{
 					camera->set_object(prj);
 				}
 			}
-			if(current->get_state() == eCharacterState::TurnEnd && m_bfired)
+		}
+	}
+
+	void Round::check_explosion()
+	{
+		if(const auto current = m_current_player.lock())
+		{
+			const auto scene = Scene::SceneManager::get_active_scene().lock();
+			const auto camera = scene->get_camera().lock();
+
+			if(const auto prj = current->get_one_active_projectile().lock())
 			{
-				m_bfired = false;
+				camera->set_object(prj);
+			}
+
+			if(current->get_state() == eCharacterState::TurnEnd)
+			{
 				pre_next_player();
 			}
 		}
@@ -71,6 +84,8 @@ namespace Fortress
 
 	void Round::pre_next_player()
 	{
+		m_state = eRoundState::NextTurn;
+
 		if(const auto player = m_current_player.lock())
 		{
 			player->set_unmovable();
@@ -81,7 +96,7 @@ namespace Fortress
 			return;
 		}
 
-		m_timer_next_player.lock()->start([this](){ next_player(); });
+		m_timer_next_player.lock()->toggle();
 	}
 
 	void Round::update()
@@ -97,6 +112,11 @@ namespace Fortress
 			// @todo: arrow man
 			check_fired();
 			check_countdown();
+			break;
+		case eRoundState::Waiting: 
+			check_explosion();
+			break;
+		case eRoundState::NextTurn:
 			check_winning_condition();
 			break;
 		case eRoundState::End:
@@ -104,6 +124,7 @@ namespace Fortress
 			Scene::SceneManager::CreateScene<Scene::SummaryScene>(shared_from_this());
 			Scene::SceneManager::SetActive(L"Summary Scene");
 			Scene::SceneManager::remove_scene<Scene::BattleScene>();
+		
 		default: break;
 		}
 	}
@@ -151,6 +172,8 @@ namespace Fortress
 		}
 
 		m_wind_affect = dis(e);
+		m_state = eRoundState::InProgress;
+		m_timer_next_player.lock()->stop();
 	}
 
 	void Round::check_winning_condition()
@@ -172,7 +195,10 @@ namespace Fortress
 			alive_one.lock()->set_unmovable();
 			m_winner = alive_one;
 			m_state = eRoundState::End;
+			return;
 		}
+
+		m_state = eRoundState::InProgress;
 	}
 
 	const std::weak_ptr<ObjectBase::character>& Round::get_current_player() const

@@ -12,13 +12,6 @@ namespace Fortress
 		class character;
 	}
 
-	enum class eRoundState
-	{
-		Start = 0,
-		InProgress,
-		End,
-	};
-
 	constexpr float max_time = 60.0f;
 
 	class Round : public std::enable_shared_from_this<Round>
@@ -35,10 +28,10 @@ namespace Fortress
 	private:
 		void check_countdown();
 		void check_fired();
+		void check_explosion();
 		void pre_next_player();
 		void next_player();
 		void check_winning_condition();
-		void winner();
 
 		float m_curr_timeout = 0.0f;
 		bool m_bfired = false;

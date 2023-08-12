@@ -196,7 +196,8 @@
     <ClCompile Include="EgyptGround.hpp" />
     <ClCompile Include="EgyptStairway.hpp" />
     <ClCompile Include="GifTimer.hpp" />
-    <ClCompile Include="GifWrapper.hpp" />
+    <ClCompile Include="GifWrapper.cpp" />
+    <ClCompile Include="GifWrapper.h" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MissileCharacter.hpp" />
     <ClCompile Include="character.cpp" />

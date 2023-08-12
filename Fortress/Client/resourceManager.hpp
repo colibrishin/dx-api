@@ -4,7 +4,7 @@
 #include <map>
 #include <string>
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "vector2.hpp"
 #include "resource.hpp"
 

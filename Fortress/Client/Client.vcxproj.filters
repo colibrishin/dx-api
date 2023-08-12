@@ -260,7 +260,7 @@
     <ClCompile Include="MissileCharacter.hpp">
       <Filter>Characters</Filter>
     </ClCompile>
-    <ClCompile Include="GifWrapper.hpp">
+    <ClCompile Include="GifWrapper.h">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="BulletinBoardScene.cpp">
@@ -322,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="EgyptStairway.hpp">
       <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GifWrapper.cpp">
+      <Filter>Engine\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
