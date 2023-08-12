@@ -33,12 +33,11 @@ namespace Fortress::Scene
 		static void render();
 
 		template <typename T, typename... Args>
-		static std::weak_ptr<T> CreateScene(Args... arg)
+		static void CreateScene(Args... arg)
 		{
 			std::shared_ptr<T> scene = std::make_shared<T>(arg...);
-			m_scenes.emplace(scene->get_name(), scene);
+			m_scenes[scene->get_name()] = scene;
 			scene->initialize();
-			return scene;
 		}	
 
 		static void SetActive(const std::wstring& name);

@@ -112,6 +112,7 @@ namespace Fortress
 			// @todo: arrow man
 			check_fired();
 			check_countdown();
+			check_winning_condition();
 			break;
 		case eRoundState::Waiting: 
 			check_explosion();
