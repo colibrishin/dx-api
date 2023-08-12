@@ -13,8 +13,6 @@ namespace Fortress
 		class TimerManager;
 	}
 
-	
-
 	/**
 	 * \brief A timer that triggered and operates temporarily in specific duration in WinAPI thread.
 	 */
@@ -28,11 +26,12 @@ namespace Fortress
 		virtual ~Timer() override;
 
 		void initialize();
-		void start(const std::function<void()>& on_end);
+		void toggle();
 		void set_duration(const UINT&);
 		bool is_started() const;
 		virtual void on_timer();
 		virtual void reset();
+		virtual void stop();
 
 	private:
 		friend ObjectBase::TimerManager;
@@ -46,8 +45,6 @@ namespace Fortress
 		{
 			initialize();
 		}
-
-		std::function<void()> m_reserved_function{};
 	};
 
 	inline Timer::~Timer()
@@ -59,13 +56,12 @@ namespace Fortress
 	{
 	}
 
-	inline void Timer::start(const std::function<void()>& on_end)
+	inline void Timer::toggle()
 	{
 		if(!m_bStarted)
 		{
 			SetTimer(WinAPIHandles::get_hwnd(), m_timer_id, m_duration, nullptr);
 			m_bStarted = true;
-			m_reserved_function = on_end;	
 		}
 	}
 
@@ -81,20 +77,19 @@ namespace Fortress
 
 	inline void Timer::on_timer()
 	{
-		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
-		if(m_reserved_function != nullptr)
-		{
-			m_reserved_function();
-		}
-
 		m_bStarted = false;
 	}
 
 	inline void Timer::reset()
 	{
-		m_bStarted = false;
-		m_reserved_function = nullptr;
 		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
+		m_bStarted = false;
+	}
+
+	inline void Timer::stop()
+	{
+		KillTimer(WinAPIHandles::get_hwnd(), m_timer_id);
+		m_bStarted = false;
 	}
 }
 #endif // TIMER_HPP
