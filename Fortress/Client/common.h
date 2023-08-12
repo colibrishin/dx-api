@@ -12,10 +12,46 @@
 
 // ## WINAPI
 
+#include <memory>
+
 #include "framework.h"
 
 namespace Fortress
 {
+	class ImageWrapper;
+
+	namespace Abstract
+	{
+		class rigidBody;
+	}
+
+	namespace ObjectBase
+	{
+		class projectile;
+	}
+
+	namespace Object
+	{
+		class Ground;
+	}
+
+	namespace Math
+	{
+		struct Vector2;
+	}
+
+	using GlobalPosition = Math::Vector2;
+	using LocalPosition = Math::Vector2;
+	using UnitVector = Math::Vector2;
+
+	using SpeedVector = Math::Vector2;
+	using AccelVector = Math::Vector2;
+
+	using GroundPointer = std::weak_ptr<Object::Ground>;
+	using ProjectilePointer = std::weak_ptr<ObjectBase::projectile>;
+	using RigidBodyPointer = std::weak_ptr<Abstract::rigidBody>;
+	using ImagePointer = std::weak_ptr<ImageWrapper>;
+
 	enum class CollisionCode
 	{
 		None,
