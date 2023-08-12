@@ -58,6 +58,12 @@
     <Filter Include="Controller">
       <UniqueIdentifier>{4e554c30-0fd4-412f-830a-0a6f9c91fe77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{46efa7e6-0f81-43aa-8a84-7055dc81a8cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Manager">
+      <UniqueIdentifier>{8c129458-bb09-4bd5-8f0f-a49ffb9baa34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -138,9 +144,6 @@
     <ClInclude Include="sound.hpp">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="SoundPack.hpp">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
@@ -174,16 +177,10 @@
     <ClInclude Include="application.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClInclude>
     <ClInclude Include="Radar.hpp">
       <Filter>Round</Filter>
     </ClInclude>
     <ClInclude Include="Round.h">
-      <Filter>Round</Filter>
-    </ClInclude>
-    <ClInclude Include="NextPlayerTimer.hpp">
       <Filter>Round</Filter>
     </ClInclude>
     <ClInclude Include="SecwindCharacter.hpp">
@@ -195,12 +192,6 @@
     <ClInclude Include="SummaryScene.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="ProjectileTimer.hpp">
-      <Filter>Engine\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="stateController.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="virtual_this.hpp">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
@@ -210,17 +201,32 @@
     <ClInclude Include="ProjectileController.hpp">
       <Filter>Controller</Filter>
     </ClInclude>
-    <ClInclude Include="TimerManager.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="sceneManager.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="CloudGround.hpp">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="LoadingScene.hpp">
       <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="NextPlayerTimer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileTimer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="sceneManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="stateController.hpp">
+      <Filter>Engine\Abstracts</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -254,9 +260,6 @@
     <ClCompile Include="MissileProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
-    <ClCompile Include="resourceManager.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClCompile>
     <ClCompile Include="MissileCharacter.hpp">
       <Filter>Characters</Filter>
     </ClCompile>
@@ -277,12 +280,6 @@
     </ClCompile>
     <ClCompile Include="rigidBody.cpp">
       <Filter>Engine\Abstracts</Filter>
-    </ClCompile>
-    <ClCompile Include="objectManager.hpp">
-      <Filter>Engine\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="cameraManager.hpp">
-      <Filter>Engine\Common</Filter>
     </ClCompile>
     <ClCompile Include="CannonCharacter.hpp">
       <Filter>Characters</Filter>
@@ -311,12 +308,6 @@
     <ClCompile Include="ProjectileController.cpp">
       <Filter>Controller</Filter>
     </ClCompile>
-    <ClCompile Include="GifTimer.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="sceneManager.cpp">
-      <Filter>Windows\소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="EgyptGround.hpp">
       <Filter>Object</Filter>
     </ClCompile>
@@ -325,6 +316,21 @@
     </ClCompile>
     <ClCompile Include="GifWrapper.cpp">
       <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="cameraManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="objectManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="resourceManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GifTimer.hpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneManager.cpp">
+      <Filter>Engine\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

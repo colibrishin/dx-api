@@ -53,12 +53,12 @@ namespace Fortress
 			if(current->get_state() == eCharacterState::Fire || 
 				current->get_state() == eCharacterState::Item)
 			{
-				m_state = eRoundState::Waiting;
-
 				if(const auto prj = current->get_one_active_projectile().lock())
 				{
 					camera->set_object(prj);
 				}
+
+				m_state = eRoundState::Waiting;
 			}
 		}
 	}
@@ -199,7 +199,10 @@ namespace Fortress
 			return;
 		}
 
-		m_state = eRoundState::InProgress;
+		if(m_state == eRoundState::NextTurn)
+		{
+			m_state = eRoundState::InProgress;
+		}
 	}
 
 	const std::weak_ptr<ObjectBase::character>& Round::get_current_player() const

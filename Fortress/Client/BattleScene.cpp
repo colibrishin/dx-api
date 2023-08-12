@@ -156,6 +156,27 @@ namespace Fortress::Scene
 				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 				DeleteObject(brush);
 			}();
+
+			const auto map = SceneManager::get_active_map().lock();
+			const auto wind = map->get_round_status().lock()->get_wind_acceleration();
+			constexpr float max_wind = 50.0f;
+
+			// MP bar
+			[this, hud_position, wind]()
+			{
+				const int x = 90;
+				const int y = hud_position.get_y() + 112;
+				
+				// bar inside
+				const HBRUSH brush = CreateSolidBrush(RGB(0, 255,0));
+				const RECT rect = {
+					x,
+					y,
+					static_cast<int>(x + ((wind / max_wind) * 45.0f)),
+					y + 10};
+				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
+				DeleteObject(brush);
+			}();
 		}
 
 		m_radar.render();
