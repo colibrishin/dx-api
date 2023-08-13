@@ -18,9 +18,7 @@ namespace Fortress::Object
 
 		void initialize() override;
 	private:
-		// 1524 x 365
 		std::weak_ptr<ImageWrapper> m_cloud_image;
-		std::weak_ptr<ImageWrapper> m_cloud_mask_image;
 	};
 
 	inline void CloudGround::initialize()
@@ -28,20 +26,19 @@ namespace Fortress::Object
 		Ground::initialize();
 		
 		m_cloud_image = Resource::ResourceManager::load<ImageWrapper>(
-			L"CloudGround", "./resources/misc/tiles/cloud-magenta-v2.png");
+			L"CloudGround", "./resources/misc/tiles/cloud-transparent.png");
 
-		m_cloud_mask_image = Resource::ResourceManager::load<ImageWrapper>(
-			L"CloudGround", "./resources/misc/tiles/cloud-mask-v2.png");
+		const auto initial_mask = Resource::ResourceManager::load<ImageWrapper>(
+			L"CloudGround Mask", "./resources/misc/tiles/cloud-mask.bmp");
 
 		const auto cloud = m_cloud_image.lock();
-		const auto cloud_mask = m_cloud_mask_image.lock();
+		const auto cloud_mask = initial_mask.lock();
 
 		set_hitbox(cloud->get_hitbox());
 		reset_hdc();
 
 		cloud->copy_to(m_ground_hdc);
 		cloud_mask->copy_to(m_mask_hdc);
-		constexpr auto magenta = RGB(255, 0, 255);
 
 		std::for_each(
 			std::execution::par,
@@ -53,13 +50,13 @@ namespace Fortress::Object
 				const int x = pos.first.second;
 				const COLORREF pixel = get_pixel_threadsafe(x, y);
 
-				if(pixel == magenta)
+				if(pixel == 0)
 				{
 					unsafe_set_destroyed(x, y);
 				}
 		});
 
-		force_update_mask();
+		Resource::ResourceManager::unload<ImageWrapper>(L"CloudGround Mask");
 	}
 }
 #endif // CLOUD_HPP
