@@ -34,6 +34,9 @@ namespace Fortress::ObjectBase
 
 	void projectile::render()
 	{
+		rigidBody::render();
+		ProjectileController::render();
+
 		if(is_active())
 		{
 			Math::Vector2 pos{};
@@ -49,8 +52,6 @@ namespace Fortress::ObjectBase
 					std::dynamic_pointer_cast<object>(rigidBody::shared_from_this()));	
 			}
 
-			prerender();
-
 			m_current_sprite.lock()->render(
 				pos,
 				m_hitbox, 
@@ -60,8 +61,6 @@ namespace Fortress::ObjectBase
 			Debug::draw_rect(pos - m_hitbox / 2, m_hitbox);
 			Debug::draw_dot(pos);
 		}
-
-		rigidBody::render();
 	}
 
 	void projectile::prerender()

@@ -65,6 +65,11 @@ namespace Fortress::Controller
 		}
 	}
 
+	void CharacterController::render()
+	{
+		stateController::render();
+	}
+
 	void CharacterController::prerender()
 	{
 		stateController::prerender();

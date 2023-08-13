@@ -159,6 +159,9 @@ namespace Fortress::ObjectBase
 
 	void character::render()
 	{
+		rigidBody::render();
+		CharacterController::render();
+
 		Math::Vector2 pos{};
 
 		if (is_active())
@@ -176,7 +179,6 @@ namespace Fortress::ObjectBase
 					std::dynamic_pointer_cast<object>(rigidBody::shared_from_this()));
 			}
 
-			prerender();
 			render_hp_bar(pos);
 			
 			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(get_movement_pitch_radian()));
@@ -196,8 +198,6 @@ namespace Fortress::ObjectBase
 			Debug::draw_line(
 				{camera_ptr->get_offset().get_x(), pos.get_y()}, pos);
 		}
-
-		rigidBody::render();
 	}
 
 	const std::wstring& character::get_short_name() const
