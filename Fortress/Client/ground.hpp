@@ -145,6 +145,7 @@ namespace Fortress::Object
 
 	inline void Ground::initialize()
 	{
+		// @todo: initialization path gets too complicated.
 		if(m_hitbox != Math::zero)
 		{
 			reset_hdc();
