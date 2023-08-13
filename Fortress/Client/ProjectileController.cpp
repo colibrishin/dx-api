@@ -60,9 +60,14 @@ namespace Fortress::Controller
 	{
 		stateController::prerender();
 
-		const auto unit = (m_pc_position - m_previous_position).normalized();
-		m_pitch = std::fabs(unit.unit_angle());
-		m_previous_position = m_pc_position;
+		const auto offset = m_rb->get_velocity_offset();
+		const auto diff_by_offset = offset == Math::left ? 
+			m_previous_position - m_rb->get_position() :
+			m_rb->get_position() - m_previous_position;
+
+		const auto unit = diff_by_offset.normalized();
+		m_pitch = unit.unit_angle();
+		m_previous_position = m_rb->get_position();
 
 		switch(get_state())
 		{
