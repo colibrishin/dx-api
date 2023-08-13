@@ -170,6 +170,8 @@ namespace Fortress::Object
 				const auto pos = camera_ptr->get_relative_position(
 				std::dynamic_pointer_cast<object>(shared_from_this()));
 
+				prerender();
+
 				// Move ground buffer to render buffer.
 				GdiTransparentBlt(
 					WinAPIHandles::get_buffer_dc(),
