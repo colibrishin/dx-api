@@ -67,6 +67,7 @@ namespace Fortress::Object
 
 		void initialize() override;
 		void render() override;
+		void prerender() override;
 
 		void set_hitbox(const Math::Vector2& hitbox) override;
 
@@ -85,8 +86,10 @@ namespace Fortress::Object
 			const Math::Vector2& global_position, const Math::Vector2& offset);
 	protected:
 		HDC get_ground_hdc() const;
+
 		HDC get_ground_mask_hdc() const;
 		void force_update_mask();
+
 		void unsafe_set_destroyed(const int x, const int y);
 		void unsafe_set_destroyed_visual(int x, int y);
 		void safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius);
@@ -105,12 +108,16 @@ namespace Fortress::Object
 		friend Radar;
 		std::map<GroundMapKey, GroundState> m_destroyed_table;
 		HDC m_ground_hdc;
-		HBITMAP m_ground_bitmap;
 		HDC m_mask_hdc;
+		HDC m_buffer_hdc;
+
+		HBITMAP m_ground_bitmap;
 		HBITMAP m_mask_bitmap;
+		HBITMAP m_buffer_bitmap;
 
 	private:
 		void set_tile(const std::weak_ptr<ImageWrapper>& tile_image) const;
+
 		ImagePointer m_tile_image;
 		std::mutex map_write_lock;
 		std::mutex map_read_lock;
@@ -153,6 +160,8 @@ namespace Fortress::Object
 
 	inline void Ground::render()
 	{
+		rigidBody::render();
+
 		if (is_active())
 		{
 			if(const auto camera_ptr = Scene::SceneManager::get_active_scene().lock()->get_camera().lock())
@@ -160,23 +169,52 @@ namespace Fortress::Object
 				const auto pos = camera_ptr->get_relative_position(
 				std::dynamic_pointer_cast<object>(shared_from_this()));
 
-				// Transparent color is the destroyed ground.
+				// Move ground buffer to render buffer.
 				GdiTransparentBlt(
 					WinAPIHandles::get_buffer_dc(),
 					pos.get_x(),
 					pos.get_y(),
 					m_hitbox.get_x(),
 					m_hitbox.get_y(),
-					m_ground_hdc,
+					m_buffer_hdc,
 					0,
 					0,
 					m_hitbox.get_x(),
 					m_hitbox.get_y(),
-					RGB(255,0,255));
+					RGB(0,0,0));
 
 				Debug::draw_dot(pos);
 			}
 		}
+	}
+
+	inline void Ground::prerender()
+	{
+		rigidBody::prerender();
+
+		// Copy ground sprite to buffer.
+		BitBlt(
+			m_buffer_hdc,
+			0,
+			0,
+			m_hitbox.get_x(),
+			m_hitbox.get_y(),
+			m_ground_hdc,
+			0,
+			0,
+			SRCCOPY);
+
+		// AND operation with mask.
+		BitBlt(
+			m_buffer_hdc,
+			0,
+			0,
+			m_hitbox.get_x(),
+			m_hitbox.get_y(),
+			m_mask_hdc,
+			0,
+			0,
+			SRCAND);
 	}
 
 	inline void Ground::set_hitbox(const Math::Vector2& hitbox)
@@ -226,23 +264,9 @@ namespace Fortress::Object
 
 	inline void Ground::unsafe_set_destroyed_visual(const int x, const int y)
 	{
-		std::lock_guard _hdc(hdc_lock);
 		{
-			Graphics m_ground_gdi(m_ground_hdc);
-			Graphics m_mask_gdi(m_mask_hdc);
-			const SolidBrush removal_brush(Color(255,0,255));
-			const SolidBrush mask_brush(Color(0,0,0));
-			Rect pixel{0, 0, 1, 1};
-
-			pixel.X = x;
-			pixel.Y = y;
-			m_ground_gdi.FillRectangle(&removal_brush, pixel);
-			m_mask_gdi.FillRectangle(&mask_brush, pixel);
-		}
-
-		std::lock_guard _(map_write_lock);
-		{
-			m_destroyed_table[{y, x}] = GroundState::Destroyed;
+			std::lock_guard _hdc(hdc_lock);
+			SetPixel(m_mask_hdc, x, y, RGB(0,0,0));
 		}
 	}
 
@@ -464,6 +488,8 @@ namespace Fortress::Object
 			for(int j = 0; j < static_cast<int>(m_hitbox.get_x()); ++j)
 			{
 				std::lock_guard _(map_read_lock);
+				std::lock_guard _g(hdc_lock);
+
 				if(m_destroyed_table.at({i, j}) == GroundState::NotDestroyed)
 				{
 					SetPixel(m_mask_hdc, j, i, RGB(255, 255, 255));
@@ -544,12 +570,17 @@ namespace Fortress::Object
 		m_mask_bitmap = CreateCompatibleBitmap(
 			WinAPIHandles::get_main_dc(), m_hitbox.get_x(), m_hitbox.get_y());
 
+		m_buffer_hdc = CreateCompatibleDC(WinAPIHandles::get_main_dc());
+		m_buffer_bitmap = CreateCompatibleBitmap(
+			WinAPIHandles::get_main_dc(), m_hitbox.get_x(), m_hitbox.get_y());
+
 		SelectObject(m_ground_hdc, m_ground_bitmap);
 		SelectObject(m_mask_hdc, m_mask_bitmap);
+		SelectObject(m_buffer_hdc, m_buffer_bitmap);
 
-		const auto brush = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
+		const auto mask_bkgd = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
 		const auto rect = RECT{0, 0, static_cast<int>(m_hitbox.get_x()), static_cast<int>(m_hitbox.get_y())};
-		FillRect(m_mask_hdc, &rect, brush);
+		FillRect(m_mask_hdc, &rect, mask_bkgd);
 
 		for(int i = 0; i < static_cast<int>(m_hitbox.get_y()); ++i)
 		{
@@ -560,7 +591,7 @@ namespace Fortress::Object
 			}
 		}
 
-		DeleteObject(brush);
+		DeleteObject(mask_bkgd);
 	}
 }
 
