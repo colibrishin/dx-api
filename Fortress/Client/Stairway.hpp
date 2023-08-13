@@ -59,7 +59,8 @@ namespace Fortress::Object
 		{
 			assert(nullptr);
 		}
-		
+
+		force_update_mask();
 	}
 }
 #endif // CATWALK_HPP
