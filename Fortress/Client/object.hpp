@@ -81,7 +81,6 @@ namespace Fortress::Abstract
 
 	void object::render()
 	{
-		prerender();
 	}
 
 	inline void object::prerender()

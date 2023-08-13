@@ -34,7 +34,6 @@ namespace Fortress::Controller
 
 		void initialize() override;
 		void update() override;
-		void render() override;
 		void prerender() override;
 
 		void set_unmovable();

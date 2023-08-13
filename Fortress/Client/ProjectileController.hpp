@@ -32,7 +32,6 @@ namespace Fortress::Controller
 
 		void initialize() override;
 		void update() override;
-		void render() override;
 		void prerender() override;
 
 		bool is_cooldown() const;
