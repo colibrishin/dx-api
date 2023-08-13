@@ -24,9 +24,11 @@ namespace Fortress::Controller
 	{
 	public:
 		~ProjectileController() override = default;
-		ProjectileController(const std::wstring& short_name, const Math::Vector2& velocity,
-		                     const Math::Vector2& fired_position,
-		                     const Math::Vector2& position, int max_hit_count, int max_fire_count);
+		ProjectileController(
+			const std::wstring& short_name, 
+			const Abstract::rigidBody* const rb,
+			int max_hit_count, 
+			int max_fire_count);
 
 		void initialize() override;
 		void update() override;
@@ -51,7 +53,7 @@ namespace Fortress::Controller
 		void reset_cooldown();
 		void increase_hit_count();
 
-		const Math::Vector2& m_pc_velocity;
+		const Abstract::rigidBody* const m_rb;
 
 		const int m_max_hit_count;
 		int m_curr_hit_count;
@@ -63,8 +65,6 @@ namespace Fortress::Controller
 
 		float m_pitch;
 
-		const Math::Vector2& m_fired_position;
-		const Math::Vector2& m_pc_position;
 		Math::Vector2 m_previous_position;
 
 	protected:

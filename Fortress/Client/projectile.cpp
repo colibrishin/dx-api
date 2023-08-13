@@ -67,8 +67,7 @@ namespace Fortress::ObjectBase
 	void projectile::prerender()
 	{
 		ProjectileController::prerender();
-		set_movement_pitch_radian(
-			get_velocity_offset() == Math::left ? Math::flip_radian(get_pitch()) : get_pitch());
+		set_movement_pitch_radian(get_pitch());
 	}
 
 	const character* projectile::get_origin() const
@@ -106,7 +105,7 @@ namespace Fortress::ObjectBase
 			const int fire_count,
 			const float armor_penetration) :
 			rigidBody(name, position, {30.0f, 30.0f}, velocity, mass, speed, acceleration, true),
-			ProjectileController(short_name, m_velocity, position, m_position, hit_count, fire_count),
+			ProjectileController(short_name, this, hit_count, fire_count),
 			m_damage(damage),
 			m_radius(radius),
 			m_armor_penetration(armor_penetration),
