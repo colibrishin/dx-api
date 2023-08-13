@@ -58,7 +58,7 @@ namespace Fortress
 	{
 		Graphics temp(target);
 
-		temp.DrawImage(m_image.get(), 0.0f, 0.0f);
+		temp.DrawImage(m_image.get(), 0.0f, 0.0f, m_size.get_x(), m_size.get_y());
 	}
 
 	inline void ImageWrapper::tile_copy_to(const Math::Vector2& size, HDC target) const
