@@ -207,23 +207,13 @@ namespace Fortress::ObjectBase
 		const Math::Vector2& velocity,
 		const float charged)
 	{
-		const auto x_velocity = get_velocity_offset();
-
 		set_speed({charged, charged});
-
-		if(x_velocity == Math::left)
-		{
-			m_position = position - Math::Vector2{m_hitbox.get_x(), 0};
-		}
-		else if (x_velocity == Math::right)
-		{
-			m_position = position + Math::Vector2{m_hitbox.get_x(), 0};
-		}
+		m_position = position;
 
 		if(const auto battle_scene = 
 			std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock()))
 		{
-			m_wind_acceleration = {battle_scene->get_round_status().lock()->get_wind_acceleration(), 0.0f};
+			m_wind_acceleration = {battle_scene->get_round_status().lock()->get_wind_acceleration() * 2, 0.0f};
 		}
 
 		m_velocity = velocity;
