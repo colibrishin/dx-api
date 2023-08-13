@@ -25,6 +25,7 @@ namespace Fortress::Controller
 
 		virtual void initialize();
 		virtual void update() = 0;
+		virtual void render();
 		virtual void prerender();
 
 	protected:
@@ -70,6 +71,12 @@ namespace Fortress::Controller
 	void stateController<StateEnum>::initialize()
 	{
 		m_anim_elapsed = 0.0f;
+	}
+
+	template <typename StateEnum>
+	void stateController<StateEnum>::render()
+	{
+		prerender();
 	}
 
 	template<typename StateEnum>

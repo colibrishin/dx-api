@@ -56,6 +56,11 @@ namespace Fortress::Controller
 		}
 	}
 
+	void ProjectileController::render()
+	{
+		stateController::render();
+	}
+
 	void ProjectileController::prerender()
 	{
 		stateController::prerender();

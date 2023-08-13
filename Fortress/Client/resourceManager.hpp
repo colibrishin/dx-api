@@ -1,6 +1,7 @@
 #pragma once
 #ifndef RESOURCEMANAGER_HPP
 #define RESOURCEMANAGER_HPP
+#include <cassert>
 #include <map>
 #include <string>
 
@@ -17,6 +18,8 @@ namespace Fortress::Resource
 		~ResourceManager() = default;
 		template <typename T>
 		static std::weak_ptr<T> load(const std::wstring& name, const std::filesystem::path& path);
+		template <typename T>
+		static void unload(const std::wstring& name);
 		template <typename T>
 		static std::weak_ptr<T> find(const std::wstring& name) noexcept;
 		static void cleanup();
@@ -47,6 +50,17 @@ namespace Fortress::Resource
 		m_resources[name]->load();
 
 		return std::dynamic_pointer_cast<T>(m_resources[name]);
+	}
+
+	template <typename T>
+	void ResourceManager::unload(const std::wstring& name)
+	{
+		static_assert(
+			std::is_same_v<std::shared_ptr<T>, 
+			decltype(std::dynamic_pointer_cast<T>(m_resources[name]))>);
+
+		m_resources[name].reset();
+		m_resources.erase(name);
 	}
 
 	template<typename T>
