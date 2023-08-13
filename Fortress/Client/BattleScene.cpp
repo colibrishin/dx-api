@@ -12,6 +12,9 @@
 #include "SummaryScene.hpp"
 #include "Radar.hpp"
 
+#undef min
+#undef max
+
 namespace Fortress::Scene
 {
 	BattleScene::BattleScene(const std::wstring& name, const Math::Vector2& map_size):
@@ -36,6 +39,7 @@ namespace Fortress::Scene
 
 		set_characters();
 		set_client_character();
+		spawnpoints();
 
 		for (const auto& ch : m_characters)
 		{
@@ -231,5 +235,55 @@ namespace Fortress::Scene
 		}
 
 		return false;
+	}
+
+	void BattleScene::spawnpoints() const
+	{
+		int ground_x_min = INT_MAX;
+		int ground_x_max = INT_MIN;
+
+		for(const auto& ptr : m_grounds)
+		{
+			if(const auto ground = ptr.lock())
+			{
+				ground_x_min = std::min(ground_x_min, static_cast<int>(ground->get_top_left().get_x()));
+				ground_x_max = std::max(ground_x_max, static_cast<int>(ground->get_top_right().get_x()));
+			}
+		}
+
+		const int x_interval = ground_x_max / static_cast<int>(m_characters.size());
+		int pivot = ground_x_min;
+		int x_current = pivot + 100;
+
+		// @todo: random spawnpoints
+		for(const auto& ch_ptr : m_characters)
+		{
+			if(const auto character = ch_ptr.lock())
+			{
+				character->m_position = {x_current, 0};
+
+				for(const auto& gr_ptr : m_grounds)
+				{
+					if(const auto ground = gr_ptr.lock())
+					{
+						const auto delta = ground->safe_orthogonal_surface_global(character->get_center());
+
+						if(delta == Math::vector_inf)
+						{
+							continue;
+						}
+
+						character->m_position += delta;
+						character->m_position -= {0 , character->m_hitbox.get_y() / 2};
+						break;
+					}
+				}
+			}
+
+			// @todo: multiple characters more than two
+			pivot = (pivot == ground_x_min ? ground_x_max : ground_x_min);
+			x_current = pivot - x_interval;
+		}
+
 	}
 }

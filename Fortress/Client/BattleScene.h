@@ -34,6 +34,8 @@ namespace Fortress::Scene
 		virtual bool predicate_OOB(const Math::Vector2& position);
 		virtual bool movable(const Math::Vector2& position);
 
+		void spawnpoints() const;
+
 	protected:
 		Math::Vector2 m_map_size;
 		std::weak_ptr<ObjectBase::character> m_self;
