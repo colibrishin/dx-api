@@ -133,7 +133,7 @@ namespace Fortress
 			Scene::SceneManager::CreateScene<Scene::SummaryScene>(shared_from_this());
 			Scene::SceneManager::SetActive(L"Summary Scene");
 			Scene::SceneManager::remove_scene<Scene::BattleScene>();
-		
+			break;
 		default: break;
 		}
 	}
