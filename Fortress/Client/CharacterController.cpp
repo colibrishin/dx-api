@@ -527,10 +527,12 @@ namespace Fortress::Controller
 		}
 
 		m_active_projectiles.clear();
-
 		reset_mp();
 
-		set_state(eCharacterState::Idle);
+		if(projectiles.empty())
+		{
+			set_state(eCharacterState::Idle);
+		}
 	}
 
 	void CharacterController::preitem_state()

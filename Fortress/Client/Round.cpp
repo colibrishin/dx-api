@@ -55,8 +55,9 @@ namespace Fortress
 			const auto scene = Scene::SceneManager::get_active_scene().lock();
 			const auto camera = scene->get_camera().lock();
 
-			if(current->get_state() == eCharacterState::Fire || 
-				current->get_state() == eCharacterState::Item)
+			if(current->get_state() == eCharacterState::Fired || 
+				current->get_state() == eCharacterState::Item ||
+				current->get_state() == eCharacterState::TurnEnd)
 			{
 				if(const auto prj = current->get_one_active_projectile().lock())
 				{
