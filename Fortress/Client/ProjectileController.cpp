@@ -9,22 +9,18 @@ namespace Fortress::Controller
 {
 	ProjectileController::ProjectileController(
 		const std::wstring& short_name, 
-		const Math::Vector2& velocity,
-		const Math::Vector2& fired_position,
-		const Math::Vector2& position,
+		const Abstract::rigidBody* const rb,
 		const int max_hit_count,
 		const int max_fire_count) :
 		stateController(short_name, eProjectileState::Fire),
-		m_pc_velocity(velocity),
+		m_rb(rb),
 		m_max_hit_count(max_hit_count),
 		m_curr_hit_count(0),
 		m_hit_cooldown(0.0f),
 		m_fire_count(max_fire_count),
 		m_bExploded(false),
 		m_pitch(0.0f),
-		m_fired_position(fired_position),
-		m_pc_position(position),
-		m_previous_position(fired_position)
+		m_previous_position(rb->get_position())
 	{
 	}
 
@@ -126,7 +122,7 @@ namespace Fortress::Controller
 
 		if (const auto map = Scene::SceneManager::get_active_map().lock())
 		{
-			if(map->predicate_OOB(m_pc_position))
+			if(map->predicate_OOB(m_rb->get_position()))
 			{
 				set_state(eProjectileState::Destroyed);
 			}
@@ -172,6 +168,7 @@ namespace Fortress::Controller
 	{
 		destroyed();
 		m_curr_hit_count = 0;
+		m_pitch = 0;
 		m_bExploded = true;
 		reset_cooldown();
 		m_current_sprite.lock()->reset_transform();
@@ -210,6 +207,6 @@ namespace Fortress::Controller
 	{
 		m_current_sprite = m_texture.get_image(
 			L"projectile",
-			m_pc_velocity * Math::Vector2{1, 0} == Math::left ? L"left" : L"right");
+			m_rb->get_velocity_offset() == Math::left ? L"left" : L"right");
 	}
 }
