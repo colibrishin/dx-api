@@ -2,6 +2,7 @@
 #ifndef GROUND_H
 #define GROUND_H
 
+#include <execution>
 #include <mutex>
 #include <vector>
 #include "rigidBody.hpp"
@@ -523,23 +524,67 @@ namespace Fortress::Object
 
 	inline void Ground::force_update_mask()
 	{
-		for(int i = 0; i < static_cast<int>(m_hitbox.get_y()); ++i)
-		{
-			for(int j = 0; j < static_cast<int>(m_hitbox.get_x()); ++j)
-			{
-				std::lock_guard _(map_read_lock);
-				std::lock_guard _g(hdc_lock);
+		const auto mask_bitmap = get_mask_bitmap_copy();
+		BitmapData bitmap_info{};
+		
+		const UINT width = mask_bitmap->GetWidth();
+		const UINT height = mask_bitmap->GetHeight();
 
-				if(m_destroyed_table.at({i, j}) == GroundState::NotDestroyed)
+		const Rect mask_size = Rect
+		{
+			0,
+			0,
+			static_cast<int>(width),
+			static_cast<int>(height)
+		};
+
+		// assuming we are using hdc only.
+		mask_bitmap->LockBits(
+			&mask_size,
+			ImageLockModeWrite,
+			PixelFormat32bppARGB,
+			&bitmap_info);
+
+		// used type unsigned int (4 bytes, 1b-A 1b-R 1b-G 1b-B)
+		auto* const direct_access_ptr = static_cast<unsigned int*>(bitmap_info.Scan0);
+		const UINT stride = std::abs(bitmap_info.Stride);
+
+		// probably due to non 4-byte reads happened.
+		assert(stride / 4 == width);
+		const UINT array_size = width * height;
+		// A 1111 1111 R 0000 0000 G 0000 0000 B 0000 0000
+		constexpr unsigned int alpha_black = 0xff000000;
+
+		// A 1111 1111 R 1111 1111 G 1111 1111 B 1111 1111
+		constexpr unsigned int alpha_white = 0xffffffff;
+
+		std::for_each(
+			std::execution::par,
+			direct_access_ptr,
+			direct_access_ptr + array_size,
+			[&](unsigned int& pixel)
+			{
+				const size_t index = std::distance(direct_access_ptr, &pixel);
+				const size_t y = index / width;
+				const size_t x = index % width;
+
+				if(m_destroyed_table.at({y, x}) == GroundState::Destroyed)
 				{
-					SetPixel(m_mask_hdc, j, i, RGB(255, 255, 255));
+					pixel = alpha_black;
 				}
 				else
 				{
-					SetPixel(m_mask_hdc, j, i, RGB(0, 0, 0));
+					pixel = alpha_white;
 				}
-			}
-		}
+		});
+
+		mask_bitmap->UnlockBits(&bitmap_info);
+
+		HBITMAP updated;
+		mask_bitmap->GetHBITMAP(Color(255, 0, 0, 0), &updated);
+
+		m_mask_bitmap = updated;
+		DeleteObject(SelectObject(m_mask_hdc, updated));
 	}
 
 	inline void Ground::safe_set_destroyed_global(
