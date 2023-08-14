@@ -218,6 +218,35 @@ namespace Fortress::Object
 			0,
 			0,
 			SRCAND);
+
+		if(Debug::get_debug_flag())
+		{
+			StretchBlt(
+				WinAPIHandles::get_buffer_dc(),
+				100,
+				10,
+				300,
+				100,
+				m_mask_hdc,
+				0,
+				0,
+				m_hitbox.get_x(),
+				m_hitbox.get_y(),
+				SRCCOPY);
+
+			StretchBlt(
+				WinAPIHandles::get_buffer_dc(),
+				100,
+				120,
+				300,
+				100,
+				m_ground_hdc,
+				0,
+				0,
+				m_hitbox.get_x(),
+				m_hitbox.get_y(),
+				SRCCOPY);
+		}
 	}
 
 	inline void Ground::set_hitbox(const Math::Vector2& hitbox)
