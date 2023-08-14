@@ -88,6 +88,9 @@ namespace Fortress::Object
 		HDC get_ground_hdc() const;
 
 		HDC get_ground_mask_hdc() const;
+
+		std::unique_ptr<Bitmap> get_mask_bitmap_copy() const;
+
 		void force_update_mask();
 
 		void unsafe_set_destroyed(const int x, const int y);
@@ -511,6 +514,11 @@ namespace Fortress::Object
 	inline HDC Ground::get_ground_mask_hdc() const
 	{
 		return m_mask_hdc;
+	}
+
+	inline std::unique_ptr<Bitmap> Ground::get_mask_bitmap_copy() const
+	{
+		return std::unique_ptr<Bitmap>(Bitmap::FromHBITMAP(m_mask_bitmap, nullptr));
 	}
 
 	inline void Ground::force_update_mask()
