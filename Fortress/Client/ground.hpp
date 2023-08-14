@@ -606,9 +606,9 @@ namespace Fortress::Object
 		m_buffer_bitmap = CreateCompatibleBitmap(
 			WinAPIHandles::get_main_dc(), m_hitbox.get_x(), m_hitbox.get_y());
 
-		SelectObject(m_ground_hdc, m_ground_bitmap);
-		SelectObject(m_mask_hdc, m_mask_bitmap);
-		SelectObject(m_buffer_hdc, m_buffer_bitmap);
+		DeleteObject(SelectObject(m_ground_hdc, m_ground_bitmap));
+		DeleteObject(SelectObject(m_mask_hdc, m_mask_bitmap));
+		DeleteObject(SelectObject(m_buffer_hdc, m_buffer_bitmap));
 
 		const auto mask_bkgd = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
 		const auto rect = RECT{0, 0, static_cast<int>(m_hitbox.get_x()), static_cast<int>(m_hitbox.get_y())};
