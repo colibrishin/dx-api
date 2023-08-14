@@ -25,6 +25,7 @@ namespace Fortress
 		}
 
 		static void set_debug_flag();
+		static bool get_debug_flag();
 		static void push(std::function<void()> func);
 
 		static void draw_line(const Math::Vector2 left, const Math::Vector2 right);
@@ -61,6 +62,11 @@ namespace Fortress
 	inline void Debug::set_debug_flag()
 	{
 		m_bDebug = true;
+	}
+
+	inline bool Debug::get_debug_flag()
+	{
+		return m_bDebug;
 	}
 
 	inline void Debug::push(std::function<void()> func)
