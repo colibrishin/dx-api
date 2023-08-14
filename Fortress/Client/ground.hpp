@@ -102,7 +102,6 @@ namespace Fortress::Object
 		void unsafe_set_line_destroyed(const Math::Vector2& line, const int n);
 		void unsafe_set_line_destroyed_reverse(const Math::Vector2& line, int n);
 		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr);
-		void _debug_draw_destroyed_table();
 
 		COLORREF get_pixel_threadsafe(const int x, const int y);
 
@@ -548,30 +547,6 @@ namespace Fortress::Object
 	{
 		const auto local_position = to_top_left_local_position(hit_position);
 		safe_set_circle_destroyed(local_position, radius);
-	}
-
-	inline void Ground::_debug_draw_destroyed_table()
-	{
-		Graphics m_ground_gdi(m_ground_hdc);
-		const SolidBrush not_destroyed_brush(Color(0,255,0));
-		const SolidBrush destroyed_brush(Color(255,0,0));
-
-		for(int i = 0; i < m_hitbox.get_y(); ++i)
-		{
-			for(int j = 0; j < m_hitbox.get_x(); ++j)
-			{
-				Rect pixel = {
-					j,
-					i,
-					1,
-					1};
-
-				std::lock_guard _(map_read_lock);
-				m_ground_gdi.FillRectangle(
-					&(m_destroyed_table.at({i, j}) == GroundState::NotDestroyed ? not_destroyed_brush : destroyed_brush),
-					pixel);
-			}
-		}
 	}
 
 	inline COLORREF Ground::get_pixel_threadsafe(const int x, const int y)
