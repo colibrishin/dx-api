@@ -124,8 +124,8 @@ namespace Fortress::Object
 
 		ImagePointer m_tile_image;
 		std::mutex map_write_lock;
-		std::mutex map_read_lock;
-		std::mutex hdc_lock;
+		std::mutex mask_write_lock;
+		std::mutex mask_read_lock;
 	};
 
 	inline void Ground::on_collision(
@@ -285,7 +285,6 @@ namespace Fortress::Object
 		{
 			int i = static_cast<int>(local_position.get_y());
 			int j = static_cast<int>(local_position.get_x());
-			std::lock_guard _(map_read_lock);
 			return m_destroyed_table.at({i ,j});
 		}
 
@@ -300,10 +299,8 @@ namespace Fortress::Object
 
 	inline void Ground::unsafe_set_destroyed_visual(const int x, const int y)
 	{
-		{
-			std::lock_guard _hdc(hdc_lock);
-			SetPixel(m_mask_hdc, x, y, RGB(0,0,0));
-		}
+		std::lock_guard _(mask_write_lock);
+		SetPixel(m_mask_hdc, x, y, RGB(0, 0, 0));
 	}
 
 	inline void Ground::safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius)
@@ -597,7 +594,7 @@ namespace Fortress::Object
 
 	inline COLORREF Ground::get_pixel_threadsafe(const int x, const int y)
 	{
-		std::lock_guard _(hdc_lock);
+		std::lock_guard _(mask_read_lock);
 		return GetPixel(m_ground_hdc, x ,y);
 	}
 
