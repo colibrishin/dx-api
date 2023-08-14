@@ -98,7 +98,6 @@ namespace Fortress::Abstract
 		entity(name),
 		m_objects(0)
 	{
-		scene::initialize();
 	}
 
 	inline scene::~scene()

@@ -17,6 +17,7 @@ namespace Fortress::Scene
 	public:
 		LoadingScene() : scene(L"Loading Scene")
 		{
+			initialize();
 		}
 
 		void initialize() override;

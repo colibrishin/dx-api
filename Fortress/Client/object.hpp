@@ -143,7 +143,6 @@ namespace Fortress::Abstract
 		const Math::Vector2& hitbox,
 		const float mass): entity(name), m_hitbox(hitbox), m_position(position), m_mass(mass)
 	{
-		object::initialize();
 	}
 
 	inline bool object::is_active() const

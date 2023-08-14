@@ -14,6 +14,7 @@ namespace Fortress::Scene
 	public:
 		LobbyScene() : scene(L"Lobby Scene")
 		{
+			initialize();
 		}
 
 		void initialize() override;

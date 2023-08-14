@@ -14,7 +14,9 @@ namespace Fortress
 			Timer(L"Next Player", 2000, timer_id),
 			m_on_timer(std::move(func)),
 			m_this(timer_this)
-		{ }
+		{
+			initialize();
+		}
 		inline void on_timer() override;
 	private:
 		NextPlayerTimerFunction m_on_timer;

@@ -43,7 +43,6 @@ namespace Fortress
 		Timer(const std::wstring& name, const UINT duration, const WPARAM timer_id) :
 			entity(name), m_timer_id(timer_id), m_duration(duration), m_bStarted(false)
 		{
-			initialize();
 		}
 	};
 

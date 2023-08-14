@@ -90,9 +90,6 @@
     <ClInclude Include="titleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="BattleScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="ground.hpp">
       <Filter>Object</Filter>
     </ClInclude>
@@ -155,9 +152,6 @@
     </ClInclude>
     <ClInclude Include="DesertMap.hpp">
       <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="item.hpp">
-      <Filter>Engine\Abstracts</Filter>
     </ClInclude>
     <ClInclude Include="DoubleShotItem.hpp">
       <Filter>Item</Filter>
@@ -228,6 +222,12 @@
     <ClInclude Include="stateController.hpp">
       <Filter>Engine\Abstracts</Filter>
     </ClInclude>
+    <ClInclude Include="BattleScene.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="item.hpp">
+      <Filter>Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
@@ -235,9 +235,6 @@
     </ClCompile>
     <ClCompile Include="application.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="BattleScene.cpp">
-      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="titleScene.cpp">
       <Filter>Scene</Filter>
@@ -331,6 +328,9 @@
     </ClCompile>
     <ClCompile Include="sceneManager.cpp">
       <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleScene.cpp">
+      <Filter>Map</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

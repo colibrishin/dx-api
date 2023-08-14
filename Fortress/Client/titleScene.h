@@ -13,6 +13,7 @@ namespace Fortress::Scene
 	public:
 		TitleScene() : scene(L"Title Scene")
 		{
+			initialize();
 		}
 
 		void initialize() override;

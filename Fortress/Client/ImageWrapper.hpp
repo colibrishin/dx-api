@@ -145,6 +145,7 @@ namespace Fortress
 		m_size{},
 		m_offset{}
 	{
+		ImageWrapper::load();
 	}
 
 	inline bool ImageWrapper::load()

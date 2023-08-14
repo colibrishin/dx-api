@@ -32,7 +32,9 @@ namespace Fortress::Object
 				ObjectBase::character_full_mp,
 				0.7f)
 		{
+			character::initialize();
 		}
+
 		SecwindCharacter& operator=(const SecwindCharacter& other) = default;
 		SecwindCharacter& operator=(SecwindCharacter&& other) = default;
 		SecwindCharacter(const SecwindCharacter& other) = default;

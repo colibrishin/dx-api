@@ -238,7 +238,6 @@ namespace Fortress::Controller
 		m_tmp_projectile_type(eProjectileType::Main),
 		m_active_item()
 	{
-		CharacterController::initialize();
 	}
 
 	void CharacterController::set_sprite_offset(const std::wstring& name, const std::wstring& orientation,

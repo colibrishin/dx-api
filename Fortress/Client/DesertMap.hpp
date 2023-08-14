@@ -11,10 +11,13 @@
 
 namespace Fortress::Map
 {
-	class DesertMap : public Scene::BattleScene
+	class DesertMap final : public Scene::BattleScene
 	{
 	public:
-		DesertMap() : BattleScene(L"Desert", {900.0f, 500.f}) {}
+		DesertMap() : BattleScene(L"Desert", {900.0f, 500.f})
+		{
+			BattleScene::initialize();
+		}
 		void pre_initialize() override;
 		void set_bgm() override;
 		void set_background_img() override;

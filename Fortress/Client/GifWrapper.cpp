@@ -5,13 +5,8 @@
 namespace Fortress
 {
 	bool GifWrapper::load()
-	{ 
+	{
 		ImageWrapper::load();
-
-		if(!m_timer.lock())
-		{
-			initialize();
-		}
 
 		m_dimension_count = m_image->GetFrameDimensionsCount();
 
@@ -40,6 +35,7 @@ namespace Fortress
 	void GifWrapper::initialize()
 	{
 		m_timer = ObjectBase::TimerManager::create<GifTimer>(&GifWrapper::OnTimer, this);
+		load();
 	}
 
 	void GifWrapper::play(const std::function<void()>& on_end)
@@ -116,6 +112,7 @@ namespace Fortress
 		m_current_frame(0),
 		m_str_guid{}
 	{
+		initialize();
 	}
 
 	GifWrapper::~GifWrapper()
