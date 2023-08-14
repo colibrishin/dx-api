@@ -27,7 +27,7 @@ namespace Fortress
 	{
 		m_radar_hdc = CreateCompatibleDC(WinAPIHandles::get_main_dc());
 		m_radar_bitmap = CreateCompatibleBitmap(
-			m_radar_hdc, 
+
 			2000, 
 			2000);
 		const auto previousBitmap = static_cast<HBITMAP>(SelectObject(m_radar_hdc, m_radar_bitmap));
