@@ -117,6 +117,7 @@ namespace Fortress::Object
 		HBITMAP m_mask_bitmap;
 		HBITMAP m_buffer_bitmap;
 
+		std::unique_ptr<Graphics> m_gdi_mask_handle;
 	private:
 		void set_tile(const std::weak_ptr<ImageWrapper>& tile_image) const;
 
@@ -593,9 +594,7 @@ namespace Fortress::Object
 		DeleteObject(SelectObject(m_mask_hdc, m_mask_bitmap));
 		DeleteObject(SelectObject(m_buffer_hdc, m_buffer_bitmap));
 
-		const auto mask_bkgd = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-		const auto rect = RECT{0, 0, static_cast<int>(m_hitbox.get_x()), static_cast<int>(m_hitbox.get_y())};
-		FillRect(m_mask_hdc, &rect, mask_bkgd);
+		m_gdi_mask_handle.reset(Graphics::FromHDC(m_mask_hdc));
 
 		for(int i = 0; i < static_cast<int>(m_hitbox.get_y()); ++i)
 		{
