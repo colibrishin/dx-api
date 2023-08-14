@@ -16,6 +16,7 @@ namespace Fortress::Scene
 	public:
 		RoomScene() : scene(L"Room Scene")
 		{
+			initialize();
 		}
 
 		void initialize() override;

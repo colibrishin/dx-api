@@ -37,7 +37,6 @@ namespace Fortress::Scene
 		{
 			std::shared_ptr<T> scene = std::make_shared<T>(arg...);
 			m_scenes[scene->get_name()] = scene;
-			scene->initialize();
 		}	
 
 		static void SetActive(const std::wstring& name);

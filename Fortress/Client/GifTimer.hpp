@@ -18,6 +18,7 @@ namespace Fortress
 			m_on_timer(std::move(func)),
 			m_this(gif_this)
 		{
+			initialize();
 		}
 
 		inline void on_timer() override;

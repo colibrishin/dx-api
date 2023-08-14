@@ -45,7 +45,7 @@ namespace Fortress::Object
 		cloud->copy_to(m_ground_hdc);
 		cloud_mask->copy_to(m_mask_hdc);
 
-		const auto mask_gdi = Bitmap::FromHBITMAP(m_mask_bitmap, nullptr);
+		const auto mask_gdi = get_mask_bitmap_copy();
 		BitmapData bitmap_info{};
 		
 		const UINT width = mask_gdi->GetWidth();
@@ -93,7 +93,7 @@ namespace Fortress::Object
 		});
 
 		mask_gdi->UnlockBits(&bitmap_info);
-		DeleteObject(mask_gdi);
+		DeleteObject(mask_gdi.get());
 
 		force_update_mask();
 

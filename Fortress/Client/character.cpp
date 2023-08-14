@@ -274,7 +274,6 @@ namespace Fortress::ObjectBase
 			m_short_name(short_name),
 			m_armor(armor)
 		{
-			character::initialize();
 		}
 
 

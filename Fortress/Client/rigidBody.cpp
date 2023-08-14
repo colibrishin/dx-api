@@ -26,7 +26,6 @@ namespace Fortress::Abstract
 
 	void rigidBody::initialize()
 	{
-		object::initialize();
 	}
 
 	void rigidBody::update()

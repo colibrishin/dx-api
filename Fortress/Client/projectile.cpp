@@ -112,7 +112,6 @@ namespace Fortress::ObjectBase
 			m_wind_acceleration(),
 			m_shooter(shooter)
 	{
-		projectile::initialize();
 	}
 
 	void projectile::move()

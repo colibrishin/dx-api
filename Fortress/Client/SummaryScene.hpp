@@ -16,6 +16,7 @@ namespace Fortress::Scene
 	public:
 		SummaryScene(std::shared_ptr<Round>& round) : scene(L"Summary Scene")
 		{
+			initialize();
 			m_round = std::move(round);
 		}
 

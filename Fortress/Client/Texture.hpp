@@ -30,7 +30,6 @@ namespace Fortress
 					auto storage_name = name + TEXT("_") + category + TEXT("_") + filename;
 
 					m_images[storage_name] = Resource::ResourceManager::load<T>(storage_name, p);
-					m_images[storage_name].lock()->load();
 					if(typeid(T) == typeid(GifWrapper))
 					{
 						m_images[storage_name].lock()->play();

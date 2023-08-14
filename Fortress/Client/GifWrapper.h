@@ -18,7 +18,7 @@ namespace Fortress
 {
 	class GifTimer;
 
-	class GifWrapper : public ImageWrapper
+	class GifWrapper final : public ImageWrapper
 	{
 	public:
 		GifWrapper(const std::wstring& name, const std::filesystem::path& path);
@@ -49,7 +49,7 @@ namespace Fortress
 		WCHAR m_str_guid[39];
 
 		std::vector<unsigned int> m_frame_delays;
-\
+
 		std::function<void()> m_reserved_function;
 	};
 }

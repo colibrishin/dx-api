@@ -14,6 +14,7 @@ namespace Fortress::Scene
 	public:
 		BulletinBoardScene() : scene(L"Bulletin Board Scene")
 		{
+			initialize();
 		}
 
 		void initialize() override;

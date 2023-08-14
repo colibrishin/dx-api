@@ -2,6 +2,7 @@
 #ifndef GROUND_H
 #define GROUND_H
 
+#include <execution>
 #include <mutex>
 #include <vector>
 #include "rigidBody.hpp"
@@ -71,35 +72,36 @@ namespace Fortress::Object
 
 		void set_hitbox(const Math::Vector2& hitbox) override;
 
-		GroundState safe_is_destroyed(const Math::Vector2& local_position);
+		GroundState safe_is_destroyed(const Math::Vector2& local_position) const;
 		void safe_set_destroyed_global(const Math::Vector2& hit_position, const float radius);
-		bool safe_is_object_stuck_global(const Math::Vector2& position);
-		bool safe_is_object_stuck_local(const Math::Vector2& position);
-		Math::Vector2 safe_nearest_surface(const Math::Vector2& global_position);
+		bool safe_is_object_stuck_global(const Math::Vector2& position) const;
+		bool safe_is_object_stuck_local(const Math::Vector2& position) const;
+		Math::Vector2 safe_nearest_surface(const Math::Vector2& global_position) const;
 		// this starts from given position y
 		Math::Vector2 safe_orthogonal_surface_global(
 			const Math::Vector2& global_position,
 			const int depth = -1,
-			const int start_y = -1);
+			const int start_y = -1) const;
 
 		Math::Vector2 safe_parallel_surface_global(
-			const Math::Vector2& global_position, const Math::Vector2& offset);
+			const Math::Vector2& global_position, const Math::Vector2& offset) const;
 	protected:
 		HDC get_ground_hdc() const;
-
 		HDC get_ground_mask_hdc() const;
+
+		std::unique_ptr<Bitmap> get_mask_bitmap_copy() const;
+
 		void force_update_mask();
 
 		void unsafe_set_destroyed(const int x, const int y);
-		void unsafe_set_destroyed_visual(int x, int y);
+		void unsafe_set_destroyed_visual(const int x, const int y);
 		void safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius);
 		Math::Vector2 safe_orthogonal_surface_local(
 			const Math::Vector2& local_position,
-			const int depth);
+			const int depth) const;
 		void unsafe_set_line_destroyed(const Math::Vector2& line, const int n);
 		void unsafe_set_line_destroyed_reverse(const Math::Vector2& line, int n);
-		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr);
-		void _debug_draw_destroyed_table();
+		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
 
 		COLORREF get_pixel_threadsafe(const int x, const int y);
 
@@ -115,13 +117,14 @@ namespace Fortress::Object
 		HBITMAP m_mask_bitmap;
 		HBITMAP m_buffer_bitmap;
 
+		std::unique_ptr<Graphics> m_gdi_mask_handle;
 	private:
 		void set_tile(const std::weak_ptr<ImageWrapper>& tile_image) const;
 
 		ImagePointer m_tile_image;
 		std::mutex map_write_lock;
-		std::mutex map_read_lock;
-		std::mutex hdc_lock;
+		std::mutex mask_write_lock;
+		std::mutex mask_read_lock;
 	};
 
 	inline void Ground::on_collision(
@@ -218,6 +221,35 @@ namespace Fortress::Object
 			0,
 			0,
 			SRCAND);
+
+		if(Debug::get_debug_flag())
+		{
+			StretchBlt(
+				WinAPIHandles::get_buffer_dc(),
+				100,
+				10,
+				300,
+				100,
+				m_mask_hdc,
+				0,
+				0,
+				m_hitbox.get_x(),
+				m_hitbox.get_y(),
+				SRCCOPY);
+
+			StretchBlt(
+				WinAPIHandles::get_buffer_dc(),
+				100,
+				120,
+				300,
+				100,
+				m_ground_hdc,
+				0,
+				0,
+				m_hitbox.get_x(),
+				m_hitbox.get_y(),
+				SRCCOPY);
+		}
 	}
 
 	inline void Ground::set_hitbox(const Math::Vector2& hitbox)
@@ -243,7 +275,7 @@ namespace Fortress::Object
 		}
 	}
 
-	inline GroundState Ground::safe_is_destroyed(const Math::Vector2& local_position)
+	inline GroundState Ground::safe_is_destroyed(const Math::Vector2& local_position) const
 	{
 		if(static_cast<int>(local_position.get_x()) >= 0 && 
 			static_cast<int>(local_position.get_x()) < m_hitbox.get_x() && 
@@ -252,7 +284,6 @@ namespace Fortress::Object
 		{
 			int i = static_cast<int>(local_position.get_y());
 			int j = static_cast<int>(local_position.get_x());
-			std::lock_guard _(map_read_lock);
 			return m_destroyed_table.at({i ,j});
 		}
 
@@ -267,10 +298,8 @@ namespace Fortress::Object
 
 	inline void Ground::unsafe_set_destroyed_visual(const int x, const int y)
 	{
-		{
-			std::lock_guard _hdc(hdc_lock);
-			SetPixel(m_mask_hdc, x, y, RGB(0,0,0));
-		}
+		std::lock_guard _(mask_write_lock);
+		SetPixel(m_mask_hdc, x, y, RGB(0, 0, 0));
 	}
 
 	inline void Ground::safe_set_circle_destroyed(const Math::Vector2& center_position, const int radius)
@@ -339,7 +368,7 @@ namespace Fortress::Object
 
 	inline bool Ground::safe_is_projectile_hit(
 		const Math::Vector2& hit_position,
-		const std::weak_ptr<ObjectBase::projectile>& projectile_ptr)
+		const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const
 	{
 		if(const auto projectile = projectile_ptr.lock())
 		{
@@ -361,13 +390,13 @@ namespace Fortress::Object
 		return false;
 	}
 
-	inline bool Ground::safe_is_object_stuck_global(const Math::Vector2& global_position)
+	inline bool Ground::safe_is_object_stuck_global(const Math::Vector2& global_position) const
 	{
 		const auto local_position = to_top_left_local_position(global_position);
 		return safe_is_object_stuck_local(local_position);
 	}
 
-	inline bool Ground::safe_is_object_stuck_local(const Math::Vector2& local_position)
+	inline bool Ground::safe_is_object_stuck_local(const Math::Vector2& local_position) const
 	{
 		// @todo: proper oob definition
 		Math::Vector2 offsets[4] =
@@ -389,7 +418,7 @@ namespace Fortress::Object
 		return count == std::size(offsets);
 	}
 
-	inline Math::Vector2 Ground::safe_nearest_surface(const Math::Vector2& global_position)
+	inline Math::Vector2 Ground::safe_nearest_surface(const Math::Vector2& global_position) const
 	{
 		const auto o_local_position = to_top_left_local_position(global_position);
 		auto local_position = to_top_left_local_position(global_position);
@@ -413,7 +442,7 @@ namespace Fortress::Object
 		return {0, -local_position.get_y()};
 	}
 
-	inline Math::Vector2 Ground::safe_orthogonal_surface_global(const Math::Vector2& global_position, const int depth, const int start_y)
+	inline Math::Vector2 Ground::safe_orthogonal_surface_global(const Math::Vector2& global_position, const int depth, const int start_y) const
 	{
 		auto local_position = to_top_left_local_position(global_position);
 
@@ -431,7 +460,7 @@ namespace Fortress::Object
 
 	inline Math::Vector2 Ground::safe_parallel_surface_global(
 		const Math::Vector2& global_position,
-		const Math::Vector2& offset)
+		const Math::Vector2& offset) const
 	{
 		const auto local_position = to_top_left_local_position(global_position);
 		const int i_offset = offset == Math::left ? -1 : 1;
@@ -451,7 +480,7 @@ namespace Fortress::Object
 		return Math::vector_inf;
 	}
 
-	inline Math::Vector2 Ground::safe_orthogonal_surface_local(const Math::Vector2& local_position, const int depth)
+	inline Math::Vector2 Ground::safe_orthogonal_surface_local(const Math::Vector2& local_position, const int depth) const
 	{
 		const int start_y = local_position.get_y();
 		int end_y = start_y + depth;
@@ -484,25 +513,74 @@ namespace Fortress::Object
 		return m_mask_hdc;
 	}
 
+	inline std::unique_ptr<Bitmap> Ground::get_mask_bitmap_copy() const
+	{
+		return std::unique_ptr<Bitmap>(Bitmap::FromHBITMAP(m_mask_bitmap, nullptr));
+	}
+
 	inline void Ground::force_update_mask()
 	{
-		for(int i = 0; i < static_cast<int>(m_hitbox.get_y()); ++i)
-		{
-			for(int j = 0; j < static_cast<int>(m_hitbox.get_x()); ++j)
-			{
-				std::lock_guard _(map_read_lock);
-				std::lock_guard _g(hdc_lock);
+		const auto mask_bitmap = get_mask_bitmap_copy();
+		BitmapData bitmap_info{};
+		
+		const UINT width = mask_bitmap->GetWidth();
+		const UINT height = mask_bitmap->GetHeight();
 
-				if(m_destroyed_table.at({i, j}) == GroundState::NotDestroyed)
+		const Rect mask_size = Rect
+		{
+			0,
+			0,
+			static_cast<int>(width),
+			static_cast<int>(height)
+		};
+
+		// assuming we are using hdc only.
+		mask_bitmap->LockBits(
+			&mask_size,
+			ImageLockModeWrite,
+			PixelFormat32bppARGB,
+			&bitmap_info);
+
+		// used type unsigned int (4 bytes, 1b-A 1b-R 1b-G 1b-B)
+		auto* const direct_access_ptr = static_cast<unsigned int*>(bitmap_info.Scan0);
+		const UINT stride = std::abs(bitmap_info.Stride);
+
+		// probably due to non 4-byte reads happened.
+		assert(stride / 4 == width);
+		const UINT array_size = width * height;
+		// A 1111 1111 R 0000 0000 G 0000 0000 B 0000 0000
+		constexpr unsigned int alpha_black = 0xff000000;
+
+		// A 1111 1111 R 1111 1111 G 1111 1111 B 1111 1111
+		constexpr unsigned int alpha_white = 0xffffffff;
+
+		std::for_each(
+			std::execution::par,
+			direct_access_ptr,
+			direct_access_ptr + array_size,
+			[&](unsigned int& pixel)
+			{
+				const size_t index = std::distance(direct_access_ptr, &pixel);
+				const size_t y = index / width;
+				const size_t x = index % width;
+
+				if(m_destroyed_table.at({y, x}) == GroundState::Destroyed)
 				{
-					SetPixel(m_mask_hdc, j, i, RGB(255, 255, 255));
+					pixel = alpha_black;
 				}
 				else
 				{
-					SetPixel(m_mask_hdc, j, i, RGB(0, 0, 0));
+					pixel = alpha_white;
 				}
-			}
-		}
+		});
+
+		mask_bitmap->UnlockBits(&bitmap_info);
+
+		HBITMAP updated;
+		mask_bitmap->GetHBITMAP(Color(255, 0, 0, 0), &updated);
+
+		m_mask_bitmap = updated;
+		DeleteObject(SelectObject(m_mask_hdc, updated));
 	}
 
 	inline void Ground::safe_set_destroyed_global(
@@ -513,33 +591,9 @@ namespace Fortress::Object
 		safe_set_circle_destroyed(local_position, radius);
 	}
 
-	inline void Ground::_debug_draw_destroyed_table()
-	{
-		Graphics m_ground_gdi(m_ground_hdc);
-		const SolidBrush not_destroyed_brush(Color(0,255,0));
-		const SolidBrush destroyed_brush(Color(255,0,0));
-
-		for(int i = 0; i < m_hitbox.get_y(); ++i)
-		{
-			for(int j = 0; j < m_hitbox.get_x(); ++j)
-			{
-				Rect pixel = {
-					j,
-					i,
-					1,
-					1};
-
-				std::lock_guard _(map_read_lock);
-				m_ground_gdi.FillRectangle(
-					&(m_destroyed_table.at({i, j}) == GroundState::NotDestroyed ? not_destroyed_brush : destroyed_brush),
-					pixel);
-			}
-		}
-	}
-
 	inline COLORREF Ground::get_pixel_threadsafe(const int x, const int y)
 	{
-		std::lock_guard _(hdc_lock);
+		std::lock_guard _(mask_read_lock);
 		return GetPixel(m_ground_hdc, x ,y);
 	}
 
@@ -577,13 +631,11 @@ namespace Fortress::Object
 		m_buffer_bitmap = CreateCompatibleBitmap(
 			WinAPIHandles::get_main_dc(), m_hitbox.get_x(), m_hitbox.get_y());
 
-		SelectObject(m_ground_hdc, m_ground_bitmap);
-		SelectObject(m_mask_hdc, m_mask_bitmap);
-		SelectObject(m_buffer_hdc, m_buffer_bitmap);
+		DeleteObject(SelectObject(m_ground_hdc, m_ground_bitmap));
+		DeleteObject(SelectObject(m_mask_hdc, m_mask_bitmap));
+		DeleteObject(SelectObject(m_buffer_hdc, m_buffer_bitmap));
 
-		const auto mask_bkgd = static_cast<HBRUSH>(GetStockObject(WHITE_BRUSH));
-		const auto rect = RECT{0, 0, static_cast<int>(m_hitbox.get_x()), static_cast<int>(m_hitbox.get_y())};
-		FillRect(m_mask_hdc, &rect, mask_bkgd);
+		m_gdi_mask_handle.reset(Graphics::FromHDC(m_mask_hdc));
 
 		for(int i = 0; i < static_cast<int>(m_hitbox.get_y()); ++i)
 		{
@@ -594,7 +646,7 @@ namespace Fortress::Object
 			}
 		}
 
-		DeleteObject(mask_bkgd);
+		force_update_mask();
 	}
 }
 

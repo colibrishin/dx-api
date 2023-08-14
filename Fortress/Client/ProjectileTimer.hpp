@@ -21,6 +21,7 @@ namespace Fortress
 		m_func(std::move(func)),
 		m_char_this(char_this)
 		{
+			initialize();
 		}
 
 		inline void on_timer() override;
