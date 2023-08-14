@@ -646,7 +646,7 @@ namespace Fortress::Object
 			}
 		}
 
-		DeleteObject(mask_bkgd);
+		force_update_mask();
 	}
 }
 
