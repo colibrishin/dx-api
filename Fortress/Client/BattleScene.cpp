@@ -300,4 +300,34 @@ namespace Fortress::Scene
 		}
 
 	}
+
+	Math::Vector2 BattleScene::evaluate_map_size() const
+	{
+		int top_left_x = INT_MAX;
+		int top_left_y = INT_MAX;
+
+		int bottom_right_x = INT_MIN;
+		int bottom_right_y = INT_MIN;
+
+		for(const auto& ptr : m_grounds)
+		{
+			if(const auto ground = ptr.lock())
+			{
+				top_left_x = std::min(top_left_x, static_cast<int>(ground->get_top_left().get_x()));
+				top_left_y = std::min(top_left_y, static_cast<int>(ground->get_top_left().get_y()));
+
+				bottom_right_x = std::max(
+					bottom_right_x, 
+					static_cast<int>(ground->get_bottom_right().get_x()));
+
+				bottom_right_y = std::max(
+					bottom_right_y, 
+					static_cast<int>(ground->get_bottom_right().get_y()));
+			}
+		}
+
+		const auto evaluated_size = Math::Vector2{bottom_right_x - top_left_x, bottom_right_y - top_left_y};
+
+		return evaluated_size;
+	}
 }
