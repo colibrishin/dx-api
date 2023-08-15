@@ -154,7 +154,7 @@
     <ClInclude Include="projectile.hpp" />
     <ClInclude Include="ProjectileController.hpp" />
     <ClInclude Include="ProjectileTimer.hpp" />
-    <ClInclude Include="Radar.hpp" />
+    <ClInclude Include="Radar.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="resource.hpp" />
     <ClInclude Include="rigidBody.hpp" />
@@ -210,6 +210,7 @@
     <ClCompile Include="PrecisionCannonProjectile.hpp" />
     <ClCompile Include="projectile.cpp" />
     <ClCompile Include="ProjectileController.cpp" />
+    <ClCompile Include="Radar.cpp" />
     <ClCompile Include="resourceManager.hpp" />
     <ClCompile Include="rigidBody.cpp" />
     <ClCompile Include="RoomScene.cpp" />
