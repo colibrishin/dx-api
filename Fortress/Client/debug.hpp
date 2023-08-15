@@ -2,6 +2,7 @@
 #ifndef DEBUG_HPP
 #define DEBUG_HPP
 #include "common.h"
+#include "input.hpp"
 #include "winapihandles.hpp"
 
 namespace Fortress
@@ -31,10 +32,15 @@ namespace Fortress
 		static void draw_line(const Math::Vector2 left, const Math::Vector2 right);
 		static void draw_dot(const Math::Vector2 point);
 		static void draw_circle(Math::Vector2 point, float radius);
-		static void draw_rect(Math::Vector2 point, Math::Vector2 size);
+		static void draw_rect(const Math::Vector2 point, const Math::Vector2 size, const COLORREF color);
 
 		static void render()
 		{
+			if(Input::getKeyDown(eKeyCode::F12))
+			{
+				m_bDebug = !m_bDebug;
+			}
+
 			if(!m_bDebug)
 			{
 				return;
@@ -104,12 +110,15 @@ namespace Fortress
 		});
 	}
 
-	inline void Debug::draw_rect(const Math::Vector2 point, const Math::Vector2 size)
+	inline void Debug::draw_rect(const Math::Vector2 point, const Math::Vector2 size, const COLORREF color)
 	{
-		push([point, size]()
+		push([point, size, color]()
 		{
 			const HBRUSH transparent = static_cast<HBRUSH>(GetStockObject(NULL_BRUSH));
 			const HBRUSH previous = static_cast<HBRUSH>(SelectObject(m_hdc, transparent));
+			const HPEN outline = static_cast<HPEN>(CreatePen(PS_SOLID, 1, color));
+			const HPEN previousPen = static_cast<HPEN>(SelectObject(m_hdc, outline));
+
 			Rectangle(
 				m_hdc, 
 				point.get_x(),
@@ -118,7 +127,9 @@ namespace Fortress
 				point.get_y() + size.get_y());
 
 			SelectObject(m_hdc, previous);
+			SelectObject(m_hdc, previousPen);
 			DeleteObject(transparent);
+			DeleteObject(outline);
 		});
 	}
 }

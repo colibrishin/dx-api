@@ -188,8 +188,6 @@ namespace Fortress::Object
 					m_hitbox.get_x(),
 					m_hitbox.get_y(),
 					RGB(0,0,0));
-
-				Debug::draw_dot(pos);
 			}
 		}
 	}

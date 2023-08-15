@@ -26,6 +26,7 @@ namespace Fortress::Abstract
 
 		void initialize() override;
 		void update() override;
+		void render() override;
 		virtual void prerender();
 		static void block_window_frame(const std::weak_ptr<rigidBody>& target);
 

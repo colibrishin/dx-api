@@ -191,9 +191,6 @@ namespace Fortress::ObjectBase
 			render_hp_bar(pos);
 			
 			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(get_movement_pitch_radian()));
-			
-			Debug::draw_rect(pos, m_hitbox);
-			Debug::draw_dot(camera_ptr->get_offset(m_hitbox));
 
 			// c
 			Debug::draw_line(pos, camera_ptr->get_offset());
