@@ -98,14 +98,6 @@ namespace Fortress::Scene
 
 			[this]()
 			{
-				wchar_t notice[100] = {};
-				swprintf_s(notice, 100, L"Use WASD to move...");
-				const size_t strlen = wcsnlen_s(notice, 100);
-				TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
-			}();
-
-			[this]()
-			{
 				const std::wstring time_remaining = std::to_wstring(
 					static_cast<int>(max_time - m_round->get_current_time()));
 
