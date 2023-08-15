@@ -27,7 +27,9 @@ namespace Fortress::Object
 			10,
 			1,
 			1,
-			0.7f)
+			0.7f),
+			m_bLocked(false),
+			m_bSoundPlayed(false)
 		{
 			GuidedMissileProjectile::initialize();
 		}
@@ -42,9 +44,12 @@ namespace Fortress::Object
 		void initialize() override;
 		virtual void play_hit_sound() override;
 		virtual void play_fire_sound() override;
+		void play_homming_sound();
 
 	private:
 		std::weak_ptr<ObjectBase::character> m_locked_target;
+		bool m_bLocked;
+		bool m_bSoundPlayed;
 
 		void destroyed() override;
 	};
@@ -73,6 +78,13 @@ namespace Fortress::Object
 								get_bottom_right() - nearest->get_bottom_right();
 						m_velocity = -diff.normalized();
 						m_locked_target = nearest;
+						m_bLocked = true;
+
+						if(!m_bSoundPlayed)
+						{
+							play_homming_sound();
+							m_bSoundPlayed = true;
+						}
 					}
 				}
 			}
@@ -94,6 +106,11 @@ namespace Fortress::Object
 	inline void GuidedMissileProjectile::play_fire_sound()
 	{
 		m_sound_pack.get_sound(L"sub-fire").lock()->play(false);
+	}
+
+	inline void GuidedMissileProjectile::play_homming_sound()
+	{
+		m_sound_pack.get_sound(L"sub-homming").lock()->play(false);
 	}
 
 	inline void GuidedMissileProjectile::destroyed()
