@@ -226,10 +226,12 @@ namespace Fortress::Scene
 
 	bool BattleScene::movable(const Math::Vector2& position)
 	{
-		if(position.get_x() >= -m_map_size.get_x() &&
-			position.get_x() <= m_map_size.get_x() &&
-			position.get_y() <= m_map_size.get_y() &&
-			position.get_y() >= -m_map_size.get_y())
+		constexpr float epsilon = 500.0f;
+
+		if(position.get_x() >= -m_map_size.get_x() - epsilon &&
+			position.get_x() <= m_map_size.get_x() + epsilon &&
+			position.get_y() <= m_map_size.get_y() + epsilon &&
+			position.get_y() >= -m_map_size.get_y() - epsilon)
 		{
 			return true;
 		}
