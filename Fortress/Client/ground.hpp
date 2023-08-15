@@ -398,7 +398,6 @@ namespace Fortress::Object
 
 	inline bool Ground::safe_is_object_stuck_local(const Math::Vector2& local_position) const
 	{
-		// @todo: proper oob definition
 		Math::Vector2 offsets[4] =
 		{
 			{-1.0f, 0.0f},
@@ -412,7 +411,7 @@ namespace Fortress::Object
 		for (const auto& offset : offsets) 
 		{
 			const auto results = safe_is_destroyed(local_position + offset);
-			count += results == GroundState::NotDestroyed;
+			count += (results == GroundState::NotDestroyed && results != GroundState::OutOfBound);
 		}
 
 		return count == std::size(offsets);
