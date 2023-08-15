@@ -24,7 +24,8 @@ namespace Fortress::Math
 	/**
 	 * \brief Gravitational acceleration constant
 	 */
-	constexpr float G_ACC = 9.80f;
+	constexpr float G_ACC_DEFAULT = 9.80f;
+	constexpr float G_ACC = G_ACC_DEFAULT * 1.5f;
 
 	const Vector2 identity = {1.0f, 1.0f};
 	const Vector2 left = {-1.0f, 0.0f};

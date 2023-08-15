@@ -167,29 +167,31 @@ namespace Fortress::ObjectBase
 
 	Math::Vector2 projectile::projectile_speed_getter(const std::wstring& short_name, const std::wstring& type)
 	{
+		const Math::Vector2 default_projectile_speed = Math::Vector2{2000.0f, 1.0f};
+
 		if(short_name == L"cannon" && type == L"main")
 		{
-			return {100.0f, 1.0f};
+			return default_projectile_speed * 3;
 		}
 		if(short_name == L"cannon" && type == L"sub")
 		{
-			return {300.0f, 1.0f};
+			return default_projectile_speed * 5;
 		}
 		if(short_name == L"missile" && type == L"main")
 		{
-			return {200.0f, 1.0f};
+			return default_projectile_speed * 2;
 		}
 		if(short_name == L"missile" && type == L"sub")
 		{
-			return {200.0f, 1.0f};
+			return default_projectile_speed * 2;
 		}
 		if(short_name == L"secwind" && type == L"main")
 		{
-			return {200.0f, 1.0f};
+			return default_projectile_speed * 1.5;
 		}
 		if(short_name == L"secwind" && type == L"sub")
 		{
-			return {500.0f, 1.0f};
+			return default_projectile_speed * 5;
 		}
 
 		return {};
@@ -212,7 +214,9 @@ namespace Fortress::ObjectBase
 		if(const auto battle_scene = 
 			std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock()))
 		{
-			m_wind_acceleration = {battle_scene->get_round_status().lock()->get_wind_acceleration() * 2, 0.0f};
+			m_wind_acceleration = {
+				battle_scene->get_round_status().lock()->get_wind_acceleration() * 5,
+				0.0f};
 		}
 
 		m_velocity = velocity;
