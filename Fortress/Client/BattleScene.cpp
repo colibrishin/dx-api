@@ -8,6 +8,8 @@
 #include "winapihandles.hpp"
 
 #include <windows.h>
+
+#include "application.h"
 #include "objectManager.hpp"
 #include "SummaryScene.hpp"
 #include "Radar.h"
@@ -101,12 +103,18 @@ namespace Fortress::Scene
 				const std::wstring time_remaining = std::to_wstring(
 					static_cast<int>(max_time - m_round->get_current_time()));
 
-				TextOut(
-					WinAPIHandles::get_buffer_dc(), 
-					750, 
-					525, 
+				const SolidBrush yellow(Color(255, 255, 255, 0));
+
+				WinAPIHandles::get_buffer_gdi_handle().lock()->DrawString(
 					time_remaining.c_str(),
-					time_remaining.length());
+					time_remaining.length(),
+					Application::get_font().lock().get(),
+					PointF
+					{
+						720.f,
+						495.f
+					},
+					&yellow);
 			}();
 
 			// Charged power
@@ -170,7 +178,7 @@ namespace Fortress::Scene
 			const auto wind = map->get_round_status().lock()->get_wind_acceleration();
 			constexpr float max_wind = 50.0f;
 
-			// MP bar
+			// wind bar
 			[this, hud_position, wind]()
 			{
 				const int x = 90;
@@ -259,7 +267,7 @@ namespace Fortress::Scene
 
 		const int x_interval = ground_x_max / static_cast<int>(m_characters.size());
 		int pivot = ground_x_min;
-		int x_current = pivot + 100;
+		int x_current = pivot + 150;
 
 		// @todo: random spawnpoints
 		for(const auto& ch_ptr : m_characters)
