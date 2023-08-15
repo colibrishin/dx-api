@@ -279,6 +279,12 @@ namespace Fortress::Controller
 		m_texture.get_image(name, orientation).lock()->set_offset(offset);
 	}
 
+	void CharacterController::set_sprite_rotation_offset(const std::wstring& name, const std::wstring& orientation,
+		const Math::Vector2& offset)
+	{
+		m_texture.get_image(name, orientation).lock()->set_rotation_offset(offset);
+	}
+
 	const std::wstring& CharacterController::get_current_sprite_name() const
 	{
 		return m_current_sprite.lock()->get_name();

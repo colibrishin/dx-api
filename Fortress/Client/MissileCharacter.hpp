@@ -44,12 +44,13 @@ namespace Fortress::Object
 		void initialize() override
 		{
 			set_sprite_offset(L"fire", L"right", {0, 10.0f});
-			set_sprite_offset(L"fire", L"left", {0, 10.0f});
+			set_sprite_offset(L"fire", L"left", {45.0f, 10.0f});
 			set_sprite_offset(L"charging", L"right", {0, 10.0f});
-			set_sprite_offset(L"charging", L"left", {0, 10.0f});
+			set_sprite_offset(L"charging", L"left", {45.0f, 10.0f});
 			set_sprite_offset(L"idle", L"left", {15.0f, 0.0f});
-			// @todo: if renderer replaces the negative hitbox as abs, this might be not needed.
-			set_sprite_offset(L"projectile", L"left", {40.0f, 0.0f});
+
+			set_sprite_offset(L"projectile", L"left", {50.5f, 0.0f});
+			set_sprite_rotation_offset(L"projectile", L"left", {-50.5f, 0.0f});
 
 			character::initialize();
 		}
