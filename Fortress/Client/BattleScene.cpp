@@ -10,18 +10,17 @@
 #include <windows.h>
 #include "objectManager.hpp"
 #include "SummaryScene.hpp"
-#include "Radar.hpp"
+#include "Radar.h"
 
 #undef min
 #undef max
 
 namespace Fortress::Scene
 {
-	BattleScene::BattleScene(const std::wstring& name, const Math::Vector2& map_size):
+	BattleScene::BattleScene(const std::wstring& name):
 		scene(L"Battle Scene " + name),
-		m_map_size(map_size),
-		m_round(std::make_shared<Round>()),
-		m_radar(map_size)
+		m_map_size({}),
+		m_round(std::make_shared<Round>()) // lazy-initialization
 	{
 	}
 
@@ -41,6 +40,9 @@ namespace Fortress::Scene
 		set_client_character();
 		spawnpoints();
 
+		m_map_size = evaluate_map_size();
+		m_radar = std::make_unique<Radar>(m_map_size);
+
 		for (const auto& ch : m_characters)
 		{
 			add_game_object(Abstract::LayerType::Character, ch);
@@ -55,14 +57,14 @@ namespace Fortress::Scene
 
 		get_camera().lock()->set_object(m_self);
 		m_round->initialize(m_characters);
-		m_radar.initialize();
+		m_radar->initialize();
 	}
 
 	void BattleScene::update()
 	{
 		scene::update();
 		m_round->update();
-		m_radar.update();
+		m_radar->update();
 	}
 
 	void BattleScene::render()
@@ -194,7 +196,7 @@ namespace Fortress::Scene
 			}();
 		}
 
-		m_radar.render();
+		m_radar->render();
 	}
 
 	void BattleScene::deactivate()
@@ -219,6 +221,16 @@ namespace Fortress::Scene
 		return m_map_size;
 	}
 
+	std::vector<CharacterPointer> BattleScene::get_characters() const
+	{
+		return m_characters;
+	}
+
+	std::vector<GroundPointer> BattleScene::get_grounds() const
+	{
+		return m_grounds;
+	}
+
 	bool BattleScene::predicate_OOB(const Math::Vector2& position)
 	{
 		return !movable(position);
@@ -226,10 +238,12 @@ namespace Fortress::Scene
 
 	bool BattleScene::movable(const Math::Vector2& position)
 	{
-		if(position.get_x() >= -m_map_size.get_x() &&
-			position.get_x() <= m_map_size.get_x() &&
-			position.get_y() <= m_map_size.get_y() &&
-			position.get_y() >= -m_map_size.get_y())
+		constexpr float epsilon = 500.0f;
+
+		if(position.get_x() >= -m_map_size.get_x() - epsilon &&
+			position.get_x() <= m_map_size.get_x() + epsilon &&
+			position.get_y() <= m_map_size.get_y() + epsilon &&
+			position.get_y() >= -m_map_size.get_y() - epsilon)
 		{
 			return true;
 		}
@@ -260,7 +274,7 @@ namespace Fortress::Scene
 		{
 			if(const auto character = ch_ptr.lock())
 			{
-				character->m_position = {x_current, 0};
+				character->m_position = {x_current, -1000};
 
 				for(const auto& gr_ptr : m_grounds)
 				{
@@ -285,5 +299,35 @@ namespace Fortress::Scene
 			x_current = pivot - x_interval;
 		}
 
+	}
+
+	Math::Vector2 BattleScene::evaluate_map_size() const
+	{
+		int top_left_x = INT_MAX;
+		int top_left_y = INT_MAX;
+
+		int bottom_right_x = INT_MIN;
+		int bottom_right_y = INT_MIN;
+
+		for(const auto& ptr : m_grounds)
+		{
+			if(const auto ground = ptr.lock())
+			{
+				top_left_x = std::min(top_left_x, static_cast<int>(ground->get_top_left().get_x()));
+				top_left_y = std::min(top_left_y, static_cast<int>(ground->get_top_left().get_y()));
+
+				bottom_right_x = std::max(
+					bottom_right_x, 
+					static_cast<int>(ground->get_bottom_right().get_x()));
+
+				bottom_right_y = std::max(
+					bottom_right_y, 
+					static_cast<int>(ground->get_bottom_right().get_y()));
+			}
+		}
+
+		const auto evaluated_size = Math::Vector2{bottom_right_x - top_left_x, bottom_right_y - top_left_y};
+
+		return evaluated_size;
 	}
 }

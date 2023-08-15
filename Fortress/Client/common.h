@@ -51,6 +51,7 @@ namespace Fortress
 	using SpeedVector = Math::Vector2;
 	using AccelVector = Math::Vector2;
 
+	using CharacterPointer = std::weak_ptr<ObjectBase::character>;
 	using GroundPointer = std::weak_ptr<Object::Ground>;
 	using ProjectilePointer = std::weak_ptr<ObjectBase::projectile>;
 	using RigidBodyPointer = std::weak_ptr<Abstract::rigidBody>;

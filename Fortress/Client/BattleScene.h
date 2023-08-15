@@ -8,14 +8,14 @@
 #include "Round.h"
 #include "sound.hpp"
 #include "scene.hpp"
-#include "Radar.hpp"
+#include "Radar.h"
 
 namespace Fortress::Scene
 {
 	class BattleScene : public Abstract::scene
 	{
 	public:
-		BattleScene(const std::wstring& name, const Math::Vector2& map_size);
+		BattleScene(const std::wstring& name);
 
 		virtual void initialize() override;
 		virtual void pre_initialize() = 0;
@@ -23,8 +23,11 @@ namespace Fortress::Scene
 		void render() override;
 		void deactivate() override;
 		void activate() override;
+
 		std::weak_ptr<Round> get_round_status();
 		const Math::Vector2& get_map_size() const;
+		std::vector<CharacterPointer> get_characters() const;
+		std::vector<GroundPointer> get_grounds() const;
 
 		virtual void set_bgm() = 0;
 		virtual void set_background_img() = 0;
@@ -35,6 +38,7 @@ namespace Fortress::Scene
 		virtual bool movable(const Math::Vector2& position);
 
 		void spawnpoints() const;
+		Math::Vector2 evaluate_map_size() const;
 
 	protected:
 		Math::Vector2 m_map_size;
@@ -45,7 +49,7 @@ namespace Fortress::Scene
 		std::weak_ptr<ImageWrapper> m_hud;
 		std::weak_ptr<ImageWrapper> m_background;
 		std::shared_ptr<Round> m_round;
-		Radar m_radar;
+		std::unique_ptr<Radar> m_radar;
 	};
 }
 

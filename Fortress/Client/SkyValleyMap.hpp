@@ -11,7 +11,7 @@ namespace Fortress::Map
 	class SkyValleyMap : public Scene::BattleScene
 	{
 	public:
-		SkyValleyMap() : BattleScene(L"SkyValley", {2000.0f, 800.0f})
+		SkyValleyMap() : BattleScene(L"SkyValley")
 		{
 			BattleScene::initialize();
 		}
@@ -21,8 +21,6 @@ namespace Fortress::Map
 		void set_grounds() override;
 		void set_characters() override;
 		void set_client_character() override;
-		bool predicate_OOB(const Math::Vector2& position) override;
-		bool movable(const Math::Vector2& position) override;
 	};
 
 	inline void SkyValleyMap::pre_initialize()
@@ -60,29 +58,11 @@ namespace Fortress::Map
 		m_self = m_characters.front();
 	}
 
-	inline bool SkyValleyMap::predicate_OOB(const Math::Vector2& position)
-	{
-		return !movable(position);
-	}
-
-	inline bool SkyValleyMap::movable(const Math::Vector2& position)
-	{
-		if(position.get_x() <= m_map_size.get_x() / 2 &&
-			position.get_x() >= -m_map_size.get_x() / 2 &&
-			position.get_y() <= m_map_size.get_y() &&
-			position.get_y() >= 0.0f)
-		{
-			return true;
-		}
-
-		return false;
-	}
-
 	inline void SkyValleyMap::set_grounds()
 	{
 		m_grounds.push_back(
 			ObjectBase::ObjectManager::create_object<Object::CloudGround>(
-				L"cloudy", Math::Vector2{0.0f, 300.f}));
+				L"cloudy", Math::Vector2{0.0f, 0.f}));
 	}
 }
 #endif // SKYVALLEYMAP_HPP

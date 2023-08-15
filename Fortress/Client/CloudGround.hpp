@@ -74,7 +74,7 @@ namespace Fortress::Object
 		assert(stride / 4 == width);
 		const UINT array_size = width * height;
 		// A 1111 1111 R 0000 0000 G 0000 0000 B 0000 0000
-		constexpr unsigned int alpha_black = UINT_MAX << 24;
+		constexpr unsigned int alpha_black = 0xff000000;
 
 		std::for_each(
 			std::execution::par,
