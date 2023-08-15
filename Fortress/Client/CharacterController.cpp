@@ -191,6 +191,11 @@ namespace Fortress::Controller
 		return m_hp;
 	}
 
+	int CharacterController::get_previous_hit_count() const
+	{
+		return m_previousHitCount;
+	}
+
 	const std::vector<std::weak_ptr<ObjectBase::projectile>>& CharacterController::get_projectiles() const
 	{
 		return m_active_projectiles;
@@ -233,6 +238,7 @@ namespace Fortress::Controller
 		m_mp(mp),
 		m_power(1.0f),
 		m_bMovable(false),
+		m_previousHitCount(),
 		m_rb(rb),
 		m_projectile_type(eProjectileType::Main),
 		m_tmp_projectile_type(eProjectileType::Main),
@@ -517,6 +523,8 @@ namespace Fortress::Controller
 	{
 		default_state();
 
+		m_previousHitCount = 0;
+
 		const auto scene = Scene::SceneManager::get_active_scene().lock();
 		const auto projectiles = get_projectiles();
 
@@ -625,6 +633,7 @@ namespace Fortress::Controller
 	void CharacterController::apply_damage(float damage)
 	{
 		m_hp -= damage;
+		m_previousHitCount++;
 		set_state(eCharacterState::Hit);
 	}
 

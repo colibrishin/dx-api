@@ -141,7 +141,7 @@ namespace Fortress::Abstract
 		const std::wstring& name, 
 		const Math::Vector2& position, 
 		const Math::Vector2& hitbox,
-		const float mass): entity(name), m_hitbox(hitbox), m_position(position), m_mass(mass)
+		const float mass): entity(name), m_hitbox(hitbox), m_position(position), m_mass(mass), m_bActive(false)
 	{
 	}
 

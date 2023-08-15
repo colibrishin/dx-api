@@ -39,6 +39,9 @@ namespace Fortress::ObjectBase
 
 	float character::get_damage_pen_dist(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point) const
 	{
+		// most hit takes from boundary, this value is for compensation the error by hits from boundary.
+		const float proximate_close_hit_epsilon = p.lock()->m_hitbox.magnitude() / 3;
+
 		// base damage
 		const float damage = p.lock()->get_damage();
 		// armor penetration rate
@@ -50,7 +53,7 @@ namespace Fortress::ObjectBase
 		const Math::Vector2 near_point = get_nearest_point(hit_point);
 		const float distance = (hit_point - near_point).magnitude();
 		// explosion radius
-		const float radius = static_cast<float>(p.lock()->get_radius());
+		const float radius = p.lock()->get_radius();
 
 		// pen vs armor. armor gets bigger, value gets smaller.
 		const float pen_armor_rate = penetration_rate / armor;
@@ -64,13 +67,21 @@ namespace Fortress::ObjectBase
 		const float normalized_rate = std::min(1.0f, std::fabs(pen_armor_rate));
 		const float pen_damage = damage * normalized_rate;
 
+		// see proximate_close_hit_epsilon.
+		const float close_hit_compensation = std::fabs(distance - proximate_close_hit_epsilon);
 		// if hit point is further than radius, damage gets smaller.
-		const float dist_ratio = std::fabs(distance / radius);
-		const float far_dist_ratio = std::min(1.0f, dist_ratio);
+		const float dist_ratio = logf(close_hit_compensation) / logf(radius);
+		// dist_ratio can be negative value, if it is too close (log scale).
+		const float dist_ratio_flooring = std::max(dist_ratio, 0.0f);
+		const float far_dist_ratio = std::min(1.0f, dist_ratio_flooring);
 
 		const float dist_pen_damage = pen_damage * (1.0f - far_dist_ratio);
 
-		return dist_pen_damage;
+		const int previous_hit_count = get_previous_hit_count();
+		const float consecutive_hit_bonus = dist_pen_damage * (static_cast<float>(previous_hit_count) * 0.25f);
+		const float total_damage = dist_pen_damage + consecutive_hit_bonus;
+
+		return total_damage;
 	}
 
 	void character::hit(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point)
