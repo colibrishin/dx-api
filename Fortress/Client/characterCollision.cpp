@@ -313,6 +313,14 @@ namespace Fortress::ObjectBase
 			// This ground is orthogonal surface. it will be treated as "main" ground.
 			if(orthogonal_surface != Math::vector_inf)
 			{
+				if (get_state() == eCharacterState::TurnEnd)
+				{
+					if (ground->safe_is_object_stuck_global(get_bottom()))
+					{
+						m_position -= ground->safe_nearest_surface(get_bottom());
+					}
+				}
+
 				ground_walk(collision, ground);
 				ground_gravity(ground);
 				ground_pitching(ground);
