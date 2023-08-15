@@ -83,7 +83,7 @@ namespace Fortress
 
 			if(!current->is_projectile_active() && 
 				current->is_projectile_fire_counted() && 
-				current->get_state() == eCharacterState::Idle)
+				(current->get_state() == eCharacterState::Idle || current->get_state() == eCharacterState::Dead))
 			{
 				pre_next_player();
 			}
