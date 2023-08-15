@@ -9,6 +9,7 @@ using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
 #include "framework.h"
+#include <memory>
 
 namespace Fortress
 {
@@ -24,6 +25,7 @@ namespace Fortress
 		static int get_window_height();
 		static HDC get_buffer_dc();
 		static HDC get_main_dc();
+		static std::weak_ptr<Graphics> get_buffer_gdi_handle();
 		static HWND get_hwnd();
 		static int get_actual_max_y();
 		static RECT& get_window_size();
@@ -31,6 +33,7 @@ namespace Fortress
 	private:
 		inline static GdiplusStartupInput input;
 		inline static ULONG_PTR token{};
+		inline static std::shared_ptr<Graphics> m_graphics_;
 		inline static RECT m_window_size = {0, 0, 800, 600};
 		inline static RECT m_native_size = {0, 0, 0, 0};
 		inline static HWND m_hwnd = nullptr;
@@ -72,6 +75,8 @@ namespace Fortress
 		const auto defaultBitmap = SelectObject(m_buffer_hdc, m_buffer_bitmap);
 		// free the temporary handle.
 		DeleteObject(defaultBitmap);
+
+		m_graphics_ = std::make_unique<Graphics>(m_buffer_hdc);
 	}
 
 	__forceinline int WinAPIHandles::get_window_width()
@@ -92,6 +97,11 @@ namespace Fortress
 	__forceinline HDC WinAPIHandles::get_main_dc()
 	{
 		return m_hdc;
+	}
+
+	__forceinline std::weak_ptr<Graphics> WinAPIHandles::get_buffer_gdi_handle()
+	{
+		return m_graphics_;
 	}
 
 	__forceinline HWND WinAPIHandles::get_hwnd()
