@@ -79,6 +79,22 @@ namespace Fortress::Abstract
 		}
 	}
 
+	void rigidBody::render()
+	{
+		object::render();
+
+		const auto ptr = Scene::SceneManager::get_active_scene();
+
+		if(const auto scene = ptr.lock())
+		{
+			if(const auto camera = scene->get_camera().lock())
+			{
+				const auto position = camera->get_relative_position(downcast_from_this<object>());
+				Debug::draw_rect(position, m_hitbox, RGB(255, 0, 0));
+			}
+		}
+	}
+
 	void rigidBody::prerender()
 	{
 	}

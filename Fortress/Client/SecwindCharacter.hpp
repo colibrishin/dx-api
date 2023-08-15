@@ -32,7 +32,7 @@ namespace Fortress::Object
 				ObjectBase::character_full_mp,
 				0.7f)
 		{
-			character::initialize();
+			initialize();
 		}
 
 		SecwindCharacter& operator=(const SecwindCharacter& other) = default;
@@ -40,6 +40,20 @@ namespace Fortress::Object
 		SecwindCharacter(const SecwindCharacter& other) = default;
 		SecwindCharacter(SecwindCharacter&& other) = default;
 		~SecwindCharacter() override = default;
+
+		void initialize() override
+		{
+			set_sprite_offset(L"fire", L"right", {45.0f, 0.0f});
+			set_sprite_offset(L"fire_sub", L"right", {45.0f, 0.0f});
+			set_sprite_offset(L"charging", L"right", {15.0f, 0.0f});
+			set_sprite_offset(L"idle", L"right", {30.0f, 0.0f});
+			set_sprite_offset(L"idle_low", L"right", {30.0f, 0.0f});
+
+			set_sprite_offset(L"projectile", L"left", {39.5f, 0.0f});
+			set_sprite_rotation_offset(L"projectile", L"left", {-39.5f, 0.0f});
+
+			character::initialize();
+		}
 
 	protected:
 		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;

@@ -27,15 +27,18 @@ namespace Fortress::Controller
 	{
 		switch(get_state())
 		{
+		case eCharacterState::IdleLow:
 		case eCharacterState::Idle:
 			idle_state();
 			break;
 		case eCharacterState::Firing:
 			firing_state();
 			break;
+		case eCharacterState::FireSub:
 		case eCharacterState::Fire:
 			fire_state();
 			break;
+		case eCharacterState::MoveLow:
 		case eCharacterState::Move:
 			move_state();
 			break;
@@ -74,20 +77,44 @@ namespace Fortress::Controller
 		case eCharacterState::Fired:
 		case eCharacterState::TurnEnd:
 		case eCharacterState::Item:
+		case eCharacterState::IdleLow:
 		case eCharacterState::Idle: 
 			if(is_anim_finished())
 			{
-				set_current_sprite(eCharacterState::Idle);
+				if(get_hp_percentage() < 0.3f)
+				{
+					set_current_sprite(eCharacterState::IdleLow);
+				}
+				else
+				{
+					set_current_sprite(eCharacterState::Idle);
+				}
 			}
 			break;
-		case eCharacterState::Move: 
-			set_current_sprite(eCharacterState::Move);
+		case eCharacterState::MoveLow:
+		case eCharacterState::Move:
+			if(get_hp_percentage() < 0.3f)
+			{
+				set_current_sprite(eCharacterState::MoveLow);
+			}
+			else
+			{
+				set_current_sprite(eCharacterState::Move);
+			}
 			break;
 		case eCharacterState::Firing: 
 			set_current_sprite(eCharacterState::Firing);
 			break;
+		case eCharacterState::FireSub:
 		case eCharacterState::Fire:
-			set_current_sprite(eCharacterState::Fire);
+			if(m_projectile_type == eProjectileType::Sub)
+			{
+				set_current_sprite(eCharacterState::FireSub);
+			}
+			else
+			{
+				set_current_sprite(eCharacterState::Fire);
+			}
 			break;
 		case eCharacterState::PreItem:
 			set_current_sprite(eCharacterState::PreItem);
@@ -252,6 +279,12 @@ namespace Fortress::Controller
 		m_texture.get_image(name, orientation).lock()->set_offset(offset);
 	}
 
+	void CharacterController::set_sprite_rotation_offset(const std::wstring& name, const std::wstring& orientation,
+		const Math::Vector2& offset)
+	{
+		m_texture.get_image(name, orientation).lock()->set_rotation_offset(offset);
+	}
+
 	const std::wstring& CharacterController::get_current_sprite_name() const
 	{
 		return m_current_sprite.lock()->get_name();
@@ -302,7 +335,15 @@ namespace Fortress::Controller
 	{
 		const auto offset = m_rb->get_offset() == Math::left ? L"left" : L"right";
 		const auto anim_name = anim_name_getter(state);
-		const auto anim = m_texture.get_image(anim_name, offset);
+		auto anim = m_texture.get_image(anim_name, offset);
+
+		// use fallback animation.
+		if(!anim.lock())
+		{
+			const auto under_bar_pos = anim_name.find('_');
+			anim = m_texture.get_image(anim_name.substr(0, under_bar_pos), offset);
+		}
+
 		const auto curr = m_current_sprite.lock();
 
 		if(const auto next = anim.lock(); curr != next)
@@ -322,13 +363,19 @@ namespace Fortress::Controller
 		case eCharacterState::TurnEnd:
 		case eCharacterState::Idle:
 			return L"idle";
+		case eCharacterState::IdleLow:
+			return L"idle_low";
 		case eCharacterState::Move: 
 			return L"move";
+		case eCharacterState::MoveLow:
+			return L"move_low";
 		case eCharacterState::Firing: 
 			return L"charging";
 		case eCharacterState::Item:
 		case eCharacterState::Fire:
 			return L"fire";
+		case eCharacterState::FireSub:
+			return L"fire_sub";
 		case eCharacterState::PreItem: 
 			return L"item";
 		case eCharacterState::Dead: 

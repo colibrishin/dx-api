@@ -76,9 +76,12 @@ namespace Fortress
 	enum class eCharacterState
 	{
 		Idle = 0,
+		IdleLow,
 		Move,
+		MoveLow,
 		Firing,
 		Fire,
+		FireSub,
 		Fired,
 		PreItem,
 		Item,

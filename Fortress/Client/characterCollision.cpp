@@ -146,7 +146,6 @@ namespace Fortress::ObjectBase
 			}
 			next_surface += delta;
 
-			Debug::draw_dot(next_surface);
 			auto rotate_radian = next_surface.local_inner_angle(get_bottom());
 
 			set_movement_pitch_radian(rotate_radian);

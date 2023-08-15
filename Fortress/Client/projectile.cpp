@@ -56,9 +56,6 @@ namespace Fortress::ObjectBase
 				m_hitbox, 
 				{1, 1},
 				Math::to_degree(get_movement_pitch_radian()));
-
-			Debug::draw_rect(pos - m_hitbox / 2, m_hitbox);
-			Debug::draw_dot(pos);
 		}
 
 		rigidBody::render();

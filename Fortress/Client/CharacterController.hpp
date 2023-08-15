@@ -62,6 +62,8 @@ namespace Fortress::Controller
 		friend class Object::item;
 
 		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
+		void set_sprite_rotation_offset(const std::wstring& name, const std::wstring& orientation,
+		                                const Math::Vector2& offset);
 		const std::wstring& get_current_sprite_name() const;
 
 		virtual void fire();

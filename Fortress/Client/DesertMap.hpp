@@ -28,22 +28,18 @@ namespace Fortress::Map
 
 	inline void DesertMap::pre_initialize()
 	{
-		Resource::ResourceManager::load<Resource::Sound>(
-			L"Egyptian Rule", "./resources/sounds/stages/Stage00015.wav");
-		Resource::ResourceManager::load<ImageWrapper>(
-			L"Desert_shutterstock", "./resources/images/desert-landscape-shutterstock.jpg");
 	}
 
 	inline void DesertMap::set_bgm()
 	{
-		m_bgm = Resource::ResourceManager::find<Resource::Sound>(
-			L"Egyptian Rule");
+		m_bgm = Resource::ResourceManager::load<Resource::Sound>(
+			L"Egyptian Rule", "./resources/sounds/stages/Stage00015.wav");
 	}
 
 	inline void DesertMap::set_background_img()
 	{
-		m_background = Resource::ResourceManager::find<ImageWrapper>(
-			L"Desert_shutterstock");
+		m_background = Resource::ResourceManager::load<ImageWrapper>(
+			L"Desert_shutterstock", "./resources/images/desert-landscape-shutterstock.jpg");
 	}
 
 	inline void DesertMap::set_characters()
