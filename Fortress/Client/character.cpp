@@ -77,7 +77,11 @@ namespace Fortress::ObjectBase
 
 		const float dist_pen_damage = pen_damage * (1.0f - far_dist_ratio);
 
-		return dist_pen_damage;
+		const int previous_hit_count = get_previous_hit_count();
+		const float consecutive_hit_bonus = dist_pen_damage * (static_cast<float>(previous_hit_count) * 0.25f);
+		const float total_damage = dist_pen_damage + consecutive_hit_bonus;
+
+		return total_damage;
 	}
 
 	void character::hit(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point)

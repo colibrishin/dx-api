@@ -46,6 +46,7 @@ namespace Fortress::Controller
 		float get_hp_percentage() const;
 		float get_mp_percentage() const;
 		float get_hp_raw() const;
+		int get_previous_hit_count() const;
 
 		const std::vector<std::weak_ptr<ObjectBase::projectile>>& get_projectiles() const;
 		const eProjectileType& get_projectile_type() const;
@@ -105,6 +106,7 @@ namespace Fortress::Controller
 		float m_mp;
 		float m_power;
 		bool m_bMovable;
+		int m_previousHitCount;
 
 		const Abstract::rigidBody* const m_rb;
 
