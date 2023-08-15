@@ -29,10 +29,10 @@ namespace Fortress::ObjectBase
 	template<typename T, typename... Args>
 	inline std::weak_ptr<T> TimerManager::create(Args... args)
 	{
-		m_timers[used_timer_id] = std::make_shared<T>(used_timer_id, args...);
-		auto ret = std::dynamic_pointer_cast<T>(m_timers[used_timer_id]);
+		const auto created = std::make_shared<T>(used_timer_id, args...);
+		m_timers[used_timer_id] = created;
 		used_timer_id++;
-		return ret;
+		return created;
 	}
 
 	inline void TimerManager::remove(const std::weak_ptr<Timer>& timer)
