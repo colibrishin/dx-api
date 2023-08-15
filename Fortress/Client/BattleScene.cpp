@@ -274,7 +274,7 @@ namespace Fortress::Scene
 		{
 			if(const auto character = ch_ptr.lock())
 			{
-				character->m_position = {x_current, 0};
+				character->m_position = {x_current, -1000};
 
 				for(const auto& gr_ptr : m_grounds)
 				{
