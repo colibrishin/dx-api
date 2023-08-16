@@ -34,7 +34,7 @@ namespace Fortress
 
 	void GifWrapper::initialize()
 	{
-		m_timer = ObjectBase::TimerManager::create<GifTimer>(&GifWrapper::OnTimer, this);
+		m_timer = TimerManager::create<GifTimer>(&GifWrapper::OnTimer, this);
 		load();
 	}
 
@@ -50,7 +50,8 @@ namespace Fortress
 
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
-		m_timer.lock()->set_duration(m_frame_delays[m_current_frame]);
+		const float frame_time = m_frame_delays[m_current_frame] / 1000.0f;
+		m_timer.lock()->set_duration(frame_time);
 		m_timer.lock()->toggle();
 
 		++m_current_frame;
@@ -66,17 +67,9 @@ namespace Fortress
 		const GUID guid = FrameDimensionTime;
 		m_image->SelectActiveFrame(&guid, m_current_frame);
 
-		m_timer.lock()->set_duration(m_frame_delays[m_current_frame]);
+		const float frame_time = m_frame_delays[m_current_frame] / 1000.0f;
+		m_timer.lock()->set_duration(frame_time);
 		m_timer.lock()->toggle();
-
-		if(m_current_frame == m_frame_count - 1)
-		{
-			if(m_reserved_function != nullptr) 
-			{
-				m_reserved_function();
-				m_reserved_function = nullptr;
-			}
-		}
 
 		m_current_frame = ++(m_current_frame) % m_frame_count;
 	}
@@ -118,6 +111,6 @@ namespace Fortress
 	GifWrapper::~GifWrapper()
 	{
 		stop();
-		ObjectBase::TimerManager::remove(std::dynamic_pointer_cast<Timer>(m_timer.lock()));
+		TimerManager::remove(std::dynamic_pointer_cast<Timer>(m_timer.lock()));
 	}
 }

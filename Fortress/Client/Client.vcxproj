@@ -217,6 +217,8 @@
     <ClCompile Include="Round.cpp" />
     <ClCompile Include="sceneManager.cpp" />
     <ClCompile Include="Texture.hpp" />
+    <ClCompile Include="Timer.cpp" />
+    <ClCompile Include="TimerManager.cpp" />
     <ClCompile Include="titleScene.cpp" />
     <ClCompile Include="winapihandles.hpp" />
     <ClCompile Include="winmain.cpp" />
