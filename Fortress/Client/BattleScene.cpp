@@ -10,6 +10,7 @@
 #include <windows.h>
 
 #include "application.h"
+#include "item.hpp"
 #include "objectManager.hpp"
 #include "SummaryScene.hpp"
 #include "Radar.h"
@@ -68,6 +69,11 @@ namespace Fortress::Scene
 		scene::update();
 		m_round->update();
 		m_radar->update();
+	}
+
+	Math::Vector2 operator/(float lhs, const Math::Vector2& rhs)
+	{
+		return {lhs / rhs.get_x(), lhs / rhs.get_y()};
 	}
 
 	void BattleScene::render()
@@ -197,7 +203,7 @@ namespace Fortress::Scene
 			}();
 
 			// shooting angle
-			// @todo: length reduction
+			// @todo: fix length reduction
 			[this, hud_position]()
 			{
 				const int x = 90;
@@ -231,6 +237,42 @@ namespace Fortress::Scene
 					&redpen,
 					mid_point,
 					mid_point + end_point);
+			}();
+
+			// items
+			[this, hud_position]()
+			{
+				const int x = 253;
+				const int y = hud_position.get_y() + 15;
+				int interval = 0;
+
+				for(const auto& [num, ptr] : m_self.lock()->get_available_items())
+				{
+					if(const auto item = ptr.lock())
+					{
+						const auto item_icon = item->get_icon_thumbnail().lock();
+						const Math::Vector2 center = {x + interval, y};
+
+						if(!item->is_used())
+						{
+							const auto green_light = SolidBrush(Color(0, 255, 155));
+
+							WinAPIHandles::get_buffer_gdi_handle().lock()->FillRectangle(
+								&green_light,
+								RectF
+								{
+									center,
+									item_icon->get_hitbox()
+								});
+						}
+
+						constexpr int slot_size = 30;
+						constexpr int line_padding = 5;
+						const auto size = item_icon->get_hitbox();
+						item_icon->render(center, size);
+						interval += slot_size + line_padding;
+					}
+				}
 			}();
 		}
 
