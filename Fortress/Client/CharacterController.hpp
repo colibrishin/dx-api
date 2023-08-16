@@ -51,6 +51,7 @@ namespace Fortress::Controller
 		const std::vector<std::weak_ptr<ObjectBase::projectile>>& get_projectiles() const;
 		const eProjectileType& get_projectile_type() const;
 		std::weak_ptr<ObjectBase::projectile> get_one_active_projectile();
+		std::vector<std::pair<const int, std::weak_ptr<Object::item>>> get_available_items() const;
 
 	protected:
 		CharacterController(

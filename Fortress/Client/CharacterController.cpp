@@ -257,6 +257,11 @@ namespace Fortress::Controller
 		return {};
 	}
 
+	std::vector<std::pair<const int, std::weak_ptr<Object::item>>> CharacterController::get_available_items() const
+	{
+		return {m_available_items.begin(), m_available_items.end()};
+	}
+
 	CharacterController::CharacterController(
 		const std::wstring& short_name, 
 		const float hp, 
