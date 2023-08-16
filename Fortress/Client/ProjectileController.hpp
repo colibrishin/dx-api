@@ -43,6 +43,7 @@ namespace Fortress::Controller
 
 	private:
 		void set_current_sprite(const eProjectileState&) override;
+		DirVector get_moving_direction() const;
 
 		void fire_state();
 		void flying_state();
