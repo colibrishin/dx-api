@@ -57,6 +57,7 @@ namespace Fortress::Abstract
 		Math::Vector2 get_offset_backward_position() const;
 		Math::Vector2 get_offset_bottom_forward_position() const;
 		Math::Vector2 get_offset_bottom_backward_position() const;
+		Math::Vector2 get_offset_top_forward_position() const;
 		Math::Vector2 get_velocity_forward_position() const;
 
 		void set_offset(const Math::Vector2& offset);
@@ -82,6 +83,8 @@ namespace Fortress::Abstract
 			const Math::Vector2& acceleration, 
 			const bool& gravity);
 		virtual void move();
+
+		void modify_current_speed(const SpeedVector& speed);
 
 		void reset_current_speed();
 		void reset_current_gravity_speed();

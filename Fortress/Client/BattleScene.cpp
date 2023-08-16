@@ -34,6 +34,7 @@ namespace Fortress::Scene
 		m_hud = Resource::ResourceManager::load<ImageWrapper>(
 			L"HUD", "./resources/images/hud.gif");
 
+
 		set_grounds();
 		set_background_img();
 		set_bgm();
@@ -193,6 +194,43 @@ namespace Fortress::Scene
 					y + 10};
 				FillRect(WinAPIHandles::get_buffer_dc(), &rect, brush);
 				DeleteObject(brush);
+			}();
+
+			// shooting angle
+			// @todo: length reduction
+			[this, hud_position]()
+			{
+				const int x = 90;
+				const int y = hud_position.get_y() + 60;
+
+				const auto default_angle = 
+					(m_self.lock()->get_offset_top_forward_position() - m_self.lock()->get_center())
+					.normalized()
+					.unit_angle() - (Math::PI / 2);
+
+				const auto offset_flip = default_angle;
+				const auto move_angle = m_self.lock()->get_movement_pitch_radian();
+
+				const auto white = Pen(Color(255, 255, 255, 0), 1);
+
+				const UnitVector angle_vector = Math::Vector2::angle_vector(move_angle);
+				const GlobalPosition ground_angle_s = Math::Vector2{x - 30, y} - (angle_vector * 30);
+				const GlobalPosition ground_angle_e = Math::Vector2{x + 30, y} + (angle_vector * 30);
+
+				WinAPIHandles::get_buffer_gdi_handle().lock()->DrawLine(
+					&white,
+					ground_angle_s,
+					ground_angle_e);
+
+				const auto redpen = Pen(Color(255, 255, 0, 0), 1);
+
+				const Math::Vector2 mid_point = {x, y};
+				const Math::Vector2 end_point = Math::Vector2{0.0f, 55.0f}.rotate(move_angle + offset_flip);
+
+				WinAPIHandles::get_buffer_gdi_handle().lock()->DrawLine(
+					&redpen,
+					mid_point,
+					mid_point + end_point);
 			}();
 		}
 

@@ -134,7 +134,7 @@ namespace Fortress::Object
 	{
 		if (auto const projectile = other.lock()->downcast_from_this<ObjectBase::projectile>())
 		{
-			const eHitVector e_vec = Math::translate_hit_vector(hit_vector);
+			const eHitVector e_vec = Math::Vector2::translate_hit_vector(hit_vector);
 			const auto hit_point = projectile->get_hit_point(e_vec);
 
 			if (projectile->get_max_hit_count() > projectile->get_hit_count() &&

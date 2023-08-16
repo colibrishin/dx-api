@@ -3,6 +3,13 @@
 
 #include <cmath>
 
+#include "common.h"
+
+namespace Gdiplus
+{
+	class PointF;
+}
+
 namespace Fortress::Math
 {
 	/**
@@ -19,6 +26,8 @@ namespace Fortress::Math
 		Vector2(Vector2&& other) = default;
 		~Vector2() = default;
 		Vector2& operator=(Vector2&& other) = default;
+
+		operator Gdiplus::PointF () const;
 
 		Vector2(const float x, const float y) : m_x(x), m_y(y)
 		{
@@ -71,11 +80,27 @@ namespace Fortress::Math
 		__forceinline Vector2 abs() const noexcept;
 		__forceinline Vector2 normalized() const noexcept;
 		__forceinline float unit_angle() const noexcept;
+		__forceinline static UnitVector angle_vector(const float) noexcept;
+		__forceinline Vector2 x_dir() const noexcept;
+		__forceinline static Vector2 to_hit_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right);
+		__forceinline static eHitVector translate_hit_vector(const Math::Vector2& hit_vector);
 
 	private:
 		float m_x;
 		float m_y;
 	};
+
+	
+	const Vector2 identity = {1.0f, 1.0f};
+	const Vector2 left = {-1.0f, 0.0f};
+	const Vector2 right = {1.0f, 0.0f};
+	const Vector2 top = {0.0f, -1.0f};
+	const Vector2 bottom = {0.0f, 1.0f};
+	const Vector2 zero = {};
+	
+	const Vector2 forward = {1.0f, 0.0f};
+	const Vector2 up = {0.0f, -1.0f};
+	const Vector2 vector_inf = {INFINITY, INFINITY};
 }
 
 namespace Fortress::Math
@@ -274,9 +299,74 @@ namespace Fortress::Math
 		return std::atan2(m_y, m_x);
 	}
 
+	inline UnitVector Vector2::angle_vector(const float angle) noexcept
+	{
+		return {cosf(angle), sinf(angle)};
+	}
+
 	__forceinline float Vector2::global_angle() const noexcept
 	{
 		return atanf(m_y / m_x);
+	}
+
+	__forceinline DirVector Vector2::x_dir() const noexcept
+	{
+		return m_x < 0 ? Math::left : Math::right;
+	}
+
+	__forceinline Vector2 Vector2::to_hit_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right)
+	{
+		return (hit_left - hit_right).normalized();
+	}
+
+	__forceinline eHitVector Vector2::translate_hit_vector(const Math::Vector2& hit_vector)
+	{
+		const auto abs_vector = hit_vector.abs();
+		const auto orthogonal = abs_vector.get_x() > 1.0f - Math::epsilon || abs_vector.get_x() <= Math::epsilon;
+		const auto parallel = abs_vector.get_y() > 1.0f - Math::epsilon || abs_vector.get_y() <= Math::epsilon;
+		const auto left_check = hit_vector.get_x() < 0;
+		const auto right_check = hit_vector.get_x() > 0;
+		const auto top_check = hit_vector.get_y() < 0;
+		const auto bottom_check = hit_vector.get_y() > 0;
+
+		if(hit_vector == Math::Vector2{0.0f, 0.0f})
+		{
+			return eHitVector::Identical;
+		}
+		if(orthogonal && top_check)
+		{
+			return eHitVector::Top;
+		}
+		if(orthogonal && bottom_check)
+		{
+			return eHitVector::Bottom;
+		}
+		if(left_check && parallel)
+		{
+			return eHitVector::Left;
+		}
+		if(right_check && parallel)
+		{
+			return eHitVector::Right;
+		}
+		if(left_check && top_check)
+		{
+			return eHitVector::TopLeft;
+		}
+		if(right_check && top_check)
+		{
+			return eHitVector::TopRight;
+		}
+		if(left_check && bottom_check)
+		{
+			return eHitVector::BottomLeft;
+		}
+		if(right_check && bottom_check)
+		{
+			return eHitVector::BottomRight;
+		}
+
+		return eHitVector::Unknown;
 	}
 }
 

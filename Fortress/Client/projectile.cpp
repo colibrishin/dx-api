@@ -125,7 +125,7 @@ namespace Fortress::ObjectBase
 
 	void projectile::flying()
 	{
-		*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
+		modify_current_speed(m_wind_acceleration);
 	}
 
 	void projectile::hit()
@@ -212,7 +212,7 @@ namespace Fortress::ObjectBase
 			std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock()))
 		{
 			m_wind_acceleration = {
-				battle_scene->get_round_status().lock()->get_wind_acceleration() * 5,
+				battle_scene->get_round_status().lock()->get_wind_acceleration(),
 				0.0f};
 		}
 

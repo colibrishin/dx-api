@@ -60,7 +60,7 @@ namespace Fortress::Abstract
 				collided = true;
 				on_collision(
 					code,
-					to_hit_vector(get_center(), rb->get_center()),
+					Math::Vector2::to_hit_vector(get_center(), rb->get_center()),
 					rb);
 			}
 		}
@@ -239,6 +239,10 @@ namespace Fortress::Abstract
 		return get_offset() == Math::left ? get_bottom_right() : get_bottom_left();
 	}
 
+	Math::Vector2 rigidBody::get_offset_top_forward_position() const
+	{
+		return get_offset() == Math::left ? get_top_left() : get_top_right();
+	}
 
 	Math::Vector2 rigidBody::get_velocity_forward_position() const
 	{
@@ -372,5 +376,19 @@ namespace Fortress::Abstract
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
 		*this += m_velocity * m_curr_speed * DeltaTime::get_deltaTime();
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
+	}
+
+	void rigidBody::modify_current_speed(const AccelVector& speed)
+	{
+		const DirVector dir = speed.x_dir();
+
+		if(get_velocity_offset() == dir)
+		{
+			m_curr_speed += speed.abs() * DeltaTime::get_deltaTime();
+		}
+		else
+		{
+			m_curr_speed -= speed.abs() * DeltaTime::get_deltaTime();
+		}
 	}
 }

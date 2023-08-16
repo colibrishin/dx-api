@@ -47,11 +47,7 @@ namespace Fortress
 
 						m_gdi_handle->DrawImage(
 							bitmap.get(),
-							PointF
-							{
-								position.get_x(),
-								position.get_y()
-							});
+							position);
 					}
 				}
 			}
