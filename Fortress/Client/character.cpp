@@ -91,7 +91,7 @@ namespace Fortress::ObjectBase
 
 	void character::fire()
 	{
-		m_multi_projectile_timer.lock()->stop();
+		m_multi_projectile_timer.lock()->reset();
 
 		float charged = get_charged_power();
 

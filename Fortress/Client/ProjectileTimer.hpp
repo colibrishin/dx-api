@@ -28,7 +28,7 @@ namespace Fortress
 		void set_count(int count);
 		void set_angle(const UnitVector& angle);
 		void set_charged(const float);
-		void stop() override;
+		void reset();
 
 	private:
 		int m_count;
@@ -41,10 +41,11 @@ namespace Fortress
 
 	inline void ProjectileTimer::on_timer()
 	{
+		Timer::on_timer();
+
 		if(m_curr_count < m_count)
 		{
 			m_func(m_char_this, m_angle, m_charged);
-			Timer::on_timer();
 			m_curr_count++;
 			toggle();
 		}
@@ -65,10 +66,9 @@ namespace Fortress
 		m_charged = charged;
 	}
 
-	inline void ProjectileTimer::stop()
+	inline void ProjectileTimer::reset()
 	{
 		m_curr_count = 0;
-		Timer::stop ();
 	}
 }
 #endif // PROJECTILETIMER_HPP

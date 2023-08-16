@@ -25,8 +25,8 @@ namespace Fortress
 
 	inline void NextPlayerTimer::on_timer()
 	{
-		m_on_timer(m_this);
 		Timer::on_timer();
+		m_on_timer(m_this);
 	}
 }
 #endif // NEXTPLAYERTIMER_HPP
