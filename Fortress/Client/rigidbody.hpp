@@ -83,6 +83,8 @@ namespace Fortress::Abstract
 			const bool& gravity);
 		virtual void move();
 
+		void modify_current_speed(const SpeedVector& speed);
+
 		void reset_current_speed();
 		void reset_current_gravity_speed();
 		void disable_gravity();

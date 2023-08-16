@@ -373,4 +373,18 @@ namespace Fortress::Abstract
 		*this += m_velocity * m_curr_speed * DeltaTime::get_deltaTime();
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
 	}
+
+	void rigidBody::modify_current_speed(const AccelVector& speed)
+	{
+		const DirVector dir = speed.x_dir();
+
+		if(get_velocity_offset() == dir)
+		{
+			m_curr_speed += speed.abs() * DeltaTime::get_deltaTime();
+		}
+		else
+		{
+			m_curr_speed -= speed.abs() * DeltaTime::get_deltaTime();
+		}
+	}
 }
