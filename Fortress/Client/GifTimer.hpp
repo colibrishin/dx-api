@@ -14,7 +14,7 @@ namespace Fortress
 			WPARAM timer_id, 
 			GifOnTimerFunction func,
 			GifWrapper* gif_this) :
-			Timer(L"Gif Timer", 100, timer_id),
+			Timer(L"Gif Timer", 0.1f, timer_id),
 			m_on_timer(std::move(func)),
 			m_this(gif_this)
 		{
@@ -29,8 +29,8 @@ namespace Fortress
 
 	inline void GifTimer::on_timer()
 	{
-		m_on_timer(m_this);
 		Timer::on_timer();
+		m_on_timer(m_this);
 	}
 }
 #endif // GIFTIMER_HPP

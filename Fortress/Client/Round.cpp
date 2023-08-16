@@ -29,7 +29,7 @@ namespace Fortress
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
 		m_known_players.erase(m_known_players.begin());
-		m_timer_next_player = ObjectBase::TimerManager::create<NextPlayerTimer>(&Round::next_player, this);
+		m_timer_next_player = TimerManager::create<NextPlayerTimer>(&Round::next_player, this);
 
 		m_current_player.lock()->set_movable();
 	}
@@ -143,7 +143,6 @@ namespace Fortress
 		return m_curr_timeout;
 	}
 
-	// this will run on another thread, by win api.
 	void Round::next_player()
 	{
 		const auto scene = Scene::SceneManager::get_active_scene().lock();

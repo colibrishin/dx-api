@@ -70,6 +70,7 @@ namespace Fortress
 
 		DeltaTime::update();
 		Input::update();
+		TimerManager::update();
 		Scene::SceneManager::update();
 	}
 

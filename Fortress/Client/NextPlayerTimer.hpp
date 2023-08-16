@@ -11,7 +11,7 @@ namespace Fortress
 			WPARAM timer_id, 
 			NextPlayerTimerFunction func,
 			Round* timer_this) :
-			Timer(L"Next Player", 2000, timer_id),
+			Timer(L"Next Player", 2.0f, timer_id),
 			m_on_timer(std::move(func)),
 			m_this(timer_this)
 		{

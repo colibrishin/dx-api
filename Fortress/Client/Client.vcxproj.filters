@@ -335,6 +335,12 @@
     <ClCompile Include="Radar.cpp">
       <Filter>Round</Filter>
     </ClCompile>
+    <ClCompile Include="TimerManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Client.rc">

@@ -1,15 +1,11 @@
 #ifndef TIMERMANAGER_HPP
 #define TIMERMANAGER_HPP
 #include "object.hpp"
-#include "Timer.hpp"
 
 namespace Fortress
 {
 	class Timer;
-}
 
-namespace Fortress::ObjectBase
-{
 	constexpr int timer_id = 8000;
 
 	class TimerManager
@@ -18,7 +14,7 @@ namespace Fortress::ObjectBase
 		template <typename T, typename... Args>
 		static std::weak_ptr<T> create(Args... args);
 		static void remove(const std::weak_ptr<Timer>& timer);
-		static void update(const WPARAM& wParam);
+		static void update();
 		static void cleanup();
 
 	private:
@@ -33,32 +29,6 @@ namespace Fortress::ObjectBase
 		m_timers[used_timer_id] = created;
 		used_timer_id++;
 		return created;
-	}
-
-	inline void TimerManager::remove(const std::weak_ptr<Timer>& timer)
-	{
-		m_timers.erase(timer.lock()->m_timer_id);
-	}
-
-	inline void TimerManager::update(const WPARAM& wParam)
-	{
-		if(const auto designated = m_timers[wParam])
-		{
-			designated->on_timer();
-		}
-		else
-		{
-			m_timers.erase(wParam);
-		}
-	}
-
-	inline void TimerManager::cleanup()
-	{
-		for(auto& object : m_timers)
-		{
-			object.second->reset();
-			object.second.reset();
-		}
 	}
 }
 #endif // TIMERMANAGER_HPP

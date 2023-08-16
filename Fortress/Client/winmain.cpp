@@ -190,9 +190,6 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 		}
 		break;
-	case WM_TIMER:
-		Fortress::ObjectBase::TimerManager::update(wParam);		
-		break;
 	case WM_PAINT:
 		{
 			PAINTSTRUCT ps;

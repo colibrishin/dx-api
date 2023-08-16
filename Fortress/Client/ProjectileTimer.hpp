@@ -15,7 +15,7 @@ namespace Fortress
 			WPARAM timer_id,
 			ProjectileInitFunction func,
 			ObjectBase::character* char_this) :
-		Timer(L"Next Projectile", 100, timer_id),
+		Timer(L"Next Projectile", 0.1f, timer_id),
 		m_count(0),
 		m_curr_count(0),
 		m_func(std::move(func)),
@@ -28,7 +28,8 @@ namespace Fortress
 		void set_count(int count);
 		void set_angle(const UnitVector& angle);
 		void set_charged(const float);
-		void reset() override;
+		void stop() override;
+
 	private:
 		int m_count;
 		int m_curr_count;
@@ -64,10 +65,10 @@ namespace Fortress
 		m_charged = charged;
 	}
 
-	inline void ProjectileTimer::reset()
+	inline void ProjectileTimer::stop()
 	{
 		m_curr_count = 0;
-		Timer::reset();
+		Timer::stop ();
 	}
 }
 #endif // PROJECTILETIMER_HPP
