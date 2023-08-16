@@ -18,6 +18,7 @@ namespace Fortress::Item
 		~DoubleShotItem() override = default;
 		virtual void reset() override;
 		void set_icon() override;
+		void set_icon_thumbnail() override;
 
 	private:
 		int m_fire_count;
@@ -25,6 +26,7 @@ namespace Fortress::Item
 
 	inline void DoubleShotItem::initialize()
 	{
+		item::initialize();
 		m_fire_count = 0;
 	}
 
@@ -55,7 +57,14 @@ namespace Fortress::Item
 
 	inline void DoubleShotItem::set_icon()
 	{
-		m_icon = Resource::ResourceManager::load<ImageWrapper>(L"Double shot item", "./resources/images/items/double-shot.png");
+		m_icon = Resource::ResourceManager::load<ImageWrapper>(
+			L"Double shot item", "./resources/images/items/double-shot.png");
+	}
+
+	inline void DoubleShotItem::set_icon_thumbnail()
+	{
+		m_icon_thumbnail = Resource::ResourceManager::load<ImageWrapper>(
+			L"Double Shot Item Thumbnail", "./resources/images/items/double-shot-thumbnail.png");
 	}
 }
 #endif // DOUBLESHOTITEM_HPP

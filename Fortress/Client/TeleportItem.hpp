@@ -16,12 +16,14 @@ namespace Fortress::Item
 
 		void initialize() override;
 		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) override;
-		void set_icon();
+		void set_icon() override;
+		void set_icon_thumbnail() override;
 		~TeleportItem() override = default;
 	};
 
 	inline void TeleportItem::initialize()
 	{
+		item::initialize();
 	}
 
 	inline void TeleportItem::update(const std::weak_ptr<ObjectBase::character>& owner)
@@ -50,7 +52,14 @@ namespace Fortress::Item
 
 	inline void TeleportItem::set_icon()
 	{
-		m_icon = Resource::ResourceManager::load<ImageWrapper>(L"Teleport item", "./resources/images/items/teleport.png");
+		m_icon = Resource::ResourceManager::load<ImageWrapper>(
+			L"Teleport item", "./resources/images/items/teleport.png");
+	}
+
+	inline void TeleportItem::set_icon_thumbnail()
+	{
+		m_icon_thumbnail = Resource::ResourceManager::load<ImageWrapper>(
+			L"Teleport item Thumbnail", "./resources/images/items/teleport-thumbnail.png");
 	}
 }
 #endif // DOUBLESHOTITEM_HPP

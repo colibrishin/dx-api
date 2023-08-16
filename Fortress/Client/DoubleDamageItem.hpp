@@ -45,7 +45,14 @@ namespace Fortress::Item
 
 	inline void DoubleDamageItem::set_icon()
 	{
-		m_icon = Resource::ResourceManager::load<ImageWrapper>(L"Double Damage item", "./resources/images/items/double-damage.png");
+		m_icon = Resource::ResourceManager::load<ImageWrapper>(
+			L"Double Damage item", "./resources/images/items/double-damage.png");
+	}
+
+	inline void DoubleDamageItem::set_icon_thumbnail()
+	{
+		m_icon_thumbnail = Resource::ResourceManager::load<ImageWrapper>(
+			L"Double Damage item Thumbnail", "./resources/images/items/double-damage-thumbnail.png");
 	}
 }
 #endif // DOUBLEDAMAGEITEM_HPP
