@@ -43,7 +43,7 @@ namespace Fortress
 	{
 		Timer::on_timer();
 
-		if(m_curr_count < m_count)
+		if(m_curr_count < m_count && m_char_this)
 		{
 			m_func(m_char_this, m_angle, m_charged);
 			m_curr_count++;
