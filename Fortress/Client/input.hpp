@@ -53,7 +53,7 @@ namespace Fortress
 		Seven,
 		Eight,
 		Nine,
-		F12,
+		ScrollLock,
 	};
 
 	/**
@@ -74,7 +74,7 @@ namespace Fortress
 		'Z', 'X', 'C', 'V', 'B', 'N', 'M',
 		VK_SPACE, VK_RETURN, VK_UP, VK_DOWN, VK_LEFT, VK_RIGHT, VK_TAB, VK_SHIFT,
 		0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37, 0x38, 0x39, /* 0 to 9*/
-		VK_F12
+		VK_SCROLL
 	};
 
 	/**
