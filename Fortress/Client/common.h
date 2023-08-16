@@ -48,6 +48,7 @@ namespace Fortress
 	using LocalPosition = Math::Vector2;
 	using UnitVector = Math::Vector2;
 	using DirVector = Math::Vector2;
+	using SizeVector = Math::Vector2;
 
 	using SpeedVector = Math::Vector2;
 	using AccelVector = Math::Vector2;

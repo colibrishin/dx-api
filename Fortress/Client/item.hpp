@@ -13,10 +13,19 @@ namespace Fortress::Object
 
 		~item() override = default;
 
-		virtual void initialize() = 0;
+		virtual void initialize();
 		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) = 0;
+
+		virtual void set_icon() = 0;
+		virtual void set_icon_thumbnail() = 0;
+
+		std::weak_ptr<ImageWrapper> get_icon() const;
+		std::weak_ptr<ImageWrapper> get_icon_thumbnail() const;
+
 		virtual bool is_effect_ended();
 		bool is_instant() const;
+		bool is_used() const;
+
 		virtual void reset();
 		void set_ended();
 	protected:
@@ -24,11 +33,31 @@ namespace Fortress::Object
 		void equip_nutshell(const std::weak_ptr<ObjectBase::character>& owner);
 		void unequip_nutshell(const std::weak_ptr<ObjectBase::character>& owner);
 		void fire(const std::weak_ptr<ObjectBase::character>& owner) const;
+		void set_double_damage(const std::weak_ptr<ObjectBase::character>& owner);
+
+		std::weak_ptr<ImageWrapper> m_icon;
+		std::weak_ptr<ImageWrapper> m_icon_thumbnail;
 	private:
 		bool m_instant;
 		bool m_is_used;
 		bool m_is_ended;
 	};
+
+	inline void item::initialize()
+	{
+		set_icon();
+		set_icon_thumbnail();
+	}
+
+	inline std::weak_ptr<ImageWrapper> item::get_icon() const
+	{
+		return m_icon;
+	}
+
+	inline std::weak_ptr<ImageWrapper> item::get_icon_thumbnail() const
+	{
+		return m_icon_thumbnail;
+	}
 
 	inline bool item::is_effect_ended()
 	{
@@ -38,6 +67,11 @@ namespace Fortress::Object
 	inline bool item::is_instant() const
 	{
 		return m_instant;
+	}
+
+	inline bool item::is_used() const
+	{
+		return m_is_used;
 	}
 
 	inline void item::reset()
@@ -73,6 +107,11 @@ namespace Fortress::Object
 	{
 		const auto casted = owner.lock()->stateController::downcast_from_this<Controller::CharacterController>();
 		casted->fire();
+	}
+	inline void item::set_double_damage(const std::weak_ptr<ObjectBase::character>& owner)
+	{
+		const auto casted = owner.lock()->stateController::downcast_from_this<Controller::CharacterController>();
+		casted->set_double_damage();
 	}
 }
 #endif // ITEM_HPP

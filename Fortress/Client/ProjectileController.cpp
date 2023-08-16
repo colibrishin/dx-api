@@ -60,14 +60,12 @@ namespace Fortress::Controller
 	{
 		stateController::prerender();
 
-		const auto offset = m_rb->get_velocity_offset();
-		const auto diff_by_offset = offset == Math::left ? 
+		const auto diff_by_offset = get_moving_direction() == Math::left ?
 			m_previous_position - m_rb->get_position() :
 			m_rb->get_position() - m_previous_position;
 
 		const auto unit = diff_by_offset.normalized();
 		m_pitch = unit.unit_angle();
-		m_previous_position = m_rb->get_position();
 
 		switch(get_state())
 		{
@@ -79,6 +77,8 @@ namespace Fortress::Controller
 			set_current_sprite(eProjectileState::Fire);
 		default: ;
 		}
+
+		m_previous_position = m_rb->get_position();
 	}
 
 	bool ProjectileController::is_cooldown() const
@@ -212,6 +212,12 @@ namespace Fortress::Controller
 	{
 		m_current_sprite = m_texture.get_image(
 			L"projectile",
-			m_rb->get_velocity_offset() == Math::left ? L"left" : L"right");
+			get_moving_direction() == Math::left ? L"left" : L"right");
+	}
+
+	DirVector ProjectileController::get_moving_direction() const
+	{
+		const UnitVector moving_dir = (m_rb->get_position() - m_previous_position).normalized();
+		return moving_dir.x_dir();
 	}
 }

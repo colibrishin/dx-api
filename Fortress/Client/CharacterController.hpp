@@ -51,6 +51,7 @@ namespace Fortress::Controller
 		const std::vector<std::weak_ptr<ObjectBase::projectile>>& get_projectiles() const;
 		const eProjectileType& get_projectile_type() const;
 		std::weak_ptr<ObjectBase::projectile> get_one_active_projectile();
+		std::vector<std::pair<const int, std::weak_ptr<Object::item>>> get_available_items() const;
 
 	protected:
 		CharacterController(
@@ -74,6 +75,9 @@ namespace Fortress::Controller
 
 		void apply_damage(float damage);
 		void set_hp(const float hp);
+
+		void set_double_damage();
+		bool is_double_damage() const;
 
 		void add_active_projectile(const std::weak_ptr<ObjectBase::projectile>& prj);
 
@@ -109,6 +113,7 @@ namespace Fortress::Controller
 		float m_power;
 		bool m_bMovable;
 		int m_previousHitCount;
+		bool m_bDoubleDamage;
 
 		const Abstract::rigidBody* const m_rb;
 

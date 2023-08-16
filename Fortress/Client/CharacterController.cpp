@@ -3,6 +3,7 @@
 #include "rigidbody.hpp"
 #include "BattleScene.h"
 #include "character.hpp"
+#include "DoubleDamageItem.hpp"
 #include "input.hpp"
 #include "RepairItem.hpp"
 #include "TeleportItem.hpp"
@@ -21,6 +22,7 @@ namespace Fortress::Controller
 		m_available_items.emplace(1, std::make_shared<Item::DoubleShotItem>());
 		m_available_items.emplace(2, std::make_shared<Item::TeleportItem>());
 		m_available_items.emplace(3, std::make_shared<Item::RepairItem>());
+		m_available_items.emplace(4, std::make_shared<Item::DoubleDamageItem>());
 	}
 
 	void CharacterController::update()
@@ -255,6 +257,11 @@ namespace Fortress::Controller
 		return {};
 	}
 
+	std::vector<std::pair<const int, std::weak_ptr<Object::item>>> CharacterController::get_available_items() const
+	{
+		return {m_available_items.begin(), m_available_items.end()};
+	}
+
 	CharacterController::CharacterController(
 		const std::wstring& short_name, 
 		const float hp, 
@@ -266,6 +273,7 @@ namespace Fortress::Controller
 		m_power(1.0f),
 		m_bMovable(false),
 		m_previousHitCount(),
+		m_bDoubleDamage(false),
 		m_rb(rb),
 		m_projectile_type(eProjectileType::Main),
 		m_tmp_projectile_type(eProjectileType::Main),
@@ -441,6 +449,10 @@ namespace Fortress::Controller
 			{
 				set_item_active(3);
 			}
+			else if(Input::getKeyDown(eKeyCode::Four))
+			{
+				set_item_active(4);
+			}
 			else if (Input::getKeyUp(eKeyCode::A) || Input::getKeyUp(eKeyCode::D))
 			{
 				set_state(eCharacterState::Idle);
@@ -571,6 +583,7 @@ namespace Fortress::Controller
 		default_state();
 
 		m_previousHitCount = 0;
+		m_bDoubleDamage = false;
 
 		const auto scene = Scene::SceneManager::get_active_scene().lock();
 		const auto projectiles = get_projectiles();
@@ -698,6 +711,16 @@ namespace Fortress::Controller
 		{
 			m_hp = hp;
 		}
+	}
+
+	void CharacterController::set_double_damage()
+	{
+		m_bDoubleDamage = true;
+	}
+
+	bool CharacterController::is_double_damage() const
+	{
+		return m_bDoubleDamage;
 	}
 
 	void CharacterController::add_active_projectile(const std::weak_ptr<ObjectBase::projectile>& prj)

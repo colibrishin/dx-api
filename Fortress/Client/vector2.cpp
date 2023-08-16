@@ -12,4 +12,9 @@ namespace Fortress::Math
 	{
 		return Gdiplus::PointF{m_x, m_y};
 	}
+
+	Vector2::operator Gdiplus::SizeF() const
+	{
+		return Gdiplus::SizeF{m_x, m_y};
+	}
 }

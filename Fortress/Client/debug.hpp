@@ -36,7 +36,7 @@ namespace Fortress
 
 		static void render()
 		{
-			if(Input::getKeyDown(eKeyCode::F12))
+			if(Input::getKeyDown(eKeyCode::ScrollLock))
 			{
 				m_bDebug = !m_bDebug;
 			}
