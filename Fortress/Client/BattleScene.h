@@ -16,6 +16,7 @@ namespace Fortress::Scene
 	{
 	public:
 		BattleScene(const std::wstring& name);
+		~BattleScene() override = default;
 
 		virtual void initialize() override;
 		virtual void pre_initialize() = 0;
