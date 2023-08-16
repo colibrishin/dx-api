@@ -8,20 +8,21 @@ namespace Fortress::Item
 	class DoubleDamageItem : public Object::item
 	{
 	public:
-		DoubleDamageItem() : item(L"Double shot", false)
+		DoubleDamageItem() : item(L"Double damage", false)
 		{
 			DoubleDamageItem::initialize();
 		}
 
 		void initialize() override;
 		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) override;
-		void set_icon();
+		void set_icon() override;
+		void set_icon_thumbnail() override;
 		~DoubleDamageItem() override = default;
-		virtual void reset() override;
 	};
 
 	inline void DoubleDamageItem::initialize()
 	{
+		item::initialize();
 	}
 
 	inline void DoubleDamageItem::update(const std::weak_ptr<ObjectBase::character>& owner)
@@ -30,12 +31,12 @@ namespace Fortress::Item
 		{
 			const auto prjs = ch->get_projectiles();
 
-			if (!ch->is_projectile_active())
+			if (prjs.empty())
 			{
 				set_double_damage(owner);
 				fire(owner);
 			}
-			else if(!ch->is_projectile_active())
+			else if (ch->is_projectile_fire_counted() && !ch->is_projectile_active())
 			{
 				set_ended();
 			}
