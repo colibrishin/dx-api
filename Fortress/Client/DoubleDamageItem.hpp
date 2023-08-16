@@ -15,6 +15,7 @@ namespace Fortress::Item
 
 		void initialize() override;
 		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) override;
+		void set_icon();
 		~DoubleDamageItem() override = default;
 		virtual void reset() override;
 	};
@@ -39,6 +40,11 @@ namespace Fortress::Item
 				set_ended();
 			}
 		}
+	}
+
+	inline void DoubleDamageItem::set_icon()
+	{
+		m_icon = Resource::ResourceManager::load<ImageWrapper>(L"Double Damage item", "./resources/images/items/double-damage.png");
 	}
 }
 #endif // DOUBLEDAMAGEITEM_HPP

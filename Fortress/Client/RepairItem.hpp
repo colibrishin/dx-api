@@ -15,6 +15,7 @@ namespace Fortress::Item
 
 		void initialize() override;
 		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) override;
+		void set_icon();
 		~RepairItem() override = default;
 	};
 
@@ -29,6 +30,11 @@ namespace Fortress::Item
 			set_hp(owner, ch->get_hp_raw() + 50.0f);
 			set_ended();
 		}
+	}
+
+	inline void RepairItem::set_icon()
+	{
+		m_icon = Resource::ResourceManager::load<ImageWrapper>(L"Repair item", "./resources/images/items/repair.png");
 	}
 }
 #endif // REPAIRITEM_HPP

@@ -13,8 +13,9 @@ namespace Fortress::Object
 
 		~item() override = default;
 
-		virtual void initialize() = 0;
+		virtual void initialize();
 		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) = 0;
+		virtual void set_icon() = 0;
 		virtual bool is_effect_ended();
 		bool is_instant() const;
 		virtual void reset();
@@ -25,11 +26,18 @@ namespace Fortress::Object
 		void unequip_nutshell(const std::weak_ptr<ObjectBase::character>& owner);
 		void fire(const std::weak_ptr<ObjectBase::character>& owner) const;
 		void set_double_damage(const std::weak_ptr<ObjectBase::character>& owner);
+
+		std::weak_ptr<ImageWrapper> m_icon;
 	private:
 		bool m_instant;
 		bool m_is_used;
 		bool m_is_ended;
 	};
+
+	inline void item::initialize()
+	{
+		set_icon();
+	}
 
 	inline bool item::is_effect_ended()
 	{

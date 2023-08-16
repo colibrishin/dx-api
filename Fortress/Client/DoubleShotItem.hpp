@@ -17,6 +17,7 @@ namespace Fortress::Item
 		virtual void update(const std::weak_ptr<ObjectBase::character>& owner) override;
 		~DoubleShotItem() override = default;
 		virtual void reset() override;
+		void set_icon() override;
 
 	private:
 		int m_fire_count;
@@ -50,6 +51,11 @@ namespace Fortress::Item
 	{
 		m_fire_count = 0;
 		item::reset();
+	}
+
+	inline void DoubleShotItem::set_icon()
+	{
+		m_icon = Resource::ResourceManager::load<ImageWrapper>(L"Double shot item", "./resources/images/items/double-shot.png");
 	}
 }
 #endif // DOUBLESHOTITEM_HPP
