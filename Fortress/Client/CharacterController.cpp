@@ -3,6 +3,7 @@
 #include "rigidbody.hpp"
 #include "BattleScene.h"
 #include "character.hpp"
+#include "DoubleDamageItem.hpp"
 #include "input.hpp"
 #include "RepairItem.hpp"
 #include "TeleportItem.hpp"
@@ -21,6 +22,7 @@ namespace Fortress::Controller
 		m_available_items.emplace(1, std::make_shared<Item::DoubleShotItem>());
 		m_available_items.emplace(2, std::make_shared<Item::TeleportItem>());
 		m_available_items.emplace(3, std::make_shared<Item::RepairItem>());
+		m_available_items.emplace(4, std::make_shared<Item::DoubleDamageItem>());
 	}
 
 	void CharacterController::update()
@@ -441,6 +443,10 @@ namespace Fortress::Controller
 			else if (Input::getKeyDown(eKeyCode::Three))
 			{
 				set_item_active(3);
+			}
+			else if(Input::getKeyDown(eKeyCode::Four))
+			{
+				set_item_active(4);
 			}
 			else if (Input::getKeyUp(eKeyCode::A) || Input::getKeyUp(eKeyCode::D))
 			{
