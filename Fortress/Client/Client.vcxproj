@@ -139,6 +139,7 @@
     <ClInclude Include="common.h" />
     <ClInclude Include="debug.hpp" />
     <ClInclude Include="DoubleShotItem.hpp" />
+    <ClInclude Include="DoubleDamageItem.hpp" />
     <ClInclude Include="EnergyBallProjectile.hpp" />
     <ClInclude Include="flower.hpp" />
     <ClInclude Include="framework.h" />
@@ -193,7 +194,6 @@
     <ClCompile Include="characterCollision.cpp" />
     <ClCompile Include="CharacterController.cpp" />
     <ClCompile Include="deltatime.cpp" />
-    <ClCompile Include="DoubleDamageItem.cpp" />
     <ClCompile Include="EgyptGround.hpp" />
     <ClCompile Include="EgyptStairway.hpp" />
     <ClCompile Include="GifTimer.hpp" />

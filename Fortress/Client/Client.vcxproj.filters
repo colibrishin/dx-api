@@ -99,6 +99,9 @@
     <ClInclude Include="debug.hpp">
       <Filter>Engine\Common</Filter>
     </ClInclude>
+    <ClInclude Include="DoubleDamageItem.hpp">
+      <Filter>Item</Filter>
+    </ClInclude>
     <ClInclude Include="rigidBody.hpp">
       <Filter>Engine\Abstracts</Filter>
     </ClInclude>
@@ -343,9 +346,6 @@
     </ClCompile>
     <ClCompile Include="vector2.cpp">
       <Filter>Engine\Math</Filter>
-    </ClCompile>
-    <ClCompile Include="DoubleDamageItem.cpp">
-      <Filter>Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
