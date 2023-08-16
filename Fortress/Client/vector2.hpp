@@ -7,6 +7,7 @@
 
 namespace Gdiplus
 {
+	class SizeF;
 	class PointF;
 }
 
@@ -28,6 +29,7 @@ namespace Fortress::Math
 		Vector2& operator=(Vector2&& other) = default;
 
 		operator Gdiplus::PointF () const;
+		operator Gdiplus::SizeF () const;
 
 		Vector2(const float x, const float y) : m_x(x), m_y(y)
 		{
