@@ -239,6 +239,10 @@ namespace Fortress::Abstract
 		return get_offset() == Math::left ? get_bottom_right() : get_bottom_left();
 	}
 
+	Math::Vector2 rigidBody::get_offset_top_forward_position() const
+	{
+		return get_offset() == Math::left ? get_top_left() : get_top_right();
+	}
 
 	Math::Vector2 rigidBody::get_velocity_forward_position() const
 	{

@@ -234,11 +234,11 @@ namespace Fortress::ObjectBase
 
 		// thinking as virtual circle which has an radius of projectile size + half of character hitbox,
 		// with an top left/right toward to.
-		const auto forward = Math::Vector2{get_offset().get_x(), -1} * (projectile->m_hitbox + (m_hitbox / 2));
+		const auto forward = Math::Vector2{get_offset().get_x(), -1} * (projectile->m_hitbox);
 		const auto forward_rotation = forward.rotate(get_movement_pitch_radian());
 
 		projectile->fire(
-			get_center() + forward_rotation, 
+			get_offset_top_forward_position() + forward_rotation, 
 			angle, 
 			charged);
 
