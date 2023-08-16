@@ -75,6 +75,9 @@ namespace Fortress::Controller
 		void apply_damage(float damage);
 		void set_hp(const float hp);
 
+		void set_double_damage();
+		bool is_double_damage() const;
+
 		void add_active_projectile(const std::weak_ptr<ObjectBase::projectile>& prj);
 
 		void equip_nutshell();
@@ -109,6 +112,7 @@ namespace Fortress::Controller
 		float m_power;
 		bool m_bMovable;
 		int m_previousHitCount;
+		bool m_bDoubleDamage;
 
 		const Abstract::rigidBody* const m_rb;
 

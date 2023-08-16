@@ -79,7 +79,12 @@ namespace Fortress::ObjectBase
 
 		const int previous_hit_count = get_previous_hit_count();
 		const float consecutive_hit_bonus = dist_pen_damage * (static_cast<float>(previous_hit_count) * 0.25f);
-		const float total_damage = dist_pen_damage + consecutive_hit_bonus;
+		float total_damage = dist_pen_damage + consecutive_hit_bonus;
+
+		if(p.lock()->get_origin()->is_double_damage())
+		{
+			total_damage += total_damage;
+		}
 
 		return total_damage;
 	}

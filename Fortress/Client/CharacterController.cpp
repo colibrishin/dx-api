@@ -266,6 +266,7 @@ namespace Fortress::Controller
 		m_power(1.0f),
 		m_bMovable(false),
 		m_previousHitCount(),
+		m_bDoubleDamage(false),
 		m_rb(rb),
 		m_projectile_type(eProjectileType::Main),
 		m_tmp_projectile_type(eProjectileType::Main),
@@ -571,6 +572,7 @@ namespace Fortress::Controller
 		default_state();
 
 		m_previousHitCount = 0;
+		m_bDoubleDamage = false;
 
 		const auto scene = Scene::SceneManager::get_active_scene().lock();
 		const auto projectiles = get_projectiles();
@@ -698,6 +700,16 @@ namespace Fortress::Controller
 		{
 			m_hp = hp;
 		}
+	}
+
+	void CharacterController::set_double_damage()
+	{
+		m_bDoubleDamage = true;
+	}
+
+	bool CharacterController::is_double_damage() const
+	{
+		return m_bDoubleDamage;
 	}
 
 	void CharacterController::add_active_projectile(const std::weak_ptr<ObjectBase::projectile>& prj)

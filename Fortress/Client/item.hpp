@@ -24,6 +24,7 @@ namespace Fortress::Object
 		void equip_nutshell(const std::weak_ptr<ObjectBase::character>& owner);
 		void unequip_nutshell(const std::weak_ptr<ObjectBase::character>& owner);
 		void fire(const std::weak_ptr<ObjectBase::character>& owner) const;
+		void set_double_damage(const std::weak_ptr<ObjectBase::character>& owner);
 	private:
 		bool m_instant;
 		bool m_is_used;
@@ -73,6 +74,11 @@ namespace Fortress::Object
 	{
 		const auto casted = owner.lock()->stateController::downcast_from_this<Controller::CharacterController>();
 		casted->fire();
+	}
+	inline void item::set_double_damage(const std::weak_ptr<ObjectBase::character>& owner)
+	{
+		const auto casted = owner.lock()->stateController::downcast_from_this<Controller::CharacterController>();
+		casted->set_double_damage();
 	}
 }
 #endif // ITEM_HPP
