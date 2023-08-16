@@ -220,6 +220,7 @@
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="TimerManager.cpp" />
     <ClCompile Include="titleScene.cpp" />
+    <ClCompile Include="vector2.cpp" />
     <ClCompile Include="winapihandles.hpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
