@@ -53,8 +53,6 @@ namespace Fortress::Object
 		Ground& operator=(const Ground& other) = default;
 		Ground& operator=(Ground&& other) = default;
 
-		void on_collision(const CollisionCode& collision, const Math::Vector2& collision_point, const std::weak_ptr<rigidBody>& other) override;
-
 		~Ground() override
 		{
 			if(m_ground_hdc)
@@ -85,6 +83,8 @@ namespace Fortress::Object
 
 		Math::Vector2 safe_parallel_surface_global(
 			const Math::Vector2& global_position, const Math::Vector2& offset) const;
+
+		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
 	protected:
 		HDC get_ground_hdc() const;
 		HDC get_ground_mask_hdc() const;
@@ -101,7 +101,6 @@ namespace Fortress::Object
 			const int depth) const;
 		void unsafe_set_line_destroyed(const Math::Vector2& line, const int n);
 		void unsafe_set_line_destroyed_reverse(const Math::Vector2& line, int n);
-		bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const;
 
 		COLORREF get_pixel_threadsafe(const int x, const int y);
 
@@ -126,22 +125,6 @@ namespace Fortress::Object
 		std::mutex mask_write_lock;
 		std::mutex mask_read_lock;
 	};
-
-	inline void Ground::on_collision(
-		const CollisionCode& collision, 
-		const GlobalPosition& collision_point, 
-		const std::weak_ptr<rigidBody>& other)
-	{
-		if (auto const projectile = other.lock()->downcast_from_this<ObjectBase::projectile>())
-		{
-			if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
-				safe_is_projectile_hit(collision_point, projectile))
-			{
-				projectile->stateController::downcast_from_this<Controller::ProjectileController>()->notify_ground_hit();
-				safe_set_destroyed_global(collision_point, projectile->get_radius());
-			}
-		}
-	}
 
 	inline void Ground::initialize()
 	{

@@ -23,7 +23,12 @@ namespace Fortress::ObjectBase
 
 		if(const auto ground = other.lock()->downcast_from_this<Object::Ground>())
 		{
-			// ground collision is handled in ground.
+			if (get_max_hit_count() > get_hit_count() &&
+				ground->safe_is_projectile_hit(collision_point, rigidBody::downcast_from_this<projectile>()))
+			{
+				notify_ground_hit();
+				ground->safe_set_destroyed_global(collision_point, get_radius());
+			}
 		}
 
 		if(const auto ch  = other.lock()->downcast_from_this<character>())
