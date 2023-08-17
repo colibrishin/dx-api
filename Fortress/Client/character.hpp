@@ -70,7 +70,6 @@ namespace Fortress::ObjectBase
 		void stop() override;
 
 		void render_hp_bar(const GlobalPosition& position);
-		bool is_moving_toward(const GroundPointer& ground_ptr) const;
 		bool check_angle(const GlobalPosition& position, const GroundPointer& ground_ptr) const;
 
 
