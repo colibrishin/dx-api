@@ -51,7 +51,7 @@ namespace Fortress::Abstract
 		__forceinline Math::Vector2 get_bottom_right() const;
 		__forceinline Math::Vector2 get_center() const;
 		std::vector<Math::Vector2> get_all_hit_points() const;
-		__forceinline Math::Vector2 get_hit_point(const eHitVector& e_vector) const;
+		__forceinline Math::Vector2 get_dir_point(const eDirVector& e_vector) const;
 		__forceinline Math::Vector2 to_top_left_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 to_top_right_local_position(const Math::Vector2& other) const;
 		__forceinline Math::Vector2 to_nearest_local_position(const Math::Vector2& other) const;
@@ -213,19 +213,19 @@ namespace Fortress::Abstract
 		};
 	}
 
-	inline Math::Vector2 object::get_hit_point(const eHitVector & e_vector) const
+	inline Math::Vector2 object::get_dir_point(const eDirVector & e_vector) const
 	{
 		switch (e_vector) {
-		case eHitVector::Identical: return get_center();
-		case eHitVector::Top: return get_top();
-		case eHitVector::Bottom: return get_bottom();
-		case eHitVector::Left: return get_left();
-		case eHitVector::Right: return get_right();
-		case eHitVector::TopLeft: return get_top_left();
-		case eHitVector::TopRight: return get_top_right();
-		case eHitVector::BottomLeft: return get_bottom_left();
-		case eHitVector::BottomRight: return get_bottom_right();
-		case eHitVector::Unknown: 
+		case eDirVector::Identical: return get_center();
+		case eDirVector::Top: return get_top();
+		case eDirVector::Bottom: return get_bottom();
+		case eDirVector::Left: return get_left();
+		case eDirVector::Right: return get_right();
+		case eDirVector::TopLeft: return get_top_left();
+		case eDirVector::TopRight: return get_top_right();
+		case eDirVector::BottomLeft: return get_bottom_left();
+		case eDirVector::BottomRight: return get_bottom_right();
+		case eDirVector::Unknown: 
 		default: return {0.0f, 0.0f};  // NOLINT(clang-diagnostic-covered-switch-default)
 		}
 	}
