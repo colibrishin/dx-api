@@ -203,6 +203,12 @@ namespace Fortress::Abstract
 		return m_user_pitch_radian;
 	}
 
+	bool rigidBody::is_moving_toward(const rigidBody& other) const
+	{
+		const DirVector dir = (get_center() - other.get_center()).normalized();
+		return get_velocity_offset() != dir.x_dir();
+	}
+
 	const Math::Vector2& rigidBody::get_velocity() const
 	{
 		return m_velocity;

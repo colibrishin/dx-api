@@ -52,6 +52,8 @@ namespace Fortress::Abstract
 		float get_movement_pitch_radian() const;
 		float get_user_pitch_radian() const;
 
+		bool is_moving_toward(const rigidBody& other) const;
+
 		const Math::Vector2& get_velocity() const;
 		const Math::Vector2& get_offset() const;
 		const Math::Vector2& get_backward_offset() const;
