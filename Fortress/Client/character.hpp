@@ -49,7 +49,7 @@ namespace Fortress::ObjectBase
 
 		void on_collision(
 			const CollisionCode& collision,
-			const UnitVector& hit_vector,
+			const GlobalPosition& collision_point,
 			const RigidBodyPointer& other) override;
 
 		void on_nocollison() override;
@@ -70,7 +70,6 @@ namespace Fortress::ObjectBase
 		void stop() override;
 
 		void render_hp_bar(const GlobalPosition& position);
-		bool is_moving_toward(const GroundPointer& ground_ptr) const;
 		bool check_angle(const GlobalPosition& position, const GroundPointer& ground_ptr) const;
 
 

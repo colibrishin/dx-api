@@ -57,11 +57,25 @@ namespace Fortress::Abstract
 
 			if(code != CollisionCode::None)
 			{
+				// @todo: verification is needed.
+				// sorts out small to big
+				const rigidBody* small_object = 
+					m_hitbox.magnitude() <= rb->m_hitbox.magnitude() ? this : rb.get();
+				const rigidBody* big_object = small_object == this ? rb.get() : this;
+
+				// gets the direction vector for position.
+				const DirVector dir = (small_object->get_center() - big_object->get_center()).normalized();
+
+				// if left object intersects with right from top left, then the direction will be
+				// top left from center. plus, hitbox needs to be considered for the nearest position.
+				// if the object collided, at least, two objects meet each other, in range of hitbox.
+				// for that, reverse the direction to get the hitbox included value, which is, in above
+				// example, bottom right.
+				const eDirVector eDir = Math::Vector2::to_dir_enum(-dir);
+				GlobalPosition collision_point = small_object->get_dir_point(eDir);
+
 				collided = true;
-				on_collision(
-					code,
-					Math::Vector2::to_hit_vector(get_center(), rb->get_center()),
-					rb);
+				on_collision(code, collision_point, rb);
 			}
 		}
 
@@ -189,6 +203,12 @@ namespace Fortress::Abstract
 		return m_user_pitch_radian;
 	}
 
+	bool rigidBody::is_moving_toward(const rigidBody& other) const
+	{
+		const DirVector dir = (get_center() - other.get_center()).normalized();
+		return get_velocity_offset() != dir.x_dir();
+	}
+
 	const Math::Vector2& rigidBody::get_velocity() const
 	{
 		return m_velocity;
@@ -254,7 +274,7 @@ namespace Fortress::Abstract
 		m_offset = offset;
 	}
 
-	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other)
+	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& collision_point, const std::weak_ptr<rigidBody>& other)
 	{
 	}
 

@@ -3,18 +3,6 @@
 
 namespace Fortress::ObjectBase
 {
-	bool character::is_moving_toward(const GroundPointer& ground_ptr) const
-	{
-		const auto position = 
-			search_ground(ground_ptr, get_offset_bottom_backward_position(), get_offset(), true);
-		const auto unit = (position - get_bottom()).normalized();
-
-		const auto velocity_offset = get_velocity_offset();
-		const auto positional_offset = unit.get_x() < 0 ? Math::left : Math::right;
-
-		return velocity_offset == positional_offset;
-	}
-
 	bool character::check_angle(const GlobalPosition& position, const GroundPointer& ground_ptr) const
 	{
 		if(const auto ground = ground_ptr.lock())
@@ -71,7 +59,7 @@ namespace Fortress::ObjectBase
 					// check ground stiffness;
 					const auto mid_ground = get_forward_ground(ground, false);
 
-					if (is_moving_toward(ground) && !check_angle(mid_ground, ground))
+					if (is_moving_toward(*ground) && !check_angle(mid_ground, ground))
 					{
 						m_velocity = {};
 					}
@@ -113,7 +101,7 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
-			const bool uphilling = ground->safe_is_object_stuck_global(get_offset_bottom_forward_position());
+			const bool uphilling = is_moving_toward(*ground);
 			Math::Vector2 delta{};
 
 			// calculate only downhilling from current position. if character is uphilling then calculate downhilling angle and reverse it.
@@ -164,7 +152,7 @@ namespace Fortress::ObjectBase
 	{
 		if (const auto ground = ground_ptr.lock())
 		{
-			const bool uphilling = is_moving_toward(ground_ptr);
+			const bool uphilling = is_moving_toward(*ground);
 
 			// flipping is needed because hitbox is inside of the ground if character is moving forward to ground.
 			const auto ray_start_pos = uphilling ? get_offset_backward_position() : get_offset_forward_position();
@@ -296,7 +284,7 @@ namespace Fortress::ObjectBase
 		return candidate;
 	}
 
-	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
+	void character::on_collision(const CollisionCode& collision, const GlobalPosition& collision_point, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
@@ -340,7 +328,7 @@ namespace Fortress::ObjectBase
 				{
 					const auto bottom_local_position = ground->to_top_left_local_position(get_bottom());
 					const auto next_velocity = get_next_velocity(bottom_local_position, ground);
-					const auto is_toward = is_moving_toward(ground);
+					const auto is_toward = is_moving_toward(*ground);
 
 					Debug::Log(L"Ground : " + ground->get_name());
 					Debug::Log(L"Is Toward:" + std::to_wstring(is_toward));
@@ -348,7 +336,7 @@ namespace Fortress::ObjectBase
 						std::to_wstring(next_velocity.get_y()));
 					
 					// @todo : inconsistency, need to find out why this is not working
-					if(!is_toward && next_velocity != Math::vector_inf)
+					if(is_toward && next_velocity != Math::vector_inf)
 					{
 						m_velocity = next_velocity;
 					}
@@ -356,7 +344,7 @@ namespace Fortress::ObjectBase
 			}
 		}
 
-		rigidBody::on_collision(collision, hit_vector, other);
+		rigidBody::on_collision(collision, collision_point, other);
 	}
 
 	void character::on_nocollison()

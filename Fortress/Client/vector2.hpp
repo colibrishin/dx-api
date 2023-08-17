@@ -84,8 +84,8 @@ namespace Fortress::Math
 		__forceinline float unit_angle() const noexcept;
 		__forceinline static UnitVector angle_vector(const float) noexcept;
 		__forceinline Vector2 x_dir() const noexcept;
-		__forceinline static Vector2 to_hit_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right);
-		__forceinline static eHitVector translate_hit_vector(const Math::Vector2& hit_vector);
+		__forceinline static Vector2 to_dir_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right);
+		__forceinline static eDirVector to_dir_enum(const Math::Vector2& hit_vector);
 
 	private:
 		float m_x;
@@ -316,12 +316,12 @@ namespace Fortress::Math
 		return m_x < 0 ? Math::left : Math::right;
 	}
 
-	__forceinline Vector2 Vector2::to_hit_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right)
+	__forceinline DirVector Vector2::to_dir_vector(const Math::Vector2& hit_left, const Math::Vector2& hit_right)
 	{
 		return (hit_left - hit_right).normalized();
 	}
 
-	__forceinline eHitVector Vector2::translate_hit_vector(const Math::Vector2& hit_vector)
+	__forceinline eDirVector Vector2::to_dir_enum(const DirVector& hit_vector)
 	{
 		const auto abs_vector = hit_vector.abs();
 		const auto orthogonal = abs_vector.get_x() > 1.0f - Math::epsilon || abs_vector.get_x() <= Math::epsilon;
@@ -333,42 +333,42 @@ namespace Fortress::Math
 
 		if(hit_vector == Math::Vector2{0.0f, 0.0f})
 		{
-			return eHitVector::Identical;
+			return eDirVector::Identical;
 		}
 		if(orthogonal && top_check)
 		{
-			return eHitVector::Top;
+			return eDirVector::Top;
 		}
 		if(orthogonal && bottom_check)
 		{
-			return eHitVector::Bottom;
+			return eDirVector::Bottom;
 		}
 		if(left_check && parallel)
 		{
-			return eHitVector::Left;
+			return eDirVector::Left;
 		}
 		if(right_check && parallel)
 		{
-			return eHitVector::Right;
+			return eDirVector::Right;
 		}
 		if(left_check && top_check)
 		{
-			return eHitVector::TopLeft;
+			return eDirVector::TopLeft;
 		}
 		if(right_check && top_check)
 		{
-			return eHitVector::TopRight;
+			return eDirVector::TopRight;
 		}
 		if(left_check && bottom_check)
 		{
-			return eHitVector::BottomLeft;
+			return eDirVector::BottomLeft;
 		}
 		if(right_check && bottom_check)
 		{
-			return eHitVector::BottomRight;
+			return eDirVector::BottomRight;
 		}
 
-		return eHitVector::Unknown;
+		return eDirVector::Unknown;
 	}
 }
 

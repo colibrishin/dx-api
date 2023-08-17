@@ -14,7 +14,7 @@ namespace Fortress::ObjectBase
 		ProjectileController::update();
 	}
 
-	void projectile::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
+	void projectile::on_collision(const CollisionCode& collision, const GlobalPosition& collision_point, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		if(const auto prj = other.lock()->downcast_from_this<projectile>())
 		{
@@ -23,7 +23,12 @@ namespace Fortress::ObjectBase
 
 		if(const auto ground = other.lock()->downcast_from_this<Object::Ground>())
 		{
-			// ground collision is handled in ground.
+			if (get_max_hit_count() > get_hit_count() &&
+				ground->safe_is_projectile_hit(collision_point, rigidBody::downcast_from_this<projectile>()))
+			{
+				notify_ground_hit();
+				ground->safe_set_destroyed_global(collision_point, get_radius());
+			}
 		}
 
 		if(const auto ch  = other.lock()->downcast_from_this<character>())
