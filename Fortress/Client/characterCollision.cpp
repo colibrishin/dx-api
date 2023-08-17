@@ -296,7 +296,7 @@ namespace Fortress::ObjectBase
 		return candidate;
 	}
 
-	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
+	void character::on_collision(const CollisionCode& collision, const GlobalPosition& collision_point, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
@@ -356,7 +356,7 @@ namespace Fortress::ObjectBase
 			}
 		}
 
-		rigidBody::on_collision(collision, hit_vector, other);
+		rigidBody::on_collision(collision, collision_point, other);
 	}
 
 	void character::on_nocollison()

@@ -14,7 +14,7 @@ namespace Fortress::ObjectBase
 		ProjectileController::update();
 	}
 
-	void projectile::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
+	void projectile::on_collision(const CollisionCode& collision, const GlobalPosition& collision_point, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		if(const auto prj = other.lock()->downcast_from_this<projectile>())
 		{

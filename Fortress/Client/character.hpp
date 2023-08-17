@@ -49,7 +49,7 @@ namespace Fortress::ObjectBase
 
 		void on_collision(
 			const CollisionCode& collision,
-			const UnitVector& hit_vector,
+			const GlobalPosition& collision_point,
 			const RigidBodyPointer& other) override;
 
 		void on_nocollison() override;

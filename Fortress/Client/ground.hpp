@@ -53,7 +53,7 @@ namespace Fortress::Object
 		Ground& operator=(const Ground& other) = default;
 		Ground& operator=(Ground&& other) = default;
 
-		void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other) override;
+		void on_collision(const CollisionCode& collision, const Math::Vector2& collision_point, const std::weak_ptr<rigidBody>& other) override;
 
 		~Ground() override
 		{
@@ -129,19 +129,16 @@ namespace Fortress::Object
 
 	inline void Ground::on_collision(
 		const CollisionCode& collision, 
-		const Math::Vector2& hit_vector, 
-		const std::weak_ptr<Abstract::rigidBody>& other)
+		const GlobalPosition& collision_point, 
+		const std::weak_ptr<rigidBody>& other)
 	{
 		if (auto const projectile = other.lock()->downcast_from_this<ObjectBase::projectile>())
 		{
-			const eHitVector e_vec = Math::Vector2::translate_hit_vector(hit_vector);
-			const auto hit_point = projectile->get_hit_point(e_vec);
-
 			if (projectile->get_max_hit_count() > projectile->get_hit_count() &&
-				safe_is_projectile_hit(hit_point, projectile))
+				safe_is_projectile_hit(collision_point, projectile))
 			{
 				projectile->stateController::downcast_from_this<Controller::ProjectileController>()->notify_ground_hit();
-				safe_set_destroyed_global(hit_point, projectile->get_radius());
+				safe_set_destroyed_global(collision_point, projectile->get_radius());
 			}
 		}
 	}

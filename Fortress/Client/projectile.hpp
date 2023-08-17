@@ -29,7 +29,10 @@ namespace Fortress::ObjectBase
 
 		const character* get_origin() const;
 
-		void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other) override;
+		void on_collision(
+			const CollisionCode& collision, 
+			const GlobalPosition& collision_point,
+			const std::weak_ptr<rigidBody>& other) override;
 
 		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
 
