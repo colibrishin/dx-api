@@ -101,7 +101,7 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
-			const bool uphilling = is_moving_toward(*ground);
+			const bool uphilling = is_facing_toward(*ground);
 			Math::Vector2 delta{};
 
 			// calculate only downhilling from current position. if character is uphilling then calculate downhilling angle and reverse it.

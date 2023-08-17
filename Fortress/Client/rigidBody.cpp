@@ -209,6 +209,12 @@ namespace Fortress::Abstract
 		return get_velocity_offset() != dir.x_dir();
 	}
 
+	bool rigidBody::is_facing_toward(const rigidBody& other) const
+	{
+		const DirVector dir = (get_center() - other.get_center()).normalized();
+		return get_offset() != dir.x_dir();
+	}
+
 	const Math::Vector2& rigidBody::get_velocity() const
 	{
 		return m_velocity;
