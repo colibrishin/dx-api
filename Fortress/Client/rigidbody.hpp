@@ -30,7 +30,11 @@ namespace Fortress::Abstract
 		virtual void prerender();
 		static void block_window_frame(const std::weak_ptr<rigidBody>& target);
 
-		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other);
+		virtual void on_collision(
+			const CollisionCode& collision, 
+			const GlobalPosition& collision_point, 
+			const std::weak_ptr<rigidBody>& other);
+
 		virtual void on_nocollison();
 		static CollisionCode is_collision(const std::weak_ptr<object>& left, const std::weak_ptr<object>& right) noexcept;
 
