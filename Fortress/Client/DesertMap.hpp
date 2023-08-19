@@ -1,12 +1,11 @@
 #ifndef DESERTMAP_HPP
 #define DESERTMAP_HPP
-#include "BattleScene.h"
+#include "../Common/BattleScene.h"
 #include "CannonCharacter.hpp"
 #include "EgyptGround.hpp"
 #include "EgyptStairway.hpp"
-#include "Stairway.hpp"
 #include "MissileCharacter.hpp"
-#include "objectManager.hpp"
+#include "../Common/objectManager.hpp"
 #include "SecwindCharacter.hpp"
 
 namespace Fortress::Map

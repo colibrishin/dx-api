@@ -2,11 +2,7 @@
 #ifndef PRECISIONCANNONPROJECTILE_HPP
 #define PRECISIONCANNONPROJECTILE_HPP
 
-#include "GifWrapper.h"
-#include "projectile.hpp"
-#include "math.h"  // NOLINT(modernize-deprecated-headers)
-#include "resourceManager.hpp"
-#include "Texture.hpp"
+#include "../Common/projectile.hpp"
 
 namespace Fortress::Object
 {

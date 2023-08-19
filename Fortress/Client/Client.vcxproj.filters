@@ -8,15 +8,6 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Engine">
-      <UniqueIdentifier>{d5413c51-5c9a-4503-a055-0983af252a52}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Common">
-      <UniqueIdentifier>{b3552554-20ee-4876-9542-18a8a16e1dbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Math">
-      <UniqueIdentifier>{b85e08a4-d752-41a5-81af-9c0cf21d71e7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Windows\소스 파일">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
@@ -24,9 +15,6 @@
     <Filter Include="리소스 파일">
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Engine\Abstracts">
-      <UniqueIdentifier>{4d369acf-a118-4ff7-bb08-ecd8273086a8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Characters">
       <UniqueIdentifier>{a4d27f8e-3247-4400-a82f-1ff59c738af7}</UniqueIdentifier>
@@ -37,32 +25,14 @@
     <Filter Include="Projectiles">
       <UniqueIdentifier>{c9b92583-e37a-48dd-b96c-578df772820d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Engine\Objects">
-      <UniqueIdentifier>{e94f1ec7-ea00-4806-ba17-66d23305d819}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Scene">
       <UniqueIdentifier>{b4d67fe7-c618-4c1d-b389-f0f443130bbf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Resource">
-      <UniqueIdentifier>{67164768-64d4-4ec6-a330-756e252d4f33}</UniqueIdentifier>
     </Filter>
     <Filter Include="Map">
       <UniqueIdentifier>{13dea890-eb8b-4ba8-b1b0-ed23b6c5e2e2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Item">
       <UniqueIdentifier>{085b2b27-ae23-4161-a3a6-1087b370e629}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Round">
-      <UniqueIdentifier>{f4b210bc-87ac-4022-a08a-6986f8a21e86}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Controller">
-      <UniqueIdentifier>{4e554c30-0fd4-412f-830a-0a6f9c91fe77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Timer">
-      <UniqueIdentifier>{46efa7e6-0f81-43aa-8a84-7055dc81a8cb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Engine\Manager">
-      <UniqueIdentifier>{8c129458-bb09-4bd5-8f0f-a49ffb9baa34}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -75,53 +45,14 @@
     <ClInclude Include="Client.h">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="common.h">
-      <Filter>Engine\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="math.h">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="vector2.hpp">
-      <Filter>Engine\Math</Filter>
-    </ClInclude>
-    <ClInclude Include="input.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClInclude>
     <ClInclude Include="titleScene.h">
       <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="ground.hpp">
-      <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="flower.hpp">
       <Filter>Object</Filter>
     </ClInclude>
-    <ClInclude Include="debug.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClInclude>
     <ClInclude Include="DoubleDamageItem.hpp">
       <Filter>Item</Filter>
-    </ClInclude>
-    <ClInclude Include="rigidBody.hpp">
-      <Filter>Engine\Abstracts</Filter>
-    </ClInclude>
-    <ClInclude Include="character.hpp">
-      <Filter>Engine\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="projectile.hpp">
-      <Filter>Engine\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageWrapper.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="scene.hpp">
-      <Filter>Engine\Abstracts</Filter>
-    </ClInclude>
-    <ClInclude Include="layer.hpp">
-      <Filter>Engine\Abstracts</Filter>
-    </ClInclude>
-    <ClInclude Include="camera.hpp">
-      <Filter>Engine\Common</Filter>
     </ClInclude>
     <ClInclude Include="BulletinBoardScene.h">
       <Filter>Scene</Filter>
@@ -135,17 +66,8 @@
     <ClInclude Include="Resource.h">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="resource.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClInclude>
     <ClInclude Include="GuidedMissileProjectile.hpp">
       <Filter>Projectiles</Filter>
-    </ClInclude>
-    <ClInclude Include="sound.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundPack.hpp">
-      <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="SkyValleyMap.hpp">
       <Filter>Map</Filter>
@@ -159,26 +81,11 @@
     <ClInclude Include="DoubleShotItem.hpp">
       <Filter>Item</Filter>
     </ClInclude>
-    <ClInclude Include="NutshellProjectile.hpp">
-      <Filter>Projectiles</Filter>
-    </ClInclude>
-    <ClInclude Include="deltatime.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClInclude>
     <ClInclude Include="RepairItem.hpp">
       <Filter>Item</Filter>
     </ClInclude>
     <ClInclude Include="TeleportItem.hpp">
       <Filter>Item</Filter>
-    </ClInclude>
-    <ClInclude Include="application.h">
-      <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Radar.h">
-      <Filter>Round</Filter>
-    </ClInclude>
-    <ClInclude Include="Round.h">
-      <Filter>Round</Filter>
     </ClInclude>
     <ClInclude Include="SecwindCharacter.hpp">
       <Filter>Characters</Filter>
@@ -186,85 +93,34 @@
     <ClInclude Include="EnergyBallProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClInclude>
-    <ClInclude Include="SummaryScene.hpp">
-      <Filter>Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="virtual_this.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterController.hpp">
-      <Filter>Controller</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectileController.hpp">
-      <Filter>Controller</Filter>
-    </ClInclude>
     <ClInclude Include="CloudGround.hpp">
       <Filter>Object</Filter>
     </ClInclude>
     <ClInclude Include="LoadingScene.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="SoundManager.hpp">
-      <Filter>Engine\Manager</Filter>
+    <ClInclude Include="application.h">
+      <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TimerManager.hpp">
-      <Filter>Engine\Manager</Filter>
+    <ClInclude Include="winapihandles.hpp">
+      <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.hpp">
-      <Filter>Timer</Filter>
-    </ClInclude>
-    <ClInclude Include="NextPlayerTimer.hpp">
-      <Filter>Timer</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectileTimer.hpp">
-      <Filter>Timer</Filter>
-    </ClInclude>
-    <ClInclude Include="sceneManager.hpp">
-      <Filter>Engine\Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="stateController.hpp">
-      <Filter>Engine\Abstracts</Filter>
-    </ClInclude>
-    <ClInclude Include="BattleScene.h">
-      <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="item.hpp">
-      <Filter>Item</Filter>
+    <ClInclude Include="NetworkMessenger.hpp">
+      <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">
       <Filter>Windows\소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="application.cpp">
-      <Filter>Engine</Filter>
-    </ClCompile>
     <ClCompile Include="titleScene.cpp">
       <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="winapihandles.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClCompile>
-    <ClCompile Include="entity.hpp">
-      <Filter>Engine\Abstracts</Filter>
-    </ClCompile>
-    <ClCompile Include="object.hpp">
-      <Filter>Engine\Abstracts</Filter>
-    </ClCompile>
-    <ClCompile Include="character.cpp">
-      <Filter>Engine\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="projectile.cpp">
-      <Filter>Engine\Objects</Filter>
     </ClCompile>
     <ClCompile Include="MissileProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
     <ClCompile Include="MissileCharacter.hpp">
       <Filter>Characters</Filter>
-    </ClCompile>
-    <ClCompile Include="GifWrapper.h">
-      <Filter>Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="BulletinBoardScene.cpp">
       <Filter>Scene</Filter>
@@ -275,38 +131,17 @@
     <ClCompile Include="LobbyScene.cpp">
       <Filter>Scene</Filter>
     </ClCompile>
-    <ClCompile Include="Texture.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="rigidBody.cpp">
-      <Filter>Engine\Abstracts</Filter>
-    </ClCompile>
     <ClCompile Include="CannonCharacter.hpp">
       <Filter>Characters</Filter>
     </ClCompile>
     <ClCompile Include="CannonProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
-    <ClCompile Include="deltatime.cpp">
-      <Filter>Engine\Common</Filter>
-    </ClCompile>
     <ClCompile Include="PrecisionCannonProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
-    <ClCompile Include="characterCollision.cpp">
-      <Filter>Engine\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="MultiEnergyBallProjectile.hpp">
       <Filter>Projectiles</Filter>
-    </ClCompile>
-    <ClCompile Include="Round.cpp">
-      <Filter>Round</Filter>
-    </ClCompile>
-    <ClCompile Include="CharacterController.cpp">
-      <Filter>Controller</Filter>
-    </ClCompile>
-    <ClCompile Include="ProjectileController.cpp">
-      <Filter>Controller</Filter>
     </ClCompile>
     <ClCompile Include="EgyptGround.hpp">
       <Filter>Object</Filter>
@@ -314,38 +149,8 @@
     <ClCompile Include="EgyptStairway.hpp">
       <Filter>Object</Filter>
     </ClCompile>
-    <ClCompile Include="GifWrapper.cpp">
-      <Filter>Engine\Resource</Filter>
-    </ClCompile>
-    <ClCompile Include="cameraManager.hpp">
-      <Filter>Engine\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="objectManager.hpp">
-      <Filter>Engine\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="resourceManager.hpp">
-      <Filter>Engine\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="GifTimer.hpp">
-      <Filter>Timer</Filter>
-    </ClCompile>
-    <ClCompile Include="sceneManager.cpp">
-      <Filter>Engine\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="BattleScene.cpp">
-      <Filter>Map</Filter>
-    </ClCompile>
-    <ClCompile Include="Radar.cpp">
-      <Filter>Round</Filter>
-    </ClCompile>
-    <ClCompile Include="TimerManager.cpp">
-      <Filter>Engine\Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="Timer.cpp">
-      <Filter>Timer</Filter>
-    </ClCompile>
-    <ClCompile Include="vector2.cpp">
-      <Filter>Engine\Math</Filter>
+    <ClCompile Include="application.cpp">
+      <Filter>Windows\소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

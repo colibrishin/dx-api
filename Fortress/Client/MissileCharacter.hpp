@@ -1,13 +1,10 @@
 #pragma once
 #ifndef MISSILECHARACTER_HPP
 #define MISSILECHARACTER_HPP
-#include "character.hpp"
-#include "GifWrapper.h"
+#include "../Common/character.hpp"
 #include "GuidedMissileProjectile.hpp"
-#include "math.h"
 #include "MissileProjectile.hpp"
-#include "objectManager.hpp"
-#include "resourceManager.hpp"
+#include "../Common/objectManager.hpp"
 
 namespace Fortress::Object
 {

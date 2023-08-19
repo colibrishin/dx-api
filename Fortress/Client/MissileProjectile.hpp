@@ -2,9 +2,7 @@
 #ifndef MISSILEPROJECTILE_HPP
 #define MISSILEPROJECTILE_HPP
 
-#include "GifWrapper.h"
-#include "projectile.hpp"
-#include "math.h"
+#include "../Common/projectile.hpp"
 
 namespace Fortress::Object
 {

@@ -1,10 +1,10 @@
 #ifndef SKYVALLEYMAP_HPP
 #define SKYVALLEYMAP_HPP
-#include "BattleScene.h"
+#include "../Common/BattleScene.h"
 #include "CannonCharacter.hpp"
 #include "CloudGround.hpp"
 #include "MissileCharacter.hpp"
-#include "objectManager.hpp"
+#include "../Common/objectManager.hpp"
 
 namespace Fortress::Map
 {

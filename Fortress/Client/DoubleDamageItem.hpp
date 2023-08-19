@@ -1,7 +1,7 @@
 #ifndef DOUBLEDAMAGEITEM_HPP
 #define DOUBLEDAMAGEITEM_HPP
-#include "item.hpp"
-#include "projectile.hpp"
+#include "../Common/item.hpp"
+#include "../Common/projectile.hpp"
 
 namespace Fortress::Item
 {

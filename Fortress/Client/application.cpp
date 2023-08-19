@@ -1,17 +1,20 @@
 #include <random>
 
 #include "application.h"
+#include <filesystem>
 
-#include "BattleScene.h"
 #include "BulletinBoardScene.h"
-#include "input.hpp"
-#include "deltatime.hpp"
+#include "LoadingScene.hpp"
 #include "LobbyScene.h"
 #include "RoomScene.h"
-#include "sceneManager.hpp"
-#include "scene.hpp"
 #include "titleScene.h"
-#include "SoundManager.hpp"
+#include "../Common/input.hpp"
+#include "../Common/deltatime.hpp"
+#include "../Common/BattleScene.h"
+#include "../Common/debug.hpp"
+#include "../Common/sceneManager.hpp"
+#include "../Common/scene.hpp"
+#include "../Common/SoundManager.hpp"
 #include "winapihandles.hpp"
 
 namespace Fortress
@@ -23,34 +26,20 @@ namespace Fortress
 		Input::initialize();
 		DeltaTime::initialize();
 
-		WinAPIHandles::initialize(hwnd, hdc);
+		EngineHandle::set_handle(std::make_shared<WinAPIHandles>());
+		EngineHandle::get_handle().lock()->initialize(hwnd, hdc);
+		m_buffer_hdc = EngineHandle::get_handle().lock()->get_buffer_dc();
+
 		SoundManager::initialize();
-		m_buffer_hdc = WinAPIHandles::get_buffer_dc();
 		Debug::initialize(m_buffer_hdc);
-
-		// lazy-initialization font collection, private font constructor initialized before gdi initialization.
-		m_font_collection = std::make_unique<PrivateFontCollection>();
-
 		Scene::SceneManager::initialize();
 		Scene::SceneManager::CreateScene<Scene::TitleScene>();
-		Scene::SceneManager::CreateScene<Scene::BulletinBoardScene>();
-		Scene::SceneManager::CreateScene<Scene::LobbyScene>();
 		Scene::SceneManager::CreateScene<Scene::RoomScene>();
+		Scene::SceneManager::CreateScene<Scene::LobbyScene>();
+		Scene::SceneManager::CreateScene<Scene::BulletinBoardScene>();
 		Scene::SceneManager::SetActive(L"Title Scene");
 
-		const std::filesystem::path font_path = "./resources/font/ark-pixel-10px-monospaced-ko.ttf";
-
-		if(m_font_collection->AddFontFile(font_path.native().c_str()) != Ok)
-		{
-			throw std::exception("Unable to load font file.");
-		}
-
-		m_font = std::make_unique<Font>(
-					L"Ark Pixel 10px Monospaced ko",
-					50,
-					FontStyleRegular,
-					UnitPixel,
-					m_font_collection.get());
+		m_messenger.send_alive();
  	}
 
 	void Application::update()
@@ -80,8 +69,18 @@ namespace Fortress
 		Debug::render();
 		DeltaTime::render();
 
-		BitBlt(m_hdc, 0, 0, WinAPIHandles::get_window_width(), WinAPIHandles::get_window_height(), m_buffer_hdc, 0, 0,
-		       SRCCOPY);
+		const auto handle = EngineHandle::get_handle().lock();
+
+		BitBlt(
+			m_hdc,
+			0, 
+			0, 
+			handle->get_window_width(), 
+			handle->get_window_height(), 
+			m_buffer_hdc, 
+			0, 
+			0,
+			SRCCOPY);
 	}
 
 	void Application::cleanup()
@@ -91,11 +90,6 @@ namespace Fortress
 		ObjectBase::ObjectManager::cleanup();
 		Resource::ResourceManager::cleanup();
 		SoundManager::cleanup();
-		WinAPIHandles::cleanup();
-	}
-
-	std::weak_ptr<Font> Application::get_font()
-	{
-		return m_font;
+		EngineHandle::get_handle().lock().reset();
 	}
 }

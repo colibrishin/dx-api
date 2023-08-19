@@ -1,6 +1,6 @@
 #ifndef EGYPTGROUND_HPP
 #define EGYPTGROUND_HPP
-#include "ground.hpp"
+#include "../Common/ground.hpp"
 
 namespace Fortress::Object
 {

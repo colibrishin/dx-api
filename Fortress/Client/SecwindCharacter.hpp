@@ -1,11 +1,8 @@
 #pragma once
 #ifndef SECNWINDCHARACTER_HPP
 #define SECNWINDCHARACTER_HPP
-#include "character.hpp"
+#include "../Common/character.hpp"
 #include "EnergyBallProjectile.hpp"
-#include "GuidedMissileProjectile.hpp"
-#include "math.h"
-#include "MissileProjectile.hpp"
 #include "MultiEnergyBallProjectile.hpp"
 
 namespace Fortress::Object

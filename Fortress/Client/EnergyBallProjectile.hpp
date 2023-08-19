@@ -2,11 +2,7 @@
 #ifndef ENERGYBALLPROJECTILE_HPP
 #define ENERGYBALLPROJECTILE_HPP
 
-#include "GifWrapper.h"
-#include "projectile.hpp"
-#include "math.h"  // NOLINT(modernize-deprecated-headers)
-#include "resourceManager.hpp"
-#include "Texture.hpp"
+#include "../Common/projectile.hpp"
 
 namespace Fortress::Object
 {

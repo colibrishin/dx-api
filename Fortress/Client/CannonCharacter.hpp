@@ -1,10 +1,10 @@
 #pragma once
 #ifndef CANNONCHARACTER_HPP
 #define CANNONCHARACTER_HPP
+#include "Client.h"
 #include "CannonProjectile.hpp"
-#include "character.hpp"
-#include "math.h"
-#include "objectManager.hpp"
+#include "../Common/character.hpp"
+#include "../Common/objectManager.hpp"
 #include "PrecisionCannonProjectile.hpp"
 
 namespace Fortress::Object

@@ -2,11 +2,9 @@
 #ifndef CANNONPROJECTILE_HPP
 #define CANNONPROJECTILE_HPP
 
-#include "GifWrapper.h"
-#include "projectile.hpp"
-#include "math.h"  // NOLINT(modernize-deprecated-headers)
-#include "resourceManager.hpp"
-#include "Texture.hpp"
+#include "../Common/GifWrapper.h"
+#include "../Common/projectile.hpp"
+#include "../Common/resourceManager.hpp"
 
 namespace Fortress::Object
 {

@@ -1,0 +1,240 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="소스 파일">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="헤더 파일">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Abstract">
+      <UniqueIdentifier>{bffbf5ff-384a-44d4-9c0c-9667c3ca14b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{d5adeb1e-1217-4943-bfba-5374d3d83095}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource">
+      <UniqueIdentifier>{a4a1efd5-0355-4203-9f70-7bba0ef1930a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Manager">
+      <UniqueIdentifier>{2d84c41b-51ea-40d0-8a4a-bfe71151a2c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{d0080c46-110f-4c85-bbb6-82a98f02f2ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Map">
+      <UniqueIdentifier>{bec8c934-efe4-4483-b8bf-23ebe2a77bb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Object">
+      <UniqueIdentifier>{4f1175d8-fbd1-440d-baa4-79e4a841f15a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Round">
+      <UniqueIdentifier>{0ad5dbe6-f96f-47b0-ad65-fd3c40009b86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{65b6fdc9-6ac9-4492-abef-81c4f14e1cd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{75cd8469-882e-4a0a-a6df-6d9d3fee5fe6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="framework.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="message.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Crc32.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Socket.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="entity.hpp">
+      <Filter>Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="layer.hpp">
+      <Filter>Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="object.hpp">
+      <Filter>Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="rigidbody.hpp">
+      <Filter>Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.hpp">
+      <Filter>Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="stateController.hpp">
+      <Filter>Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="debug.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="deltatime.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="input.hpp">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="cameraManager.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="objectManager.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="resourceManager.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="sceneManager.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerManager.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="GifWrapper.h">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageWrapper.hpp">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.hpp">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="sound.hpp">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundPack.hpp">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.hpp">
+      <Filter>Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="vector2.hpp">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="math.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleScene.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="character.hpp">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="projectile.hpp">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="ground.hpp">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="Radar.h">
+      <Filter>Round</Filter>
+    </ClInclude>
+    <ClInclude Include="Round.h">
+      <Filter>Round</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileTimer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="GifTimer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="NextPlayerTimer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.hpp">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileController.hpp">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="item.hpp">
+      <Filter>Abstract</Filter>
+    </ClInclude>
+    <ClInclude Include="NutshellProjectile.hpp">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="SummaryScene.hpp">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="EngineHandle.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Common.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Crc32.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerManager.cpp">
+      <Filter>Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GifWrapper.cpp">
+      <Filter>Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="vector2.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleScene.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="character.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="characterCollision.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="projectile.cpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="Radar.cpp">
+      <Filter>Round</Filter>
+    </ClCompile>
+    <ClCompile Include="Round.cpp">
+      <Filter>Round</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="rigidBody.cpp">
+      <Filter>Abstract</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

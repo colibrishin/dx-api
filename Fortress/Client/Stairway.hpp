@@ -1,6 +1,6 @@
 #ifndef CATWALK_HPP
 #define CATWALK_HPP
-#include "ground.hpp"
+#include "../Common/ground.hpp"
 
 namespace Fortress::Object
 {

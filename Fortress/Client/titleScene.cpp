@@ -4,10 +4,10 @@
 
 #include "application.h"
 #include "MissileCharacter.hpp"
-#include "ImageWrapper.hpp"
-#include "input.hpp"
-#include "resourceManager.hpp"
-#include "sceneManager.hpp"
+#include "../Common/ImageWrapper.hpp"
+#include "../Common/input.hpp"
+#include "../Common/resourceManager.hpp"
+#include "../Common/sceneManager.hpp"
 #include "winapihandles.hpp"
 
 namespace Fortress::Scene
@@ -24,9 +24,15 @@ namespace Fortress::Scene
 	{
 		scene::update();
 
-		if (Input::getKey(eKeyCode::SPACE))
+		if (Input::getKey(eKeyCode::One))
 		{
 			SceneManager::SetActive(L"Bulletin Board Scene");
+			Application::m_messenger.set_player_id(1);
+		}
+		if (Input::getKey(eKeyCode::Two))
+		{
+			SceneManager::SetActive(L"Bulletin Board Scene");
+			Application::m_messenger.set_player_id(2);
 		}
 	}
 
@@ -36,14 +42,6 @@ namespace Fortress::Scene
 		{
 			m_imBackground.lock()->render({}, m_imBackground.lock()->get_hitbox(), {1.0f, 1.0f});
 		}
-
-		[this]()
-		{
-			wchar_t notice[100] = {};
-			swprintf_s(notice, 100, L"Press SPACE to continue...");
-			const size_t strlen = wcsnlen_s(notice, 100);
-			TextOut(WinAPIHandles::get_buffer_dc(), 300, 300, notice, strlen);
-		}();
 
 		scene::render();
 	}

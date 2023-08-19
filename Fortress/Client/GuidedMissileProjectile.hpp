@@ -2,10 +2,9 @@
 #ifndef GUIDEDMISSILEPROJECTILE_HPP
 #define GUIDEDMISSILEPROJECTILE_HPP
 
-#include "GifWrapper.h"
-#include "projectile.hpp"
-#include "math.h"
-#include "scene.hpp"
+#include "../Common/projectile.hpp"
+#include "../Common/scene.hpp"
+#include "../Common/debug.hpp"
 
 namespace Fortress::Object
 {

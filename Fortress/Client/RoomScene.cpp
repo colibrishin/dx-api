@@ -2,12 +2,11 @@
 
 #include "BulletinBoardScene.h"
 #include "DesertMap.hpp"
-#include "input.hpp"
+#include "../Common/input.hpp"
 #include "LoadingScene.hpp"
 
-#include "resourceManager.hpp"
+#include "../Common/resourceManager.hpp"
 #include "SkyValleyMap.hpp"
-#include "BattleScene.h"
 
 void Fortress::Scene::RoomScene::initialize()
 {

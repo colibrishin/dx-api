@@ -2,10 +2,22 @@
 #define APPLICATION_H
 #pragma once
 
-#include "resourceManager.hpp"
+#include "framework.h"
+
+#include <windows.h>
+#include <objidl.h>
+#include <gdiplus.h>
+
+#include "NetworkMessenger.hpp"
+#include "../Common/message.hpp"
+
+#pragma comment (lib,"Gdiplus.lib")
+
 
 namespace Fortress
 {
+	using namespace Gdiplus;
+
 	class Application
 	{
 	public:
@@ -24,15 +36,11 @@ namespace Fortress
 		void render();
 		static void cleanup();
 
-		static std::weak_ptr<Font> get_font();
-
+		inline static Network::NetworkMessenger m_messenger;
 	private:
 		HWND m_hwnd;
 		HDC m_hdc;
 		HDC m_buffer_hdc;
-
-		inline static std::shared_ptr<Font> m_font;
-		std::unique_ptr<PrivateFontCollection> m_font_collection;
 	};
 }
 

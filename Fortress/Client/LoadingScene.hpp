@@ -3,11 +3,13 @@
 #ifndef LOADINGSCENE_H
 #define LOADINGSCENE_H
 
-#include "ImageWrapper.hpp"
-#include "resourceManager.hpp"
-#include "scene.hpp"
-#include "sceneManager.hpp"
-#include "sound.hpp"
+#include "../Common/ImageWrapper.hpp"
+#include "../Common/resourceManager.hpp"
+#include "../Common/scene.hpp"
+#include "../Common/sceneManager.hpp"
+#include "../Common/sound.hpp"
+#include "../Common/deltatime.hpp"
+#include <thread>
 
 namespace Fortress::Scene
 {
