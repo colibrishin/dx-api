@@ -18,6 +18,7 @@ namespace Fortress::Object
 			const Math::Vector2& orientation)
 			:
 			character(
+				player_id,
 				name,
 				L"missile",
 				orientation,

@@ -132,6 +132,11 @@ namespace Fortress::ObjectBase
 		return m_armor;
 	}
 
+	unsigned character::get_player_id() const
+	{
+		return m_player_id;
+	}
+
 	void character::render_hp_bar(const Math::Vector2& position)
 	{
 		// white box
@@ -254,6 +259,7 @@ namespace Fortress::ObjectBase
 	}
 
 	character::character(
+			const unsigned int player_id,
 			const std::wstring& name,
 			const std::wstring& short_name,
 			const Math::Vector2& offset,
@@ -279,6 +285,7 @@ namespace Fortress::ObjectBase
 				hp, 
 				mp,
 				this),
+			m_player_id(player_id),
 			m_bGrounded(false),
 			m_short_name(short_name),
 			m_armor(armor)
