@@ -24,15 +24,15 @@ void Fortress::Scene::LobbyScene::update()
 		SceneManager::SetActive(L"Room Scene");
 	}
 
-	static float room_update = 0.0f;
+	static float lobby_update = 0.0f;
 
-	if(room_update >= 1.0f)
+	if(lobby_update >= 1.0f)
 	{
 		Application::m_messenger.check_lobby_update(&m_lobby_info_);
-		room_update = 0.0f;
+		lobby_update = 0.0f;
 	}
 
-	room_update += DeltaTime::get_deltaTime();
+	lobby_update += DeltaTime::get_deltaTime();
 }
 
 void Fortress::Scene::LobbyScene::render()

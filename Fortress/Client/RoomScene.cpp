@@ -34,6 +34,16 @@ void Fortress::Scene::RoomScene::update()
 		SceneManager::SetActive<LoadingScene<Map::DesertMap>>();
 	}
 
+	static float room_update = 0.0f;
+
+	if(room_update >= 1.0f)
+	{
+		Application::m_messenger.check_room_update(&m_room_info);
+		room_update = 0.0f;
+	}
+
+	room_update += DeltaTime::get_deltaTime();
+
 	for(const auto& player_name : m_room_info.player_names)
 	{
 		if(wcslen(player_name) != 0)

@@ -18,13 +18,15 @@ namespace Fortress::Network
 		void send_alive();
 
 		void join_lobby(LobbyInfo* out);
+		bool check_lobby_update(LobbyInfo* out);
+
 		void join_room(RoomID room_id, RoomInfo* out);
+		bool check_room_update(RoomInfo* out);
 
 		void start_game(RoomID room_id);
 		void call_loading_finished(RoomID room_id);
 		void sync_game(RoomID room_id);
 
-		bool check_lobby_update(LobbyInfo* out);
 		void set_player_id(PlayerID id);
 	private:
 		Server::Socket m_soc {60901};
@@ -88,6 +90,16 @@ namespace Fortress::Network
 		while(!m_soc.find_message<RoomInfo>(&reply)) {}
 
 		std::memcpy(out, &reply, sizeof(RoomInfo));
+	}
+
+	inline bool NetworkMessenger::check_room_update(RoomInfo* out)
+	{
+		if(m_soc.find_message<RoomInfo>(out))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	inline bool NetworkMessenger::check_lobby_update(LobbyInfo* out)
