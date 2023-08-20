@@ -22,7 +22,7 @@ namespace Fortress::Network::Server
 	public:
 		using MessageTuple = std::tuple<SOCKADDR_IN, time_t, const Message*>;
 
-		Socket(const u_short listen)
+		Socket(const u_short listen, bool check_bad_client) : m_b_check_bad_client(check_bad_client)
 		{
 			initialize(listen);
 		}
@@ -132,7 +132,7 @@ namespace Fortress::Network::Server
 					receive_event.notify_all();
 				}
 
-				if (recv_info.first <= 0 || recv_info.first > max_packet_size + 1)
+				if ((recv_info.first <= 0 || recv_info.first > max_packet_size + 1) && m_b_check_bad_client)
 				{
 					add_bad_client(recv_info.second);
 					continue;
@@ -287,18 +287,19 @@ namespace Fortress::Network::Server
 		SOCKADDR_IN m_local_info{};
 		SOCKET m_socket = INVALID_SOCKET;
 
+		bool m_b_check_bad_client;
+
 		std::deque<MessageTuple> m_message_queue_{};
 
 		char m_buffer[max_packet_size + 1]{};
-
+		
+		std::atomic<bool> m_bIsRunning;
 	public:
 		std::condition_variable m_bad_client_event;
 		std::set<SOCKADDR_IN, FNV> m_bad_client_list{};
 
 		std::condition_variable receive_event;
 		std::condition_variable queue_event;
-
-		std::atomic<bool> m_bIsRunning;
 
 		std::mutex queue_lock;
 		std::mutex bad_client_lock;

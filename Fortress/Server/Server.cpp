@@ -16,7 +16,7 @@
 
 namespace Fortress::Network::Server
 {
-	static Socket server_socket = Socket(51211);
+	static Socket server_socket = Socket(51211, true);
 
 	const sockaddr* extract_ip(const SOCKADDR_IN& client_info)
 	{

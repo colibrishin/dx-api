@@ -8,7 +8,7 @@
 
 int main()
 {
-	Fortress::Network::Server::Socket soc{60901};
+	Fortress::Network::Server::Socket soc{60901, false};
 
 	sockaddr_in server
 	{
