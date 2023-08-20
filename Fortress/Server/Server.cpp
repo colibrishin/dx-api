@@ -235,9 +235,11 @@ namespace Fortress::Network::Server
 			}
 		}
 
+		rif.type = eMessageType::RoomInfo;
 		rif.player_count = count;
 		rif.player_id = -1;
 		rif.room_id = room_id;
+
 		auto msg = create_network_message<RoomInfo>(rif);
 
 		for(int i = 0; i < 15; ++i)
