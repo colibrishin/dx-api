@@ -19,21 +19,21 @@ namespace Fortress::Network
 	enum class eMessageType
 	{
 		// Latency
-		PING = 0x0,
-		PONG = 0x1,
+		PING = 0x10,
+		PONG = 0x11,
 
 		// Validation
-		GO = 0x10,
-		NOGO = 0x11,
+		GO = 0x20,
+		NOGO = 0x21,
 
 		// interpolation
-		DeltaTime = 0x20,
+		DeltaTime = 0x30,
 
-		LobbyJoin = 0x30,
-		LobbyInfo = 0x31,
+		LobbyJoin = 0x40,
+		LobbyInfo = 0x41,
 
-		RoomJoin = 0x40,
-		RoomInfo = 0x41,
+		RoomJoin = 0x50,
+		RoomInfo = 0x51,
 
 		Position,
 		Fire,
