@@ -8,8 +8,10 @@
 #include <vector>
 #include <mutex>
 
+#include "hash_fnv1.hpp"
 #include "pch.h"
 #include "../Common/message.hpp"
+#include "../Common/hash_fnv1.hpp"
 
 namespace Fortress::Network::Server
 {
@@ -185,7 +187,7 @@ namespace Fortress::Network::Server
 		void add_bad_client(const sockaddr_in& client_info)
 		{
 			std::unique_lock _(bad_client_lock);
-			m_bad_client_list.push_back(client_info);
+			m_bad_client_list.insert(client_info);
 			m_bad_client_event.notify_all();
 		}
 
@@ -237,9 +239,22 @@ namespace Fortress::Network::Server
 			}
 
 			std::cout << "Opened port for " + std::to_string(listen) + "...\n";
+
+			m_bIsRunning = {true};
 		}
 
 	private:
+		struct FNV
+		{
+			bool operator()(const SOCKADDR_IN& left, const SOCKADDR_IN& right) const
+			{
+				const uint64_t lh = hash_64_fnv1a(&left, sizeof(SOCKADDR_IN));
+				const uint64_t rh = hash_64_fnv1a(&right, sizeof(SOCKADDR_IN));
+
+				return lh < rh;
+			}
+		};
+
 		void retrieve_message(char* out) const
 		{
  			std::memcpy(out, m_buffer, max_packet_size + 1);
@@ -278,7 +293,7 @@ namespace Fortress::Network::Server
 
 	public:
 		std::condition_variable m_bad_client_event;
-		std::deque<SOCKADDR_IN> m_bad_client_list{};
+		std::set<SOCKADDR_IN, FNV> m_bad_client_list{};
 
 		std::condition_variable receive_event;
 		std::condition_variable queue_event;

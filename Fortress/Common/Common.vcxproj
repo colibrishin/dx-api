@@ -166,6 +166,7 @@
     <ClInclude Include="GifTimer.hpp" />
     <ClInclude Include="GifWrapper.h" />
     <ClInclude Include="ground.hpp" />
+    <ClInclude Include="hash_fnv1.hpp" />
     <ClInclude Include="ImageWrapper.hpp" />
     <ClInclude Include="input.hpp" />
     <ClInclude Include="item.hpp" />

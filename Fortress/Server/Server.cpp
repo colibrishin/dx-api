@@ -1,4 +1,4 @@
-﻿#include <cassert>
+#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -185,7 +185,7 @@ namespace Fortress::Network::Server
 
 				while (!server_socket.m_bad_client_list.empty())
 				{
-					const auto bad_client = server_socket.m_bad_client_list.front();
+					const auto bad_client = *server_socket.m_bad_client_list.begin();
 					// There can be multiple room id + player id. This should be blocked or cleaned up somehow.
 					std::pair<RoomID, PlayerID> target_key_pair = {-1, -1};
 
@@ -203,7 +203,8 @@ namespace Fortress::Network::Server
 						client_list.erase(target_key_pair);
 					}
 
-					server_socket.m_bad_client_list.pop_front();
+					server_socket.m_bad_client_list.erase(
+						server_socket.m_bad_client_list.begin());
 				}
 			}
 
