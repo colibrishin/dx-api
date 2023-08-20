@@ -10,7 +10,7 @@
 
 namespace Fortress::Network
 {
-	constexpr float retry_time = 2.0f;
+	constexpr unsigned int retry_time = 500;
 
 	class NetworkMessenger
 	{
@@ -186,19 +186,12 @@ namespace Fortress::Network
 		const Message* msg,
 		const SOCKADDR_IN& client_info)
 	{
-		float retry_attempt = 0.0f;
-
 		m_soc.send_message(msg, client_info);
 
 		while(!m_soc.find_message<T>(reply))
 		{
-			if (retry_attempt >= retry_time)
-			{
-				m_soc.send_message(msg, client_info);
-				retry_attempt = 0.0f;
-			}
-
-			retry_attempt += DeltaTime::get_deltaTime();
+			Sleep(retry_time);
+			m_soc.send_message(msg, client_info);
 		}
 	}
 }
