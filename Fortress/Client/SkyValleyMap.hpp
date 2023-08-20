@@ -8,19 +8,18 @@
 
 namespace Fortress::Map
 {
-	class SkyValleyMap : public Scene::BattleScene
+	class SkyValleyMap final : public Map
 	{
 	public:
-		SkyValleyMap() : BattleScene(L"SkyValley")
+		SkyValleyMap(const Network::GameInitMsg& game_init) : Map(L"SkyValley", game_init)
 		{
-			BattleScene::initialize();
+			Map::initialize();
 		}
+
 		void pre_initialize() override;
 		void set_bgm() override;
 		void set_background_img() override;
 		void set_grounds() override;
-		void set_characters() override;
-		void set_client_character() override;
 	};
 
 	inline void SkyValleyMap::pre_initialize()
@@ -41,21 +40,6 @@ namespace Fortress::Map
 	{
 		m_background = Resource::ResourceManager::find<ImageWrapper>(
 			L"SkyValley_wirestock");
-	}
-
-	inline void SkyValleyMap::set_characters()
-	{
-		m_characters.emplace_back(
-			ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
-				0, L"Missile", Math::Vector2{50.0f, 50.0f}, Math::right));
-		m_characters.emplace_back(
-			ObjectBase::ObjectManager::create_object<Object::CannonCharacter>(
-				1, L"Cannon", Math::Vector2{100.0f, 50.0f}, Math::left));
-	}
-
-	inline void SkyValleyMap::set_client_character()
-	{
-		m_self = m_characters.front();
 	}
 
 	inline void SkyValleyMap::set_grounds()

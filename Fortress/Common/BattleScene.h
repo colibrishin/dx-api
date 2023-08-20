@@ -5,6 +5,7 @@
 #include "common.h"
 #include "character.hpp"
 #include "ground.hpp"
+#include "message.hpp"
 #include "Round.h"
 #include "sound.hpp"
 #include "scene.hpp"
@@ -15,7 +16,7 @@ namespace Fortress::Scene
 	class BattleScene : public Abstract::scene
 	{
 	public:
-		BattleScene(const std::wstring& name);
+		BattleScene(const std::wstring& name, const Network::GameInitMsg& game_init);
 		~BattleScene() override = default;
 
 		virtual void initialize() override;
@@ -51,6 +52,7 @@ namespace Fortress::Scene
 		std::weak_ptr<ImageWrapper> m_background;
 		std::shared_ptr<Round> m_round;
 		std::unique_ptr<Radar> m_radar;
+		Network::GameInitMsg m_game_init;
 	};
 }
 

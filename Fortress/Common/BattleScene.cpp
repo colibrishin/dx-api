@@ -8,6 +8,7 @@
 #include <windows.h>
 
 #include "item.hpp"
+#include "message.hpp"
 #include "objectManager.hpp"
 #include "Radar.h"
 
@@ -16,10 +17,11 @@
 
 namespace Fortress::Scene
 {
-	BattleScene::BattleScene(const std::wstring& name):
+	BattleScene::BattleScene(const std::wstring& name, const Network::GameInitMsg& game_init):
 		scene(L"Battle Scene " + name),
 		m_map_size({}),
-		m_round(std::make_shared<Round>()) // lazy-initialization
+		m_round(std::make_shared<Round>()), // lazy-initialization
+		m_game_init(game_init)
 	{
 	}
 

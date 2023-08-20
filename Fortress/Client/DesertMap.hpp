@@ -4,25 +4,23 @@
 #include "CannonCharacter.hpp"
 #include "EgyptGround.hpp"
 #include "EgyptStairway.hpp"
-#include "MissileCharacter.hpp"
+#include "Map.hpp"
 #include "../Common/objectManager.hpp"
-#include "SecwindCharacter.hpp"
 
 namespace Fortress::Map
 {
-	class DesertMap final : public Scene::BattleScene
+	class DesertMap final : public Map
 	{
 	public:
-		DesertMap() : BattleScene(L"Desert")
+		DesertMap(const Network::GameInitMsg& game_init) : Map(L"Desert", game_init)
 		{
-			BattleScene::initialize();
+			Map::initialize();
 		}
+
 		void pre_initialize() override;
 		void set_bgm() override;
 		void set_background_img() override;
 		void set_grounds() override;
-		void set_characters() override;
-		void set_client_character() override;
 	};
 
 	inline void DesertMap::pre_initialize()
@@ -39,21 +37,6 @@ namespace Fortress::Map
 	{
 		m_background = Resource::ResourceManager::load<ImageWrapper>(
 			L"Desert_shutterstock", "./resources/images/desert-landscape-shutterstock.jpg");
-	}
-
-	inline void DesertMap::set_characters()
-	{
-		m_characters.emplace_back(
-			ObjectBase::ObjectManager::create_object<Object::SecwindCharacter>(
-				0, L"Secwind", Math::Vector2{350.0f, 1.0f}, Math::left));
-		m_characters.emplace_back(
-			ObjectBase::ObjectManager::create_object<Object::MissileCharacter>(
-				1, L"Missile", Math::Vector2{-150.0f, 1.0f}, Math::right));
-	}
-
-	inline void DesertMap::set_client_character()
-	{
-		m_self = m_characters.front();
 	}
 
 	inline void DesertMap::set_grounds()
