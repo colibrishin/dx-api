@@ -36,10 +36,25 @@ namespace Fortress::Network::Server
 				closesocket(m_socket);
 			}
 
-			std::unique_lock rl(receiving_lock);
-			receive_event.wait(rl);
+			m_bIsRunning = {false};
+
 			std::unique_lock bcl(bad_client_lock);
-			m_bad_client_event.wait(bcl);
+			if(!bcl.owns_lock())
+			{
+				if(!bcl.try_lock())
+				{
+					m_bad_client_event.wait(bcl);
+				}
+			}
+
+			std::unique_lock rl(receiving_lock);
+			if(!rl.owns_lock())
+			{
+				if(!rl.try_lock())
+				{
+					receive_event.wait(rl);
+				}
+			}
 		}
 
 		bool get_any_message(SOCKADDR_IN* info_out, std::time_t& time_out, char* message_out)
@@ -104,7 +119,7 @@ namespace Fortress::Network::Server
 
 		[[noreturn]] void receiving_message()
 		{
-			while (true)
+			while (m_bIsRunning)
 			{
 				std::pair<int, sockaddr_in> recv_info;
 
@@ -113,12 +128,12 @@ namespace Fortress::Network::Server
 
 					recv_info = wait_for_recv();
 					receive_event.notify_all();
+				}
 
-					if (recv_info.first <= 0 || recv_info.first > max_packet_size + 1)
-					{
-						add_bad_client(recv_info.second);
-						continue;
-					}
+				if (recv_info.first <= 0 || recv_info.first > max_packet_size + 1)
+				{
+					add_bad_client(recv_info.second);
+					continue;
 				}
 
 				{
@@ -267,6 +282,8 @@ namespace Fortress::Network::Server
 
 		std::condition_variable receive_event;
 		std::condition_variable queue_event;
+
+		std::atomic<bool> m_bIsRunning;
 
 		std::mutex queue_lock;
 		std::mutex bad_client_lock;
