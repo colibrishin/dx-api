@@ -1,5 +1,6 @@
 #include "RoomScene.h"
 
+#include "application.h"
 #include "BulletinBoardScene.h"
 #include "DesertMap.hpp"
 #include "../Common/input.hpp"
@@ -32,6 +33,14 @@ void Fortress::Scene::RoomScene::update()
 		SceneManager::CreateScene<LoadingScene<Map::DesertMap>>();
 		SceneManager::SetActive<LoadingScene<Map::DesertMap>>();
 	}
+
+	for(const auto& player_name : m_room_info.player_names)
+	{
+		if(wcslen(player_name) != 0)
+		{
+			Debug::Log(player_name);
+		}
+	}
 }
 
 void Fortress::Scene::RoomScene::render()
@@ -49,6 +58,7 @@ void Fortress::Scene::RoomScene::deactivate()
 
 void Fortress::Scene::RoomScene::activate()
 {
+	Application::m_messenger.join_room(m_room_id, &m_room_info);
 	scene::activate();
 	m_bgm.lock()->play(true);
 }

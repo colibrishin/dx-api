@@ -16,7 +16,14 @@ namespace Fortress::Network
 		NetworkMessenger();
 		virtual ~NetworkMessenger() = default;
 		void send_alive();
+
 		void join_lobby(LobbyInfo* out);
+		void join_room(RoomID room_id, RoomInfo* out);
+
+		void start_game(RoomID room_id);
+		void call_loading_finished(RoomID room_id);
+		void sync_game(RoomID room_id);
+
 		bool check_lobby_update(LobbyInfo* out);
 		void set_player_id(PlayerID id);
 	private:
@@ -59,7 +66,8 @@ namespace Fortress::Network
 	{
 		send_alive();
 
-		auto msg = create_network_message<LobbyJoin>(eMessageType::LobbyJoin, -1, m_player_id);
+		auto msg = create_network_message<LobbyJoin>(
+			eMessageType::LobbyJoin, -1, m_player_id);
 		
 		LobbyInfo reply{};
 
@@ -67,6 +75,19 @@ namespace Fortress::Network
   		m_soc.find_message<LobbyInfo>(&reply);
 		
 		std::memcpy(out, &reply, sizeof(LobbyInfo));
+	}
+
+	inline void NetworkMessenger::join_room(RoomID room_id, RoomInfo* out)
+	{
+		send_alive();
+		auto msg = create_network_message<RoomJoin>(
+			eMessageType::RoomJoin, room_id, m_player_id);
+
+		RoomInfo reply{};
+		m_soc.send_message(&msg, m_server_info);
+		while(!m_soc.find_message<RoomInfo>(&reply)) {}
+
+		std::memcpy(out, &reply, sizeof(RoomInfo));
 	}
 
 	inline bool NetworkMessenger::check_lobby_update(LobbyInfo* out)

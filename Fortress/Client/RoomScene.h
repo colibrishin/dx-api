@@ -8,13 +8,14 @@
 #include "../Common/sceneManager.hpp"
 #include "../Common/sound.hpp"
 #include "../Common/scene.hpp"
+#include "../Common/message.hpp"
 
 namespace Fortress::Scene
 {
 	class RoomScene final : public Abstract::scene
 	{
 	public:
-		RoomScene() : scene(L"Room Scene")
+		RoomScene() : scene(L"Room Scene"), m_room_id(0)
 		{
 			initialize();
 		}
@@ -27,6 +28,9 @@ namespace Fortress::Scene
 
 		std::weak_ptr<ImageWrapper> m_imBackground;
 		std::weak_ptr<Resource::Sound> m_bgm;
+
+		Network::RoomID m_room_id;
+		Network::RoomInfo m_room_info;
 	};
 }
 

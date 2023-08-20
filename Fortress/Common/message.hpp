@@ -19,18 +19,22 @@ namespace Fortress::Network
 	enum class eMessageType
 	{
 		// Latency
-		PING,
-		PONG,
+		PING = 0x0,
+		PONG = 0x1,
 
 		// Validation
-		GO,
-		NOGO,
+		GO = 0x10,
+		NOGO = 0x11,
 
 		// interpolation
-		DeltaTime,
+		DeltaTime = 0x20,
 
-		LobbyJoin,
-		LobbyInfo,
+		LobbyJoin = 0x30,
+		LobbyInfo = 0x31,
+
+		RoomJoin = 0x40,
+		RoomInfo = 0x41,
+
 		Position,
 		Fire,
 		Item,
@@ -85,6 +89,17 @@ namespace Fortress::Network
 	{
 		int room_count;
 		Room room_info[15];
+		int player_count;
+		wchar_t player_names[15][15];
+	};
+
+	struct RoomJoin : Message
+	{
+	};
+
+	struct RoomInfo : Message
+	{
+		wchar_t room_name[15];
 		int player_count;
 		wchar_t player_names[15][15];
 	};
@@ -151,6 +166,8 @@ namespace Fortress::Network
 		WindMsg wind;
 		LobbyJoin lobby_join;
 		LobbyInfo lobby_info;
+		RoomJoin room_join;
+		RoomInfo room_info;
 	};
 
 	// UDP Packet size limit

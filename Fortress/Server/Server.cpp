@@ -177,6 +177,78 @@ namespace Fortress::Network::Server
 		}
 	}
 
+	void remove_client_from_lobby(PlayerID player_id)
+	{
+		std::cout << player_id << " Leaves Lobby" << std::endl;
+		client_list.erase({-1, player_id});
+	}
+
+	void add_player_to_room(RoomID room_id, PlayerID player_id, const Client& client)
+	{
+		std::cout << player_id << " Joined " << room_id << std::endl;
+		client_list[{room_id, player_id}] = client;
+	}
+
+	void send_room_info(const RoomID room_id, const sockaddr_in& client_info)
+	{
+		RoomInfo rif{};
+
+		int count = 0;
+
+		for(int i = 0; i < 15; ++i)
+		{
+			if(client_list.find({room_id, i}) != client_list.end())
+			{
+				std::memcpy(
+					rif.player_names[count],
+					client_names.at(i).c_str(),
+					client_names.at(i).length() * sizeof(wchar_t));
+				count++;
+			}
+		}
+
+		rif.type = eMessageType::RoomInfo;
+		rif.player_count = count;
+		rif.player_id = -1;
+		rif.room_id = room_id;
+
+		auto msg = create_network_message<RoomInfo>(rif);
+		server_socket.send_message(&msg, client_info);
+	}
+
+	void notify_join(RoomID room_id)
+	{
+		RoomInfo rif{};
+
+		wchar_t room_players_name[15][15]{};
+		int count = 0;
+
+		for(int i = 0; i < 15; ++i)
+		{
+			if(client_list.find({room_id, i}) != client_list.end())
+			{
+				std::memcpy(
+					room_players_name[i],
+					client_names.at(i).c_str(),
+					client_names.at(i).length() * sizeof(wchar_t));
+				count++;
+			}
+		}
+
+		rif.player_count = count;
+		rif.player_id = -1;
+		rif.room_id = room_id;
+		auto msg = create_network_message<RoomInfo>(rif);
+
+		for(int i = 0; i < 15; ++i)
+		{
+			if(client_list.find({room_id, i}) != client_list.end())
+			{
+				server_socket.send_message(&msg, client_list[{room_id, i}].ip);
+			}
+		}
+	}
+
 	[[noreturn]] void consume_message()
 	{
 		while(true) 
@@ -194,6 +266,7 @@ namespace Fortress::Network::Server
 			case eMessageType::GO:
 			case eMessageType::NOGO:
 			case eMessageType::LobbyInfo:
+			case eMessageType::RoomInfo:
 			case eMessageType::PONG: break; // Server side message.
 			case eMessageType::PING:
 				add_client(message->room_id, message->player_id, client_info, time);
@@ -218,6 +291,21 @@ namespace Fortress::Network::Server
 				add_player(message->player_id);
 				std::cout << "New player joined. Broadcasting new lobby info." << std::endl;
 				broadcast_lobby_info();
+				break;
+			case eMessageType::RoomJoin: 
+				add_client(message->room_id, message->player_id, client_info, time);
+				remove_client_from_lobby(message->player_id);
+				add_player_to_room(
+					message->room_id, 
+					message->player_id,
+					Client 
+					{
+						client_info,
+						message->player_id,
+						time
+					});
+				send_room_info(message->room_id, client_info);
+				notify_join(message->room_id);
 				break;
 			default: break; // Unknown type of message
 			}
