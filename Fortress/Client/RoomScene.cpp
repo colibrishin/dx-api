@@ -19,26 +19,36 @@ void Fortress::Scene::RoomScene::initialize()
 		L"Room BGM", "./resources/sounds/room.wav");
 }
 
+template <typename T>
+void Fortress::Scene::RoomScene::load_and_sync_map(const Network::GameInitMsg& game_info) const
+{
+	SceneManager::CreateScene<LoadingScene<T>>(game_info);
+	Application::m_messenger.call_loading_finished(m_room_id);
+
+	Debug::Log(L"Waiting for other clients...");
+	Application::m_messenger.check_game_start();
+
+	SceneManager::SetActive<LoadingScene<T>>();
+}
+
 void Fortress::Scene::RoomScene::update()
 {
 	scene::update();
-	Network::GameInitMsg game_info{};
+	Network::GameInitMsg gis{};
 
 	if (Input::getKey(eKeyCode::S))
 	{
 		Application::m_messenger.start_game(
-			m_room_id, Network::eMapType::SkyValleyMap, &game_info);
-		SceneManager::CreateScene<LoadingScene<Map::SkyValleyMap>>(game_info);
-		Application::m_messenger.call_loading_finished(m_room_id);
-		SceneManager::SetActive<LoadingScene<Map::SkyValleyMap>>();
+			m_room_id, Network::eMapType::SkyValleyMap, &gis);
+		Application::m_messenger.go_and_wait(m_room_id, gis.crc32);
+		load_and_sync_map<Map::SkyValleyMap>(gis);
 	}
 	if (Input::getKey(eKeyCode::D))
 	{
 		Application::m_messenger.start_game(
-			m_room_id, Network::eMapType::DesertMap, &game_info);
-		SceneManager::CreateScene<LoadingScene<Map::DesertMap>>(game_info);
-		Application::m_messenger.call_loading_finished(m_room_id);
-		SceneManager::SetActive<LoadingScene<Map::DesertMap>>();
+			m_room_id, Network::eMapType::DesertMap, &gis);
+		Application::m_messenger.go_and_wait(m_room_id, gis.crc32);
+		load_and_sync_map<Map::DesertMap>(gis);
 	}
 	if (Input::getKeyDown(eKeyCode::One))
 	{
@@ -70,21 +80,17 @@ void Fortress::Scene::RoomScene::update()
 
 	if(game_update >= 0.2f)
 	{
-		if(Application::m_messenger.check_room_start(&game_info))
+		if(Application::m_messenger.check_room_start(&gis))
 		{
-			switch(game_info.map_type)
+			switch(gis.map_type)
 			{
 			case Network::eMapType::DesertMap:
-				Application::m_messenger.send_confirm(m_room_id, game_info.crc32);
-				SceneManager::CreateScene<LoadingScene<Map::DesertMap>>(game_info);
-				Application::m_messenger.call_loading_finished(m_room_id);
-				SceneManager::SetActive<LoadingScene<Map::DesertMap>>();
+				Application::m_messenger.go_and_wait(m_room_id, gis.crc32);
+				load_and_sync_map<Map::DesertMap>(gis);
 				break;
 			case Network::eMapType::SkyValleyMap: 
-				Application::m_messenger.send_confirm(m_room_id, game_info.crc32);
-				SceneManager::CreateScene<LoadingScene<Map::SkyValleyMap>>(game_info);
-				Application::m_messenger.call_loading_finished(m_room_id);
-				SceneManager::SetActive<LoadingScene<Map::SkyValleyMap>>();
+				Application::m_messenger.go_and_wait(m_room_id, gis.crc32);
+				load_and_sync_map<Map::SkyValleyMap>(gis);
 				break;
 			default: break;
 			}

@@ -21,10 +21,14 @@ namespace Fortress::Scene
 		}
 
 		void initialize() override;
+		
 		void update() override;
 		void render() override;
 		void deactivate() override;
 		void activate() override;
+
+		template <class T>
+		void load_and_sync_map(const Network::GameInitMsg& game_info) const;
 
 		std::weak_ptr<ImageWrapper> m_imBackground;
 		std::weak_ptr<Resource::Sound> m_bgm;

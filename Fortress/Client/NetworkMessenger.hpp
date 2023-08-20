@@ -19,6 +19,9 @@ namespace Fortress::Network
 		virtual ~NetworkMessenger() = default;
 		void send_alive();
 		void send_confirm(RoomID room_id, CRC32 previous_msg);
+		bool check_confirm();
+
+		void go_and_wait(RoomID room_id, const CRC32& last_message);
 
 		void join_lobby(LobbyInfo* out);
 		bool check_lobby_update(LobbyInfo* out);
@@ -30,11 +33,12 @@ namespace Fortress::Network
 		bool check_room_start(GameInitMsg* out);
 		void call_loading_finished(RoomID room_id);
 		void send_deltaTime(RoomID room_id, float deltaTime);
+		bool check_game_start();
+
 		void sync_game(RoomID room_id);
 
 		void set_player_id(PlayerID id);
 		void send_character(RoomID room_id, eCharacterType character);
-
 	private:
 		template <typename T>
 		void send_and_retry(
@@ -46,6 +50,10 @@ namespace Fortress::Network
 		SOCKADDR_IN m_server_info;
 		std::thread m_receiver;
 		PlayerID m_player_id;
+
+	public:
+		std::mutex& queue_mutex = m_soc.queue_lock;
+		std::condition_variable& queue_event = m_soc.queue_event;
 	};
 
 	inline NetworkMessenger::NetworkMessenger() : m_player_id(1)
@@ -86,8 +94,6 @@ namespace Fortress::Network
 
 	inline void NetworkMessenger::join_lobby(LobbyInfo* out)
 	{
-		send_alive();
-
 		auto msg = create_network_message<LobbyJoin>(
 			eMessageType::LobbyJoin, -1, m_player_id);
 
@@ -96,7 +102,6 @@ namespace Fortress::Network
 
 	inline void NetworkMessenger::join_room(RoomID room_id, RoomInfo* out)
 	{
-		send_alive();
 		auto msg = create_network_message<RoomJoin>(
 			eMessageType::RoomJoin, room_id, m_player_id);
 
@@ -113,16 +118,22 @@ namespace Fortress::Network
 		return false;
 	}
 
+	inline void NetworkMessenger::go_and_wait(
+		RoomID room_id, const CRC32& last_message)
+	{
+		send_confirm(room_id, last_message);
+		GOMsg go{};
+		// @todo: recursive mutex is needed but conditional variable does not support in C++17.
+		while(!m_soc.find_message<GOMsg>(&go)) {}
+	}
+
 	inline void NetworkMessenger::start_game(
 		RoomID room_id, eMapType map, GameInitMsg* out)
 	{
-		send_alive();
-
 		auto msg = create_network_message<RoomStart>(
 			eMessageType::RoomStart, room_id, m_player_id, map);
 
 		send_and_retry(out, &msg, m_server_info);
-		send_confirm(room_id, msg.crc32);
 	}
 
 	inline bool NetworkMessenger::check_room_start(GameInitMsg* out)
@@ -132,13 +143,10 @@ namespace Fortress::Network
 
 	inline void NetworkMessenger::call_loading_finished(RoomID room_id)
 	{
-		send_alive();
 		auto msg = create_network_message<LoadDoneMsg>(
 			eMessageType::LoadDone, room_id, m_player_id);
-		m_soc.send_message(&msg, m_server_info);
 
 		ReqDeltaTimeMsg reply{};
-
 		send_and_retry(&reply, &msg, m_server_info);
 
 		send_deltaTime(room_id, DeltaTime::get_deltaTime());
@@ -146,10 +154,21 @@ namespace Fortress::Network
 
 	inline void NetworkMessenger::send_deltaTime(RoomID room_id, float deltaTime)
 	{
-		send_alive();
 		auto msg = create_network_message<DeltaTimeMsg>(
 			eMessageType::DeltaTime, room_id, m_player_id, deltaTime);
 		m_soc.send_message(&msg, m_server_info);
+	}
+
+	inline bool NetworkMessenger::check_game_start()
+	{
+		GameStartMsg gsm{};
+
+		if(m_soc.find_message<GameStartMsg>(&gsm))
+		{
+			return true;
+		}
+
+		return false;
 	}
 
 	inline bool NetworkMessenger::check_lobby_update(LobbyInfo* out)
@@ -171,7 +190,6 @@ namespace Fortress::Network
 		RoomID room_id,
 		eCharacterType character)
 	{
-		send_alive();
 		auto msg = create_network_message<RoomSelectCh>(
 			eMessageType::RoomSelectCh, room_id, m_player_id);
 
