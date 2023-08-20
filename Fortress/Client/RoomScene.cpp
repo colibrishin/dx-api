@@ -22,16 +22,38 @@ void Fortress::Scene::RoomScene::initialize()
 void Fortress::Scene::RoomScene::update()
 {
 	scene::update();
+	Network::GameInitMsg game_info{};
 
 	if (Input::getKey(eKeyCode::S))
 	{
-		SceneManager::CreateScene<LoadingScene<Map::SkyValleyMap>>();
+		Application::m_messenger.start_game(
+			m_room_id, Network::eMapType::SkyValleyMap, &game_info);
+		SceneManager::CreateScene<LoadingScene<Map::SkyValleyMap>>(game_info);
+		Application::m_messenger.call_loading_finished(m_room_id);
 		SceneManager::SetActive<LoadingScene<Map::SkyValleyMap>>();
 	}
 	if (Input::getKey(eKeyCode::D))
 	{
-		SceneManager::CreateScene<LoadingScene<Map::DesertMap>>();
+		Application::m_messenger.start_game(
+			m_room_id, Network::eMapType::DesertMap, &game_info);
+		SceneManager::CreateScene<LoadingScene<Map::DesertMap>>(game_info);
+		Application::m_messenger.call_loading_finished(m_room_id);
 		SceneManager::SetActive<LoadingScene<Map::DesertMap>>();
+	}
+	if (Input::getKeyDown(eKeyCode::One))
+	{
+		Application::m_messenger.send_character(
+			m_room_id, Network::eCharacterType::CannonCharacter);
+	}
+	if (Input::getKeyDown(eKeyCode::Two))
+	{
+		Application::m_messenger.send_character(
+			m_room_id, Network::eCharacterType::MissileCharacter);
+	}
+	if (Input::getKeyDown(eKeyCode::Three))
+	{
+		Application::m_messenger.send_character(
+			m_room_id, Network::eCharacterType::SecwindCharacter);
 	}
 
 	static float room_update = 0.0f;
@@ -43,6 +65,35 @@ void Fortress::Scene::RoomScene::update()
 	}
 
 	room_update += DeltaTime::get_deltaTime();
+
+	static float game_update = 0.0f;
+
+	if(game_update >= 0.2f)
+	{
+		if(Application::m_messenger.check_room_start(&game_info))
+		{
+			switch(game_info.map_type)
+			{
+			case Network::eMapType::DesertMap:
+				Application::m_messenger.send_confirm(m_room_id, game_info.crc32);
+				SceneManager::CreateScene<LoadingScene<Map::DesertMap>>(game_info);
+				Application::m_messenger.call_loading_finished(m_room_id);
+				SceneManager::SetActive<LoadingScene<Map::DesertMap>>();
+				break;
+			case Network::eMapType::SkyValleyMap: 
+				Application::m_messenger.send_confirm(m_room_id, game_info.crc32);
+				SceneManager::CreateScene<LoadingScene<Map::SkyValleyMap>>(game_info);
+				Application::m_messenger.call_loading_finished(m_room_id);
+				SceneManager::SetActive<LoadingScene<Map::SkyValleyMap>>();
+				break;
+			default: break;
+			}
+		}
+		
+		game_update = 0.0f;
+	}
+
+	game_update += DeltaTime::get_deltaTime();
 
 	for(const auto& player_name : m_room_info.player_names)
 	{

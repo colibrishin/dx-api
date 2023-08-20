@@ -17,7 +17,8 @@ namespace Fortress::Scene
 	class LoadingScene final : public Abstract::scene
 	{
 	public:
-		LoadingScene() : scene(L"Loading Scene")
+		LoadingScene(const Network::GameInitMsg& game_info) :
+		scene(L"Loading Scene"), m_game_init(game_info)
 		{
 			initialize();
 		}
@@ -33,6 +34,7 @@ namespace Fortress::Scene
 		std::thread m_initialization_thread;
 		std::weak_ptr<ImageWrapper> m_imBackground;
 		std::weak_ptr<Resource::Sound> m_bgm;
+		Network::GameInitMsg m_game_init;
 	};
 
 	template <typename MapName>

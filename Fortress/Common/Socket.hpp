@@ -39,6 +39,7 @@ namespace Fortress::Network::Server
 			std::unique_lock rl(receiving_lock);
 			receive_event.wait(rl);
 			std::unique_lock bcl(bad_client_lock);
+			m_bad_client_event.wait(bcl);
 		}
 
 		bool get_any_message(SOCKADDR_IN* info_out, std::time_t& time_out, char* message_out)
@@ -138,7 +139,7 @@ namespace Fortress::Network::Server
 		}
 
 		template <typename T>
-		void send_message(T* message, const SOCKADDR_IN& client_info)
+		void send_message(const T* message, const SOCKADDR_IN& client_info)
 		{
 			if(sizeof(T) > max_packet_size)
 			{
@@ -147,7 +148,7 @@ namespace Fortress::Network::Server
 
 			char buffer[max_packet_size + 1]{};
 			const unsigned int send_size = sizeof(T);
-			std::memcpy(buffer, reinterpret_cast<char*>(message), send_size);
+			std::memcpy(buffer, reinterpret_cast<const char*>(message), send_size);
 
 			const unsigned int sent_size = sendto(
 				m_socket, 
@@ -157,7 +158,6 @@ namespace Fortress::Network::Server
 				reinterpret_cast<const sockaddr*>(&client_info), 
 				sizeof(client_info));
 
-			std::cout << sent_size << std::endl;
 			const int errcode = WSAGetLastError();
 			std::cout << errcode << std::endl;
 
