@@ -88,7 +88,7 @@ namespace Fortress::Scene
 	{
 		static float fixed_frame_wait = 0.0f;
 
-		SceneManager::CreateScene<MapName>();
+		SceneManager::CreateScene<MapName>(m_game_init);
 
 		while(fixed_frame_wait < 20.0f)
 		{

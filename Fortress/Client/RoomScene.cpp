@@ -26,9 +26,24 @@ void Fortress::Scene::RoomScene::load_and_sync_map(const Network::GameInitMsg& g
 	Application::m_messenger.call_loading_finished(m_room_id);
 
 	Debug::Log(L"Waiting for other clients...");
-	Application::m_messenger.check_game_start();
 
-	SceneManager::SetActive<LoadingScene<T>>();
+	static Network::GameStartMsg gsm{};
+
+	if(gsm.type != Network::eMessageType::GameStart)
+	{
+		Application::m_messenger.check_game_start(gsm);
+	}
+
+	static float fixed_frame_wait = 0.0f;
+
+	if (fixed_frame_wait >= 20.0f)
+	{
+		fixed_frame_wait = 0.0f;
+		SceneManager::SetActive<LoadingScene<T>>();
+		gsm = {};
+	}
+
+	fixed_frame_wait += DeltaTime::get_deltaTime();
 }
 
 void Fortress::Scene::RoomScene::update()

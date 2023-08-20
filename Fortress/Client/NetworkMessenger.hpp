@@ -17,6 +17,10 @@ namespace Fortress::Network
 	public:
 		NetworkMessenger();
 		virtual ~NetworkMessenger() = default;
+
+		void set_player_id(PlayerID id);
+		PlayerID get_player_id() const;
+
 		void send_alive();
 		void send_confirm(RoomID room_id, CRC32 previous_msg);
 		bool check_confirm();
@@ -33,11 +37,9 @@ namespace Fortress::Network
 		bool check_room_start(GameInitMsg* out);
 		void call_loading_finished(RoomID room_id);
 		void send_deltaTime(RoomID room_id, float deltaTime);
-		bool check_game_start();
+		bool check_game_start(GameStartMsg& gsm);
 
 		void sync_game(RoomID room_id);
-
-		void set_player_id(PlayerID id);
 		void send_character(RoomID room_id, eCharacterType character);
 	private:
 		template <typename T>
@@ -46,7 +48,7 @@ namespace Fortress::Network
 			const Message* msg,
 			const SOCKADDR_IN& client_info);
 
-		Server::Socket m_soc {60901};
+		Server::Socket m_soc {60901, false};
 		SOCKADDR_IN m_server_info;
 		std::thread m_receiver;
 		PlayerID m_player_id;
@@ -159,10 +161,8 @@ namespace Fortress::Network
 		m_soc.send_message(&msg, m_server_info);
 	}
 
-	inline bool NetworkMessenger::check_game_start()
+	inline bool NetworkMessenger::check_game_start(GameStartMsg& gsm)
 	{
-		GameStartMsg gsm{};
-
 		if(m_soc.find_message<GameStartMsg>(&gsm))
 		{
 			return true;
@@ -184,6 +184,11 @@ namespace Fortress::Network
 	inline void NetworkMessenger::set_player_id(const PlayerID id)
 	{
 		m_player_id = id;
+	}
+
+	inline PlayerID NetworkMessenger::get_player_id() const
+	{
+		return m_player_id;
 	}
 
 	inline void NetworkMessenger::send_character(
