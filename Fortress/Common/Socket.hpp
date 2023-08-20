@@ -26,11 +26,6 @@ namespace Fortress::Network::Server
 		}
 		~Socket()
 		{
-			std::unique_lock rl(receiving_lock);
-			std::unique_lock bcl(bad_client_lock);
-			std::unique_lock ql(queue_lock);
-			receive_event.wait(rl);
-
 			if(m_socket_data)
 			{
 				WSACleanup();
@@ -40,6 +35,10 @@ namespace Fortress::Network::Server
 			{
 				closesocket(m_socket);
 			}
+
+			std::unique_lock rl(receiving_lock);
+			receive_event.wait(rl);
+			std::unique_lock bcl(bad_client_lock);
 		}
 
 		bool get_any_message(SOCKADDR_IN* info_out, std::time_t& time_out, char* message_out)
@@ -112,14 +111,13 @@ namespace Fortress::Network::Server
 					std::unique_lock rl(receiving_lock);
 
 					recv_info = wait_for_recv();
+					receive_event.notify_all();
 
 					if (recv_info.first <= 0 || recv_info.first > max_packet_size + 1)
 					{
 						add_bad_client(recv_info.second);
 						continue;
 					}
-
-					receive_event.notify_all();
 				}
 
 				{
