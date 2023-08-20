@@ -1,4 +1,4 @@
-#include <cassert>
+﻿#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -43,6 +43,8 @@ namespace Fortress::Network::Server
 
 	static std::mutex player_list_lock;
 	static bool player_list[15]{ false, };
+
+	std::thread go_checker[15];
 
 	static std::map<std::pair<RoomID, PlayerID>, Client> client_list = {};
 
@@ -326,6 +328,38 @@ namespace Fortress::Network::Server
 		server_socket.send_message<GOMsg>(&msg, client_info);
 	}
 
+	void check_client_go(RoomID room_id, const Message* message)
+	{
+		GOMsg buffer{};
+		unsigned int count = 0;
+		bool go_table[15]{false,};
+
+		const unsigned int player_count = get_room_player_count(room_id);
+
+		// @todo: max retry;
+		while (count != player_count)
+		{
+			if(server_socket.find_message<GOMsg>(&buffer))
+			{
+				if (!go_table[buffer.player_id])
+				{
+					go_table[buffer.player_id] = true;
+					count++;
+				}
+			}
+		}
+
+		const auto msg = create_network_message<GOMsg>(
+			eMessageType::GO, message->room_id, -1, message->crc32);
+
+		const auto room_clients = get_room_client(room_id);
+
+		for(const auto& client: room_clients)
+		{
+			server_socket.send_message(&msg, client.ip);
+		}
+	}
+
 	void aggregate_send_room_info(const Message* message)
 	{
 		std::cout << "Room start received, Aggregates room info" << std::endl;
@@ -368,6 +402,9 @@ namespace Fortress::Network::Server
 		{
 			server_socket.send_message<GameInitMsg>(&msg, client.ip);
 		}
+
+		go_checker[message->room_id] = std::thread(check_client_go, message->room_id, &msg);
+		go_checker->detach();
 	}
 
 	void request_deltatime(RoomID room_id, const Message* message, const sockaddr_in& client_info)
@@ -384,28 +421,6 @@ namespace Fortress::Network::Server
 		const float delta_time = reinterpret_cast<const DeltaTimeMsg*>(message)->deltaTime;
 
 		client_list[{room_id, player_id}].room_info.delta_time = delta_time;
-	}
-
-	void check_client_go(RoomID room_id)
-	{
-		GOMsg buffer{};
-		unsigned int count = 0;
-		bool go_table[15]{false,};
-
-		const unsigned int player_count = get_room_player_count(room_id);
-
-		// @todo: max retry;
-		while (count != player_count)
-		{
-			if(server_socket.find_message<GOMsg>(&buffer))
-			{
-				if (!go_table[buffer.player_id])
-				{
-					go_table[buffer.player_id] = true;
-					count++;
-				}
-			}
-		}
 	}
 
 	bool check_deltatime_aggregation(RoomID room_id)
@@ -454,6 +469,8 @@ namespace Fortress::Network::Server
 			case eMessageType::LobbyInfo:
 			case eMessageType::RoomInfo:
 			case eMessageType::GameInit:
+			case eMessageType::ReqDeltaTime:
+			case eMessageType::GameStart:
 			case eMessageType::PONG: break;
 			case eMessageType::PING:
 				add_client(message->room_id, message->player_id, client_info, time);
@@ -499,7 +516,6 @@ namespace Fortress::Network::Server
 				break;
 			case eMessageType::RoomStart:
 				aggregate_send_room_info(message);
-				check_client_go(message->room_id);
 				break;
 			case eMessageType::LoadDone:
 				request_deltatime(message->room_id, message, client_info);
