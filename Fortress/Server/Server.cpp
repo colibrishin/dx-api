@@ -1,4 +1,4 @@
-#include <cassert>
+﻿#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -39,12 +39,9 @@ namespace Fortress::Network::Server
 
 	const std::map<PlayerID, std::wstring> client_names = {{1, L"Test1"}, {2, L"Test2"}};
 
-	static std::list<Room> room_list = {};
-
 	static std::mutex player_list_lock;
 	static bool player_list[15]{ false, };
-
-	std::thread go_checker[15];
+	static bool load_dome[15][15] { false, };
 
 	static std::map<std::pair<RoomID, PlayerID>, Client> client_list = {};
 
@@ -134,12 +131,12 @@ namespace Fortress::Network::Server
 			}
 		}
 
-		LobbyInfo li{{0, eMessageType::LobbyInfo, -1, -1},
+		LobbyInfoMsg li{{0, eMessageType::LobbyInfo, -1, -1},
 			0, {}, pos, {}};
 
 		std::memcpy(li.player_names, player_names, sizeof(player_names));
 
-		auto reply = create_network_message<LobbyInfo>(li);
+		auto reply = create_network_message<LobbyInfoMsg>(li);
 		server_socket.send_message(&reply, client_info);
 	}
 
@@ -244,7 +241,7 @@ namespace Fortress::Network::Server
 	void send_room_info(const RoomID room_id, const sockaddr_in& client_info)
 	{
 		std::cout << "Sending Room info to new client" << std::endl;
-		RoomInfo rif{};
+		RoomInfoMsg rif{};
 
 		int count = 0;
 		const auto room_clients = get_room_client(room_id);
@@ -263,14 +260,14 @@ namespace Fortress::Network::Server
 		rif.player_id = -1;
 		rif.room_id = room_id;
 
-		auto msg = create_network_message<RoomInfo>(rif);
+		auto msg = create_network_message<RoomInfoMsg>(rif);
 		server_socket.send_message(&msg, client_info);
 	}
 
 	void notify_join(RoomID room_id)
 	{
 		std::cout << "Broadcasting new client to pre-existing clients" << std::endl;
-		RoomInfo rif{};
+		RoomInfoMsg rif{};
 
 		int count = 0;
 		const auto room_clients = get_room_client(room_id);
@@ -289,7 +286,7 @@ namespace Fortress::Network::Server
 		rif.player_id = -1;
 		rif.room_id = room_id;
 
-		auto msg = create_network_message<RoomInfo>(rif);
+		auto msg = create_network_message<RoomInfoMsg>(rif);
 
 		for(int i = 0; i < 15; ++i)
 		{
@@ -304,7 +301,7 @@ namespace Fortress::Network::Server
 	{
 		const RoomID room_id = message->room_id;
 		const PlayerID player_id = message->player_id;
-		const eCharacterType ch_type = reinterpret_cast<const RoomSelectCh*>(message)->ch_type;
+		const eCharacterType ch_type = reinterpret_cast<const RoomSelectChMsg*>(message)->ch_type;
 
 		client_list[{room_id, player_id}].room_info.character = ch_type;
 		auto msg = create_network_message<GOMsg>(
@@ -316,7 +313,7 @@ namespace Fortress::Network::Server
 	{
 		const RoomID room_id = message->room_id;
 		const PlayerID player_id = message->player_id;
-		const eItemType* it_types_begin = reinterpret_cast<const RoomSelectIt*>(message)->items;
+		const eItemType* it_types_begin = reinterpret_cast<const RoomSelectItMsg*>(message)->items;
 
 		std::memcpy(
 			&client_list[{room_id, player_id}].room_info.items,
@@ -328,43 +325,12 @@ namespace Fortress::Network::Server
 		server_socket.send_message<GOMsg>(&msg, client_info);
 	}
 
-	void check_client_go(RoomID room_id, const Message* message)
-	{
-		GOMsg buffer{};
-		unsigned int count = 0;
-		bool go_table[15]{false,};
-
-		const unsigned int player_count = get_room_player_count(room_id);
-
-		// @todo: max retry;
-		while (count != player_count)
-		{
-			if(server_socket.find_message<GOMsg>(&buffer))
-			{
-				if (!go_table[buffer.player_id])
-				{
-					go_table[buffer.player_id] = true;
-					count++;
-				}
-			}
-		}
-
-		const auto msg = create_network_message<GOMsg>(
-			eMessageType::GO, message->room_id, -1, message->crc32);
-
-		const auto room_clients = get_room_client(room_id);
-
-		for(const auto& client: room_clients)
-		{
-			server_socket.send_message(&msg, client.ip);
-		}
-	}
-
 	void aggregate_send_room_info(const Message* message)
 	{
 		std::cout << "Room start received, Aggregates room info" << std::endl;
-		const RoomID room_id = message->room_id;
-		const eMapType map = reinterpret_cast<const RoomStart*>(message)->map_type;
+		const auto* recv_msg = reinterpret_cast<const RoomStartMsg*>(message);
+		const RoomID room_id = recv_msg->room_id;
+		const eMapType map = recv_msg->map_type;
 
 		GameInitMsg gi{};
 		uint8_t pos = 0;
@@ -402,9 +368,6 @@ namespace Fortress::Network::Server
 		{
 			server_socket.send_message<GameInitMsg>(&msg, client.ip);
 		}
-
-		go_checker[message->room_id] = std::thread(check_client_go, message->room_id, &msg);
-		go_checker->detach();
 	}
 
 	void request_deltatime(RoomID room_id, const Message* message, const sockaddr_in& client_info)
@@ -440,6 +403,8 @@ namespace Fortress::Network::Server
 
 	void game_gtg(RoomID room_id)
 	{
+		std::cout << "All Players are ready, game is good to go" << std::endl;
+
 		const auto clients = get_room_client(room_id);
 		auto msg = create_network_message<GameStartMsg>(
 			eMessageType::GameStart, -1, room_id);
@@ -447,6 +412,52 @@ namespace Fortress::Network::Server
 		for(const auto& client : clients)
 		{
 			server_socket.send_message<GameStartMsg>(&msg, client.ip);
+		}
+	}
+
+	bool check_priority(RoomID room_id, PlayerID player_id)
+	{
+		const auto room_clients = get_room_client(room_id);
+		const auto min = std::min_element(room_clients.begin(), room_clients.end(), [](const Client& l, const Client& r)
+		{
+			return l.pid < r.pid;
+		});
+
+		if(min == room_clients.end())
+		{
+			return false;
+		}
+
+		return player_id == min->pid;
+	}
+
+	bool add_load_done(const Message* message)
+	{
+		const auto clients = get_room_client(message->room_id);
+		int load_finished = 0;
+		load_dome[message->room_id][message->player_id] = true;
+
+		for(const auto& client: clients)
+		{
+			if(load_dome[message->room_id][client.pid])
+			{
+				load_finished++;
+			}
+		}
+
+		return load_finished == clients.size();
+	}
+
+	void broadcast_position(const Message* message)
+	{
+		std::cout << message->room_id << " -> " << message->player_id << " : Position Received." << std::endl;
+		const auto clients = get_room_client(message->room_id);
+		const auto* casted_msg = reinterpret_cast<const PositionMsg*>(message);
+		std::cout << "Type : " << static_cast<int>(casted_msg->object_type) << std::endl;
+
+		for(const auto& client : clients)
+		{
+			server_socket.send_message<PositionMsg>(casted_msg, client.ip);
 		}
 	}
 
@@ -480,6 +491,8 @@ namespace Fortress::Network::Server
 				reply_ping(client_info);
 				break;
 			case eMessageType::Position:
+				// @todo: verification?
+				broadcast_position(message);
 				break;
 			case eMessageType::Fire:
 				break;
@@ -518,17 +531,18 @@ namespace Fortress::Network::Server
 				change_items(message, client_info);
 				break;
 			case eMessageType::RoomStart:
-				aggregate_send_room_info(message);
+				if(check_priority(message->room_id, message->player_id))
+				{
+					aggregate_send_room_info(message);
+				}
 				break;
 			case eMessageType::LoadDone:
-				request_deltatime(message->room_id, message, client_info);
-				break;
-			case eMessageType::DeltaTime:
-				set_delta_time(message);
-				if (check_deltatime_aggregation(message->room_id))
+				if(add_load_done(message))
 				{
 					game_gtg(message->room_id);
 				}
+				break;
+			case eMessageType::DeltaTime:
 				break;
 			default: break; // Unknown type of message
 			}

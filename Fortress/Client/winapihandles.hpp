@@ -1,6 +1,7 @@
 #ifndef WINAPIHANDLES_H
 #define WINAPIHANDLES_H
 #pragma once
+#include <filesystem>
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>

@@ -25,7 +25,7 @@ namespace Fortress::Scene
 		void activate() override;
 
 	private:
-		Network::LobbyInfo m_lobby_info_;
+		Network::LobbyInfoMsg m_lobby_info_;
 		std::weak_ptr<ImageWrapper> m_imBackground;
 		std::weak_ptr<Resource::Sound> m_bgm;
 	};

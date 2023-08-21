@@ -1,7 +1,7 @@
 #ifndef MESSAGE_HPP
 #define MESSAGE_HPP
 
-#include <windows.h>
+#include "pch.h"
 #include "Crc32.h"
 #include "vector2.hpp"
 
@@ -11,9 +11,9 @@ namespace Fortress::Network
 {
 	enum class eObjectType
 	{
-		Character,
-		Projectile,
-		Ground
+		Character = 0x10,
+		Projectile = 0x11,
+		Ground = 0x12
 	};
 
 	enum class eMessageType
@@ -109,11 +109,11 @@ namespace Fortress::Network
 		CRC32 last_message;
 	};
 
-	struct LobbyJoin : Message
+	struct LobbyJoinMsg : Message
 	{
 	};
 
-	struct LobbyInfo : Message
+	struct LobbyInfoMsg : Message
 	{
 		int room_count;
 		Room room_info[15];
@@ -121,7 +121,7 @@ namespace Fortress::Network
 		wchar_t player_names[15][15];
 	};
 
-	struct RoomJoin : Message
+	struct RoomJoinMsg : Message
 	{
 	};
 
@@ -132,17 +132,17 @@ namespace Fortress::Network
 		wchar_t player_names[15][15];
 	};
 
-	struct RoomSelectCh : Message
+	struct RoomSelectChMsg : Message
 	{
 		eCharacterType ch_type{};
 	};
 
-	struct RoomSelectIt : Message
+	struct RoomSelectItMsg : Message
 	{
 		eItemType items[4]{};
 	};
 
-	struct RoomStart : Message
+	struct RoomStartMsg : Message
 	{
 		eMapType map_type;
 	};
@@ -225,12 +225,12 @@ namespace Fortress::Network
 		HitMsg hit;
 		DestroyedMsg destroyed;
 		WindMsg wind;
-		LobbyJoin lobby_join;
-		LobbyInfo lobby_info;
-		RoomJoin room_join;
-		RoomInfo room_info;
-		RoomSelectCh room_ch;
-		RoomSelectIt room_it;
+		LobbyJoinMsg lobby_join;
+		LobbyInfoMsg lobby_info;
+		RoomJoinMsg room_join;
+		RoomInfoMsg room_info;
+		RoomSelectChMsg room_ch;
+		RoomSelectItMsg room_it;
 		GameInitMsg init;
 		LoadDoneMsg load_done;
 		GameStartMsg start;

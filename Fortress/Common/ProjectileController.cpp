@@ -126,6 +126,9 @@ namespace Fortress::Controller
 	{
 		flying();
 
+		EngineHandle::get_messenger()->send_message_within_tick_rate<Network::PositionMsg>(
+			Network::eMessageType::Position, Network::eObjectType::Projectile, m_rb->get_position());
+
 		if (const auto map = Scene::SceneManager::get_active_map().lock())
 		{
 			if(map->predicate_OOB(m_rb->get_position()))

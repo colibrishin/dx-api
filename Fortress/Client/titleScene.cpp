@@ -27,12 +27,12 @@ namespace Fortress::Scene
 		if (Input::getKey(eKeyCode::One))
 		{
 			SceneManager::SetActive(L"Bulletin Board Scene");
-			Application::m_messenger.set_player_id(1);
+			EngineHandle::get_messenger()->set_player_id(1);
 		}
 		if (Input::getKey(eKeyCode::Two))
 		{
 			SceneManager::SetActive(L"Bulletin Board Scene");
-			Application::m_messenger.set_player_id(2);
+			EngineHandle::get_messenger()->set_player_id(2);
 		}
 	}
 

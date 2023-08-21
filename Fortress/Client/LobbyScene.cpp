@@ -4,6 +4,7 @@
 #include "../Common/input.hpp"
 #include "../Common/resourceManager.hpp"
 #include "../Common/debug.hpp"
+#include "../Common/deltatime.hpp"
 
 void Fortress::Scene::LobbyScene::initialize()
 {
@@ -28,7 +29,7 @@ void Fortress::Scene::LobbyScene::update()
 
 	if(lobby_update >= 1.0f)
 	{
-		Application::m_messenger.check_lobby_update(&m_lobby_info_);
+		EngineHandle::get_messenger()->check_lobby_update(&m_lobby_info_);
 		lobby_update = 0.0f;
 	}
 
@@ -58,7 +59,7 @@ void Fortress::Scene::LobbyScene::deactivate()
 
 void Fortress::Scene::LobbyScene::activate()
 {
-	Application::m_messenger.join_lobby(&m_lobby_info_);
+	EngineHandle::get_messenger()->join_lobby(&m_lobby_info_);
 	scene::activate();
 	m_bgm.lock()->play(true);
 }
