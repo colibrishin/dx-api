@@ -160,6 +160,19 @@ namespace Fortress::Network::Server
 			}
 		}
 
+		void flush_message(const eMessageType type)
+		{
+			std::lock_guard ql(queue_lock);
+
+			m_message_queue_.erase(
+				std::remove_if(m_message_queue_.begin(), m_message_queue_.end(), [&](const MessageTuple& t)
+				{
+					return std::get<2>(t)->type == type;
+				}),
+				m_message_queue_.end()
+			);
+		}
+
 		template <typename T>
 		void send_message(const T* message, const SOCKADDR_IN& client_info)
 		{
