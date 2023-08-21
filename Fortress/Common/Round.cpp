@@ -14,20 +14,20 @@ namespace Fortress
 		
 	}
 
-	void Round::initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
+	void Round::initialize(const std::vector<CharacterPointer>& players)
 	{
 		for(const auto& ptr : players)
 		{
 			if(const auto player = ptr.lock())
 			{
 				player->set_unmovable();
+				m_known_players.push_back(ptr);
+				m_all_players.push_back(ptr);
 			}
 		}
 
 		m_wind_affect = dis(e);
 		m_state = eRoundState::InProgress;
-		m_known_players = players;
-		m_all_players = players;
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
 		m_known_players.erase(m_known_players.begin());

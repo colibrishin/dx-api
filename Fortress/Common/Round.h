@@ -2,6 +2,8 @@
 #define ROUND_HPP
 #include <memory>
 #include <random>
+
+#include "BattleScene.h"
 #include "deltatime.hpp"
 #include "NextPlayerTimer.hpp"
 
@@ -18,7 +20,7 @@ namespace Fortress
 	{
 	public:
 		Round();
-		void initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players);
+		void initialize(const std::vector<CharacterPointer>& players);
 		void update();
 		float get_current_time() const;
 		float get_wind_acceleration() const;

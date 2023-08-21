@@ -45,7 +45,7 @@ namespace Fortress::Scene
 		m_map_size = evaluate_map_size();
 		m_radar = std::make_unique<Radar>(m_map_size);
 
-		for (const auto& ch : m_characters)
+		for (const auto& [pid, ch] : m_characters)
 		{
 			add_game_object(Abstract::LayerType::Character, ch);
 			ch.lock()->set_disabled();
@@ -58,7 +58,7 @@ namespace Fortress::Scene
 		}
 
 		get_camera().lock()->set_object(m_self);
-		m_round->initialize(m_characters);
+		m_round->initialize(get_characters());
 		m_radar->initialize();
 	}
 
@@ -273,7 +273,7 @@ namespace Fortress::Scene
 				}
 			}();
 		}
-
+		
 		m_radar->render();
 	}
 
@@ -301,7 +301,14 @@ namespace Fortress::Scene
 
 	std::vector<CharacterPointer> BattleScene::get_characters() const
 	{
-		return m_characters;
+		std::vector<CharacterPointer> ret;
+
+		for(const auto& [pid, ch] : m_characters)
+		{
+			ret.push_back(ch);
+		}
+
+		return ret;
 	}
 
 	std::vector<GroundPointer> BattleScene::get_grounds() const
@@ -348,7 +355,7 @@ namespace Fortress::Scene
 		int x_current = pivot + 150;
 
 		// @todo: random spawnpoints
-		for(const auto& ch_ptr : m_characters)
+		for(const auto& [id, ch_ptr] : m_characters)
 		{
 			if(const auto character = ch_ptr.lock())
 			{

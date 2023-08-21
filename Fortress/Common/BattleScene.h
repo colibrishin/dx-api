@@ -13,6 +13,8 @@
 
 namespace Fortress::Scene
 {
+	using PlayerCharacterMap = std::map<Network::PlayerID, std::weak_ptr<ObjectBase::character>>;
+
 	class BattleScene : public Abstract::scene
 	{
 	public:
@@ -45,7 +47,7 @@ namespace Fortress::Scene
 	protected:
 		Math::Vector2 m_map_size;
 		std::weak_ptr<ObjectBase::character> m_self;
-		std::vector<std::weak_ptr<ObjectBase::character>> m_characters;
+		PlayerCharacterMap m_characters;
 		std::vector<GroundPointer> m_grounds;
 		std::weak_ptr<Resource::Sound> m_bgm;
 		std::weak_ptr<ImageWrapper> m_hud;
