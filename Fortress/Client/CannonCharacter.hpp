@@ -1,7 +1,6 @@
 #pragma once
 #ifndef CANNONCHARACTER_HPP
 #define CANNONCHARACTER_HPP
-#include "Client.h"
 #include "CannonProjectile.hpp"
 #include "../Common/character.hpp"
 #include "../Common/objectManager.hpp"
