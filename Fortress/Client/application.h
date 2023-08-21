@@ -8,11 +8,7 @@
 #include <objidl.h>
 #include <gdiplus.h>
 
-#include "NetworkMessenger.hpp"
-#include "../Common/message.hpp"
-
 #pragma comment (lib,"Gdiplus.lib")
-
 
 namespace Fortress
 {
@@ -36,7 +32,6 @@ namespace Fortress
 		void render();
 		static void cleanup();
 
-		inline static Network::NetworkMessenger m_messenger;
 	private:
 		HWND m_hwnd;
 		HDC m_hdc;

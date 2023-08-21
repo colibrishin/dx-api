@@ -25,7 +25,7 @@ namespace Fortress
 		m_hdc = hdc;
 		Input::initialize();
 		DeltaTime::initialize();
-
+		
 		EngineHandle::set_handle(std::make_shared<WinAPIHandles>());
 		EngineHandle::get_handle().lock()->initialize(hwnd, hdc);
 		m_buffer_hdc = EngineHandle::get_handle().lock()->get_buffer_dc();
@@ -38,8 +38,6 @@ namespace Fortress
 		Scene::SceneManager::CreateScene<Scene::LobbyScene>();
 		Scene::SceneManager::CreateScene<Scene::BulletinBoardScene>();
 		Scene::SceneManager::SetActive(L"Title Scene");
-
-		m_messenger.send_alive();
  	}
 
 	void Application::update()

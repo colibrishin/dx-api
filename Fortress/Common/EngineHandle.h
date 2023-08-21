@@ -1,5 +1,6 @@
 #ifndef ENGINEHANDLE_H
 #define ENGINEHANDLE_H
+#include "pch.h"
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
@@ -9,6 +10,7 @@ using namespace Gdiplus;
 
 #include "framework.h"
 #include <memory>
+#include "NetworkMessenger.hpp"
 
 namespace Fortress
 {
@@ -46,6 +48,7 @@ namespace Fortress
 
 		static void set_handle(std::shared_ptr<EngineHandle> h);
 		static std::weak_ptr<EngineHandle> get_handle();
+		static Network::NetworkMessenger* get_messenger();
 
 	protected:
 		GdiplusStartupInput input;
@@ -65,11 +68,13 @@ namespace Fortress
 	private:
 		// @todo: probably this is not good way to share the data.
 		inline static std::shared_ptr<EngineHandle> winapi_handle = {};
+		inline static std::shared_ptr<Network::NetworkMessenger> network_messenger_ = {};
 	};
 
 	inline void EngineHandle::initialize(HWND hwnd, HDC hdc)
 	{
 		GdiplusStartup(&token, &input, NULL);
+		network_messenger_ = std::make_shared<Network::NetworkMessenger>();
 	}
 
 	inline void EngineHandle::set_handle(std::shared_ptr<EngineHandle> h)
@@ -80,6 +85,11 @@ namespace Fortress
 	inline std::weak_ptr<EngineHandle> EngineHandle::get_handle()
 	{
 		return winapi_handle;
+	}
+
+	inline Network::NetworkMessenger* EngineHandle::get_messenger()
+	{
+		return network_messenger_.get();
 	}
 }
 
