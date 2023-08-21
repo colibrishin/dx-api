@@ -186,6 +186,9 @@
     <ClInclude Include="hash_fnv1.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="NetworkMessenger.hpp">
+      <Filter>Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp">
@@ -238,6 +241,9 @@
     </ClCompile>
     <ClCompile Include="rigidBody.cpp">
       <Filter>Abstract</Filter>
+    </ClCompile>
+    <ClCompile Include="NetworkMessenger.cpp">
+      <Filter>Manager</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
