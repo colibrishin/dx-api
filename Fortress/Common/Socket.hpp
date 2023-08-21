@@ -1,17 +1,18 @@
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
+#include "pch.h"
 #include <cassert>
 #include <iostream>
-#include <winsock2.h>
 #include <ws2tcpip.h>
 #include <array>
 #include <vector>
 #include <mutex>
+#include <winsock2.h>
 
 #include "hash_fnv1.hpp"
-#include "pch.h"
 #include "../Common/message.hpp"
-#include "../Common/hash_fnv1.hpp"
+
+#pragma comment (lib, "ws2_32.lib")
 
 namespace Fortress::Network::Server
 {
@@ -124,7 +125,7 @@ namespace Fortress::Network::Server
 			}
 		}
 
-		[[noreturn]] void receiving_message()
+		void receiving_message()
 		{
 			while (m_bIsRunning)
 			{
