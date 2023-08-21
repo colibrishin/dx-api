@@ -105,9 +105,6 @@
     <ClInclude Include="winapihandles.hpp">
       <Filter>Windows\헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkMessenger.hpp">
-      <Filter>Windows\헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Map.hpp">
       <Filter>Map</Filter>
     </ClInclude>

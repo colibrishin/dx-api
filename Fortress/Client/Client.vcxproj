@@ -144,7 +144,6 @@
     <ClInclude Include="LoadingScene.hpp" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="Map.hpp" />
-    <ClInclude Include="NetworkMessenger.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RoomScene.h" />
     <ClInclude Include="SecwindCharacter.hpp" />
