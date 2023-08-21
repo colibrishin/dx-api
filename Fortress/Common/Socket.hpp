@@ -59,10 +59,15 @@ namespace Fortress::Network::Server
 			}
 		}
 
-		bool get_any_message(SOCKADDR_IN* info_out, std::time_t& time_out, char* message_out)
+		void block_until_queue_event()
 		{
 			std::unique_lock ql(queue_lock);
 			queue_event.wait(ql);
+		}
+
+		bool get_any_message(SOCKADDR_IN* info_out, std::time_t& time_out, char* message_out)
+		{
+			std::lock_guard _(queue_lock);
 
 			if(m_message_queue_.empty())
 			{

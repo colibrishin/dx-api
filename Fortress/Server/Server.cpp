@@ -1,4 +1,4 @@
-﻿#include <cassert>
+#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -458,7 +458,10 @@ namespace Fortress::Network::Server
 			sockaddr_in client_info{};
 			std::time_t time;
 
-			server_socket.get_any_message(&client_info, time, buffer);
+			if(!server_socket.get_any_message(&client_info, time, buffer))
+			{
+				server_socket.block_until_queue_event();
+			}
 
 			const Message* message = reinterpret_cast<Message*>(buffer);
 
