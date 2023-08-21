@@ -9,7 +9,7 @@
 #include "../Common/sceneManager.hpp"
 #include "../Common/sound.hpp"
 #include "../Common/deltatime.hpp"
-#include <thread>
+#include "../Common/debug.hpp"
 
 namespace Fortress::Scene
 {
@@ -28,10 +28,7 @@ namespace Fortress::Scene
 		void render() override;
 		void deactivate() override;
 		void activate() override;
-
-		void load_scene() const;
-
-		std::thread m_initialization_thread;
+		
 		std::weak_ptr<ImageWrapper> m_imBackground;
 		std::weak_ptr<Resource::Sound> m_bgm;
 		Network::GameInitMsg m_game_init;
@@ -45,19 +42,50 @@ namespace Fortress::Scene
 			L"Loading", "./resources/misc/loading/loading.png");
 		m_bgm = Resource::ResourceManager::load<Resource::Sound>(
 			L"Loading BGM", "./resources/sounds/loading.wav");
-
-		// we are calling the member function, so this has to be given for the argument.
-		m_initialization_thread = std::thread(&LoadingScene::load_scene, this);
 	}
 
 	template <typename MapName>
 	void LoadingScene<MapName>::update()
 	{
 		scene::update();
-		// using this as thread might be handy later on.
-		if(m_initialization_thread.joinable())
+
+		static float fixed_frame_wait = 0.0f;
+
+		static bool load_finished = false;
+		static bool handshake_finished = false;
+
+		if(!load_finished)
 		{
-			m_initialization_thread.join();
+			SceneManager::CreateScene<MapName>(m_game_init);
+
+			load_finished = true;
+		}
+
+		if(!handshake_finished)
+		{
+			if(fixed_frame_wait < 20.0f)
+			{
+				fixed_frame_wait += DeltaTime::get_deltaTime();
+				return;
+			}
+
+			fixed_frame_wait = 0.0f;
+			handshake_finished = true;
+
+			EngineHandle::get_messenger()->call_loading_finished();
+		}
+
+		static Network::GameStartMsg gsm{};
+
+		Debug::Log(L"Waiting for other clients...");
+
+		if(EngineHandle::get_messenger()->check_game_start(gsm) || 
+			gsm.type == Network::eMessageType::GameStart)
+		{
+			SceneManager::SetActive<MapName>();
+			load_finished = false;
+			handshake_finished = false;
+			fixed_frame_wait = 0.0f;
 		}
 	}
 
@@ -81,22 +109,6 @@ namespace Fortress::Scene
 	{
 		scene::activate();
 		m_bgm.lock()->play(true);
-	}
-
-	template <typename MapName>
-	void LoadingScene<MapName>::load_scene() const
-	{
-		static float fixed_frame_wait = 0.0f;
-
-		SceneManager::CreateScene<MapName>(m_game_init);
-
-		while(fixed_frame_wait < 20.0f)
-		{
-			fixed_frame_wait += DeltaTime::get_deltaTime();
-		}
-
-		SceneManager::SetActive<MapName>();
-		fixed_frame_wait = 0.0f;
 	}
 }
 

@@ -34,7 +34,7 @@ namespace Fortress::Scene
 		std::weak_ptr<Resource::Sound> m_bgm;
 
 		Network::RoomID m_room_id;
-		Network::RoomInfo m_room_info;
+		Network::RoomInfoMsg m_room_info;
 	};
 }
 

@@ -22,28 +22,9 @@ void Fortress::Scene::RoomScene::initialize()
 template <typename T>
 void Fortress::Scene::RoomScene::load_and_sync_map(const Network::GameInitMsg& game_info) const
 {
+	EngineHandle::get_messenger()->go_and_wait(game_info.crc32);
 	SceneManager::CreateScene<LoadingScene<T>>(game_info);
-	Application::m_messenger.call_loading_finished(m_room_id);
-
-	Debug::Log(L"Waiting for other clients...");
-
-	static Network::GameStartMsg gsm{};
-
-	if(gsm.type != Network::eMessageType::GameStart)
-	{
-		Application::m_messenger.check_game_start(gsm);
-	}
-
-	static float fixed_frame_wait = 0.0f;
-
-	if (fixed_frame_wait >= 20.0f)
-	{
-		fixed_frame_wait = 0.0f;
-		SceneManager::SetActive<LoadingScene<T>>();
-		gsm = {};
-	}
-
-	fixed_frame_wait += DeltaTime::get_deltaTime();
+	SceneManager::SetActive<LoadingScene<T>>();
 }
 
 void Fortress::Scene::RoomScene::update()
@@ -53,31 +34,29 @@ void Fortress::Scene::RoomScene::update()
 
 	if (Input::getKey(eKeyCode::S))
 	{
-		Application::m_messenger.start_game(
-			m_room_id, Network::eMapType::SkyValleyMap, &gis);
-		Application::m_messenger.go_and_wait(m_room_id, gis.crc32);
+		EngineHandle::get_messenger()->start_game(
+			Network::eMapType::SkyValleyMap, &gis);
 		load_and_sync_map<Map::SkyValleyMap>(gis);
 	}
 	if (Input::getKey(eKeyCode::D))
 	{
-		Application::m_messenger.start_game(
-			m_room_id, Network::eMapType::DesertMap, &gis);
-		Application::m_messenger.go_and_wait(m_room_id, gis.crc32);
+		EngineHandle::get_messenger()->start_game(
+			Network::eMapType::DesertMap, &gis);
 		load_and_sync_map<Map::DesertMap>(gis);
 	}
 	if (Input::getKeyDown(eKeyCode::One))
 	{
-		Application::m_messenger.send_character(
+		EngineHandle::get_messenger()->send_character(
 			m_room_id, Network::eCharacterType::CannonCharacter);
 	}
 	if (Input::getKeyDown(eKeyCode::Two))
 	{
-		Application::m_messenger.send_character(
+		EngineHandle::get_messenger()->send_character(
 			m_room_id, Network::eCharacterType::MissileCharacter);
 	}
 	if (Input::getKeyDown(eKeyCode::Three))
 	{
-		Application::m_messenger.send_character(
+		EngineHandle::get_messenger()->send_character(
 			m_room_id, Network::eCharacterType::SecwindCharacter);
 	}
 
@@ -85,7 +64,7 @@ void Fortress::Scene::RoomScene::update()
 
 	if(room_update >= 1.0f)
 	{
-		Application::m_messenger.check_room_update(&m_room_info);
+		EngineHandle::get_messenger()->check_room_update(&m_room_info);
 		room_update = 0.0f;
 	}
 
@@ -95,16 +74,14 @@ void Fortress::Scene::RoomScene::update()
 
 	if(game_update >= 0.2f)
 	{
-		if(Application::m_messenger.check_room_start(&gis))
+		if(EngineHandle::get_messenger()->check_room_start(&gis))
 		{
 			switch(gis.map_type)
 			{
 			case Network::eMapType::DesertMap:
-				Application::m_messenger.go_and_wait(m_room_id, gis.crc32);
 				load_and_sync_map<Map::DesertMap>(gis);
 				break;
 			case Network::eMapType::SkyValleyMap: 
-				Application::m_messenger.go_and_wait(m_room_id, gis.crc32);
 				load_and_sync_map<Map::SkyValleyMap>(gis);
 				break;
 			default: break;
@@ -140,7 +117,7 @@ void Fortress::Scene::RoomScene::deactivate()
 
 void Fortress::Scene::RoomScene::activate()
 {
-	Application::m_messenger.join_room(m_room_id, &m_room_info);
+	EngineHandle::get_messenger()->join_room(m_room_id, &m_room_info);
 	scene::activate();
 	m_bgm.lock()->play(true);
 }

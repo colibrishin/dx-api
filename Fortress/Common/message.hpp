@@ -125,7 +125,7 @@ namespace Fortress::Network
 	{
 	};
 
-	struct RoomInfo : Message
+	struct RoomInfoMsg : Message
 	{
 		wchar_t room_name[15];
 		int player_count;
