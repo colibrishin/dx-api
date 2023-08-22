@@ -277,7 +277,7 @@ namespace Fortress::ObjectBase
 	}
 
 	character::character(
-			const unsigned int player_id,
+			const Network::PlayerID& player_id,
 			const std::wstring& name,
 			const std::wstring& short_name,
 			const Math::Vector2& offset,
@@ -299,6 +299,7 @@ namespace Fortress::ObjectBase
 				acceleration, 
 				true),
 			CharacterController(
+				m_player_id,
 				short_name, 
 				hp, 
 				mp,

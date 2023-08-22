@@ -57,7 +57,7 @@ namespace Fortress::ObjectBase
 		float get_armor() const;
 		unsigned int get_player_id() const;
 	private:
-		unsigned int m_player_id;
+		Network::PlayerID m_player_id;
 		bool m_bGrounded;
 
 		const std::wstring m_short_name;
@@ -92,7 +92,7 @@ namespace Fortress::ObjectBase
 
 	protected:
 		character(
-			const unsigned int player_id,
+			const Network::PlayerID& player_id,
 			const std::wstring& name,
 			const std::wstring& short_name,
 			const UnitVector& offset,

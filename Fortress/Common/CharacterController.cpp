@@ -142,6 +142,11 @@ namespace Fortress::Controller
 		m_bMovable = true;
 	}
 
+	bool CharacterController::is_movable() const
+	{
+		return m_bMovable && m_player_id_ == EngineHandle::get_messenger()->get_player_id();
+	}
+
 	bool CharacterController::is_projectile_fire_counted() const
 	{
 		int fire_count = 0;
@@ -257,11 +262,13 @@ namespace Fortress::Controller
 	}
 
 	CharacterController::CharacterController(
+		const Network::PlayerID& player_id,
 		const std::wstring& short_name, 
 		const float hp, 
 		const float mp,
 		RefOnlyRigidBodyPointer rb) :
 		stateController(short_name, eCharacterState::Idle),
+		m_player_id_(player_id),
 		m_hp(hp),
 		m_mp(mp),
 		m_power(1.0f),
@@ -407,7 +414,7 @@ namespace Fortress::Controller
 
 	void CharacterController::idle_state()
 	{
-		if(m_bMovable)
+		if(is_movable())
 		{
 			default_state();
 
@@ -457,7 +464,7 @@ namespace Fortress::Controller
 
 	void CharacterController::move_state()
 	{
-		if(m_bMovable)
+		if(is_movable())
 		{
 			default_state();
 
@@ -489,7 +496,7 @@ namespace Fortress::Controller
 
 	void CharacterController::firing_state()
 	{
-		if(m_bMovable)
+		if(is_movable())
 		{
 			default_state();
 

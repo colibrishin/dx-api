@@ -38,6 +38,7 @@ namespace Fortress::Controller
 
 		void set_unmovable();
 		void set_movable();
+		bool is_movable() const;
 
 		bool is_projectile_fire_counted() const;
 		bool is_projectile_active() const;
@@ -55,6 +56,7 @@ namespace Fortress::Controller
 
 	protected:
 		CharacterController(
+			const Network::PlayerID& player_id,
 			const std::wstring& short_name, 
 			float hp,
 			float mp,
@@ -107,6 +109,8 @@ namespace Fortress::Controller
 
 		void change_projectile();
 		void reset_mp();
+
+		const Network::PlayerID& m_player_id_;
 
 		float m_hp;
 		float m_mp;
