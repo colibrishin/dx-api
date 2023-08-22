@@ -1,4 +1,4 @@
-﻿#include <cassert>
+#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -256,10 +256,10 @@ namespace Fortress::Network::Server
 
 		for(const auto& client : room_clients)
 		{
-			std::memcpy(
+			std::wmemcpy(
 				rif.player_names[count],
 				client_names.at(client.pid).c_str(),
-				client_names.at(client.pid).length() * sizeof(wchar_t));
+				client_names.at(client.pid).length());
 			count++;
 		}
 
@@ -282,10 +282,10 @@ namespace Fortress::Network::Server
 
 		for(const auto& client : room_clients)
 		{
-			std::memcpy(
+			std::wmemcpy(
 				rif.player_names[count],
 				client_names.at(client.pid).c_str(),
-				client_names.at(client.pid).length() * sizeof(wchar_t));
+				client_names.at(client.pid).length());
 			count++;
 		}
 
