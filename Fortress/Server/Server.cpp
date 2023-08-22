@@ -101,12 +101,17 @@ namespace Fortress::Network::Server
 		return clients;
 	}
 
-	void send_go(const Message* message, const sockaddr_in& client_info)
+	void send_go(const Message* message, RoomID room_id)
 	{
-		GOMsg go{};
-		go.last_message = message->crc32;
+		const auto clients = get_room_client(room_id);
 
-		server_socket.send_message<GOMsg>(&go, client_info);
+		const auto msg = create_network_message<GOMsg>(
+			eMessageType::GO, message->room_id, -1, message->crc32);
+
+		for(const auto& client : clients)
+		{
+			server_socket.send_message<GOMsg>(&msg, client.ip);
+		}
 	}
 
 	void add_client(RoomID id, PlayerID pid, const SOCKADDR_IN& client_info, const std::time_t time)
