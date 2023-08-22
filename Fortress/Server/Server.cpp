@@ -448,16 +448,19 @@ namespace Fortress::Network::Server
 		return load_finished == clients.size();
 	}
 
-	void broadcast_position(const Message* message)
+	template <typename T>
+	void broadcast(const Message* message)
 	{
-		std::cout << message->room_id << " -> " << message->player_id << " : Position Received." << std::endl;
+		std::cout << message->room_id << " -> " << message->player_id << " : Received." << std::endl;
 		const auto clients = get_room_client(message->room_id);
-		const auto* casted_msg = reinterpret_cast<const PositionMsg*>(message);
-		std::cout << "Type : " << static_cast<int>(casted_msg->object_type) << std::endl;
+		const auto* casted_msg = reinterpret_cast<const T*>(message);
 
 		for(const auto& client : clients)
 		{
-			server_socket.send_message<PositionMsg>(casted_msg, client.ip);
+			if(client.pid != message->player_id)
+			{
+				server_socket.send_message<T>(casted_msg, client.ip);
+			}
 		}
 	}
 
@@ -492,9 +495,20 @@ namespace Fortress::Network::Server
 				break;
 			case eMessageType::Position:
 				// @todo: verification?
-				broadcast_position(message);
+				std::cout << "Message type: Position ";
+				broadcast<PositionMsg>(message);
+				break;
+			case eMessageType::Stop:
+				std::cout << "Message type: Stop ";
+				broadcast<StopMsg>(message);
+				break;
+			case eMessageType::Firing:
+				std::cout << "Message type: Firing ";
+				broadcast<FiringMsg>(message);
 				break;
 			case eMessageType::Fire:
+				std::cout << "Message type: Fire ";
+				broadcast<FireMsg>(message);
 				break;
 			case eMessageType::Item:
 				break;
