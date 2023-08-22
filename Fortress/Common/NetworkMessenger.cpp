@@ -215,12 +215,10 @@ namespace Fortress::Network
 		return m_rood_id_;
 	}
 
-	void NetworkMessenger::send_character(
-		RoomID room_id,
-		eCharacterType character)
+	void NetworkMessenger::send_character(eCharacterType character)
 	{
 		auto msg = create_network_message<RoomSelectChMsg>(
-			eMessageType::RoomSelectCh, room_id, m_player_id);
+			eMessageType::RoomSelectCh, m_rood_id_, m_player_id);
 
 		msg.ch_type = character;
 

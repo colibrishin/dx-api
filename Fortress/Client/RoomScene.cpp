@@ -48,17 +48,17 @@ void Fortress::Scene::RoomScene::update()
 	if (Input::getKeyDown(eKeyCode::One))
 	{
 		EngineHandle::get_messenger()->send_character(
-			m_room_id, Network::eCharacterType::CannonCharacter);
+			Network::eCharacterType::CannonCharacter);
 	}
 	if (Input::getKeyDown(eKeyCode::Two))
 	{
 		EngineHandle::get_messenger()->send_character(
-			m_room_id, Network::eCharacterType::MissileCharacter);
+			Network::eCharacterType::MissileCharacter);
 	}
 	if (Input::getKeyDown(eKeyCode::Three))
 	{
 		EngineHandle::get_messenger()->send_character(
-			m_room_id, Network::eCharacterType::SecwindCharacter);
+			Network::eCharacterType::SecwindCharacter);
 	}
 
 	static float room_update = 0.0f;
