@@ -82,7 +82,7 @@ namespace Fortress::Network::Server
 		}
 
 		template <typename T = Message>
-		bool find_message(T* out)
+		bool find_message(const eMessageType type, T* out)
 		{
 			{
 				int pos = 0;
@@ -99,7 +99,7 @@ namespace Fortress::Network::Server
 					const T* casted_msg = reinterpret_cast<const T*>(msg);
 					const unsigned int reeval_crc = get_crc32<T>(*casted_msg);
 
-					if (casted_msg->crc32 == reeval_crc)
+					if (casted_msg->crc32 == reeval_crc && msg->type == type)
 					{
 						std::memcpy(out, msg, sizeof(T));
 						delete[] reinterpret_cast<const char*>(msg);
