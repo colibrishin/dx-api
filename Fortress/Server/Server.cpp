@@ -141,10 +141,10 @@ namespace Fortress::Network::Server
 			{
 				if(player_list[i])
 				{
-					std::memcpy(
+					std::wmemcpy(
 						player_names[pos], 
 						client_names.at(i).c_str(),
-						client_names.at(i).length() * sizeof(wchar_t));
+						client_names.at(i).length());
 					pos++;
 				}
 			}
@@ -153,7 +153,7 @@ namespace Fortress::Network::Server
 		LobbyInfoMsg li{{0, eMessageType::LobbyInfo, -1, -1},
 			0, {}, pos, {}};
 
-		std::memcpy(li.player_names, player_names, sizeof(player_names));
+		std::wmemcpy(li.player_names[0], player_names[0], sizeof(player_names));
 
 		auto reply = create_network_message<LobbyInfoMsg>(li);
 		server_socket.send_message(&reply, client_info);
