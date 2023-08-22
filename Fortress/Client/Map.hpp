@@ -86,17 +86,18 @@ namespace Fortress::Map
 			{
 				switch(items[j])
 				{
+				// key binding is starts from 1.
 				case Network::eItemType::DoubleShot:
-					ch.lock()->add_item(j, std::make_shared<Item::DoubleShotItem>());
+					ch.lock()->add_item(j + 1, std::make_shared<Item::DoubleShotItem>());
 					break;
 				case Network::eItemType::Teleport:
-					ch.lock()->add_item(j, std::make_shared<Item::TeleportItem>());
+					ch.lock()->add_item(j + 1, std::make_shared<Item::TeleportItem>());
 					break;
 				case Network::eItemType::Repair:
-					ch.lock()->add_item(j, std::make_shared<Item::RepairItem>());
+					ch.lock()->add_item(j + 1, std::make_shared<Item::RepairItem>());
 					break;
 				case Network::eItemType::DoubleDamage:
-					ch.lock()->add_item(j, std::make_shared<Item::DoubleDamageItem>());
+					ch.lock()->add_item(j + 1, std::make_shared<Item::DoubleDamageItem>());
 					break;
 				case Network::eItemType::None:
 				default: break;
