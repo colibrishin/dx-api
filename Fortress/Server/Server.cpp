@@ -461,11 +461,11 @@ namespace Fortress::Network::Server
 	{
 		const auto clients = get_room_client(message->room_id);
 		int load_finished = 0;
-		load_dome[message->room_id][message->player_id] = true;
+		load_done[message->room_id][message->player_id] = true;
 
 		for(const auto& client: clients)
 		{
-			if(load_dome[message->room_id][client.pid])
+			if(load_done[message->room_id][client.pid])
 			{
 				load_finished++;
 			}
