@@ -506,6 +506,7 @@ namespace Fortress::Controller
 			{
 				set_state(eCharacterState::Idle);
 				stop();
+				EngineHandle::get_messenger()->send_stop_signal(m_rb->get_position(), m_rb->get_offset());
 			}
 		}
 	}
