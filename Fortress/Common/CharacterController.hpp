@@ -54,7 +54,7 @@ namespace Fortress::Controller
 		const eProjectileType& get_projectile_type() const;
 		std::weak_ptr<ObjectBase::projectile> get_one_active_projectile();
 
-		void add_item(unsigned index, const std::shared_ptr<Object::item>& item);
+		void add_item(const unsigned int index, const std::shared_ptr<Object::item>& item);
 		std::vector<std::pair<const int, std::weak_ptr<Object::item>>> get_available_items() const;
 
 	protected:
@@ -108,7 +108,7 @@ namespace Fortress::Controller
 		void item_state();
 		void death_state();
 		void dead_state();
-		void set_item_active(int n);
+		void set_item_active(const unsigned int n);
 
 		void change_projectile();
 		void reset_mp();
@@ -128,6 +128,7 @@ namespace Fortress::Controller
 		eProjectileType m_tmp_projectile_type;
 
 		std::map<unsigned int, std::shared_ptr<Object::item>> m_available_items;
+		unsigned int m_active_item_index;
 		std::weak_ptr<Object::item> m_active_item;
 
 		std::vector<std::weak_ptr<ObjectBase::projectile>> m_active_projectiles;

@@ -43,6 +43,8 @@ namespace Fortress::Network
 		bool check_game_start(GameStartMsg& gsm);
 
 		bool get_updated_projectile_position(PlayerID player_id, PositionMsg* position);
+		void get_wind_acceleration(RspWindMsg* wind);
+		void send_turn_end();
 
 		void send_move_signal(Math::Vector2 position, Math::Vector2 offset);
 		bool get_move_signal(PlayerID player_id, PositionMsg* position);
@@ -54,6 +56,10 @@ namespace Fortress::Network
 		bool get_firing_signal(PlayerID player_id, FiringMsg* firing);
 		void send_fire_signal(Math::Vector2 position, Math::Vector2 offset, float charged);
 		bool get_fire_signal(PlayerID player_id, FireMsg* fire);
+		void send_item_signal(Math::Vector2 position, Math::Vector2 offset, unsigned index, eItemType item);
+		bool get_item_signal(PlayerID player_id, ItemMsg* item);
+		void send_item_fire_signal(Math::Vector2 position, Math::Vector2 offset, unsigned index, eItemType item, float charged);
+		bool get_item_fire_signal(PlayerID player_id, eItemType type, ItemFireMsg* item);
 
 	private:
 		template <typename SendT, typename RecvT = Message>

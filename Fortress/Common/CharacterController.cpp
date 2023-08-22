@@ -426,6 +426,7 @@ namespace Fortress::Controller
 			Network::FiringMsg firing_msg{};
 			Network::StopMsg stop_msg{};
 			Network::ProjectileSelectMsg projectile_msg{};
+			Network::ItemMsg item_msg{};
 
 			if (EngineHandle::get_messenger()->get_move_signal(m_player_id_, &position_msg))
 			{
@@ -450,6 +451,11 @@ namespace Fortress::Controller
 			if (EngineHandle::get_messenger()->get_projectile_select_signal(m_player_id_, &projectile_msg))
 			{
 				m_projectile_type = projectile_msg.prj_type;
+			}
+
+			if(EngineHandle::get_messenger()->get_item_signal(m_player_id_, &item_msg))
+			{
+				set_item_active(item_msg.index);
 			}
 
 			if (EngineHandle::get_messenger()->get_firing_signal(m_player_id_, &firing_msg))
@@ -560,12 +566,22 @@ namespace Fortress::Controller
 		if(!is_localplayer())
 		{
 			Network::FireMsg fire_msg{};
+			Network::ItemFireMsg item_fire_msg{};
+
 			if(EngineHandle::get_messenger()->get_fire_signal(m_player_id_, &fire_msg))
 			{
 				downcast_from_this<ObjectBase::character>()->m_position = fire_msg.position;
 				m_power = fire_msg.charged;
+
 				set_state(eCharacterState::Fire);
 				fire();
+			}
+
+			if(EngineHandle::get_messenger()->get_item_fire_signal(
+				m_player_id_, m_active_item.lock()->get_item_type(), &item_fire_msg))
+			{
+				m_power = item_fire_msg.charged;
+				set_state(eCharacterState::Item);
 			}
 		}
 
@@ -587,6 +603,8 @@ namespace Fortress::Controller
 				if(const auto item = m_active_item.lock())
 				{
 					set_state(eCharacterState::Item);
+					EngineHandle::get_messenger()->send_item_fire_signal(
+						m_rb->get_position(), m_rb->get_offset(), m_active_item_index, m_active_item.lock()->get_item_type(), m_power);
 				}
 				else
 				{
@@ -722,7 +740,7 @@ namespace Fortress::Controller
 	{
 	}
 
-	void CharacterController::set_item_active(const int n)
+	void CharacterController::set_item_active(const unsigned int n)
 	{
 		if (m_bMovable)
 		{
@@ -736,6 +754,13 @@ namespace Fortress::Controller
 			{
 				m_active_item = m_available_items[n];
 				set_state(eCharacterState::PreItem);
+				m_active_item_index = n;
+
+				if(is_movable_localplayer())
+				{
+					EngineHandle::get_messenger()->send_item_signal(
+						m_rb->get_position(), m_rb->get_offset(), n, m_available_items[n]->get_item_type());
+				}
 			}
 		}
 	}

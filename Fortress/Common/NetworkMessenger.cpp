@@ -55,7 +55,7 @@ namespace Fortress::Network
 
 	void NetworkMessenger::join_lobby(LobbyInfoMsg* out)
 	{
-		auto msg = create_network_message<LobbyJoinMsg>(
+		const auto msg = create_network_message<LobbyJoinMsg>(
 			eMessageType::LobbyJoin, -1, m_player_id);
 
    		send_and_retry<LobbyJoinMsg, LobbyInfoMsg>(&msg, m_server_info, out, eMessageType::LobbyInfo);
@@ -185,6 +185,23 @@ namespace Fortress::Network
 			position->room_id == m_rood_id_;
 	}
 
+	void NetworkMessenger::get_wind_acceleration(RspWindMsg* wind)
+	{
+		const auto msg = create_network_message<ReqWindMsg>(
+			eMessageType::ReqWind, m_rood_id_, m_player_id);
+
+		send_and_retry<ReqWindMsg, RspWindMsg>(&msg, m_server_info, wind, eMessageType::RspWind);
+	}
+
+	void NetworkMessenger::send_turn_end()
+	{
+		const auto msg = create_network_message<TurnEndMsg>(
+			eMessageType::TurnEnd, m_rood_id_, m_player_id);
+
+		GOMsg go{};
+		send_and_retry<TurnEndMsg, GOMsg>(&msg, m_server_info, &go, eMessageType::GO);
+	}
+
 	bool NetworkMessenger::check_lobby_update(LobbyInfoMsg* out)
 	{
 		if(m_soc.find_message<LobbyInfoMsg>(eMessageType::LobbyInfo, out))
@@ -268,6 +285,36 @@ namespace Fortress::Network
 		return m_soc.find_message<FireMsg>(eMessageType::Fire, fire) &&
 			fire->player_id == player_id &&
 			fire->room_id == m_rood_id_;
+	}
+
+	void NetworkMessenger::send_item_signal(Math::Vector2 position, Math::Vector2 offset, unsigned int index, eItemType item)
+	{
+		const auto msg = create_network_message<ItemMsg>(
+			eMessageType::Item, m_rood_id_, m_player_id, eObjectType::Character, position, offset, index, item);
+		m_soc.send_message<ItemMsg>(&msg, m_server_info);
+	}
+
+	bool NetworkMessenger::get_item_signal(PlayerID player_id, ItemMsg* item)
+	{
+		return m_soc.find_message<ItemMsg>(eMessageType::Item, item) &&
+			item->player_id == player_id &&
+			item->room_id == m_rood_id_;
+	}
+
+	void NetworkMessenger::send_item_fire_signal(Math::Vector2 position, Math::Vector2 offset, unsigned index,
+		eItemType item, float charged)
+	{
+		const auto msg = create_network_message<ItemFireMsg>(
+			eMessageType::ItemFire, m_rood_id_, m_player_id, eObjectType::Character, position, offset, index, item, charged);
+		m_soc.send_message<ItemFireMsg>(&msg, m_server_info);
+	}
+
+	bool NetworkMessenger::get_item_fire_signal(PlayerID player_id, eItemType type, ItemFireMsg* item)
+	{
+		return m_soc.find_message<ItemFireMsg>(eMessageType::ItemFire, item) &&
+			item->player_id == player_id &&
+			item->item_type == type &&
+			item->room_id == m_rood_id_;
 	}
 
 	bool NetworkMessenger::check_delta_time()

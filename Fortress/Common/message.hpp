@@ -48,10 +48,15 @@ namespace Fortress::Network
 		Firing = 0x73,
 		Fire = 0x74,
 		ProjectileSelect = 0x75,
-		Item,
+		Item = 0x76,
+		ItemFire = 0x77,
 		Hit,
 		Destroyed,
-		Wind,
+
+		RoundStart = 0x80,
+		ReqWind = 0x81,
+		RspWind = 0x82,
+		TurnEnd = 0x83,
 	};
 
 	enum class eCharacterType
@@ -203,10 +208,18 @@ namespace Fortress::Network
 		float charged;
 	};
 
-	struct ItemMsg : Message
+	struct ItemMsg : PositionMsg
 	{
-		eObjectType object_type;
+		unsigned int index;
 		eItemType item_type;
+	};
+
+	struct ItemFireMsg : PositionMsg
+	{
+		unsigned int index;
+		eItemType item_type;
+			float charged;
+
 	};
 
 	struct HitMsg : Message
@@ -223,9 +236,17 @@ namespace Fortress::Network
 		PlayerID object_player_id;
 	};
 	
-	struct WindMsg : Message
+	struct ReqWindMsg : Message
 	{
-		float wind;
+	};
+
+	struct RspWindMsg : Message
+	{
+		int wind;
+	};
+
+	struct TurnEndMsg : Message
+	{
 	};
 
 	union Data final
@@ -243,7 +264,8 @@ namespace Fortress::Network
 		ItemMsg item;
 		HitMsg hit;
 		DestroyedMsg destroyed;
-		WindMsg wind;
+		ReqWindMsg req_wind;
+		RspWindMsg rsp_wind;
 		LobbyJoinMsg lobby_join;
 		LobbyInfoMsg lobby_info;
 		RoomJoinMsg room_join;
