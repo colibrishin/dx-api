@@ -40,7 +40,7 @@ namespace Fortress::Network::Server
 				closesocket(m_socket);
 			}
 
-			m_bIsRunning = {false};
+			m_bIsRunning = false;
 
 			std::unique_lock bcl(bad_client_lock);
 			if(!bcl.owns_lock())
@@ -254,7 +254,7 @@ namespace Fortress::Network::Server
 
 			std::cout << "Opened port for " + std::to_string(listen) + "...\n";
 
-			m_bIsRunning = {true};
+			m_bIsRunning = true;
 		}
 
 	private:
