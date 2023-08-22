@@ -181,7 +181,10 @@ namespace Fortress
 	 */
 	void Input::update()
 	{
-		checkKeyState();
+		if(GetFocus())
+		{
+			checkKeyState();
+		}
 	}
 
 	bool Input::getKeyDown(const eKeyCode code)
