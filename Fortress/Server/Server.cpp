@@ -1,7 +1,8 @@
-﻿#include <cassert>
+#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
+#include <random>
 #include <thread>
 #include <winsock2.h>
 #include <ws2tcpip.h>
@@ -41,9 +42,19 @@ namespace Fortress::Network::Server
 
 	static std::mutex player_list_lock;
 	static bool player_list[15]{ false, };
-	static bool load_dome[15][15] { false, };
+	static bool load_done[15][15] { false, };
+	static bool turn_end[15][15] {false, };
+
+	static std::default_random_engine e;
+	static std::uniform_real_distribution<float> dis{-50, 50};
+	static float room_wind[15]{0.0f, };
 
 	static std::map<std::pair<RoomID, PlayerID>, Client> client_list = {};
+
+	int get_wind_acceleration(const RoomID room_id)
+	{
+		return static_cast<int>(room_wind[room_id] / 10.0f) * 10.0f;
+	}
 
 	unsigned int get_room_player_count(RoomID room_id)
 	{
@@ -326,6 +337,19 @@ namespace Fortress::Network::Server
 		client_list[{room_id, player_id}].room_info.items[it_idx] = it_type;
 	}
 
+	void send_wind(const Message* message, const sockaddr_in& client_info)
+	{
+		const int wind = get_wind_acceleration(message->room_id);
+		const auto msg = create_network_message<RspWindMsg>(
+			eMessageType::RspWind, message->room_id, message->player_id, wind);
+		server_socket.send_message<RspWindMsg>(&msg, client_info);
+	}
+
+	void reset_wind(const RoomID room_id)
+	{
+		room_wind[room_id] = dis(e);
+	}
+
 	void aggregate_send_room_info(const Message* message)
 	{
 		std::cout << "Room start received, Aggregates room info" << std::endl;
@@ -363,7 +387,8 @@ namespace Fortress::Network::Server
 		std::cout << "Player Count: " << static_cast<int>(gi.player_count) << std::endl;
 		std::cout << "Map: " << static_cast<int>(gi.map_type) << std::endl;
 
-		auto msg = create_network_message<GameInitMsg>(gi);
+		reset_wind(room_id);
+		const auto msg = create_network_message<GameInitMsg>(gi);
 
 		for(const auto& client : room_clients)
 		{
@@ -465,6 +490,32 @@ namespace Fortress::Network::Server
 		}
 	}
 
+	bool check_turn_done(const RoomID room_id)
+	{
+		const auto clients = get_room_client(room_id);
+		int load_finished = 0;
+
+		for(const auto& client: clients)
+		{
+			if(turn_end[room_id][client.pid])
+			{
+				load_finished++;
+			}
+		}
+
+		return load_finished == clients.size();
+	}
+
+	void set_turn_done(const Message* message)
+	{
+		turn_end[message->room_id][message->player_id] = true;
+	}
+
+	void clear_turn_done(const RoomID room_id)
+	{
+		std::fill(std::begin(turn_end[room_id]), std::end(turn_end[room_id]), false);
+	}
+
 	[[noreturn]] void consume_message()
 	{
 		while(true) 
@@ -489,6 +540,7 @@ namespace Fortress::Network::Server
 			case eMessageType::GameInit:
 			case eMessageType::ReqDeltaTime:
 			case eMessageType::GameStart:
+			case eMessageType::RspWind:
 			case eMessageType::PONG: break;
 			case eMessageType::PING:
 				add_client(message->room_id, message->player_id, client_info, time);
@@ -516,12 +568,31 @@ namespace Fortress::Network::Server
 				broadcast<FireMsg>(message);
 				break;
 			case eMessageType::Item:
+				std::cout << "Message type: Item ";
+				broadcast<ItemMsg>(message);
+				break;
+			case eMessageType::ItemFire:
+				std::cout << "Message type: Item Fire ";
+				broadcast<ItemFireMsg>(message);
 				break;
 			case eMessageType::Hit:
 				break;
-			case eMessageType::Destroyed:
+			case eMessageType::TurnEnd:
+				// @todo: check previous message.
+				std::cout << "Turn ended" << std::endl;
+				set_turn_done(message);
+				if(check_turn_done(message->room_id))
+				{
+					reset_wind(message->room_id);
+					clear_turn_done(message->room_id);
+					send_go(message, message->room_id);
+				}
 				break;
-			case eMessageType::Wind:
+			case eMessageType::ReqWind:
+				std::cout << "Got wind request" << std::endl;
+				send_wind(message, client_info);
+				break;
+			case eMessageType::Destroyed:
 				break;
 			case eMessageType::LobbyJoin:
 				add_client(message->room_id, message->player_id, client_info, time);

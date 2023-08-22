@@ -26,12 +26,12 @@ namespace Fortress
 			}
 		}
 
-		m_wind_affect = dis(e);
 		m_state = eRoundState::InProgress;
 		m_curr_timeout = 0.0f;
 		m_current_player = m_known_players.front();
 		m_known_players.erase(m_known_players.begin());
 		m_timer_next_player = TimerManager::create<NextPlayerTimer>(&Round::next_player, this);
+		m_wind_affect = get_wind_from_server();
 
 		m_current_player.lock()->set_movable();
 	}
@@ -111,7 +111,7 @@ namespace Fortress
 
 	void Round::update()
 	{
-		Debug::Log(std::to_wstring(get_wind_acceleration()));
+		Debug::Log(std::to_wstring(m_wind_affect));
 
 		switch (m_state)
 		{
@@ -143,6 +143,18 @@ namespace Fortress
 	float Round::get_current_time() const
 	{
 		return m_curr_timeout;
+	}
+
+	int Round::get_wind_acceleration() const
+	{
+		return m_wind_affect;
+	}
+
+	int Round::get_wind_from_server() const
+	{
+		Network::RspWindMsg wind_msg{};
+		EngineHandle::get_messenger()->get_wind_acceleration(&wind_msg);
+		return wind_msg.wind;
 	}
 
 	void Round::next_player()
@@ -181,7 +193,9 @@ namespace Fortress
 			camera->set_object(m_current_player);
 		}
 
-		m_wind_affect = dis(e);
+		EngineHandle::get_messenger()->send_turn_end();
+
+		m_wind_affect = get_wind_from_server();
 		m_state = eRoundState::InProgress;
 		m_timer_next_player.lock()->stop();
 	}
@@ -222,11 +236,6 @@ namespace Fortress
 	const eRoundState& Round::get_current_status() const
 	{
 		return m_state;
-	}
-
-	float Round::get_wind_acceleration() const
-	{
-		return static_cast<int>(m_wind_affect / 10.0f) * 10.0f;
 	}
 }
 

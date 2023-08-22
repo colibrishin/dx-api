@@ -23,7 +23,7 @@ namespace Fortress
 		void initialize(const std::vector<CharacterPointer>& players);
 		void update();
 		float get_current_time() const;
-		float get_wind_acceleration() const;
+		int get_wind_acceleration() const;
 		const std::weak_ptr<ObjectBase::character>& get_current_player() const;
 		const eRoundState& get_current_status() const;
 
@@ -35,6 +35,8 @@ namespace Fortress
 		void next_player();
 		void check_winning_condition();
 
+		int get_wind_from_server() const;
+
 		float m_curr_timeout = 0.0f;
 		bool m_bfired = false;
 
@@ -42,8 +44,6 @@ namespace Fortress
 
 		float m_wind_affect = 0.0f;
 		// @todo: random seed should be different every round
-		inline static std::default_random_engine e;
-		inline static std::uniform_real_distribution<float> dis{-50, 50};
 
 		// here used vector instead of queue due to un-iterable.
 		eRoundState m_state;
