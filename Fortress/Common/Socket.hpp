@@ -110,14 +110,14 @@ namespace Fortress::Network::Server
 					pos++;
 				}
 
-				if (found)
+				if(found)
 				{
 					m_message_queue_.erase(m_message_queue_.begin() + pos);
 					return true;
 				}
-
-				return false;
 			}
+
+			return false;
 		}
 
 		void receiving_message()
