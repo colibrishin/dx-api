@@ -33,6 +33,7 @@ namespace Fortress::Network
 		void join_room(RoomID room_id, RoomInfoMsg* out);
 		bool check_room_update(RoomInfoMsg* out);
 		void send_character(eCharacterType character);
+		void send_item(eItemType item, unsigned index);
 
 		void start_game(const eMapType& map, GameInitMsg* out);
 		bool check_room_start(GameInitMsg* out);

@@ -261,6 +261,11 @@ namespace Fortress::Controller
 		return {};
 	}
 
+	void CharacterController::add_item(const unsigned index, const std::shared_ptr<Object::item>& item)
+	{
+		m_available_items[index] = item;
+	}
+
 	std::vector<std::pair<const int, std::weak_ptr<Object::item>>> CharacterController::get_available_items() const
 	{
 		return {m_available_items.begin(), m_available_items.end()};

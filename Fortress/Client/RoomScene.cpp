@@ -33,17 +33,31 @@ void Fortress::Scene::RoomScene::update()
 
 	if (Input::getKey(eKeyCode::S))
 	{
-		EngineHandle::get_messenger()->start_game(
-			Network::eMapType::SkyValleyMap, &gis);
+		EngineHandle::get_messenger()->start_game(Network::eMapType::SkyValleyMap, &gis);
 		load_and_sync_map<Map::SkyValleyMap>(gis);
 		return;
 	}
 	if (Input::getKey(eKeyCode::D))
 	{
-		EngineHandle::get_messenger()->start_game(
-			Network::eMapType::DesertMap, &gis);
+		EngineHandle::get_messenger()->start_game(Network::eMapType::DesertMap, &gis);
 		load_and_sync_map<Map::DesertMap>(gis);
 		return;
+	}
+	if (Input::getKeyDown(eKeyCode::Q))
+	{
+		EngineHandle::get_messenger()->send_item(Network::eItemType::DoubleShot, 0);
+	}
+	if (Input::getKeyDown(eKeyCode::W))
+	{
+		EngineHandle::get_messenger()->send_item(Network::eItemType::Teleport, 1);
+	}
+	if (Input::getKeyDown(eKeyCode::E))
+	{
+		EngineHandle::get_messenger()->send_item(Network::eItemType::Repair, 2);
+	}
+	if (Input::getKeyDown(eKeyCode::R))
+	{
+		EngineHandle::get_messenger()->send_item(Network::eItemType::DoubleDamage, 3);
 	}
 	if (Input::getKeyDown(eKeyCode::One))
 	{

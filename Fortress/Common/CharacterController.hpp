@@ -53,6 +53,8 @@ namespace Fortress::Controller
 		const std::vector<std::weak_ptr<ObjectBase::projectile>>& get_projectiles() const;
 		const eProjectileType& get_projectile_type() const;
 		std::weak_ptr<ObjectBase::projectile> get_one_active_projectile();
+
+		void add_item(unsigned index, const std::shared_ptr<Object::item>& item);
 		std::vector<std::pair<const int, std::weak_ptr<Object::item>>> get_available_items() const;
 
 	protected:
@@ -125,7 +127,7 @@ namespace Fortress::Controller
 		eProjectileType m_projectile_type;
 		eProjectileType m_tmp_projectile_type;
 
-		std::map<int, std::shared_ptr<Object::item>> m_available_items;
+		std::map<unsigned int, std::shared_ptr<Object::item>> m_available_items;
 		std::weak_ptr<Object::item> m_active_item;
 
 		std::vector<std::weak_ptr<ObjectBase::projectile>> m_active_projectiles;

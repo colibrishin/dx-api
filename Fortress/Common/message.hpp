@@ -142,7 +142,8 @@ namespace Fortress::Network
 
 	struct RoomSelectItMsg : Message
 	{
-		eItemType items[4]{};
+		unsigned int index;
+		eItemType item_type;
 	};
 
 	struct RoomStartMsg : Message

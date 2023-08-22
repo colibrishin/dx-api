@@ -1,4 +1,4 @@
-#include <cassert>
+﻿#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -316,14 +316,14 @@ namespace Fortress::Network::Server
 
 	void change_items(const Message* message)
 	{
+		std::cout << "Equip item : " << message->player_id;
 		const RoomID room_id = message->room_id;
 		const PlayerID player_id = message->player_id;
-		const eItemType* it_types_begin = reinterpret_cast<const RoomSelectItMsg*>(message)->items;
+		const unsigned int it_idx = reinterpret_cast<const RoomSelectItMsg*>(message)->index;
+		const eItemType it_type = reinterpret_cast<const RoomSelectItMsg*>(message)->item_type;
+		std::cout << static_cast<int>(it_type) << std::endl;
 
-		std::memcpy(
-			&client_list[{room_id, player_id}].room_info.items,
-			it_types_begin,
-			4);
+		client_list[{room_id, player_id}].room_info.items[it_idx] = it_type;
 	}
 
 	void aggregate_send_room_info(const Message* message)
@@ -348,8 +348,8 @@ namespace Fortress::Network::Server
 			{
 				gi.character_type[pos] = client.room_info.character;
 			}
-			
-			std::memcpy(gi.equied_item[pos], client.room_info.items, 4);
+
+			std::copy(std::begin(client.room_info.items), std::end(client.room_info.items), gi.equied_item[pos]);
 			pos++;
 		}
 

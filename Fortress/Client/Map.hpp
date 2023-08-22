@@ -2,9 +2,13 @@
 #define MAP_HPP
 #include "../Common/BattleScene.h"
 #include "CannonCharacter.hpp"
+#include "DoubleDamageItem.hpp"
+#include "DoubleShotItem.hpp"
 #include "MissileCharacter.hpp"
+#include "RepairItem.hpp"
 #include "../Common/objectManager.hpp"
 #include "SecwindCharacter.hpp"
+#include "TeleportItem.hpp"
 
 namespace Fortress::Map
 {
@@ -74,6 +78,29 @@ namespace Fortress::Map
 				break;
 			case Network::eCharacterType::None: break;
 			default: ;
+			}
+
+			const auto& items = m_game_init.equied_item[i];
+
+			for(unsigned int j = 0; j < sizeof(items) / sizeof (Network::eItemType); ++j)
+			{
+				switch(items[j])
+				{
+				case Network::eItemType::DoubleShot:
+					ch.lock()->add_item(j, std::make_shared<Item::DoubleShotItem>());
+					break;
+				case Network::eItemType::Teleport:
+					ch.lock()->add_item(j, std::make_shared<Item::TeleportItem>());
+					break;
+				case Network::eItemType::Repair:
+					ch.lock()->add_item(j, std::make_shared<Item::RepairItem>());
+					break;
+				case Network::eItemType::DoubleDamage:
+					ch.lock()->add_item(j, std::make_shared<Item::DoubleDamageItem>());
+					break;
+				case Network::eItemType::None:
+				default: break;
+				}
 			}
 		}
 	}

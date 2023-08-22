@@ -225,6 +225,13 @@ namespace Fortress::Network
 		m_soc.send_message<RoomSelectChMsg>(&msg, m_server_info);
 	}
 
+	void NetworkMessenger::send_item(eItemType item, unsigned index)
+	{
+		const auto msg = create_network_message<RoomSelectItMsg>(
+			eMessageType::RoomSelectIt, m_rood_id_, m_player_id, index, item);
+		m_soc.send_message<RoomSelectItMsg>(&msg, m_server_info);
+	}
+
 	void NetworkMessenger::send_firing_signal(Math::Vector2 position, Math::Vector2 offset)
 	{
 		auto msg = create_network_message<FiringMsg>(
