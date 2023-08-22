@@ -161,6 +161,20 @@ namespace Fortress::Network
 		return false;
 	}
 
+	void NetworkMessenger::send_projectile_select_signal(eProjectileType type)
+	{
+		const auto msg = create_network_message<ProjectileSelectMsg>(
+			eMessageType::ProjectileSelect, m_rood_id_, m_player_id, type);
+		m_soc.send_message<ProjectileSelectMsg>(&msg, m_server_info);
+	}
+
+	bool NetworkMessenger::get_projectile_select_signal(PlayerID player_id, ProjectileSelectMsg* projectile)
+	{
+		return m_soc.find_message<ProjectileSelectMsg>(eMessageType::ProjectileSelect, projectile) &&
+			projectile->player_id == player_id &&
+			projectile->room_id == m_rood_id_;
+	}
+
 	bool NetworkMessenger::get_updated_projectile_position(
 		PlayerID player_id,
 		PositionMsg* position)

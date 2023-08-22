@@ -23,6 +23,7 @@ namespace Fortress::Network
 
 		void send_alive();
 		void send_confirm(CRC32 previous_msg);
+		void wait_confirm();
 
 		void go_and_wait(const CRC32& last_message);
 
@@ -31,6 +32,7 @@ namespace Fortress::Network
 
 		void join_room(RoomID room_id, RoomInfoMsg* out);
 		bool check_room_update(RoomInfoMsg* out);
+		void send_character(RoomID room_id, eCharacterType character);
 
 		void start_game(const eMapType& map, GameInitMsg* out);
 		bool check_room_start(GameInitMsg* out);
@@ -39,13 +41,14 @@ namespace Fortress::Network
 		void send_delta_time(float deltaTime);
 		bool check_game_start(GameStartMsg& gsm);
 
+		bool get_updated_projectile_position(PlayerID player_id, PositionMsg* position);
+
 		void send_move_signal(Math::Vector2 position, Math::Vector2 offset);
 		bool get_move_signal(PlayerID player_id, PositionMsg* position);
 		void send_stop_signal(Math::Vector2 position, Math::Vector2 offset);
 		bool get_stop_signal(PlayerID player_id, StopMsg* position);
-		bool get_updated_projectile_position(PlayerID player_id, PositionMsg* position);
-
-		void send_character(RoomID room_id, eCharacterType character);
+		void send_projectile_select_signal(eProjectileType type);
+		bool get_projectile_select_signal(PlayerID player_id, ProjectileSelectMsg* projectile);
 		void send_firing_signal(Math::Vector2 position, Math::Vector2 offset);
 		bool get_firing_signal(PlayerID player_id, FiringMsg* firing);
 		void send_fire_signal(Math::Vector2 position, Math::Vector2 offset, float charged);

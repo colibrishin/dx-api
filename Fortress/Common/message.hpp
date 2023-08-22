@@ -47,6 +47,7 @@ namespace Fortress::Network
 		Stop = 0x72,
 		Firing = 0x73,
 		Fire = 0x74,
+		ProjectileSelect = 0x75,
 		Item,
 		Hit,
 		Destroyed,
@@ -183,6 +184,11 @@ namespace Fortress::Network
 		Math::Vector2 offset;
 	};
 
+	struct ProjectileSelectMsg : Message
+	{
+		eProjectileType prj_type;
+	};
+
 	struct StopMsg : PositionMsg
 	{
 	};
@@ -230,6 +236,8 @@ namespace Fortress::Network
 		GOMsg go;
 		NOGOMsg nogo;
 		PositionMsg pos;
+		ProjectileSelectMsg prj_sel;
+		FiringMsg firing;
 		FireMsg fire;
 		ItemMsg item;
 		HitMsg hit;

@@ -420,6 +420,7 @@ namespace Fortress::Controller
 			Network::PositionMsg position_msg{};
 			Network::FiringMsg firing_msg{};
 			Network::StopMsg stop_msg{};
+			Network::ProjectileSelectMsg projectile_msg{};
 
 			if (EngineHandle::get_messenger()->get_move_signal(m_player_id_, &position_msg))
 			{
@@ -439,6 +440,11 @@ namespace Fortress::Controller
 			{
 				downcast_from_this<ObjectBase::character>()->m_position = stop_msg.position;
 				stop();
+			}
+
+			if (EngineHandle::get_messenger()->get_projectile_select_signal(m_player_id_, &projectile_msg))
+			{
+				m_projectile_type = projectile_msg.prj_type;
 			}
 
 			if (EngineHandle::get_messenger()->get_firing_signal(m_player_id_, &firing_msg))
@@ -737,6 +743,11 @@ namespace Fortress::Controller
 		else if(m_projectile_type == eProjectileType::Sub)
 		{
 			m_projectile_type = eProjectileType::Main;
+		}
+
+		if(is_movable_localplayer())
+		{
+			EngineHandle::get_messenger()->send_projectile_select_signal(m_projectile_type);
 		}
 	}
 

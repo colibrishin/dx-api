@@ -1,4 +1,4 @@
-#include <cassert>
+﻿#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -499,6 +499,10 @@ namespace Fortress::Network::Server
 				std::cout << "Message type: Position ";
 				broadcast<PositionMsg>(message);
 				break;
+			case eMessageType::ProjectileSelect:
+				std::cout << "Message type: Projectile Selection ";
+				broadcast<ProjectileSelectMsg>(message);
+				break;
 			case eMessageType::Stop:
 				std::cout << "Message type: Stop ";
 				broadcast<StopMsg>(message);
@@ -540,10 +544,10 @@ namespace Fortress::Network::Server
 				notify_join(message->room_id);
 				break;
 			case eMessageType::RoomSelectCh:
-				change_character(message, client_info);
+				change_character(message);
 				break;
 			case eMessageType::RoomSelectIt:
-				change_items(message, client_info);
+				change_items(message);
 				break;
 			case eMessageType::RoomStart:
 				if(check_priority(message->room_id, message->player_id))
