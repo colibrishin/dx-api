@@ -181,7 +181,7 @@ namespace Fortress::Network::Server
 			const unsigned int send_size = sizeof(T);
 			std::memcpy(buffer, reinterpret_cast<const char*>(message), send_size);
 
-			const unsigned int sent_size = sendto(
+			const int sent_size = sendto(
 				m_socket, 
 				buffer,
 				sizeof(T),
@@ -189,12 +189,15 @@ namespace Fortress::Network::Server
 				reinterpret_cast<const sockaddr*>(&client_info), 
 				sizeof(client_info));
 
-			const int errcode = WSAGetLastError();
-			std::cout << errcode << std::endl;
-
-			if(errcode != 0)
+			if(sent_size == -1)
 			{
-				add_bad_client(client_info);
+				const int errcode = WSAGetLastError();
+				std::cout << errcode << std::endl;
+
+				if(errcode != 0)
+				{
+					add_bad_client(client_info);
+				}
 			}
 		}
 
