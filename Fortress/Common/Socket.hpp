@@ -8,6 +8,7 @@
 #include <vector>
 #include <mutex>
 #include <winsock2.h>
+#include <condition_variable>
 
 #include "hash_fnv1.hpp"
 #include "../Common/message.hpp"
@@ -44,19 +45,13 @@ namespace Fortress::Network::Server
 			std::unique_lock bcl(bad_client_lock);
 			if(!bcl.owns_lock())
 			{
-				if(!bcl.try_lock())
-				{
-					m_bad_client_event.wait(bcl);
-				}
+				m_bad_client_event.wait(bcl);
 			}
 
 			std::unique_lock rl(receiving_lock);
 			if(!rl.owns_lock())
 			{
-				if(!rl.try_lock())
-				{
-					receive_event.wait(rl);
-				}
+				receive_event.wait(rl);
 			}
 		}
 
@@ -132,7 +127,7 @@ namespace Fortress::Network::Server
 				std::pair<int, sockaddr_in> recv_info;
 
 				{
-					std::unique_lock rl(receiving_lock);
+					std::lock_guard rl(receiving_lock);
 
 					recv_info = wait_for_recv();
 					receive_event.notify_all();
@@ -314,13 +309,13 @@ namespace Fortress::Network::Server
 		
 		std::atomic<bool> m_bIsRunning;
 	public:
-		std::condition_variable m_bad_client_event;
+		std::condition_variable_any m_bad_client_event;
 		std::set<SOCKADDR_IN, FNV> m_bad_client_list{};
 
-		std::condition_variable receive_event;
-		std::condition_variable queue_event;
+		std::condition_variable_any receive_event;
+		std::condition_variable_any queue_event;
 
-		std::mutex queue_lock;
+		std::recursive_mutex queue_lock;
 		std::mutex bad_client_lock;
 		std::mutex receiving_lock;
 	};

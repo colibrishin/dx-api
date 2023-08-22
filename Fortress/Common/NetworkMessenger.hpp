@@ -90,7 +90,7 @@ namespace Fortress::Network
 			increase_delta_time();
 		}
 
-		std::mutex& queue_mutex = m_soc.queue_lock;
-		std::condition_variable& queue_event = m_soc.queue_event;
+		std::recursive_mutex& queue_mutex = m_soc.queue_lock;
+		std::condition_variable_any& queue_event = m_soc.queue_event;
 	};
 }
