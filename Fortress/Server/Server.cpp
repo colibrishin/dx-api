@@ -1,4 +1,4 @@
-﻿#include <cassert>
+#include <cassert>
 #include <chrono>
 #include <iostream>
 #include <mutex>
@@ -297,19 +297,16 @@ namespace Fortress::Network::Server
 		}
 	}
 
-	void change_character(const Message* message, const sockaddr_in& client_info)
+	void change_character(const Message* message)
 	{
 		const RoomID room_id = message->room_id;
 		const PlayerID player_id = message->player_id;
 		const eCharacterType ch_type = reinterpret_cast<const RoomSelectChMsg*>(message)->ch_type;
 
 		client_list[{room_id, player_id}].room_info.character = ch_type;
-		auto msg = create_network_message<GOMsg>(
-			eMessageType::GO, -1, -1, message->crc32);
-		server_socket.send_message<GOMsg>(&msg, client_info);
 	}
 
-	void change_items(const Message* message, const sockaddr_in& client_info)
+	void change_items(const Message* message)
 	{
 		const RoomID room_id = message->room_id;
 		const PlayerID player_id = message->player_id;
@@ -319,10 +316,6 @@ namespace Fortress::Network::Server
 			&client_list[{room_id, player_id}].room_info.items,
 			it_types_begin,
 			4);
-
-		GOMsg reply{{message->crc32}};
-		auto msg = create_network_message<GOMsg>(reply);
-		server_socket.send_message<GOMsg>(&msg, client_info);
 	}
 
 	void aggregate_send_room_info(const Message* message)

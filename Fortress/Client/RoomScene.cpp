@@ -22,7 +22,6 @@ void Fortress::Scene::RoomScene::initialize()
 template <typename T>
 void Fortress::Scene::RoomScene::load_and_sync_map(const Network::GameInitMsg& game_info) const
 {
-	EngineHandle::get_messenger()->go_and_wait(game_info.crc32);
 	SceneManager::CreateScene<LoadingScene<T>>(game_info);
 	SceneManager::SetActive<LoadingScene<T>>();
 }
