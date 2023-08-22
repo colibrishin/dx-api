@@ -8,7 +8,7 @@ namespace Fortress::Item
 	class DoubleDamageItem : public Object::item
 	{
 	public:
-		DoubleDamageItem() : item(L"Double damage", false)
+		DoubleDamageItem() : item(L"Double damage", Network::eItemType::DoubleDamage, false)
 		{
 			DoubleDamageItem::initialize();
 		}

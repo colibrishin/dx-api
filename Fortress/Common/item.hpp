@@ -8,8 +8,8 @@ namespace Fortress::Object
 	class item : public Abstract::entity
 	{
 	public:
-		item(const std::wstring& name, const bool instant)
-			: entity(name), m_instant(instant), m_is_used(false), m_is_ended(false) {}
+		item(const std::wstring& name, const Network::eItemType item_type, const bool instant)
+			: entity(name), m_instant(instant), m_is_used(false), m_is_ended(false), m_item_type_(item_type) {}
 
 		~item() override = default;
 
@@ -21,6 +21,7 @@ namespace Fortress::Object
 
 		std::weak_ptr<ImageWrapper> get_icon() const;
 		std::weak_ptr<ImageWrapper> get_icon_thumbnail() const;
+		Network::eItemType get_item_type() const;
 
 		virtual bool is_effect_ended();
 		bool is_instant() const;
@@ -41,6 +42,7 @@ namespace Fortress::Object
 		bool m_instant;
 		bool m_is_used;
 		bool m_is_ended;
+		Network::eItemType m_item_type_;
 	};
 
 	inline void item::initialize()
@@ -57,6 +59,11 @@ namespace Fortress::Object
 	inline std::weak_ptr<ImageWrapper> item::get_icon_thumbnail() const
 	{
 		return m_icon_thumbnail;
+	}
+
+	inline Network::eItemType item::get_item_type() const
+	{
+		return m_item_type_;
 	}
 
 	inline bool item::is_effect_ended()

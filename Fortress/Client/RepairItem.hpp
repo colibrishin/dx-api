@@ -8,7 +8,7 @@ namespace Fortress::Item
 	class RepairItem : public Object::item
 	{
 	public:
-		RepairItem() : item(L"Repair", true)
+		RepairItem() : item(L"Repair", Network::eItemType::Repair, true)
 		{
 			RepairItem::initialize();
 		}

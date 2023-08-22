@@ -8,7 +8,7 @@ namespace Fortress::Item
 	class DoubleShotItem : public Object::item
 	{
 	public:
-		DoubleShotItem() : item(L"Double shot", false), m_fire_count(0)
+		DoubleShotItem() : item(L"Double shot", Network::eItemType::DoubleShot, false), m_fire_count(0)
 		{
 			DoubleShotItem::initialize();
 		}
