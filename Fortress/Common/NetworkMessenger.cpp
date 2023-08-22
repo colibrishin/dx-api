@@ -42,6 +42,17 @@ namespace Fortress::Network
 		m_soc.send_message<GOMsg>(&confirm_msg, m_server_info);
 	}
 
+	void NetworkMessenger::wait_confirm()
+	{
+		GOMsg go{};
+
+		std::unique_lock ql(m_soc.queue_lock);
+		while(!m_soc.find_message<GOMsg>(eMessageType::GO, &go))
+		{
+			queue_event.wait(ql);
+		}
+	}
+
 	void NetworkMessenger::join_lobby(LobbyInfoMsg* out)
 	{
 		auto msg = create_network_message<LobbyJoinMsg>(
@@ -75,13 +86,7 @@ namespace Fortress::Network
 	void NetworkMessenger::go_and_wait(const CRC32& last_message)
 	{
 		send_confirm(last_message);
-		GOMsg go{};
-
-		std::unique_lock ql(m_soc.queue_lock);
-		while(!m_soc.find_message<GOMsg>(eMessageType::GO, &go))
-		{
-			queue_event.wait(ql);
-		}
+		wait_confirm();
 	}
 
 	void NetworkMessenger::start_game(const eMapType& map, GameInitMsg* out)

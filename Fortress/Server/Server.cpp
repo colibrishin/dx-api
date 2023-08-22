@@ -90,6 +90,14 @@ namespace Fortress::Network::Server
 		return clients;
 	}
 
+	void send_go(const Message* message, const sockaddr_in& client_info)
+	{
+		GOMsg go{};
+		go.last_message = message->crc32;
+
+		server_socket.send_message<GOMsg>(&go, client_info);
+	}
+
 	void add_client(RoomID id, PlayerID pid, const SOCKADDR_IN& client_info, const std::time_t time)
 	{
 		if (client_list.find({id, pid}) != client_list.end())
