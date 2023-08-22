@@ -57,7 +57,7 @@ namespace Fortress::Scene
 			gr.lock()->set_disabled();
 		}
 
-		get_camera().lock()->set_object(m_self);
+		get_camera().lock()->set_object(m_characters.begin()->second);
 		m_round->initialize(get_characters());
 		m_radar->initialize();
 	}
