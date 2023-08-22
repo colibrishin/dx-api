@@ -38,7 +38,8 @@ namespace Fortress::Controller
 
 		void set_unmovable();
 		void set_movable();
-		bool is_movable() const;
+		bool is_movable_localplayer() const;
+		bool is_localplayer() const;
 
 		bool is_projectile_fire_counted() const;
 		bool is_projectile_active() const;

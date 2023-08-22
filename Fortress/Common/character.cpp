@@ -30,24 +30,6 @@ namespace Fortress::ObjectBase
 	{
 		rigidBody::update();
 		CharacterController::update();
-
-		if(!is_active())
-		{
-			return;
-		}
-			
-		if (m_player_id == EngineHandle::get_messenger()->get_player_id())
-		{
-			return;
-		}
-
-		Network::PositionMsg msg{};
-
-		if(EngineHandle::get_messenger()->get_updated_character_position(
-			m_player_id, &msg))
-		{
-			m_position = msg.position;
-		}
 	}
 
 	void character::prerender()
@@ -322,35 +304,17 @@ namespace Fortress::ObjectBase
 	{
 		rigidBody::move_left();
 		CharacterController::move_left();
-
-		if(m_player_id == EngineHandle::get_messenger()->get_player_id())
-		{
-			EngineHandle::get_messenger()->send_message_within_tick_rate<Network::PositionMsg>(
-				Network::eMessageType::Position, Network::eObjectType::Character, get_position());
-		}
 	}
 
 	void character::move_right()
 	{
 		rigidBody::move_right();
 		CharacterController::move_right();
-
-		if(m_player_id == EngineHandle::get_messenger()->get_player_id())
-		{
-			EngineHandle::get_messenger()->send_message_within_tick_rate<Network::PositionMsg>(
-				Network::eMessageType::Position, Network::eObjectType::Character, get_position());
-		}
 	}
 
 	void character::stop()
 	{
 		rigidBody::stop();
 		CharacterController::stop();
-
-		if(m_player_id == EngineHandle::get_messenger()->get_player_id())
-		{
-			EngineHandle::get_messenger()->send_message_within_tick_rate<Network::PositionMsg>(
-				Network::eMessageType::Position, Network::eObjectType::Character, get_position());
-		}
 	}
 }

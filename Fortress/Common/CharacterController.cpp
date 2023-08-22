@@ -142,9 +142,14 @@ namespace Fortress::Controller
 		m_bMovable = true;
 	}
 
-	bool CharacterController::is_movable() const
+	bool CharacterController::is_movable_localplayer() const
 	{
 		return m_bMovable && m_player_id_ == EngineHandle::get_messenger()->get_player_id();
+	}
+
+	bool CharacterController::is_localplayer() const
+	{
+		return m_player_id_ == EngineHandle::get_messenger()->get_player_id();
 	}
 
 	bool CharacterController::is_projectile_fire_counted() const
@@ -312,8 +317,6 @@ namespace Fortress::Controller
 				move_sound->play(true);
 			}
 		}
-
-		set_state(eCharacterState::Move);
 	}
 
 	void CharacterController::move_right()
@@ -325,8 +328,6 @@ namespace Fortress::Controller
 				move_sound->play(true);
 			}
 		}
-
-		set_state(eCharacterState::Move);
 	}
 
 	void CharacterController::stop()
@@ -414,7 +415,40 @@ namespace Fortress::Controller
 
 	void CharacterController::idle_state()
 	{
-		if(is_movable())
+		if(!is_localplayer())
+		{
+			Network::PositionMsg position_msg{};
+			Network::FiringMsg firing_msg{};
+			Network::StopMsg stop_msg{};
+
+			if (EngineHandle::get_messenger()->get_move_signal(m_player_id_, &position_msg))
+			{
+				if(position_msg.offset == Math::left)
+				{
+					set_state(eCharacterState::Move);
+					move_left();
+				}
+				else if(position_msg.offset == Math::right)
+				{
+					set_state(eCharacterState::Move);
+					move_right();
+				}
+			}
+
+			if (EngineHandle::get_messenger()->get_stop_signal(m_player_id_, &stop_msg))
+			{
+				downcast_from_this<ObjectBase::character>()->m_position = stop_msg.position;
+				stop();
+			}
+
+			if (EngineHandle::get_messenger()->get_firing_signal(m_player_id_, &firing_msg))
+			{
+				downcast_from_this<ObjectBase::character>()->m_position = firing_msg.position;
+				set_state(eCharacterState::Firing);
+			}
+		}
+
+		if(is_movable_localplayer())
 		{
 			default_state();
 
@@ -424,15 +458,18 @@ namespace Fortress::Controller
 			{
 				set_state(eCharacterState::Move);
 				move_left();
+				EngineHandle::get_messenger()->send_move_signal(m_rb->get_position(), m_rb->get_offset());
 			}
 			else if (Input::getKey(eKeyCode::D))
 			{
 				set_state(eCharacterState::Move);
 				move_right();
+				EngineHandle::get_messenger()->send_move_signal(m_rb->get_position(), m_rb->get_offset());
 			}
 			else if (Input::getKey(eKeyCode::SPACE))
 			{
 				set_state(eCharacterState::Firing);
+				EngineHandle::get_messenger()->send_firing_signal(m_rb->get_position(), m_rb->get_offset());
 			}
 			else if (Input::getKeyDown(eKeyCode::TAB) && !m_active_item.lock())
 			{
@@ -464,7 +501,18 @@ namespace Fortress::Controller
 
 	void CharacterController::move_state()
 	{
-		if(is_movable())
+		if(!is_localplayer())
+		{
+			Network::StopMsg stop_msg{};
+			if(EngineHandle::get_messenger()->get_stop_signal(m_player_id_, &stop_msg))
+			{
+				set_state(eCharacterState::Idle);
+				downcast_from_this<ObjectBase::character>()->m_position = stop_msg.position;
+				stop();
+			}
+		}
+
+		if(is_movable_localplayer())
 		{
 			default_state();
 
@@ -490,13 +538,26 @@ namespace Fortress::Controller
 			{
 				set_state(eCharacterState::Idle);
 				stop();
+				EngineHandle::get_messenger()->send_stop_signal(m_rb->get_position(), m_rb->get_offset());
 			}
 		}
 	}
 
 	void CharacterController::firing_state()
 	{
-		if(is_movable())
+		if(!is_localplayer())
+		{
+			Network::FireMsg fire_msg{};
+			if(EngineHandle::get_messenger()->get_fire_signal(m_player_id_, &fire_msg))
+			{
+				downcast_from_this<ObjectBase::character>()->m_position = fire_msg.position;
+				m_power = fire_msg.charged;
+				set_state(eCharacterState::Fire);
+				fire();
+			}
+		}
+
+		if(is_movable_localplayer())
 		{
 			default_state();
 
@@ -519,6 +580,7 @@ namespace Fortress::Controller
 				{
 					set_state(eCharacterState::Fire);
 					fire();
+					EngineHandle::get_messenger()->send_fire_signal(m_rb->get_position(), m_rb->get_offset(), m_power);
 				}
 			}
 		}

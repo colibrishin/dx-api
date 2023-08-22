@@ -43,8 +43,10 @@ namespace Fortress::Network
 		LoadDone = 0x62,
 		GameStart = 0x63,
 
-		Position,
-		Fire,
+		Position = 0x71,
+		Stop = 0x72,
+		Firing = 0x73,
+		Fire = 0x74,
 		Item,
 		Hit,
 		Destroyed,
@@ -178,12 +180,20 @@ namespace Fortress::Network
 	{
 		eObjectType object_type;
 		Math::Vector2 position;
+		Math::Vector2 offset;
 	};
 
-	struct FireMsg : Message
+	struct StopMsg : PositionMsg
 	{
-		eObjectType object_type;
-		Math::Vector2 position;
+	};
+
+	struct FiringMsg : PositionMsg
+	{
+	};
+
+	struct FireMsg : PositionMsg
+	{
+		float charged;
 	};
 
 	struct ItemMsg : Message

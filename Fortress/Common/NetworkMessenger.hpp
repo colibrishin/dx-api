@@ -39,22 +39,29 @@ namespace Fortress::Network
 		void send_delta_time(float deltaTime);
 		bool check_game_start(GameStartMsg& gsm);
 
-		void send_character_position(Math::Vector2 position);
-		bool get_updated_character_position(PlayerID player_id, PositionMsg* position);
+		void send_move_signal(Math::Vector2 position, Math::Vector2 offset);
+		bool get_move_signal(PlayerID player_id, PositionMsg* position);
+		void send_stop_signal(Math::Vector2 position, Math::Vector2 offset);
+		bool get_stop_signal(PlayerID player_id, StopMsg* position);
 		bool get_updated_projectile_position(PlayerID player_id, PositionMsg* position);
 
 		void send_character(RoomID room_id, eCharacterType character);
+		void send_firing_signal(Math::Vector2 position, Math::Vector2 offset);
+		bool get_firing_signal(PlayerID player_id, FiringMsg* firing);
+		void send_fire_signal(Math::Vector2 position, Math::Vector2 offset, float charged);
+		bool get_fire_signal(PlayerID player_id, FireMsg* fire);
 
 	private:
 		template <typename SendT, typename RecvT = Message>
 		inline void send_and_retry(
-			RecvT* reply,
 			const SendT* msg,
-			const SOCKADDR_IN& client_info)
+			const SOCKADDR_IN& client_info,
+			RecvT* reply,
+			const eMessageType reply_type)
 		{
 			m_soc.send_message<SendT>(msg, client_info);
 
-			while(!m_soc.find_message<RecvT>(reply))
+			while(!m_soc.find_message<RecvT>(reply_type, reply))
 			{
 				Sleep(retry_time);
 				m_soc.send_message<SendT>(msg, client_info);
