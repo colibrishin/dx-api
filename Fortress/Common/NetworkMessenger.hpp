@@ -63,12 +63,14 @@ namespace Fortress::Network
 			RecvT* reply,
 			const eMessageType reply_type)
 		{
+			std::unique_lock ql(queue_mutex);
 			m_soc.send_message<SendT>(msg, client_info);
+			queue_event.wait(ql);
 
 			while(!m_soc.find_message<RecvT>(reply_type, reply))
 			{
-				Sleep(retry_time);
 				m_soc.send_message<SendT>(msg, client_info);
+				queue_event.wait(ql);
 			}
 
 			m_soc.flush_message(reply->type);
