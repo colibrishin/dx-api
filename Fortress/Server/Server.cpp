@@ -581,6 +581,8 @@ namespace Fortress::Network::Server
 				broadcast<ItemFireMsg>(message);
 				break;
 			case eMessageType::Hit:
+				std::cout << "Message type: Hit ";
+				broadcast<HitMsg>(message);
 				break;
 			case eMessageType::TurnEnd:
 				// @todo: check previous message.
