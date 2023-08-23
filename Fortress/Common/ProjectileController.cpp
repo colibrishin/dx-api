@@ -9,11 +9,13 @@
 namespace Fortress::Controller
 {
 	ProjectileController::ProjectileController(
+		const ObjectBase::character* shooter,
 		const std::wstring& short_name, 
 		const Abstract::rigidBody* const rb,
 		const int max_hit_count,
 		const int max_fire_count) :
 		stateController(short_name, eProjectileState::Fire),
+		m_ch(shooter),
 		m_rb(rb),
 		m_max_hit_count(max_hit_count),
 		m_curr_hit_count(0),
@@ -21,7 +23,8 @@ namespace Fortress::Controller
 		m_fire_count(max_fire_count),
 		m_bExploded(false),
 		m_pitch(0.0f),
-		m_previous_position(rb->get_position())
+		m_previous_position(rb->get_position()),
+		m_hitmsg_()
 	{
 	}
 
@@ -35,6 +38,26 @@ namespace Fortress::Controller
 	void ProjectileController::update()
 	{
 		m_hit_cooldown += DeltaTime::get_deltaTime();
+
+		if(!m_ch->is_localplayer() && 
+			(get_state() != eProjectileState::CharacterHit || 
+				get_state() != eProjectileState::GroundHit))
+		{
+			if (EngineHandle::get_messenger()->get_hit_signal(m_ch->get_player_id(), &m_hitmsg_))
+			{
+				switch(m_hitmsg_.object_type)
+				{
+				case Network::eObjectType::Character:
+					notify_character_hit();
+					break;
+				case Network::eObjectType::Projectile: break;
+				case Network::eObjectType::Ground: 
+					notify_ground_hit();
+					break;
+				default: ;
+				}
+			}
+		}
 
 		switch(get_state())
 		{
@@ -126,9 +149,6 @@ namespace Fortress::Controller
 	{
 		flying();
 
-		EngineHandle::get_messenger()->send_message_within_tick_rate<Network::PositionMsg>(
-			Network::eMessageType::Position, Network::eObjectType::Projectile, m_rb->get_position());
-
 		if (const auto map = Scene::SceneManager::get_active_map().lock())
 		{
 			if(map->predicate_OOB(m_rb->get_position()))
@@ -145,7 +165,21 @@ namespace Fortress::Controller
 			increase_hit_count();
 			reset_cooldown();
 			play_hit_sound();
-			hit();
+			if(m_ch->is_localplayer())
+			{
+				EngineHandle::get_messenger()->send_hit_signal(
+					Network::eObjectType::Character, m_rb->get_center());
+				hit();	
+			}
+			else
+			{
+				if (m_hitmsg_.object_type == Network::eObjectType::Character)
+				{
+					downcast_from_this<ObjectBase::projectile>()->m_position = m_hitmsg_.position;
+					hit();
+					m_hitmsg_ = {};
+				}
+			}
 		}
 
 		if(m_max_hit_count == m_curr_hit_count)
@@ -162,7 +196,21 @@ namespace Fortress::Controller
 		increase_hit_count();
 		reset_cooldown();
 		play_hit_sound();
-		hit();
+		if(m_ch->is_localplayer())
+		{
+			EngineHandle::get_messenger()->send_hit_signal(
+					Network::eObjectType::Ground, m_rb->get_center());
+			hit();
+		}
+		else
+		{
+			if(m_hitmsg_.object_type == Network::eObjectType::Ground)
+			{
+				downcast_from_this<ObjectBase::projectile>()->m_position = m_hitmsg_.position;
+				hit();
+				m_hitmsg_ = {};
+			}
+		}
 
 		if(m_max_hit_count == m_curr_hit_count)
 		{

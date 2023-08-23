@@ -25,6 +25,7 @@ namespace Fortress::Controller
 	public:
 		~ProjectileController() override = default;
 		ProjectileController(
+			const ObjectBase::character* const shooter,
 			const std::wstring& short_name, 
 			const Abstract::rigidBody* const rb,
 			int max_hit_count, 
@@ -54,6 +55,7 @@ namespace Fortress::Controller
 		void reset_cooldown();
 		void increase_hit_count();
 
+		const ObjectBase::character* const m_ch;
 		const Abstract::rigidBody* const m_rb;
 
 		const int m_max_hit_count;
@@ -67,6 +69,7 @@ namespace Fortress::Controller
 		float m_pitch;
 
 		Math::Vector2 m_previous_position;
+		Network::HitMsg m_hitmsg_;
 
 	protected:
 		friend class Object::Ground;

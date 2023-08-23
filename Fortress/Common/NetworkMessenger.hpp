@@ -42,7 +42,6 @@ namespace Fortress::Network
 		void send_delta_time(float deltaTime);
 		bool check_game_start(GameStartMsg& gsm);
 
-		bool get_updated_projectile_position(PlayerID player_id, PositionMsg* position);
 		void get_wind_acceleration(RspWindMsg* wind);
 		void send_turn_end();
 
@@ -60,6 +59,8 @@ namespace Fortress::Network
 		bool get_item_signal(PlayerID player_id, ItemMsg* item);
 		void send_item_fire_signal(Math::Vector2 position, Math::Vector2 offset, unsigned index, eItemType item, float charged);
 		bool get_item_fire_signal(PlayerID player_id, eItemType type, ItemFireMsg* item);
+		void send_hit_signal(eObjectType type, Math::Vector2 position);
+		bool get_hit_signal(PlayerID player_id, HitMsg* hit);
 
 	private:
 		template <typename SendT, typename RecvT = Message>

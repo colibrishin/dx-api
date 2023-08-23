@@ -175,16 +175,6 @@ namespace Fortress::Network
 			projectile->room_id == m_rood_id_;
 	}
 
-	bool NetworkMessenger::get_updated_projectile_position(
-		PlayerID player_id,
-		PositionMsg* position)
-	{
-		return m_soc.find_message<PositionMsg>(eMessageType::Position, position) &&
-			position->player_id == player_id &&
-			position->object_type == eObjectType::Projectile &&
-			position->room_id == m_rood_id_;
-	}
-
 	void NetworkMessenger::get_wind_acceleration(RspWindMsg* wind)
 	{
 		const auto msg = create_network_message<ReqWindMsg>(
@@ -315,6 +305,20 @@ namespace Fortress::Network
 			item->player_id == player_id &&
 			item->item_type == type &&
 			item->room_id == m_rood_id_;
+	}
+
+	void NetworkMessenger::send_hit_signal(const eObjectType type, const Math::Vector2 position)
+	{
+		const auto msg = create_network_message<HitMsg>(
+			eMessageType::Hit, m_rood_id_, m_player_id, type, position);
+		m_soc.send_message<HitMsg>(&msg, m_server_info);
+	}
+
+	bool NetworkMessenger::get_hit_signal(const PlayerID player_id, HitMsg* hit)
+	{
+		return m_soc.find_message<HitMsg>(eMessageType::Hit, hit) &&
+			player_id == hit->player_id &&
+			m_rood_id_ == hit->room_id;
 	}
 
 	bool NetworkMessenger::check_delta_time()

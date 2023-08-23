@@ -28,7 +28,6 @@ namespace Fortress::ObjectBase
 				ground->safe_is_projectile_hit(collision_point, rigidBody::downcast_from_this<projectile>()))
 			{
 				notify_ground_hit();
-				ground->safe_set_destroyed_global(collision_point, get_radius());
 			}
 		}
 
@@ -108,7 +107,7 @@ namespace Fortress::ObjectBase
 			const int fire_count,
 			const float armor_penetration) :
 			rigidBody(name, position, {30.0f, 30.0f}, velocity, mass, speed, acceleration, true),
-			ProjectileController(short_name, this, hit_count, fire_count),
+			ProjectileController(shooter, short_name, this, hit_count, fire_count),
 			m_damage(damage),
 			m_radius(radius),
 			m_armor_penetration(armor_penetration),
