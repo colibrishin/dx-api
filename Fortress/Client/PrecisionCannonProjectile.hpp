@@ -7,10 +7,11 @@
 
 namespace Fortress::Object
 {
-	class PrecisionCannonProjectile final : public ObjectBase::projectile
+	class PrecisionCannonProjectile final : public Network::Client::Object::ClientProjectile
 	{
 	public:
-		PrecisionCannonProjectile(const ObjectBase::character* shooter) : projectile(
+		PrecisionCannonProjectile(const unsigned int id, const ObjectBase::character* shooter) : ClientProjectile(
+			id,
 			shooter,
 			L"Precision Cannon Projectile",
 			L"cannon",

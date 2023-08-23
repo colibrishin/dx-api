@@ -112,7 +112,7 @@ namespace Fortress::ObjectBase
 			angle = {cosf(get_movement_pitch_radian()), sinf(get_movement_pitch_radian())};
 		}
 
-		const std::weak_ptr<projectile> instantiated = initialize_projectile(angle, charged);
+		const std::weak_ptr<projectile> instantiated = initialize_projectile(0, angle, charged);
 
 		const int remaining = instantiated.lock()->get_fire_count() - 1;
 
@@ -219,17 +219,17 @@ namespace Fortress::ObjectBase
 		return m_short_name;
 	}
 
-	ProjectilePointer character::initialize_projectile(const Math::Vector2& angle, const float charged)
+	ProjectilePointer character::initialize_projectile(const unsigned int id, const Math::Vector2& angle, const float charged)
 	{
 		std::weak_ptr<projectile> instantiated;
 
 		if(get_projectile_type() == eProjectileType::Main)
 		{
-			instantiated = get_main_projectile();
+			instantiated = get_main_projectile(id);
 		}
 		else if(get_projectile_type() == eProjectileType::Sub)
 		{
-			instantiated = get_sub_projectile();
+			instantiated = get_sub_projectile(id);
 		}
 		else
 		{

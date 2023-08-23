@@ -57,8 +57,8 @@ namespace Fortress::Object
 		Network::eCharacterType get_type() const override;
 
 	protected:
-		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
-		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
+		std::weak_ptr<ObjectBase::projectile> get_main_projectile(const unsigned int id) override;
+		std::weak_ptr<ObjectBase::projectile> get_sub_projectile(const unsigned int id) override;
 	};
 
 	inline Network::eCharacterType SecwindCharacter::get_type() const
@@ -66,14 +66,14 @@ namespace Fortress::Object
 		return Network::eCharacterType::SecwindCharacter;
 	}
 
-	inline std::weak_ptr<ObjectBase::projectile> SecwindCharacter::get_main_projectile()
+	inline std::weak_ptr<ObjectBase::projectile> SecwindCharacter::get_main_projectile(const unsigned int id)
 	{
-		return ObjectBase::ObjectManager::create_object<EnergyBallProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<EnergyBallProjectile>(id, this).lock();
 	}
 
-	inline std::weak_ptr<ObjectBase::projectile> SecwindCharacter::get_sub_projectile()
+	inline std::weak_ptr<ObjectBase::projectile> SecwindCharacter::get_sub_projectile(const unsigned int id)
 	{
-		return ObjectBase::ObjectManager::create_object<MultiEnergyBallProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<MultiEnergyBallProjectile>(id, this).lock();
 	}
 }
 #endif // SECNWINDCHARACTER_HPP

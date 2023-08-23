@@ -54,8 +54,8 @@ namespace Fortress::Object
 		Network::eCharacterType get_type() const override;
 
 	protected:
-		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
-		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
+		std::weak_ptr<ObjectBase::projectile> get_main_projectile(const unsigned int id) override;
+		std::weak_ptr<ObjectBase::projectile> get_sub_projectile(const unsigned int id) override;
 	};
 
 	inline Network::eCharacterType CannonCharacter::get_type() const
@@ -63,14 +63,14 @@ namespace Fortress::Object
 		return Network::eCharacterType::CannonCharacter;
 	}
 
-	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_main_projectile()
+	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_main_projectile(const unsigned int id)
 	{
-		return ObjectBase::ObjectManager::create_object<CannonProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<CannonProjectile>(id, this).lock();
 	}
 
-	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_sub_projectile()
+	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_sub_projectile(const unsigned int id)
 	{
-		return ObjectBase::ObjectManager::create_object<PrecisionCannonProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<PrecisionCannonProjectile>(id, this).lock();
 	}
 }
 

@@ -88,6 +88,7 @@ namespace Fortress::ObjectBase
 	}
 
 	projectile::projectile(
+			const unsigned int id, 
 			const character* shooter,
 			const std::wstring& name,
 			const std::wstring& short_name,
@@ -102,7 +103,7 @@ namespace Fortress::ObjectBase
 			const int fire_count,
 			const float armor_penetration) :
 			rigidBody(name, position, {30.0f, 30.0f}, velocity, mass, speed, acceleration, true),
-			ProjectileController(shooter, short_name, this, hit_count, fire_count),
+			ProjectileController(id, shooter, short_name, this, hit_count, fire_count),
 			m_damage(damage),
 			m_radius(radius),
 			m_armor_penetration(armor_penetration),
@@ -159,38 +160,6 @@ namespace Fortress::ObjectBase
 		reset_current_gravity_speed();
 		reset_current_speed();
 		set_disabled();
-	}
-
-	Math::Vector2 projectile::projectile_speed_getter(const std::wstring& short_name, const std::wstring& type)
-	{
-		const Math::Vector2 default_projectile_speed = Math::Vector2{2000.0f, 1.0f};
-
-		if(short_name == L"cannon" && type == L"main")
-		{
-			return default_projectile_speed * 3;
-		}
-		if(short_name == L"cannon" && type == L"sub")
-		{
-			return default_projectile_speed * 5;
-		}
-		if(short_name == L"missile" && type == L"main")
-		{
-			return default_projectile_speed * 2;
-		}
-		if(short_name == L"missile" && type == L"sub")
-		{
-			return default_projectile_speed * 2;
-		}
-		if(short_name == L"secwind" && type == L"main")
-		{
-			return default_projectile_speed * 1.5;
-		}
-		if(short_name == L"secwind" && type == L"sub")
-		{
-			return default_projectile_speed * 5;
-		}
-
-		return {};
 	}
 
 	void projectile::initialize()

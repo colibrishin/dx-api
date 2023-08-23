@@ -45,7 +45,7 @@ namespace Fortress
 
 		if(m_curr_count < m_count && m_char_this)
 		{
-			m_func(m_char_this, m_angle, m_charged);
+			m_func(m_char_this, m_curr_count + 1, m_angle, m_charged);
 			m_curr_count++;
 			toggle();
 		}

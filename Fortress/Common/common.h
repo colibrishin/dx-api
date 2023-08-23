@@ -65,7 +65,7 @@ namespace Fortress
 
 	using GifOnTimerFunction = std::function<void(GifWrapper*)>;
 	using NextPlayerTimerFunction = std::function<void(Round*)>;
-	using ProjectileInitFunction = std::function<ProjectilePointer(ObjectBase::character*, const UnitVector&, const float)>;
+	using ProjectileInitFunction = std::function<ProjectilePointer(ObjectBase::character*, const unsigned int, const UnitVector&, const float)>;
 
 	enum class CollisionCode
 	{

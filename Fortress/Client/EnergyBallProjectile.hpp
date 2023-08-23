@@ -7,10 +7,11 @@
 
 namespace Fortress::Object
 {
-	class EnergyBallProjectile final : public ObjectBase::projectile
+	class EnergyBallProjectile final : public Network::Client::Object::ClientProjectile
 	{
 	public:
-		EnergyBallProjectile(const ObjectBase::character* shooter) : projectile(
+		EnergyBallProjectile(const unsigned int id, const ObjectBase::character* shooter) : ClientProjectile(
+			id,
 			shooter,
 			L"Energy Ball Projectile",
 			L"secwind",

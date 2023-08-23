@@ -20,8 +20,6 @@ namespace Fortress::ObjectBase
 		projectile(projectile&& other) = default;
 		~projectile() override = default;
 
-		static Math::Vector2 projectile_speed_getter(const std::wstring& short_name, const std::wstring& type);
-
 		void initialize() override;
 		void update() override;
 		void render() override;
@@ -40,6 +38,7 @@ namespace Fortress::ObjectBase
 
 	protected:
 		projectile(
+			const unsigned int id,
 			const character* shooter,
 			const std::wstring& name,
 			const std::wstring& short_name,
@@ -61,6 +60,7 @@ namespace Fortress::ObjectBase
 		void destroyed() override;
 
 	private:
+		unsigned int id;
 		float m_damage;
 		float m_radius;
 		float m_armor_penetration;

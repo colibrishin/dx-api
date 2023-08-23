@@ -9,10 +9,11 @@
 
 namespace Fortress::Object
 {
-	class NutShellProjectile final : public ObjectBase::projectile
+	class NutShellProjectile final : public Network::Client::Object::ClientProjectile
 	{
 	public:
-		NutShellProjectile(const ObjectBase::character* shooter) : projectile(
+		NutShellProjectile(const unsigned int id, const ObjectBase::character* shooter) : ClientProjectile(
+			id,
 			shooter,
 			L"Nutshell Projectile",
 			shooter->get_short_name(),

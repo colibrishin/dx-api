@@ -11,10 +11,11 @@ namespace Fortress::Object
 {
 	class MissileCharacter;
 
-	class GuidedMissileProjectile final : public ObjectBase::projectile
+	class GuidedMissileProjectile final : public Network::Client::Object::ClientProjectile
 	{
 	public:
-		GuidedMissileProjectile(const ObjectBase::character* shooter) : projectile(
+		GuidedMissileProjectile(const unsigned int id, const ObjectBase::character* shooter) : ClientProjectile(
+			id,
 			shooter,
 			L"Guided Precision Projectile",
 			L"missile",

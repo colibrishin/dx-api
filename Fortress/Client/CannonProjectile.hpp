@@ -3,16 +3,18 @@
 #define CANNONPROJECTILE_HPP
 
 #include "CharacterProperties.hpp"
+#include "ClientProjectile.hpp"
 #include "../Common/GifWrapper.h"
 #include "../Common/projectile.hpp"
 #include "../Common/resourceManager.hpp"
 
 namespace Fortress::Object
 {
-	class CannonProjectile final : public ObjectBase::projectile
+	class CannonProjectile final : public Network::Client::Object::ClientProjectile
 	{
 	public:
-		CannonProjectile(const ObjectBase::character* shooter) : projectile(
+		CannonProjectile(const unsigned int id, const ObjectBase::character* shooter) : ClientProjectile(
+			id,
 			shooter,
 			L"Cannon Projectile",
 			L"cannon",

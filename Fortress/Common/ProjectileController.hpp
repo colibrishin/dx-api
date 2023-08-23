@@ -25,6 +25,7 @@ namespace Fortress::Controller
 	public:
 		~ProjectileController() override = default;
 		ProjectileController(
+			const unsigned int id,
 			const ObjectBase::character* const shooter,
 			const std::wstring& short_name, 
 			const Abstract::rigidBody* const rb,
@@ -38,9 +39,13 @@ namespace Fortress::Controller
 		bool is_cooldown() const;
 		bool is_exploded() const;
 
+		unsigned int get_id() const;
 		int get_hit_count() const;
 		int get_fire_count() const;
 		int get_max_hit_count() const;
+
+		const ObjectBase::character* get_origin() const;
+		virtual eProjectileType get_type() const = 0;
 
 	private:
 		void set_current_sprite(const eProjectileState&) override;
@@ -55,6 +60,7 @@ namespace Fortress::Controller
 		void reset_cooldown();
 		void increase_hit_count();
 
+		unsigned int m_id_;
 		const Abstract::rigidBody* const m_rb;
 
 		const int m_max_hit_count;
@@ -84,8 +90,6 @@ namespace Fortress::Controller
 		float get_pitch() const;
 		void notify_character_hit();
 		void notify_ground_hit();
-
-		Network::HitMsg m_hit_msg_;
 	};
 }
 #endif // PROJECTILECONTROLLER_HPP

@@ -226,6 +226,6 @@ namespace Fortress::Network::Client::Object
 
 	inline std::weak_ptr<ObjectBase::projectile> ClientCharacter::get_nutshell_projectile()
 	{
-		return ObjectBase::ObjectManager::create_object<Fortress::Object::NutShellProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<Fortress::Object::NutShellProjectile>(0, this).lock();
 	}
 }

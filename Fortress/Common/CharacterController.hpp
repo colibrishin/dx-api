@@ -107,8 +107,8 @@ namespace Fortress::Controller
 		unsigned int m_active_item_index;
 		std::weak_ptr<Object::item> m_active_item;
 
-		virtual std::weak_ptr<ObjectBase::projectile> get_main_projectile() = 0;
-		virtual std::weak_ptr<ObjectBase::projectile> get_sub_projectile() = 0;
+		virtual std::weak_ptr<ObjectBase::projectile> get_main_projectile(const unsigned int id) = 0;
+		virtual std::weak_ptr<ObjectBase::projectile> get_sub_projectile(const unsigned int id) = 0;
 		virtual std::weak_ptr<ObjectBase::projectile> get_nutshell_projectile() = 0;
 
 	private:
