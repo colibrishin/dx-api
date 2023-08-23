@@ -2,6 +2,7 @@
 #ifndef MISSILEPROJECTILE_HPP
 #define MISSILEPROJECTILE_HPP
 
+#include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 
 namespace Fortress::Object
@@ -16,13 +17,13 @@ namespace Fortress::Object
 			{}, 
 			Math::identity,
 			5.0f,
-			projectile_speed_getter(L"missile", L"main"), 
+			Property::projectile_speed_getter(L"missile", L"main"), 
 			{}, 
-			10.0f,
-			30,
+			Property::projectile_damage_getter(L"missile", L"main"),
+			Property::projectile_radius_getter(L"missile", L"main"),
 			2,
 			1,
-			0.9f)
+			Property::projectile_pen_rate_getter(L"missile", L"main"))
 		{
 			MissileProjectile::initialize();
 		}
@@ -36,6 +37,7 @@ namespace Fortress::Object
 		void initialize() override;
 		virtual void play_hit_sound() override;
 		virtual void play_fire_sound() override;
+		eProjectileType get_type() const override;
 	};
 
 	inline void MissileProjectile::initialize()
@@ -51,6 +53,11 @@ namespace Fortress::Object
 	inline void MissileProjectile::play_fire_sound()
 	{
 		m_sound_pack.get_sound(L"main-fire").lock()->play(false);
+	}
+
+	inline eProjectileType MissileProjectile::get_type() const
+	{
+		return eProjectileType::Main;
 	}
 }
 #endif // CANNONPROJECTILE_HPP

@@ -2,6 +2,7 @@
 #ifndef ENERGYBALLPROJECTILE_HPP
 #define ENERGYBALLPROJECTILE_HPP
 
+#include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 
 namespace Fortress::Object
@@ -16,13 +17,13 @@ namespace Fortress::Object
 			{}, 
 			Math::identity,
 			5.0f,
-			projectile_speed_getter(L"secwind", L"main"), 
+			Property::projectile_speed_getter(L"secwind", L"main"), 
 			{}, 
-			30.0f,
-			30,
+			Property::projectile_damage_getter(L"secwind", L"main"),
+			Property::projectile_radius_getter(L"secwind", L"main"),
 			1,
 			1,
-			0.7f)
+			Property::projectile_pen_rate_getter(L"secwind", L"main"))
 		{
 			EnergyBallProjectile::initialize();
 		}
@@ -36,6 +37,7 @@ namespace Fortress::Object
 		void initialize() override;
 		virtual void play_hit_sound() override;
 		virtual void play_fire_sound() override;
+		eProjectileType get_type() const override;
 	};
 
 	inline void EnergyBallProjectile::initialize()
@@ -51,6 +53,11 @@ namespace Fortress::Object
 	inline void EnergyBallProjectile::play_fire_sound()
 	{
 		m_sound_pack.get_sound(L"main-fire").lock()->play(false);
+	}
+
+	inline eProjectileType EnergyBallProjectile::get_type() const
+	{
+		return eProjectileType::Main;
 	}
 }
 #endif // ENERGYBALLPROJECTILE_HPP

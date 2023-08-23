@@ -55,7 +55,8 @@ namespace Fortress::ObjectBase
 		void on_nocollison() override;
 
 		float get_armor() const;
-		unsigned int get_player_id() const;
+		Network::PlayerID get_player_id() const;
+		virtual Network::eCharacterType get_type() const = 0;
 	private:
 		Network::PlayerID m_player_id;
 		bool m_bGrounded;
@@ -63,13 +64,7 @@ namespace Fortress::ObjectBase
 		const std::wstring m_short_name;
 		float m_armor;
 
-		float get_damage_pen_dist(const ProjectilePointer& p, const GlobalPosition& hit_point) const;
-
 		void move() override;
-		void fire() override;
-		void move_left() override;
-		void move_right() override;
-		void stop() override;
 
 		void render_hp_bar(const GlobalPosition& position);
 		bool check_angle(const GlobalPosition& position, const GroundPointer& ground_ptr) const;
@@ -91,6 +86,11 @@ namespace Fortress::ObjectBase
 		std::weak_ptr<ProjectileTimer> m_multi_projectile_timer;
 
 	protected:
+		void move_left() override;
+		void move_right() override;
+		void stop() override;
+		void fire() override;
+
 		character(
 			const Network::PlayerID& player_id,
 			const std::wstring& name,

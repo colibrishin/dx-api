@@ -2,6 +2,7 @@
 #ifndef GUIDEDMISSILEPROJECTILE_HPP
 #define GUIDEDMISSILEPROJECTILE_HPP
 
+#include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 #include "../Common/scene.hpp"
 #include "../Common/debug.hpp"
@@ -20,13 +21,13 @@ namespace Fortress::Object
 			{}, 
 			Math::identity,
 			5.0f,
-			projectile_speed_getter(L"missile", L"sub"), 
+			Property::projectile_speed_getter(L"missile", L"sub"), 
 			{}, 
-			10.0f,
-			10,
+			Property::projectile_damage_getter(L"missile", L"sub"),
+			Property::projectile_radius_getter(L"missile", L"sub"),
 			1,
 			1,
-			0.7f),
+			Property::projectile_pen_rate_getter(L"missile", L"sub")),
 			m_bLocked(false),
 			m_bSoundPlayed(false)
 		{
@@ -44,6 +45,7 @@ namespace Fortress::Object
 		virtual void play_hit_sound() override;
 		virtual void play_fire_sound() override;
 		void play_homming_sound();
+		eProjectileType get_type() const override;
 
 	private:
 		std::weak_ptr<ObjectBase::character> m_locked_target;
@@ -110,6 +112,11 @@ namespace Fortress::Object
 	inline void GuidedMissileProjectile::play_homming_sound()
 	{
 		m_sound_pack.get_sound(L"sub-homming").lock()->play(false);
+	}
+
+	inline eProjectileType GuidedMissileProjectile::get_type() const
+	{
+		return eProjectileType::Sub;
 	}
 
 	inline void GuidedMissileProjectile::destroyed()

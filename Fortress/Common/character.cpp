@@ -132,7 +132,7 @@ namespace Fortress::ObjectBase
 		return m_armor;
 	}
 
-	unsigned character::get_player_id() const
+	Network::PlayerID character::get_player_id() const
 	{
 		return m_player_id;
 	}
@@ -233,7 +233,7 @@ namespace Fortress::ObjectBase
 		}
 		else
 		{
-			instantiated = ObjectManager::create_object<Object::NutShellProjectile>(this);
+			instantiated = get_nutshell_projectile();
 		}
 
 		const auto projectile = instantiated.lock();

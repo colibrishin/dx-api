@@ -1,6 +1,7 @@
 #pragma once
 #ifndef MISSILECHARACTER_HPP
 #define MISSILECHARACTER_HPP
+#include "ClientCharacter.hpp"
 #include "../Common/character.hpp"
 #include "GuidedMissileProjectile.hpp"
 #include "MissileProjectile.hpp"
@@ -8,7 +9,7 @@
 
 namespace Fortress::Object
 {
-	class MissileCharacter final : public ObjectBase::character
+	class MissileCharacter final : public Network::Client::Object::ClientCharacter
 	{
 	public:
 		MissileCharacter(
@@ -17,7 +18,7 @@ namespace Fortress::Object
 			const Math::Vector2& position, 
 			const Math::Vector2& orientation)
 			:
-			character(
+			ClientCharacter(
 				player_id,
 				name,
 				L"missile",
@@ -29,7 +30,7 @@ namespace Fortress::Object
 				{},
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp,
-				1.0f)
+				Property::character_armor_getter(L"missile"))
 		{
 			initialize();
 		}
@@ -53,10 +54,17 @@ namespace Fortress::Object
 
 			character::initialize();
 		}
+
+		Network::eCharacterType get_type() const override;
 	protected:
 		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
 		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
 	};
+
+	inline Network::eCharacterType MissileCharacter::get_type() const
+	{
+		return Network::eCharacterType::MissileCharacter;
+	}
 
 	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_main_projectile()
 	{

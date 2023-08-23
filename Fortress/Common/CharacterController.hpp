@@ -6,6 +6,20 @@
 
 namespace Fortress
 {
+	namespace Network
+	{
+		namespace Client
+		{
+			namespace Object
+			{
+				class ClientCharacter;
+			}
+		}
+	}
+}
+
+namespace Fortress
+{
 	namespace Object
 	{
 		class item;
@@ -86,13 +100,19 @@ namespace Fortress::Controller
 
 		void add_active_projectile(const std::weak_ptr<ObjectBase::projectile>& prj);
 
-		void equip_nutshell();
-		void unequip_nutshell();
+		virtual void change_projectile();
+		virtual void equip_nutshell();
+		virtual void unequip_nutshell();
+
+		unsigned int m_active_item_index;
+		std::weak_ptr<Object::item> m_active_item;
 
 		virtual std::weak_ptr<ObjectBase::projectile> get_main_projectile() = 0;
 		virtual std::weak_ptr<ObjectBase::projectile> get_sub_projectile() = 0;
+		virtual std::weak_ptr<ObjectBase::projectile> get_nutshell_projectile() = 0;
 
 	private:
+		friend Network::Client::Object::ClientCharacter;
 		static std::wstring anim_name_getter(const eCharacterState& state);
 		void set_current_sprite(const eCharacterState&) override;
 
@@ -110,7 +130,6 @@ namespace Fortress::Controller
 		void dead_state();
 		void set_item_active(const unsigned int n);
 
-		void change_projectile();
 		void reset_mp();
 
 		const Network::PlayerID& m_player_id_;
@@ -128,8 +147,6 @@ namespace Fortress::Controller
 		eProjectileType m_tmp_projectile_type;
 
 		std::map<unsigned int, std::shared_ptr<Object::item>> m_available_items;
-		unsigned int m_active_item_index;
-		std::weak_ptr<Object::item> m_active_item;
 
 		std::vector<std::weak_ptr<ObjectBase::projectile>> m_active_projectiles;
 	};

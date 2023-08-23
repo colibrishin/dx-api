@@ -174,9 +174,6 @@
     <ClInclude Include="item.hpp">
       <Filter>Abstract</Filter>
     </ClInclude>
-    <ClInclude Include="NutshellProjectile.hpp">
-      <Filter>Object</Filter>
-    </ClInclude>
     <ClInclude Include="SummaryScene.hpp">
       <Filter>Map</Filter>
     </ClInclude>

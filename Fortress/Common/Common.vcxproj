@@ -176,7 +176,6 @@
     <ClInclude Include="message.hpp" />
     <ClInclude Include="NetworkMessenger.hpp" />
     <ClInclude Include="NextPlayerTimer.hpp" />
-    <ClInclude Include="NutshellProjectile.hpp" />
     <ClInclude Include="object.hpp" />
     <ClInclude Include="objectManager.hpp" />
     <ClInclude Include="pch.h" />

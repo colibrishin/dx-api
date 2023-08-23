@@ -2,6 +2,7 @@
 #ifndef PRECISIONCANNONPROJECTILE_HPP
 #define PRECISIONCANNONPROJECTILE_HPP
 
+#include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 
 namespace Fortress::Object
@@ -16,13 +17,13 @@ namespace Fortress::Object
 			{}, 
 			Math::identity,
 			5.0f,
-			projectile_speed_getter(L"cannon", L"sub"), 
+			Property::projectile_speed_getter(L"cannon", L"sub"), 
 			{}, 
-			30.0f,
-			10,
+			Property::projectile_damage_getter(L"cannon", L"sub"),
+			Property::projectile_radius_getter(L"cannon", L"sub"),
 			1,
 			1,
-			1.0f)
+			Property::projectile_pen_rate_getter(L"cannon", L"sub"))
 		{
 			PrecisionCannonProjectile::initialize();
 		}
@@ -36,6 +37,7 @@ namespace Fortress::Object
 		void initialize() override;
 		virtual void play_hit_sound() override;
 		virtual void play_fire_sound() override;
+		eProjectileType get_type() const override;
 	};
 
 	inline void PrecisionCannonProjectile::initialize()
@@ -51,6 +53,11 @@ namespace Fortress::Object
 	inline void PrecisionCannonProjectile::play_fire_sound()
 	{
 		m_sound_pack.get_sound(L"sub-fire").lock()->play(false);
+	}
+
+	inline eProjectileType PrecisionCannonProjectile::get_type() const
+	{
+		return eProjectileType::Sub;
 	}
 }
 #endif // PRECISIONCANNONPROJECTILE_HPP

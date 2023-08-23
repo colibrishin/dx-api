@@ -108,6 +108,15 @@
     <ClInclude Include="Map.hpp">
       <Filter>Map</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterProperties.hpp">
+      <Filter>Characters</Filter>
+    </ClInclude>
+    <ClInclude Include="NutshellProjectile.hpp">
+      <Filter>Projectiles</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientCharacter.hpp">
+      <Filter>Characters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">

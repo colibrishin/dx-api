@@ -133,7 +133,9 @@
   <ItemGroup>
     <ClInclude Include="application.h" />
     <ClInclude Include="BulletinBoardScene.h" />
+    <ClInclude Include="CharacterProperties.hpp" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="ClientCharacter.hpp" />
     <ClInclude Include="CloudGround.hpp" />
     <ClInclude Include="DoubleShotItem.hpp" />
     <ClInclude Include="DoubleDamageItem.hpp" />
@@ -144,6 +146,7 @@
     <ClInclude Include="LoadingScene.hpp" />
     <ClInclude Include="LobbyScene.h" />
     <ClInclude Include="Map.hpp" />
+    <ClInclude Include="NutshellProjectile.hpp" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RoomScene.h" />
     <ClInclude Include="SecwindCharacter.hpp" />
