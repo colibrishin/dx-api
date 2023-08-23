@@ -117,6 +117,9 @@
     <ClInclude Include="ClientCharacter.hpp">
       <Filter>Characters</Filter>
     </ClInclude>
+    <ClInclude Include="ClientProjectile.hpp">
+      <Filter>Projectiles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="winmain.cpp">

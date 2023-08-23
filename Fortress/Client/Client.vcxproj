@@ -136,6 +136,7 @@
     <ClInclude Include="CharacterProperties.hpp" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="ClientCharacter.hpp" />
+    <ClInclude Include="ClientProjectile.hpp" />
     <ClInclude Include="CloudGround.hpp" />
     <ClInclude Include="DoubleShotItem.hpp" />
     <ClInclude Include="DoubleDamageItem.hpp" />
