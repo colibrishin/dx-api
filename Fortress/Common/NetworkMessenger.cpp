@@ -262,17 +262,17 @@ namespace Fortress::Network
 		Math::Vector2 offset,
 		float charged)
 	{
-		const auto msg = create_network_message<FireMsg>(
+		const auto msg = create_network_message<CharacterFireMsg>(
 			eMessageType::Fire, m_rood_id_, m_player_id, eObjectType::Character, position, offset, charged);
 
-		m_soc.send_message<FireMsg>(&msg, m_server_info);
+		m_soc.send_message<CharacterFireMsg>(&msg, m_server_info);
 	}
 
 	bool NetworkMessenger::get_fire_signal(
 		PlayerID player_id,
-		FireMsg* fire)
+		CharacterFireMsg* fire)
 	{
-		return m_soc.find_message<FireMsg>(eMessageType::Fire, fire) &&
+		return m_soc.find_message<CharacterFireMsg>(eMessageType::Fire, fire) &&
 			fire->player_id == player_id &&
 			fire->room_id == m_rood_id_;
 	}

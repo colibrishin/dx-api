@@ -50,7 +50,8 @@ namespace Fortress::Network
 		ProjectileSelect = 0x75,
 		Item = 0x76,
 		ItemFire = 0x77,
-		Hit,
+		Hit = 0x78,
+		Damage = 0x79,
 		Destroyed,
 
 		RoundStart = 0x80,
@@ -218,14 +219,26 @@ namespace Fortress::Network
 	{
 		unsigned int index;
 		eItemType item_type;
-			float charged;
+		float charged;
 
 	};
 
 	struct HitMsg : Message
 	{
 		eObjectType object_type;
-		Math::Vector2 position;
+		Math::Vector2 prj_position;
+		eProjectileType prj_type;
+		PlayerID ch_player_id;
+		eCharacterType ch_type;
+		Math::Vector2 ch_position;
+	};
+
+	struct DamageMsg : Message
+	{
+		CRC32 last_message;
+		Math::Vector2 prj_position;
+		PlayerID hit_player_id;
+		float damage;
 	};
 
 	struct DestroyedMsg : Message

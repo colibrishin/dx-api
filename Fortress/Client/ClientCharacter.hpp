@@ -167,7 +167,7 @@ namespace Fortress::Network::Client::Object
 			StopMsg stop_msg{};
 			ProjectileSelectMsg projectile_msg{};
 			ItemMsg item_msg{};
-			FireMsg fire_msg{};
+			CharacterFireMsg fire_msg{};
 			ItemFireMsg item_fire_msg{};
 
 			if (EngineHandle::get_messenger()->get_move_signal(get_player_id(), &position_msg))
