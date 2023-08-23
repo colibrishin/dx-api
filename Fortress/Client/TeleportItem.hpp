@@ -2,7 +2,7 @@
 #define TELEPORTITEM_HPP
 #include "../Common/item.hpp"
 #include "../Common/projectile.hpp"
-#include "../Common/NutshellProjectile.hpp"
+#include "NutshellProjectile.hpp"
 
 namespace Fortress::Item
 {
