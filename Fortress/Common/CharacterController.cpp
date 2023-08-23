@@ -577,7 +577,8 @@ namespace Fortress::Controller
 				fire();
 			}
 
-			if(EngineHandle::get_messenger()->get_item_fire_signal(
+
+			if(m_active_item.lock() && EngineHandle::get_messenger()->get_item_fire_signal(
 				m_player_id_, m_active_item.lock()->get_item_type(), &item_fire_msg))
 			{
 				m_power = item_fire_msg.charged;
