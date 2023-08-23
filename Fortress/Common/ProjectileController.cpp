@@ -15,7 +15,7 @@ namespace Fortress::Controller
 		const int max_hit_count,
 		const int max_fire_count) :
 		stateController(short_name, eProjectileState::Fire),
-		m_ch(shooter),
+		m_shooter(shooter),
 		m_rb(rb),
 		m_max_hit_count(max_hit_count),
 		m_curr_hit_count(0),
@@ -133,6 +133,11 @@ namespace Fortress::Controller
 	int ProjectileController::get_max_hit_count() const
 	{
 		return m_max_hit_count;
+	}
+
+	const ObjectBase::character* ProjectileController::get_origin() const
+	{
+		return m_shooter;
 	}
 
 	void ProjectileController::fire_state()

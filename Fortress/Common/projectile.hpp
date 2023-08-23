@@ -27,8 +27,6 @@ namespace Fortress::ObjectBase
 		void render() override;
 		void prerender() override;
 
-		const character* get_origin() const;
-
 		void on_collision(
 			const CollisionCode& collision, 
 			const GlobalPosition& collision_point,
@@ -68,7 +66,6 @@ namespace Fortress::ObjectBase
 		float m_armor_penetration;
 
 		Math::Vector2 m_wind_acceleration;
-		const character* const m_shooter;
 	};
 }
 #endif // PROJECTILE_HPP

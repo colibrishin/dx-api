@@ -55,7 +55,6 @@ namespace Fortress::Controller
 		void reset_cooldown();
 		void increase_hit_count();
 
-		const ObjectBase::character* const m_ch;
 		const Abstract::rigidBody* const m_rb;
 
 		const int m_max_hit_count;
@@ -69,10 +68,10 @@ namespace Fortress::Controller
 		float m_pitch;
 
 		Math::Vector2 m_previous_position;
-		Network::HitMsg m_hitmsg_;
 
 	protected:
 		friend class Object::Ground;
+		const ObjectBase::character* const m_shooter;
 
 		virtual void fire() = 0;
 		virtual void flying() = 0;
@@ -85,6 +84,8 @@ namespace Fortress::Controller
 		float get_pitch() const;
 		void notify_character_hit();
 		void notify_ground_hit();
+
+		Network::HitMsg m_hit_msg_;
 	};
 }
 #endif // PROJECTILECONTROLLER_HPP

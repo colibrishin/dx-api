@@ -72,11 +72,6 @@ namespace Fortress::ObjectBase
 		set_movement_pitch_radian(get_pitch());
 	}
 
-	const character* projectile::get_origin() const
-	{
-		return m_shooter;
-	}
-
 	float projectile::get_radius() const
 	{
 		return m_radius;
@@ -111,8 +106,7 @@ namespace Fortress::ObjectBase
 			m_damage(damage),
 			m_radius(radius),
 			m_armor_penetration(armor_penetration),
-			m_wind_acceleration(),
-			m_shooter(shooter)
+			m_wind_acceleration()
 	{
 	}
 
