@@ -17,6 +17,8 @@
 
 namespace Fortress::Network::Server
 {
+	constexpr unsigned int timeout = 1000;
+
 	class Socket
 	{
 		using QueuePair = std::pair<unsigned int, std::vector<char>>;
@@ -58,7 +60,7 @@ namespace Fortress::Network::Server
 		void block_until_queue_event()
 		{
 			std::unique_lock ql(queue_lock);
-			queue_event.wait(ql);
+			queue_event.wait_for(ql, std::chrono::milliseconds(timeout));
 		}
 
 		bool get_any_message(SOCKADDR_IN* info_out, std::time_t& time_out, char* message_out)
@@ -114,6 +116,36 @@ namespace Fortress::Network::Server
 				{
 					m_message_queue_.erase(m_message_queue_.begin() + pos);
 					return true;
+				}
+			}
+
+			return false;
+		}
+
+		template <typename T = Message>
+		bool peek_message(const eMessageType type, std::function<bool(const T*)> predicate)
+		{
+			{
+				int pos = 0;
+				bool found = false;
+				std::lock_guard _(queue_lock);
+
+				if(m_message_queue_.empty())
+				{
+					return false;
+				}
+
+				for(auto& [info, time, msg] : m_message_queue_)
+				{
+					const T* casted_msg = reinterpret_cast<const T*>(msg);
+					const unsigned int reeval_crc = get_crc32<T>(*casted_msg);
+
+					if (casted_msg->crc32 == reeval_crc && msg->type == type && predicate(casted_msg))
+					{
+						return true;
+					}
+
+					pos++;
 				}
 			}
 
