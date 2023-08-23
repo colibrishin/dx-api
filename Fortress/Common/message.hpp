@@ -225,9 +225,7 @@ namespace Fortress::Network
 	struct HitMsg : Message
 	{
 		eObjectType object_type;
-		PlayerID object_player_id;
 		Math::Vector2 position;
-		float damage;
 	};
 
 	struct DestroyedMsg : Message
