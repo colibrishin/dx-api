@@ -88,6 +88,7 @@ namespace Fortress
 		ObjectBase::ObjectManager::cleanup();
 		Resource::ResourceManager::cleanup();
 		SoundManager::cleanup();
+		TimerManager::cleanup();
 		EngineHandle::get_handle().lock().reset();
 	}
 }
