@@ -2,6 +2,7 @@
 #ifndef GUIDEDMISSILEPROJECTILE_HPP
 #define GUIDEDMISSILEPROJECTILE_HPP
 
+#include "ClientProjectile.hpp"
 #include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 #include "../Common/scene.hpp"

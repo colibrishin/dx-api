@@ -34,6 +34,9 @@
     <Filter Include="Item">
       <UniqueIdentifier>{085b2b27-ae23-4161-a3a6-1087b370e629}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Network">
+      <UniqueIdentifier>{c9dca8e0-712c-4aca-a17f-b9f45e252517}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -114,11 +117,11 @@
     <ClInclude Include="NutshellProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClInclude>
-    <ClInclude Include="ClientCharacter.hpp">
-      <Filter>Characters</Filter>
-    </ClInclude>
     <ClInclude Include="ClientProjectile.hpp">
-      <Filter>Projectiles</Filter>
+      <Filter>Network</Filter>
+    </ClInclude>
+    <ClInclude Include="ClientCharacter.hpp">
+      <Filter>Network</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

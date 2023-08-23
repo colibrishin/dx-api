@@ -2,6 +2,7 @@
 #ifndef MISSILEPROJECTILE_HPP
 #define MISSILEPROJECTILE_HPP
 
+#include "ClientProjectile.hpp"
 #include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 

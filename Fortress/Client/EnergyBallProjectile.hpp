@@ -2,6 +2,7 @@
 #ifndef ENERGYBALLPROJECTILE_HPP
 #define ENERGYBALLPROJECTILE_HPP
 
+#include "ClientProjectile.hpp"
 #include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 

@@ -2,6 +2,7 @@
 #ifndef PRECISIONCANNONPROJECTILE_HPP
 #define PRECISIONCANNONPROJECTILE_HPP
 
+#include "ClientProjectile.hpp"
 #include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 

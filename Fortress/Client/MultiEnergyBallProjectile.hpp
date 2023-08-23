@@ -2,12 +2,13 @@
 #ifndef MULTIENERGYBALLPROJECTILE_HPP
 #define MULTIENERGYBALLPROJECTILE_HPP
 
+#include "ClientProjectile.hpp"
 #include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 
 namespace Fortress::Object
 {
-	class MultiEnergyBallProjectile final : Network::Client::Object::ClientProjectile
+	class MultiEnergyBallProjectile final : public Network::Client::Object::ClientProjectile
 	{
 	public:
 		MultiEnergyBallProjectile(const unsigned int id, const ObjectBase::character* shooter) : ClientProjectile(

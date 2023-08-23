@@ -2,11 +2,9 @@
 #ifndef CANNONPROJECTILE_HPP
 #define CANNONPROJECTILE_HPP
 
-#include "CharacterProperties.hpp"
 #include "ClientProjectile.hpp"
-#include "../Common/GifWrapper.h"
+#include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
-#include "../Common/resourceManager.hpp"
 
 namespace Fortress::Object
 {

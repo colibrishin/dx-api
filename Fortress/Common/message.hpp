@@ -204,7 +204,7 @@ namespace Fortress::Network
 	{
 	};
 
-	struct FireMsg : PositionMsg
+	struct CharacterFireMsg : PositionMsg
 	{
 		float charged;
 	};
@@ -220,7 +220,11 @@ namespace Fortress::Network
 		unsigned int index;
 		eItemType item_type;
 		float charged;
+	};
 
+	struct FlyingMsg : PositionMsg
+	{
+		eProjectileType prj_type;
 	};
 
 	struct HitMsg : Message
@@ -271,7 +275,7 @@ namespace Fortress::Network
 		PositionMsg pos;
 		ProjectileSelectMsg prj_sel;
 		FiringMsg firing;
-		FireMsg fire;
+		CharacterFireMsg fire;
 		ItemMsg item;
 		HitMsg hit;
 		DestroyedMsg destroyed;

@@ -7,13 +7,15 @@ namespace Fortress::Network::Client::Object
 	{
 	public:
 		ClientProjectile() = delete;
+		~ClientProjectile() override = default;
 		void update() override;
 
 	private:
 		void send_flying() const;
 		void send_ground_hit() const;
 		void send_character_hit() const;
-		
+		void send_fire() const;
+
 		void update_local_player() const;
 		void update_non_local_player();
 
@@ -48,7 +50,6 @@ namespace Fortress::Network::Client::Object
 
 	inline void ClientProjectile::send_flying() const
 	{
-		EngineHandle::get_messenger()->send_
 	}
 
 	inline bool ClientProjectile::has_state_changed() const
@@ -63,6 +64,8 @@ namespace Fortress::Network::Client::Object
 			switch (m_current_state_)
 			{
 			case eProjectileState::Fire:
+				send_fire();
+				break;
 			case eProjectileState::Flying:
 				send_flying();
 				break;

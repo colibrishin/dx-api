@@ -57,8 +57,8 @@ namespace Fortress::Object
 
 		Network::eCharacterType get_type() const override;
 	protected:
-		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
-		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
+		std::weak_ptr<ObjectBase::projectile> get_main_projectile(const unsigned int id) override;
+		std::weak_ptr<ObjectBase::projectile> get_sub_projectile(const unsigned int id) override;
 	};
 
 	inline Network::eCharacterType MissileCharacter::get_type() const
@@ -66,14 +66,14 @@ namespace Fortress::Object
 		return Network::eCharacterType::MissileCharacter;
 	}
 
-	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_main_projectile()
+	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_main_projectile(const unsigned int id)
 	{
-		return ObjectBase::ObjectManager::create_object<MissileProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<MissileProjectile>(id, this).lock();
 	}
 
-	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_sub_projectile()
+	inline std::weak_ptr<ObjectBase::projectile> MissileCharacter::get_sub_projectile(const unsigned int id)
 	{
-		return ObjectBase::ObjectManager::create_object<GuidedMissileProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<GuidedMissileProjectile>(id, this).lock();
 	}
 }
 #endif // MISSILECHARACTER_HPP

@@ -2,10 +2,9 @@
 #ifndef NUTSHELLPROJECTILE_HPP
 #define NUTSHELLPROJECTILE_HPP
 
+#include "ClientProjectile.hpp"
 #include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
-#include "../Common/resourceManager.hpp"
-#include "../Common/Texture.hpp"
 
 namespace Fortress::Object
 {

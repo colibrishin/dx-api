@@ -6,7 +6,6 @@
 #include "ProjectileController.hpp"
 #include "CharacterController.hpp"
 #include "debug.hpp"
-#include "NutshellProjectile.hpp"
 
 #undef max
 #undef min

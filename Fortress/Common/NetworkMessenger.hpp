@@ -54,13 +54,15 @@ namespace Fortress::Network
 		void send_firing_signal(Math::Vector2 position, Math::Vector2 offset);
 		bool get_firing_signal(PlayerID player_id, FiringMsg* firing);
 		void send_fire_signal(Math::Vector2 position, Math::Vector2 offset, float charged);
-		bool get_fire_signal(PlayerID player_id, FireMsg* fire);
+		bool get_fire_signal(PlayerID player_id, CharacterFireMsg* fire);
 		void send_item_signal(Math::Vector2 position, Math::Vector2 offset, unsigned index, eItemType item);
 		bool get_item_signal(PlayerID player_id, ItemMsg* item);
 		void send_item_fire_signal(Math::Vector2 position, Math::Vector2 offset, unsigned index, eItemType item, float charged);
 		bool get_item_fire_signal(PlayerID player_id, eItemType type, ItemFireMsg* item);
 		void send_hit_signal(eObjectType type, Math::Vector2 position);
 		bool get_hit_signal(PlayerID player_id, HitMsg* hit);
+
+		void send_projectile_flying_signal();
 
 	private:
 		template <typename SendT, typename RecvT = Message>
