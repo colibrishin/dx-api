@@ -44,7 +44,7 @@ namespace Fortress::Object
 
 	inline void EnergyBallProjectile::initialize()
 	{
-		projectile::initialize();
+		ClientProjectile::initialize();
 	}
 
 	inline void EnergyBallProjectile::play_hit_sound()

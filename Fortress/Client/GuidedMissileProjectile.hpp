@@ -93,7 +93,7 @@ namespace Fortress::Object
 			}
 		}
 
-		projectile::update();
+		ClientProjectile::update();
 	}
 
 	inline void GuidedMissileProjectile::initialize()

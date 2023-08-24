@@ -44,7 +44,7 @@ namespace Fortress::Object
 
 	inline void NutShellProjectile::initialize()
 	{
-		projectile::initialize();
+		ClientProjectile::initialize();
 	}
 
 	inline void NutShellProjectile::play_hit_sound()

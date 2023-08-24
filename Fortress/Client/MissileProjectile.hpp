@@ -44,7 +44,7 @@ namespace Fortress::Object
 
 	inline void MissileProjectile::initialize()
 	{
-		projectile::initialize();
+		ClientProjectile::initialize();
 	}
 
 	inline void MissileProjectile::play_hit_sound()
