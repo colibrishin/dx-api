@@ -28,6 +28,7 @@ namespace Fortress::ObjectBase
 				ground->safe_is_projectile_hit(collision_point, rigidBody::downcast_from_this<projectile>()))
 			{
 				notify_ground_hit();
+				ground->safe_set_destroyed_global(collision_point, get_radius());
 			}
 		}
 

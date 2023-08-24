@@ -88,8 +88,8 @@ namespace Fortress::Controller
 		virtual void play_hit_sound() = 0;
 
 		float get_pitch() const;
-		void notify_character_hit();
-		void notify_ground_hit();
+		virtual bool notify_character_hit();
+		virtual void notify_ground_hit();
 	};
 }
 #endif // PROJECTILECONTROLLER_HPP

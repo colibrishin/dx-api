@@ -209,17 +209,19 @@ namespace Fortress::Controller
 		return m_pitch;
 	}
 
-	void ProjectileController::notify_character_hit()
+	bool ProjectileController::notify_character_hit()
 	{
 		if(!is_cooldown())
 		{
 			set_state(eProjectileState::CharacterHit);
+			return true;
 		}
+
+		return false;
 	}
 
 	void ProjectileController::notify_ground_hit()
 	{
-
 		set_state(eProjectileState::GroundHit);
 	}
 

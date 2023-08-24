@@ -1,5 +1,6 @@
 #pragma once
 #include "../Common/projectile.hpp"
+#include "../Common/debug.hpp"
 
 namespace Fortress::Network::Client::Object
 {
@@ -20,6 +21,9 @@ namespace Fortress::Network::Client::Object
 		void update_non_local_player();
 
 		bool has_state_changed() const;
+
+		void notify_ground_hit() override;
+		bool notify_character_hit() override;
 
 	protected:
 		ClientProjectile(const unsigned int id, const ObjectBase::character* shooter, const std::wstring& name, const std::wstring& short_name,
@@ -94,10 +98,8 @@ namespace Fortress::Network::Client::Object
 				send_flying();
 				break;
 			case eProjectileState::CharacterHit:
-				send_character_hit();
-				break;
 			case eProjectileState::GroundHit:
-				send_ground_hit();
+				// Character hit and ground hit processed in one tick.
 				break;
 			case eProjectileState::Destroyed: 
 				break;
@@ -160,5 +162,22 @@ namespace Fortress::Network::Client::Object
 	inline bool ClientProjectile::has_state_changed() const
 	{
 		return m_previous_state_ != m_current_state_;
+	}
+
+	inline void ClientProjectile::notify_ground_hit()
+	{
+		projectile::notify_ground_hit();
+		send_ground_hit();
+	}
+
+	inline bool ClientProjectile::notify_character_hit()
+	{
+		if(projectile::notify_character_hit())
+		{
+			send_character_hit();
+			return true;
+		}
+
+		return false; 
 	}
 }
