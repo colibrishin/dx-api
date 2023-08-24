@@ -219,6 +219,7 @@ namespace Fortress
 			alive_one.lock()->set_unmovable();
 			m_winner = alive_one;
 			m_state = eRoundState::End;
+			m_timer_next_player.lock()->stop();
 			return;
 		}
 
