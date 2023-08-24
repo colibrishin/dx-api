@@ -25,6 +25,8 @@ namespace Fortress::Network::Client::Object
 		void notify_ground_hit() override;
 		bool notify_character_hit() override;
 
+		void fire() override;
+
 	protected:
 		ClientProjectile(const unsigned int id, const ObjectBase::character* shooter, const std::wstring& name, const std::wstring& short_name,
 			const Math::Vector2& position, const Math::Vector2& velocity, float mass, const Math::Vector2& speed,
@@ -90,12 +92,10 @@ namespace Fortress::Network::Client::Object
 		{
 			switch (m_current_state_)
 			{
-			case eProjectileState::Fire:
-				send_fire();
-				break;
 			case eProjectileState::Flying:
 				send_flying();
 				break;
+			case eProjectileState::Fire:
 			case eProjectileState::CharacterHit:
 			case eProjectileState::GroundHit:
 				// Character hit and ground hit processed in one tick.
@@ -177,5 +177,15 @@ namespace Fortress::Network::Client::Object
 		}
 
 		return false; 
+	}
+
+	inline void ClientProjectile::fire()
+	{
+		projectile::fire();
+
+		if(get_origin()->is_localplayer())
+		{
+			send_fire();
+		}
 	}
 }
