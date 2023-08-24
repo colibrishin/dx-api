@@ -165,14 +165,21 @@ namespace Fortress::Network::Client::Object
 	inline void ClientProjectile::notify_ground_hit()
 	{
 		projectile::notify_ground_hit();
-		send_ground_hit();
+
+		if(get_origin()->is_localplayer())
+		{
+			send_ground_hit();
+		}
 	}
 
 	inline bool ClientProjectile::notify_character_hit()
 	{
 		if(projectile::notify_character_hit())
 		{
-			send_character_hit();
+			if(get_origin()->is_localplayer())
+			{
+				send_character_hit();
+			}
 			return true;
 		}
 
