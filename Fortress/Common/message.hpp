@@ -248,7 +248,8 @@ namespace Fortress::Network
 	struct DamageMsg : Message
 	{
 		CRC32 last_message;
-		eCharacterType ch_type;
+		eCharacterType shooter_type;
+		eCharacterType victim_type;
 		PlayerID prj_owner_id;
 		unsigned int prj_id;
 		eProjectileType prj_type;

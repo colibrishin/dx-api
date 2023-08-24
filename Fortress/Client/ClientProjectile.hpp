@@ -1,4 +1,5 @@
 #pragma once
+#include "CharacterProperties.hpp"
 #include "../Common/projectile.hpp"
 #include "../Common/debug.hpp"
 
@@ -29,12 +30,13 @@ namespace Fortress::Network::Client::Object
 
 	protected:
 		ClientProjectile(const unsigned int id, const ObjectBase::character* shooter, const std::wstring& name, const std::wstring& short_name,
-			const Math::Vector2& position, const Math::Vector2& velocity, float mass, const Math::Vector2& speed,
-			const Math::Vector2& acceleration, float damage, float radius, int hit_count, int fire_count,
-			float armor_penetration)
+			const Math::Vector2& position, const Math::Vector2& velocity, const float mass, const Math::Vector2& speed,
+			const Math::Vector2& acceleration, const float damage, const float radius, const int hit_count, const int fire_count,
+			const float armor_penetration)
 			: projectile(
-				  id, shooter, name, short_name, position, velocity, mass, speed, acceleration, damage, radius, hit_count,
-				  fire_count, armor_penetration),
+				  id, shooter, name, short_name, position, velocity,
+				  Fortress::Object::Property::projectile_hitbox_getter(), mass, speed, acceleration, damage, radius,
+				  hit_count, fire_count, armor_penetration),
 				m_previous_state_(eProjectileState::Fire),
 				m_current_state_(eProjectileState::Fire)
 		{

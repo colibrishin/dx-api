@@ -10,7 +10,8 @@
 namespace Fortress::Network::Server
 {
 	inline float calculate_damage(
-		const eCharacterType ch_type,
+		const eCharacterType shooter_type,
+		const eCharacterType victim_type,
 		const eProjectileType prj_type,
 		const unsigned int previous_hit_count,
 		const bool double_damage,
@@ -18,20 +19,37 @@ namespace Fortress::Network::Server
 		const Math::Vector2& hit_point,
 		const Math::Vector2& near_point)
 	{
-		std::wstring ch_name;
-		std::wstring prj_name;
+		std::wstring shooter_ch_name;
+		std::wstring shooter_prj_name;
 
-		switch(ch_type)
+		std::wstring victim_ch_name;
+
+		switch(shooter_type)
 		{
 		case eCharacterType::None: break;
 		case eCharacterType::CannonCharacter: 
-			ch_name = L"cannon";
+			shooter_ch_name = L"cannon";
 			break;
 		case eCharacterType::MissileCharacter: 
-			ch_name = L"missile";
+			shooter_ch_name = L"missile";
 			break;
 		case eCharacterType::SecwindCharacter: 
-			ch_name = L"secwind";
+			shooter_ch_name = L"secwind";
+			break;
+		default: ;
+		}
+
+		switch(victim_type)
+		{
+		case eCharacterType::None: break;
+		case eCharacterType::CannonCharacter: 
+			victim_ch_name = L"cannon";
+			break;
+		case eCharacterType::MissileCharacter: 
+			victim_ch_name = L"missile";
+			break;
+		case eCharacterType::SecwindCharacter: 
+			victim_ch_name = L"secwind";
 			break;
 		default: ;
 		}
@@ -39,22 +57,25 @@ namespace Fortress::Network::Server
 		switch(prj_type)
 		{
 		case eProjectileType::Main: 
-			prj_name = L"main";
+			shooter_prj_name = L"main";
 			break;
 		case eProjectileType::Sub: 
-			prj_name = L"sub";
+			shooter_prj_name = L"sub";
 			break;
 		case eProjectileType::Nutshell: break;
 		default: ;
 		}
 
-		const float damage = Object::Property::projectile_damage_getter(ch_name, prj_name);
-		const float armor = Object::Property::character_armor_getter(ch_name);
-		const float penetration_rate = Object::Property::projectile_pen_rate_getter(ch_name, prj_name);
-		const float radius = Object::Property::projectile_radius_getter(ch_name, prj_name);
+		const float damage = Object::Property::projectile_damage_getter(shooter_ch_name, shooter_prj_name);
+		const float armor = Object::Property::character_armor_getter(victim_ch_name);
+		const float penetration_rate = Object::Property::projectile_pen_rate_getter(shooter_ch_name, shooter_prj_name);
+		const float radius = Object::Property::projectile_radius_getter(shooter_ch_name, shooter_prj_name);
 
 		// most hit takes from boundary, this value is for compensation the error by hits from boundary.
-		const float proximate_close_hit_epsilon = hitbox.magnitude() / 3;
+		// note that this hitbox should be from projectile. (near_point = character's nearest
+		// point, which means m_position - (m_hitbox / 2) (with hitbox).
+		// but projectile position comes from get_center(), which means m_position (without hitbox).
+		const float proximate_close_hit_epsilon = hitbox.magnitude() / 2;
 		const float distance = (hit_point - near_point).magnitude();
 
 		// pen vs armor. armor gets bigger, value gets smaller.

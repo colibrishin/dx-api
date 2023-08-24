@@ -95,6 +95,7 @@ namespace Fortress::ObjectBase
 			const std::wstring& short_name,
 			const Math::Vector2& position,
 			const Math::Vector2& velocity,
+			const Math::Vector2& hitbox,
 			const float mass,
 			const Math::Vector2& speed,
 			const Math::Vector2& acceleration,
@@ -103,7 +104,7 @@ namespace Fortress::ObjectBase
 			const int hit_count,
 			const int fire_count,
 			const float armor_penetration) :
-			rigidBody(name, position, {30.0f, 30.0f}, velocity, mass, speed, acceleration, true),
+			rigidBody(name, position, hitbox, velocity, mass, speed, acceleration, true),
 			ProjectileController(id, shooter, short_name, this, hit_count, fire_count),
 			m_damage(damage),
 			m_radius(radius),

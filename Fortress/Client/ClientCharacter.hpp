@@ -29,7 +29,7 @@ namespace Fortress::Network::Client::Object
 
 		bool has_state_changed() const;
 
-		void hit(const std::weak_ptr<ObjectBase::projectile>& prj, const GlobalPosition& hit_point) override;
+		void hit(const std::weak_ptr<ObjectBase::projectile>& prj, const GlobalPosition& ch_position) override;
 
 	protected:
 		ClientCharacter(const Network::PlayerID& player_id, const std::wstring& name, const std::wstring& short_name,
@@ -226,7 +226,7 @@ namespace Fortress::Network::Client::Object
 		return m_previous_state_ != m_current_state_;
 	}
 
-	inline void ClientCharacter::hit(const std::weak_ptr<ObjectBase::projectile>& prj, const GlobalPosition& hit_point)
+	inline void ClientCharacter::hit(const std::weak_ptr<ObjectBase::projectile>& prj, const GlobalPosition& ch_position)
 	{
 		if(const auto projectile = prj.lock())
 		{
@@ -238,12 +238,13 @@ namespace Fortress::Network::Client::Object
 				{
 					{},
 					projectile->get_hit_msg().crc32,
+					projectile->get_origin()->get_type(),
 					get_type(),
 					projectile->get_origin()->get_player_id(),
 					projectile->get_id(),
 					projectile->get_type(),
 					projectile->get_center(),
-					hit_point
+					ch_position
 				});
 			}
 

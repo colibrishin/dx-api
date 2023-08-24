@@ -537,16 +537,19 @@ namespace Fortress::Network::Server
 		auto* casted = reinterpret_cast<DamageMsg*>(message);
 
 		const float damage = calculate_damage(
-			casted->ch_type, 
+			casted->shooter_type,
+			casted->victim_type, 
 			casted->prj_type, 
 			hit_count[message->room_id][message->player_id],
-			double_damage_enabled[casted->room_id][casted->prj_owner_id],
-			Object::Property::character_hitbox_getter(),
+			double_damage_enabled[casted->room_id][casted->prj_owner_id], // @todo: item check
+			Object::Property::projectile_hitbox_getter(),
 			casted->prj_position,
 			casted->ch_position);
 
 		casted->damage = damage;
 		const auto overwrite_message = create_prewritten_network_message<DamageMsg>(*casted);
+
+		std::cout << " Damage : " << damage << std::endl;
 
 		server_socket.send_message<DamageMsg>(&overwrite_message, client_info);
 		broadcast<DamageMsg>(&overwrite_message);
