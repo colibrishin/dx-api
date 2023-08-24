@@ -421,10 +421,10 @@ namespace Fortress::Controller
 
 	void CharacterController::idle_state()
 	{
+		default_state();
+
 		if(is_movable_localplayer())
 		{
-			default_state();
-
 			m_power = 1.0f;
 
 			if (Input::getKey(eKeyCode::A))
@@ -471,10 +471,10 @@ namespace Fortress::Controller
 
 	void CharacterController::move_state()
 	{
+		default_state();
+
 		if(is_movable_localplayer())
 		{
-			default_state();
-
 			const auto map =  Scene::SceneManager::get_active_map().lock();
 
 			if(!map->movable(m_rb->get_offset_bottom_forward_position()))
@@ -503,10 +503,10 @@ namespace Fortress::Controller
 
 	void CharacterController::firing_state()
 	{
+		default_state();
+
 		if(is_movable_localplayer())
 		{
-			default_state();
-
 			if (m_power < ObjectBase::character_max_charge)
 			{
 				m_power += 100.0f * DeltaTime::get_deltaTime();
