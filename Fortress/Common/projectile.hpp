@@ -60,7 +60,6 @@ namespace Fortress::ObjectBase
 		void destroyed() override;
 
 	private:
-		unsigned int id;
 		float m_damage;
 		float m_radius;
 		float m_armor_penetration;
