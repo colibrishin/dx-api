@@ -19,45 +19,45 @@ namespace Fortress::Network
 	enum class eMessageType
 	{
 		// Latency
-		PING = 0x10,
-		PONG = 0x11,
+		PING = 0x101,
+		PONG = 0x102,
 
 		// Validation
-		GO = 0x20,
-		NOGO = 0x21,
+		GO = 0x201,
+		NOGO = 0x202,
 
 		// interpolation
-		DeltaTime = 0x30,
-		ReqDeltaTime = 0x31,
+		DeltaTime = 0x301,
+		ReqDeltaTime = 0x302,
 
-		LobbyJoin = 0x40,
-		LobbyInfo = 0x41,
+		LobbyJoin = 0x401,
+		LobbyInfo = 0x402,
 
-		RoomJoin = 0x50,
-		RoomInfo = 0x51,
-		RoomStart = 0x53,
-		RoomSelectCh = 0x54,
-		RoomSelectIt = 0x55,
+		RoomJoin = 0x501,
+		RoomInfo = 0x502,
+		RoomStart = 0x503,
+		RoomSelectCh = 0x504,
+		RoomSelectIt = 0x505,
 
-		GameInit = 0x60,
-		LoadDone = 0x62,
-		GameStart = 0x63,
+		GameInit = 0x601,
+		LoadDone = 0x602,
+		GameStart = 0x603,
 
-		Position = 0x71,
-		Stop = 0x72,
-		Firing = 0x73,
-		Fire = 0x74,
-		ProjectileSelect = 0x75,
-		Item = 0x76,
-		ItemFire = 0x77,
-		Hit = 0x78,
-		Damage = 0x79,
+		Position = 0x701,
+		Stop = 0x702,
+		Firing = 0x703,
+		Fire = 0x704,
+		ProjectileSelect = 0x705,
+		Item = 0x706,
+		ItemFire = 0x707,
+		Hit = 0x708,
+		Damage = 0x709,
 		Destroyed,
 
-		RoundStart = 0x80,
-		ReqWind = 0x81,
-		RspWind = 0x82,
-		TurnEnd = 0x83,
+		RoundStart = 0x800,
+		ReqWind = 0x801,
+		RspWind = 0x802,
+		TurnEnd = 0x803,
 
 		ProjectileFire = 0x900,
 		ProjectileFlying = 0x901,
@@ -248,9 +248,9 @@ namespace Fortress::Network
 	struct DamageMsg : Message
 	{
 		CRC32 last_message;
-		Math::Vector2 prj_position;
-		PlayerID hit_player_id;
-		float damage;
+		eCharacterType ch_type;
+		eProjectileType prj_type;
+		Math::Vector2 hit_point;
 	};
 
 	struct DestroyedMsg : Message
