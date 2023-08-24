@@ -536,14 +536,13 @@ namespace Fortress::Controller
 		default_state();
 
 		const auto scene = Scene::SceneManager::get_active_scene().lock();
-		const auto projectile_list = scene->get_objects<ObjectBase::projectile>();
 
-		if(projectile_list.empty())
+		if (get_projectiles().empty())
 		{
 			return;
 		}
 
-		const auto initial_prj = (*projectile_list.begin()).lock();
+		const auto initial_prj = (*get_projectiles().begin()).lock();
 
 		// @todo: too broad assumption
 		if(initial_prj->get_origin() == dynamic_cast<ObjectBase::character*>(this) && 
