@@ -91,7 +91,7 @@ namespace Fortress::Network
 		{
 			std::unique_lock ql(queue_mutex);
 			m_soc.send_message<SendT>(msg, client_info);
-			queue_event.wait(ql);
+			queue_event.wait_for(ql, std::chrono::milliseconds(Server::timeout));
 
 			while(!m_soc.find_message<RecvT>(reply_type, reply))
 			{
