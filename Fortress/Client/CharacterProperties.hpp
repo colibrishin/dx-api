@@ -48,7 +48,7 @@ namespace Fortress::Object::Property
 		}
 		if(short_name == L"missile" && type == L"main")
 		{
-			return 10.0f;
+			return 20.0f;
 		}
 		if(short_name == L"missile" && type == L"sub")
 		{
