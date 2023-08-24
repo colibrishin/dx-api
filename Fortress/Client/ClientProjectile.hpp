@@ -44,13 +44,12 @@ namespace Fortress::Network::Client::Object
 
 	inline void ClientProjectile::update()
 	{
-		update_non_local_player();
-
 		m_previous_state_ = get_state();
 		projectile::update();
 		m_current_state_ = get_state();
 
 		update_local_player();
+		update_non_local_player();
 	}
 
 	inline void ClientProjectile::send_flying() const
