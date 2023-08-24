@@ -11,10 +11,10 @@ namespace Fortress::Network::Client::Object
 		void update() override;
 
 	private:
+		void send_fire() const;
 		void send_flying() const;
 		void send_ground_hit() const;
 		void send_character_hit() const;
-		void send_fire() const;
 
 		void update_local_player() const;
 		void update_non_local_player();
@@ -40,21 +40,45 @@ namespace Fortress::Network::Client::Object
 
 	inline void ClientProjectile::update()
 	{
+		update_non_local_player();
+
 		m_previous_state_ = get_state();
 		projectile::update();
 		m_current_state_ = get_state();
 
 		update_local_player();
-		update_non_local_player();
 	}
 
 	inline void ClientProjectile::send_flying() const
 	{
+		EngineHandle::get_messenger()->send_message<ProjectileFlyingMsg>(
+			eMessageType::ProjectileFlying, ProjectileFlyingMsg
+			{{{}, eObjectType::Projectile, get_center(), get_offset()},
+			get_id(), get_type()});
 	}
 
-	inline bool ClientProjectile::has_state_changed() const
+	inline void ClientProjectile::send_ground_hit() const
 	{
-		return m_previous_state_ != m_current_state_;
+		EngineHandle::get_messenger()->send_message<ProjectileHitMsg>(
+			eMessageType::ProjectileHit, ProjectileHitMsg
+			{{{}, eObjectType::Projectile, get_center(), get_offset()},
+			eObjectType::Ground, get_id(), get_type()});
+	}
+
+	inline void ClientProjectile::send_character_hit() const
+	{
+		EngineHandle::get_messenger()->send_message<ProjectileHitMsg>(
+			eMessageType::ProjectileHit, ProjectileHitMsg
+			{{{}, eObjectType::Projectile, get_center(), get_offset()},
+			eObjectType::Character, get_id(), get_type()});
+	}
+
+	inline void ClientProjectile::send_fire() const
+	{
+		EngineHandle::get_messenger()->send_message<ProjectileFireMsg>(
+			eMessageType::ProjectileFire, ProjectileFireMsg
+			{{{}, eObjectType::Projectile, get_center(), get_offset()},
+			get_id(), get_type()});
 	}
 
 	inline void ClientProjectile::update_local_player() const
@@ -80,5 +104,61 @@ namespace Fortress::Network::Client::Object
 			default: ;
 			}
 		}
+	}
+
+	inline void ClientProjectile::update_non_local_player()
+	{
+		if(!get_origin()->is_localplayer())
+		{
+			ProjectileFireMsg fire{};
+			ProjectileFlyingMsg flying{};
+			ProjectileHitMsg hit{};
+
+			if(EngineHandle::get_messenger()->pop_message<ProjectileFireMsg>(
+				eMessageType::ProjectileFire, get_origin()->get_player_id(), &fire, [&](const ProjectileFireMsg* msg)
+			{
+					return msg->prj_type == get_type() && msg->prj_id == get_id();
+			}))
+			{
+				m_position = fire.position;
+				set_offset(fire.offset);
+				set_state(eProjectileState::Fire);
+			}
+			else if(EngineHandle::get_messenger()->pop_message<ProjectileFlyingMsg>(
+				eMessageType::ProjectileFlying, get_origin()->get_player_id(), &flying, [&](const ProjectileFlyingMsg* msg)
+			{
+					return msg->prj_type == get_type() && msg->prj_id == get_id();
+			}))
+			{
+				m_position = fire.position;
+				set_offset(fire.offset);
+				set_state(eProjectileState::Flying);
+			}
+			else if(EngineHandle::get_messenger()->pop_message<ProjectileHitMsg>(
+				eMessageType::ProjectileHit, get_origin()->get_player_id(), &hit, [&](const ProjectileHitMsg* msg)
+			{
+					return msg->prj_type == get_type() && msg->prj_id == get_id() && msg->obj_type == eObjectType::Ground;
+			}))
+			{
+				m_position = fire.position;
+				set_offset(fire.offset);
+				notify_ground_hit();
+			}
+			else if(EngineHandle::get_messenger()->pop_message<ProjectileHitMsg>(
+				eMessageType::ProjectileHit, get_origin()->get_player_id(), &hit, [&](const ProjectileHitMsg* msg)
+			{
+					return msg->prj_type == get_type() && msg->prj_id == get_id() && msg->obj_type == eObjectType::Character;
+			}))
+			{
+				m_position = fire.position;
+				set_offset(fire.offset);
+				notify_character_hit();
+			}
+		}
+	}
+
+	inline bool ClientProjectile::has_state_changed() const
+	{
+		return m_previous_state_ != m_current_state_;
 	}
 }

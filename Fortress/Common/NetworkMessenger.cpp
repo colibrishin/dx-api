@@ -309,14 +309,14 @@ namespace Fortress::Network
 
 	void NetworkMessenger::send_hit_signal(const eObjectType type, const Math::Vector2 position)
 	{
-		const auto msg = create_network_message<HitMsg>(
+		const auto msg = create_network_message<ProjectileHitMsg>(
 			eMessageType::Hit, m_rood_id_, m_player_id, type, position);
-		m_soc.send_message<HitMsg>(&msg, m_server_info);
+		m_soc.send_message<ProjectileHitMsg>(&msg, m_server_info);
 	}
 
-	bool NetworkMessenger::get_hit_signal(const PlayerID player_id, HitMsg* hit)
+	bool NetworkMessenger::get_hit_signal(const PlayerID player_id, ProjectileHitMsg* hit)
 	{
-		return m_soc.find_message<HitMsg>(eMessageType::Hit, hit) &&
+		return m_soc.find_message<ProjectileHitMsg>(eMessageType::Hit, hit) &&
 			player_id == hit->player_id &&
 			m_rood_id_ == hit->room_id;
 	}

@@ -199,6 +199,7 @@
     <ClInclude Include="Timer.hpp" />
     <ClInclude Include="TimerManager.hpp" />
     <ClInclude Include="vector2.hpp" />
+    <ClInclude Include="virtual_this.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Common.cpp" />

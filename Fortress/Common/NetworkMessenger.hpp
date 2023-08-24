@@ -60,9 +60,23 @@ namespace Fortress::Network
 		void send_item_fire_signal(Math::Vector2 position, Math::Vector2 offset, unsigned index, eItemType item, float charged);
 		bool get_item_fire_signal(PlayerID player_id, eItemType type, ItemFireMsg* item);
 		void send_hit_signal(eObjectType type, Math::Vector2 position);
-		bool get_hit_signal(PlayerID player_id, HitMsg* hit);
+		bool get_hit_signal(PlayerID player_id, ProjectileHitMsg* hit);
 
-		void send_projectile_flying_signal();
+		template <typename T = Message>
+		void send_message(const eMessageType type, const T& pre_packed)
+		{
+			auto msg = create_prewritten_network_message<T>(pre_packed);
+			msg.room_id = m_rood_id_;
+			msg.player_id = m_player_id;
+			msg.type = type;
+			m_soc.send_message<T>(&msg, m_server_info);
+		}
+
+		template <typename T = Message>
+		bool pop_message(const eMessageType type, const PlayerID send_player_id, T* out, std::function<bool(const T*)> predicate)
+		{
+			return m_soc.find_message<T>(type, out) && out->room_id == m_rood_id_ && out->player_id == send_player_id && predicate(out);
+		}
 
 	private:
 		template <typename SendT, typename RecvT = Message>
@@ -98,20 +112,6 @@ namespace Fortress::Network
 		PlayerID m_player_id;
 		RoomID m_rood_id_;
 	public:
-		template <typename T = Message, typename... Args>
-		void send_message_within_tick_rate(eMessageType type, Args... args)
-		{
-			if(check_delta_time())
-			{
-				T msg = create_network_message<T>(
-					type, m_rood_id_, m_player_id, args...);
-				m_soc.send_message<T>(&msg, m_server_info);
-				reset_delta_time();
-			}
-
-			increase_delta_time();
-		}
-
 		std::recursive_mutex& queue_mutex = m_soc.queue_lock;
 		std::condition_variable_any& queue_event = m_soc.queue_event;
 	};

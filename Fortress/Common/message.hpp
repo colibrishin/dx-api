@@ -58,6 +58,10 @@ namespace Fortress::Network
 		ReqWind = 0x81,
 		RspWind = 0x82,
 		TurnEnd = 0x83,
+
+		ProjectileFire = 0x900,
+		ProjectileFlying = 0x901,
+		ProjectileHit = 0x902,
 	};
 
 	enum class eCharacterType
@@ -222,19 +226,23 @@ namespace Fortress::Network
 		float charged;
 	};
 
-	struct FlyingMsg : PositionMsg
+	struct ProjectileFireMsg : PositionMsg
 	{
+		unsigned int prj_id;
 		eProjectileType prj_type;
 	};
 
-	struct HitMsg : Message
+	struct ProjectileFlyingMsg : PositionMsg
 	{
-		eObjectType object_type;
-		Math::Vector2 prj_position;
+		unsigned int prj_id;
 		eProjectileType prj_type;
-		PlayerID ch_player_id;
-		eCharacterType ch_type;
-		Math::Vector2 ch_position;
+	};
+
+	struct ProjectileHitMsg : PositionMsg
+	{
+		eObjectType obj_type;
+		unsigned int prj_id;
+		eProjectileType prj_type;
 	};
 
 	struct DamageMsg : Message
@@ -277,7 +285,7 @@ namespace Fortress::Network
 		FiringMsg firing;
 		CharacterFireMsg fire;
 		ItemMsg item;
-		HitMsg hit;
+		ProjectileHitMsg hit;
 		DestroyedMsg destroyed;
 		ReqWindMsg req_wind;
 		RspWindMsg rsp_wind;
@@ -305,19 +313,20 @@ namespace Fortress::Network
 		return msg;
 	}
 
+	template <typename T, typename... Args>
+	static T create_prewritten_network_message(const T& msg)
+	{
+		T msg_copy = msg;
+		msg_copy.crc32 = get_crc32(msg_copy);
+		return msg_copy;
+	}
+
 	template <typename T>
 	static CRC32 get_crc32(const T& msg)
 	{
 		return crc32_fast(
 			reinterpret_cast<const char*>(&msg) + sizeof(CRC32), 
 			sizeof(T) - sizeof(CRC32));
-	}
-
-	template <typename T, typename... Args>
-	static T create_network_message(T& pre_written_message)
-	{
-		pre_written_message.crc32 = get_crc32(pre_written_message);
-		return pre_written_message;
 	}
 	
 	constexpr unsigned int max_packet_size = sizeof(Data);
