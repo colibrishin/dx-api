@@ -84,7 +84,7 @@ namespace Fortress::Network::Server
 		}
 
 		template <typename T = Message>
-		bool find_message(const eMessageType type, T* out)
+		bool find_message(const eMessageType type, T* out, std::function<bool(const T*)> predicate = {})
 		{
 			{
 				int pos = 0;
@@ -103,6 +103,14 @@ namespace Fortress::Network::Server
 
 					if (casted_msg->crc32 == reeval_crc && msg->type == type)
 					{
+						if(predicate)
+						{
+							if(!predicate(casted_msg))
+							{
+								continue;
+							}
+						}
+
 						std::memcpy(out, msg, sizeof(T));
 						delete[] reinterpret_cast<const char*>(msg);
 						found = true;
@@ -116,36 +124,6 @@ namespace Fortress::Network::Server
 				{
 					m_message_queue_.erase(m_message_queue_.begin() + pos);
 					return true;
-				}
-			}
-
-			return false;
-		}
-
-		template <typename T = Message>
-		bool peek_message(const eMessageType type, std::function<bool(const T*)> predicate)
-		{
-			{
-				int pos = 0;
-				bool found = false;
-				std::lock_guard _(queue_lock);
-
-				if(m_message_queue_.empty())
-				{
-					return false;
-				}
-
-				for(auto& [info, time, msg] : m_message_queue_)
-				{
-					const T* casted_msg = reinterpret_cast<const T*>(msg);
-					const unsigned int reeval_crc = get_crc32<T>(*casted_msg);
-
-					if (casted_msg->crc32 == reeval_crc && msg->type == type && predicate(casted_msg))
-					{
-						return true;
-					}
-
-					pos++;
 				}
 			}
 
