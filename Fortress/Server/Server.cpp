@@ -370,6 +370,7 @@ namespace Fortress::Network::Server
 		const auto* recv_msg = reinterpret_cast<const RoomStartMsg*>(message);
 		const RoomID room_id = recv_msg->room_id;
 		const eMapType map = recv_msg->map_type;
+		std::fill_n(hit_count[message->room_id], 15, 0);
 
 		GameInitMsg gi{};
 		uint8_t pos = 0;
@@ -522,6 +523,7 @@ namespace Fortress::Network::Server
 
 	void set_turn_done(const Message* message)
 	{
+		std::fill_n(hit_count[message->room_id], 15, 0);
 		turn_end[message->room_id][message->player_id] = true;
 	}
 
