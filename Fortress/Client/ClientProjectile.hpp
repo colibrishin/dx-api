@@ -114,7 +114,6 @@ namespace Fortress::Network::Client::Object
 		{
 			ProjectileFireMsg fire{};
 			ProjectileFlyingMsg flying{};
-			ProjectileHitMsg hit{};
 
 			if(EngineHandle::get_messenger()->pop_message<ProjectileFireMsg>(
 				eMessageType::ProjectileFire, get_origin()->get_player_id(), &fire, [&](const ProjectileFireMsg* msg)
@@ -137,7 +136,7 @@ namespace Fortress::Network::Client::Object
 				set_state(eProjectileState::Flying);
 			}
 			else if(EngineHandle::get_messenger()->pop_message<ProjectileHitMsg>(
-				eMessageType::ProjectileHit, get_origin()->get_player_id(), &hit, [&](const ProjectileHitMsg* msg)
+				eMessageType::ProjectileHit, get_origin()->get_player_id(), &m_hit_msg_, [&](const ProjectileHitMsg* msg)
 			{
 					return msg->prj_type == get_type() && msg->prj_id == get_id() && msg->obj_type == eObjectType::Ground;
 			}))
@@ -147,7 +146,7 @@ namespace Fortress::Network::Client::Object
 				notify_ground_hit();
 			}
 			else if(EngineHandle::get_messenger()->pop_message<ProjectileHitMsg>(
-				eMessageType::ProjectileHit, get_origin()->get_player_id(), &hit, [&](const ProjectileHitMsg* msg)
+				eMessageType::ProjectileHit, get_origin()->get_player_id(), &m_hit_msg_, [&](const ProjectileHitMsg* msg)
 			{
 					return msg->prj_type == get_type() && msg->prj_id == get_id() && msg->obj_type == eObjectType::Character;
 			}))

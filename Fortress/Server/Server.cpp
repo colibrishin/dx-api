@@ -12,6 +12,13 @@
 #include "../Common/vector2.hpp"
 #include "../Common/message.hpp"
 
+#include "../Common/TimerManager.hpp"
+#include "../Common/deltatime.hpp"
+#include "../Common/sceneManager.hpp"
+#include "../Common/resourceManager.hpp"
+
+#include "ClientSide.hpp"
+
 #pragma comment (lib, "ws2_32.lib")
 #pragma comment (lib, "Common.lib")
 
@@ -44,6 +51,8 @@ namespace Fortress::Network::Server
 	static bool player_list[15]{ false, };
 	static bool load_done[15][15] { false, };
 	static bool turn_end[15][15] {false, };
+	static bool double_damage_enabled[15][15] {false,};
+	static int hit_count[15][15] {0, };
 
 	static std::default_random_engine e;
 	static std::uniform_real_distribution<float> dis{-50, 50};
@@ -160,7 +169,7 @@ namespace Fortress::Network::Server
 
 		std::wmemcpy(li.player_names[0], player_names[0], sizeof(player_names));
 
-		auto reply = create_network_message<LobbyInfoMsg>(li);
+		auto reply = create_prewritten_network_message<LobbyInfoMsg>(li);
 		server_socket.send_message(&reply, client_info);
 	}
 
@@ -284,7 +293,7 @@ namespace Fortress::Network::Server
 		rif.player_id = -1;
 		rif.room_id = room_id;
 
-		auto msg = create_network_message<RoomInfoMsg>(rif);
+		auto msg = create_prewritten_network_message<RoomInfoMsg>(rif);
 		server_socket.send_message(&msg, client_info);
 	}
 
@@ -310,7 +319,7 @@ namespace Fortress::Network::Server
 		rif.player_id = -1;
 		rif.room_id = room_id;
 
-		auto msg = create_network_message<RoomInfoMsg>(rif);
+		const auto msg = create_prewritten_network_message<RoomInfoMsg>(rif);
 
 		for(int i = 0; i < 15; ++i)
 		{
@@ -393,7 +402,7 @@ namespace Fortress::Network::Server
 		std::cout << "Map: " << static_cast<int>(gi.map_type) << std::endl;
 
 		reset_wind(room_id);
-		const auto msg = create_network_message<GameInitMsg>(gi);
+		const auto msg = create_prewritten_network_message<GameInitMsg>(gi);
 
 		for(const auto& client : room_clients)
 		{
@@ -521,6 +530,26 @@ namespace Fortress::Network::Server
 		std::fill(std::begin(turn_end[room_id]), std::end(turn_end[room_id]), false);
 	}
 
+	void calculate_damage_and_reply(Message* message, const sockaddr_in& client_info)
+	{
+		auto* casted = reinterpret_cast<DamageMsg*>(message);
+
+		const float damage = calculate_damage(
+			casted->ch_type, 
+			casted->prj_type, 
+			hit_count[message->room_id][message->player_id],
+			double_damage_enabled[casted->room_id][casted->prj_owner_id],
+			Object::Property::character_hitbox_getter(),
+			casted->prj_position,
+			casted->ch_position);
+
+		casted->damage = damage;
+		const auto overwrite_message = create_prewritten_network_message<DamageMsg>(*casted);
+
+		server_socket.send_message<DamageMsg>(&overwrite_message, client_info);
+		broadcast<DamageMsg>(&overwrite_message);
+	}
+
 	[[noreturn]] void consume_message()
 	{
 		while(true) 
@@ -535,6 +564,7 @@ namespace Fortress::Network::Server
 			}
 
 			const Message* message = reinterpret_cast<Message*>(buffer);
+			auto* writable_message = reinterpret_cast<Message*>(buffer);
 
 			switch(message->type)
 			{
@@ -570,7 +600,7 @@ namespace Fortress::Network::Server
 				break;
 			case eMessageType::Fire:
 				std::cout << "Message type: Fire ";
-				broadcast<FireMsg>(message);
+				broadcast<CharacterFireMsg>(message);
 				break;
 			case eMessageType::Item:
 				std::cout << "Message type: Item ";
@@ -580,9 +610,17 @@ namespace Fortress::Network::Server
 				std::cout << "Message type: Item Fire ";
 				broadcast<ItemFireMsg>(message);
 				break;
-			case eMessageType::Hit:
-				std::cout << "Message type: Hit ";
-				broadcast<HitMsg>(message);
+			case eMessageType::ProjectileFire:
+				std::cout << "Message type : Projectile Fire";
+				broadcast<ProjectileFireMsg>(message);
+				break;
+			case eMessageType::ProjectileFlying:
+				std::cout << "Message type : Projectile Flying";
+				broadcast<ProjectileFlyingMsg>(message);
+				break;
+			case eMessageType::ProjectileHit:
+				std::cout << "Message type : Projectile Hit ";
+				broadcast<ProjectileHitMsg>(message);
 				break;
 			case eMessageType::TurnEnd:
 				// @todo: check previous message.
@@ -594,6 +632,10 @@ namespace Fortress::Network::Server
 					clear_turn_done(message->room_id);
 					send_go(message, message->room_id);
 				}
+				break;
+			case eMessageType::Damage:
+				std::cout << "Message type : Damage ";
+				calculate_damage_and_reply(writable_message, client_info);
 				break;
 			case eMessageType::ReqWind:
 				std::cout << "Got wind request" << std::endl;

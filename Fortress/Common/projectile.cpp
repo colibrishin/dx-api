@@ -145,12 +145,11 @@ namespace Fortress::ObjectBase
 				}
 			}
 
-			for (const auto& [ptr, _] : characters)
+			for (const auto& [ptr, near_pair] : characters)
 			{
 				if (const auto character = ptr.lock())
 				{
-					character->hit(
-						rigidBody::downcast_from_this<projectile>(), get_center());
+					character->hit(rigidBody::downcast_from_this<projectile>(), near_pair.second);
 				}
 			}
 		}

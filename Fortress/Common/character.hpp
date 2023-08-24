@@ -43,9 +43,7 @@ namespace Fortress::ObjectBase
 		void render() override;
 		void prerender() override;
 
-		float get_damage_pen_dist(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point) const;
-
-		void hit(const ProjectilePointer& p, const GlobalPosition& hit_point);
+		virtual void hit(const std::weak_ptr<ObjectBase::projectile>& prj, const GlobalPosition& hit_point);
 
 		const std::wstring& get_short_name() const;
 

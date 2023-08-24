@@ -37,56 +37,8 @@ namespace Fortress::ObjectBase
 		CharacterController::prerender();
 	}
 
-	float character::get_damage_pen_dist(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point) const
+	void character::hit(const std::weak_ptr<projectile>& prj, const GlobalPosition& hit_point)
 	{
-		// most hit takes from boundary, this value is for compensation the error by hits from boundary.
-		const float proximate_close_hit_epsilon = p.lock()->m_hitbox.magnitude() / 3;
-
-		// base damage
-		const float damage = p.lock()->get_damage();
-		// armor penetration rate
-		const float penetration_rate = p.lock()->get_penetration_rate();
-		// armor
-		const float armor = get_armor();
-
-		// gets the nearest point from projectile and distance.
-		const Math::Vector2 near_point = get_nearest_point(hit_point);
-		const float distance = (hit_point - near_point).magnitude();
-		// explosion radius
-		const float radius = p.lock()->get_radius();
-
-		// pen vs armor. armor gets bigger, value gets smaller.
-		const float pen_armor_rate = penetration_rate / armor;
-
-		// normalize the value to between from 0 to 1.
-		const float normalized_rate = std::min(1.0f, std::fabs(pen_armor_rate));
-		const float pen_damage = damage * normalized_rate;
-
-		// see proximate_close_hit_epsilon.
-		const float close_hit_compensation = std::fabs(distance - proximate_close_hit_epsilon);
-		// if hit point is further than radius, damage gets smaller.
-		const float dist_ratio = logf(close_hit_compensation) / logf(radius);
-		// dist_ratio can be negative value, if it is too close (log scale).
-		const float dist_ratio_flooring = std::max(dist_ratio, 0.0f);
-		const float far_dist_ratio = std::min(1.0f, dist_ratio_flooring);
-
-		const float dist_pen_damage = pen_damage * (1.0f - far_dist_ratio);
-
-		const int previous_hit_count = get_previous_hit_count();
-		const float consecutive_hit_bonus = dist_pen_damage * (static_cast<float>(previous_hit_count) * 0.25f);
-		float total_damage = dist_pen_damage + consecutive_hit_bonus;
-
-		if(p.lock()->get_origin()->is_double_damage())
-		{
-			total_damage += total_damage;
-		}
-
-		return total_damage;
-	}
-
-	void character::hit(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point)
-	{
-		apply_damage(get_damage_pen_dist(p, hit_point));
 	}
 
 	void character::fire()

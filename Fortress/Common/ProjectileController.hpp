@@ -46,6 +46,7 @@ namespace Fortress::Controller
 
 		const ObjectBase::character* get_origin() const;
 		virtual eProjectileType get_type() const = 0;
+		const Network::ProjectileHitMsg& get_hit_msg() const;
 
 	private:
 		void set_current_sprite(const eProjectileState&) override;
@@ -78,6 +79,7 @@ namespace Fortress::Controller
 	protected:
 		friend class Object::Ground;
 		const ObjectBase::character* const m_shooter;
+		Network::ProjectileHitMsg m_hit_msg_;
 
 		virtual void fire() = 0;
 		virtual void flying() = 0;

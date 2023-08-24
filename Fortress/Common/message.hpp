@@ -249,8 +249,12 @@ namespace Fortress::Network
 	{
 		CRC32 last_message;
 		eCharacterType ch_type;
+		PlayerID prj_owner_id;
+		unsigned int prj_id;
 		eProjectileType prj_type;
-		Math::Vector2 hit_point;
+		Math::Vector2 prj_position;
+		Math::Vector2 ch_position;
+		float damage;
 	};
 
 	struct DestroyedMsg : Message

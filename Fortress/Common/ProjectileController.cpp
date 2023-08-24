@@ -225,6 +225,11 @@ namespace Fortress::Controller
 		set_state(eProjectileState::GroundHit);
 	}
 
+	const Network::ProjectileHitMsg& ProjectileController::get_hit_msg() const
+	{
+		return m_hit_msg_;
+	}
+
 	void ProjectileController::set_current_sprite(const eProjectileState& state)
 	{
 		m_current_sprite = m_texture.get_image(

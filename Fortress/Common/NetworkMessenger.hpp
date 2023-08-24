@@ -75,7 +75,10 @@ namespace Fortress::Network
 		template <typename T = Message>
 		bool pop_message(const eMessageType type, const PlayerID send_player_id, T* out, std::function<bool(const T*)> predicate)
 		{
-			return m_soc.find_message<T>(type, out) && out->room_id == m_rood_id_ && out->player_id == send_player_id && predicate(out);
+			return m_soc.find_message<T>(type, out, [&](const T* msg)
+			{
+				return msg->room_id == m_rood_id_ && msg->player_id == send_player_id && predicate(msg);
+			});
 		}
 
 	private:
@@ -93,7 +96,7 @@ namespace Fortress::Network
 			while(!m_soc.find_message<RecvT>(reply_type, reply))
 			{
 				m_soc.send_message<SendT>(msg, client_info);
-				queue_event.wait(ql);
+				queue_event.wait_for(ql, std::chrono::milliseconds(Server::timeout));
 			}
 
 			m_soc.flush_message(reply->type);
