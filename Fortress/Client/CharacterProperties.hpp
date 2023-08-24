@@ -44,11 +44,11 @@ namespace Fortress::Object::Property
 		}
 		if(short_name == L"cannon" && type == L"sub")
 		{
-			return 30.0f;
+			return 15.0f;
 		}
 		if(short_name == L"missile" && type == L"main")
 		{
-			return 20.0f;
+			return 30.0f;
 		}
 		if(short_name == L"missile" && type == L"sub")
 		{
@@ -74,7 +74,7 @@ namespace Fortress::Object::Property
 		}
 		if(short_name == L"cannon" && type == L"sub")
 		{
-			return 30.0f;
+			return 25.0f;
 		}
 		if(short_name == L"missile" && type == L"main")
 		{
@@ -147,5 +147,10 @@ namespace Fortress::Object::Property
 	inline SizeVector character_hitbox_getter()
 	{
 		return {50.0f, 50.0f};
+	}
+
+	inline SizeVector projectile_hitbox_getter()
+	{
+		return {30.0f, 30.0f};
 	}
 }
