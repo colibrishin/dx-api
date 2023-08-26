@@ -1,10 +1,11 @@
 #pragma once
 #ifndef RESOURCEMANAGER_HPP
 #define RESOURCEMANAGER_HPP
+#include <cassert>
 #include <map>
 #include <string>
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "vector2.hpp"
 #include "resource.hpp"
 
@@ -17,6 +18,8 @@ namespace Fortress::Resource
 		~ResourceManager() = default;
 		template <typename T>
 		static std::weak_ptr<T> load(const std::wstring& name, const std::filesystem::path& path);
+		template <typename T>
+		static void unload(const std::wstring& name);
 		template <typename T>
 		static std::weak_ptr<T> find(const std::wstring& name) noexcept;
 		static void cleanup();
@@ -43,10 +46,20 @@ namespace Fortress::Resource
 			return resource;
 		}
 
-		m_resources[name] = std::make_shared<T>(name, path);
-		m_resources[name]->load();
+		const auto created = std::make_shared<T>(name, path);
+		m_resources[name] = created;
+		return created;
+	}
 
-		return std::dynamic_pointer_cast<T>(m_resources[name]);
+	template <typename T>
+	void ResourceManager::unload(const std::wstring& name)
+	{
+		static_assert(
+			std::is_same_v<std::shared_ptr<T>, 
+			decltype(std::dynamic_pointer_cast<T>(m_resources[name]))>);
+
+		m_resources[name].reset();
+		m_resources.erase(name);
 	}
 
 	template<typename T>

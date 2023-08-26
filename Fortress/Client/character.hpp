@@ -2,30 +2,19 @@
 #ifndef CHARACTER_HPP
 #define CHARACTER_HPP
 
-#include "GifWrapper.hpp"
+#include "CharacterController.hpp"
 #include "rigidBody.hpp"
 #include "common.h"
 #include "sceneManager.hpp"
-#include "sound.hpp"
-#include "SoundPack.hpp"
 #include "Texture.hpp"
 #include "ProjectileTimer.hpp"
-
-namespace Fortress
-{
-	namespace Item
-	{
-		class DoubleShotItem;
-	}
-}
+#include "common.h"
 
 // forward declaration for avoiding circular reference
 namespace Fortress
 {
 	namespace Object
 	{
-		class NutShellProjectile;
-		class item;
 		enum class GroundState;
 		class Ground;
 	}
@@ -39,7 +28,7 @@ namespace Fortress::ObjectBase
 	constexpr float character_full_mp = 1000.0f;
 	constexpr float character_max_charge = 250.0f;
 
-	class character : public Abstract::rigidBody
+	class character : public Abstract::rigidBody, public Controller::CharacterController
 	{
 	public:
 		character() = delete;
@@ -47,157 +36,71 @@ namespace Fortress::ObjectBase
 		character& operator=(character&& other) = default;
 		character(const character& other) = default;
 		character(character&& other) = default;
-		~character() override = default;
+		~character() override;
 
-		virtual void initialize() override;
-		float get_damage_pen_dist(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point) const;
-		void hit(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point);
-		void post_hit();
+		void initialize() override;
 		void update() override;
 		void render() override;
-		virtual void firing();
-		virtual void shoot();
-		float get_charged_power() const;
-		virtual void move() override;
-		void change_projectile();
-		void equip_nutshell();
-		void unequip_nutshell();
+		void prerender() override;
+
+		void hit(const ProjectilePointer& p, const GlobalPosition& hit_point);
+
 		const std::wstring& get_short_name() const;
 
-		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other) override;
-		virtual void on_nocollison() override;
+		void on_collision(
+			const CollisionCode& collision,
+			const GlobalPosition& collision_point,
+			const RigidBodyPointer& other) override;
 
-		eCharacterState get_state() const;
-		void default_state();
-		void idle_state();
-		void move_state();
-		void firing_state();
-		void fire_state();
-		void fired_state();
-		void hit_state();
-		void turn_end_state();
-		virtual void preitem_state();
-		virtual void item_state();
-		virtual void death_state();
-		virtual void dead_state();
+		void on_nocollison() override;
 
-		void set_hp(const float hp);
-		void set_unmovable();
-		void set_movable();
-		void reset_mp();
-		void set_item_active(int n);
-
-		void set_current_sprite(const eCharacterAnim& eAnim);
-		bool is_anim_finished() const;
-
-		void set_sprite_offset(const std::wstring& name, const std::wstring& orientation, const Math::Vector2& offset);
-		const std::wstring& get_current_sprite_name() const;
-
-		std::weak_ptr<projectile> initialize_projectile(const Math::Vector2& angle, const float charged);
-		eProjectileType get_projectile_type() const;
-		bool is_projectile_fire_counted() const;
-		bool is_projectile_active() const;
-		std::weak_ptr<projectile> get_one_active_projectile() const;
-		std::vector<std::weak_ptr<projectile>> get_projectiles() const;
-
-		virtual void move_left() override;
-		virtual void move_right() override;
-		virtual void stop() override;
-		virtual void prerender() override;
-
-		float get_hp_percentage() const;
-		float get_mp_percentage() const;
-		float get_hp_raw() const;
 		float get_armor() const;
-
 	private:
-		int m_player_id;
-		float m_hp;
-		float m_mp;
-		float m_power;
 		bool m_bGrounded;
-		bool m_bMovable;
-		const std::wstring m_shot_name;
-		eCharacterState m_state;
 
-		float m_anim_elapsed;
+		const std::wstring m_short_name;
 		float m_armor;
 
-		void set_state(const eCharacterState& state);
-		void render_hp_bar(const Math::Vector2& position);
+		float get_damage_pen_dist(const ProjectilePointer& p, const GlobalPosition& hit_point) const;
 
-		void ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground);
-		void ground_gravity(const std::weak_ptr<Object::Ground>& ptr_ground);
-		void ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground);
+		void move() override;
+		void fire() override;
+		void move_left() override;
+		void move_right() override;
+		void stop() override;
 
-		Math::Vector2 get_next_velocity(const Math::Vector2& local_position_bottom,
-		                                const std::weak_ptr<Object::Ground>& ground_ptr) const;
+		void render_hp_bar(const GlobalPosition& position);
+		bool check_angle(const GlobalPosition& position, const GroundPointer& ground_ptr) const;
 
-		Texture<GifWrapper> m_texture;
-		SoundPack m_sound_pack;
-		std::weak_ptr<GifWrapper> m_current_sprite;
 
-		ProjectileTimer m_multi_projectile_timer;
-		eProjectileType m_projectile_type;
-		eProjectileType m_tmp_projectile_type;
+		void ground_walk(const CollisionCode& collision, const GroundPointer& ptr_ground);
+		void ground_gravity(const GroundPointer& ptr_ground);
+		void ground_pitching(const GroundPointer& ptr_ground);
 
-		std::map<int, std::shared_ptr<Object::item>> m_available_items;
-		std::weak_ptr<Object::item> m_active_item;
+		GlobalPosition get_forward_ground(const GroundPointer& ground_ptr, const bool& reverse) const;
+		GlobalPosition search_ground(const GroundPointer& ground, const GlobalPosition& start_position,
+		                             const UnitVector& offset, bool reverse) const;
 
-		static std::wstring anim_name_getter(const eCharacterAnim& anim)
-		{
-			switch(anim)
-			{
-			case eCharacterAnim::Idle: return L"idle";
-			case eCharacterAnim::Move: return L"move";
-			case eCharacterAnim::Firing: return L"charging";
-			case eCharacterAnim::Fire: return L"fire";
-			case eCharacterAnim::Item: return L"item";
-			case eCharacterAnim::Dead: return L"dead";
-			case eCharacterAnim::Death: return L"death";
-			case eCharacterAnim::Hit: return L"hit";
-			case eCharacterAnim::Fired: break;
-			default: return L"";
-			}
-		}
+		UnitVector get_next_velocity(const LocalPosition& local_position_bottom,
+		                             const GroundPointer& ground_ptr) const;
+
+		ProjectilePointer initialize_projectile(const UnitVector& angle, float charged);
+
+		std::weak_ptr<ProjectileTimer> m_multi_projectile_timer;
 
 	protected:
-		virtual std::weak_ptr<projectile> get_main_projectile() = 0;
-		virtual std::weak_ptr<projectile> get_sub_projectile() = 0;
-
 		character(
-			const int player_id,
 			const std::wstring& name,
 			const std::wstring& short_name,
-			const Math::Vector2 offset,
-			const Math::Vector2 position,
-			const Math::Vector2 velocity,
+			const UnitVector& offset,
+			const GlobalPosition& position,
+			const UnitVector& velocity,
 			const float mass,
-			const Math::Vector2& speed,
-			const Math::Vector2& acceleration,
+			const SpeedVector& speed,
+			const AccelVector& acceleration,
 			const int hp,
 			const int mp,
-			const float armor):
-			rigidBody(name, position, {50.0f, 50.0f}, velocity, mass, speed, acceleration, true),
-			m_player_id(player_id),
-			m_hp(hp),
-			m_mp(mp),
-			m_power(1.0f),
-			m_bGrounded(false),
-			m_bMovable(true),
-			m_shot_name(short_name),
-			m_state(eCharacterState::Idle),
-			m_anim_elapsed(0.0f),
-			m_armor(armor),
-			m_texture(short_name),
-			m_sound_pack(short_name),
-			m_projectile_type(eProjectileType::Main),
-			m_tmp_projectile_type(eProjectileType::Main),
-			m_available_items{},
-			m_active_item{}
-		{
-			character::initialize();
-		}
+			const float armor);
 	};
 }
 

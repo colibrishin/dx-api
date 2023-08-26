@@ -27,7 +27,6 @@ namespace Fortress
 					auto storage_name = name + TEXT("_") + category;
 
 					m_sounds[storage_name] = Resource::ResourceManager::load<Resource::Sound>(storage_name, p);
-					m_sounds[storage_name].lock()->load();
 				}
 			}
 		}

@@ -2,6 +2,7 @@
 #ifndef DEBUG_HPP
 #define DEBUG_HPP
 #include "common.h"
+#include "input.hpp"
 #include "winapihandles.hpp"
 
 namespace Fortress
@@ -25,15 +26,21 @@ namespace Fortress
 		}
 
 		static void set_debug_flag();
+		static bool get_debug_flag();
 		static void push(std::function<void()> func);
 
 		static void draw_line(const Math::Vector2 left, const Math::Vector2 right);
 		static void draw_dot(const Math::Vector2 point);
 		static void draw_circle(Math::Vector2 point, float radius);
-		static void draw_rect(Math::Vector2 point, Math::Vector2 size);
+		static void draw_rect(const Math::Vector2 point, const Math::Vector2 size, const COLORREF color);
 
 		static void render()
 		{
+			if(Input::getKeyDown(eKeyCode::ScrollLock))
+			{
+				m_bDebug = !m_bDebug;
+			}
+
 			if(!m_bDebug)
 			{
 				return;
@@ -49,7 +56,7 @@ namespace Fortress
 		}
 
 	private:
-		inline static bool m_bDebug = false;
+		inline static bool m_bDebug = true;
 		static constexpr int y_movement = 15;
 		static constexpr int y_initial = 30;
 		inline static int x = 100;
@@ -61,6 +68,11 @@ namespace Fortress
 	inline void Debug::set_debug_flag()
 	{
 		m_bDebug = true;
+	}
+
+	inline bool Debug::get_debug_flag()
+	{
+		return m_bDebug;
 	}
 
 	inline void Debug::push(std::function<void()> func)
@@ -98,12 +110,15 @@ namespace Fortress
 		});
 	}
 
-	inline void Debug::draw_rect(const Math::Vector2 point, const Math::Vector2 size)
+	inline void Debug::draw_rect(const Math::Vector2 point, const Math::Vector2 size, const COLORREF color)
 	{
-		push([point, size]()
+		push([point, size, color]()
 		{
 			const HBRUSH transparent = static_cast<HBRUSH>(GetStockObject(NULL_BRUSH));
 			const HBRUSH previous = static_cast<HBRUSH>(SelectObject(m_hdc, transparent));
+			const HPEN outline = static_cast<HPEN>(CreatePen(PS_SOLID, 1, color));
+			const HPEN previousPen = static_cast<HPEN>(SelectObject(m_hdc, outline));
+
 			Rectangle(
 				m_hdc, 
 				point.get_x(),
@@ -112,7 +127,9 @@ namespace Fortress
 				point.get_y() + size.get_y());
 
 			SelectObject(m_hdc, previous);
+			SelectObject(m_hdc, previousPen);
 			DeleteObject(transparent);
+			DeleteObject(outline);
 		});
 	}
 }

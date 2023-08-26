@@ -2,7 +2,7 @@
 #ifndef TEXTURE_HPP
 #define TEXTURE_HPP
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "ImageWrapper.hpp"
 #include "resourceManager.hpp"
 
@@ -30,7 +30,6 @@ namespace Fortress
 					auto storage_name = name + TEXT("_") + category + TEXT("_") + filename;
 
 					m_images[storage_name] = Resource::ResourceManager::load<T>(storage_name, p);
-					m_images[storage_name].lock()->load();
 					if(typeid(T) == typeid(GifWrapper))
 					{
 						m_images[storage_name].lock()->play();
@@ -41,7 +40,14 @@ namespace Fortress
 
 		std::weak_ptr<T> get_image(const std::wstring& category, const std::wstring& orientation)
 		{
-			return m_images[m_name + TEXT("_") + category + TEXT("_") + orientation];
+			const auto index = m_name + TEXT("_") + category + TEXT("_") + orientation;
+
+			if(m_images.find(index) != m_images.end())
+			{
+				return m_images[index];
+			}
+
+			return std::weak_ptr<T>();
 		}
 
 	

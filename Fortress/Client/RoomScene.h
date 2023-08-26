@@ -7,6 +7,7 @@
 #include "ImageWrapper.hpp"
 #include "sceneManager.hpp"
 #include "sound.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Scene
 {
@@ -15,6 +16,7 @@ namespace Fortress::Scene
 	public:
 		RoomScene() : scene(L"Room Scene")
 		{
+			initialize();
 		}
 
 		void initialize() override;

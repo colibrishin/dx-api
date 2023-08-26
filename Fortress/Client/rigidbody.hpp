@@ -26,14 +26,20 @@ namespace Fortress::Abstract
 
 		void initialize() override;
 		void update() override;
+		void render() override;
 		virtual void prerender();
 		static void block_window_frame(const std::weak_ptr<rigidBody>& target);
 
-		virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other);
+		virtual void on_collision(
+			const CollisionCode& collision, 
+			const GlobalPosition& collision_point, 
+			const std::weak_ptr<rigidBody>& other);
+
 		virtual void on_nocollison();
 		static CollisionCode is_collision(const std::weak_ptr<object>& left, const std::weak_ptr<object>& right) noexcept;
 
 		void set_speed(const Math::Vector2& speed);
+		virtual void set_hitbox(const Math::Vector2& hitbox);
 
 		void move_down() override;
 		void move_left() override;
@@ -46,11 +52,19 @@ namespace Fortress::Abstract
 		float get_movement_pitch_radian() const;
 		float get_user_pitch_radian() const;
 
-		Math::Vector2 get_offset() const;
+		bool is_moving_toward(const rigidBody& other) const;
+		bool is_facing_toward(const rigidBody& other) const;
+
+		const Math::Vector2& get_velocity() const;
+		const Math::Vector2& get_offset() const;
+		const Math::Vector2& get_backward_offset() const;
 		Math::Vector2 get_mixed_offset() const;
 		Math::Vector2 get_velocity_offset() const;
 		Math::Vector2 get_offset_forward_position() const;
+		Math::Vector2 get_offset_backward_position() const;
 		Math::Vector2 get_offset_bottom_forward_position() const;
+		Math::Vector2 get_offset_bottom_backward_position() const;
+		Math::Vector2 get_offset_top_forward_position() const;
 		Math::Vector2 get_velocity_forward_position() const;
 
 		void set_offset(const Math::Vector2& offset);
@@ -76,6 +90,8 @@ namespace Fortress::Abstract
 			const Math::Vector2& acceleration, 
 			const bool& gravity);
 		virtual void move();
+
+		void modify_current_speed(const SpeedVector& speed);
 
 		void reset_current_speed();
 		void reset_current_gravity_speed();

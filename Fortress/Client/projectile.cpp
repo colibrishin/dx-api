@@ -4,76 +4,36 @@
 #include "character.hpp"
 #include "deltatime.hpp"
 #include "ground.hpp"
-#include "Round.hpp"
+#include "Round.h"
 
 namespace Fortress::ObjectBase
 {
 	void projectile::update()
 	{
-		if(is_active())
-		{
-			m_hit_cooldown += DeltaTime::get_deltaTime();
-
-			const auto scene = std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock());
-			const float epsilon = 50.0f;
-			const auto map_size = scene->get_map_size() + epsilon;
-
-			if(scene)
-			{
-				if(m_position.get_x() <= -map_size.get_x() ||
-					m_position.get_x() >= map_size.get_x() ||
-					m_position.get_y() >= map_size.get_y() ||
-					m_position.get_y() <= -map_size.get_y())
-				{
-					post_hit();
-				}	
-			}
-
-			*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
-			rigidBody::update();
-			*this += m_wind_acceleration * DeltaTime::get_deltaTime() * 0.5;
-		}
+		rigidBody::update();
+		ProjectileController::update();
 	}
 
-	void projectile::post_hit()
+	void projectile::on_collision(const CollisionCode& collision, const GlobalPosition& collision_point, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
-		m_curr_hit_count = 0;
-		m_bExploded = true;
-		reset_cooldown();
-		m_current_sprite.lock()->reset_transform();
-		reset_current_gravity_speed();
-		reset_current_speed();
-		set_disabled();
-	}
-
-	void projectile::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
-	{
-		rigidBody::on_collision(collision, hit_vector, other);
-
-		if(m_curr_hit_count == m_max_hit_count)
+		if(const auto prj = other.lock()->downcast_from_this<projectile>())
 		{
-			post_hit();
 			return;
 		}
 
-		if (const auto character = 
-				std::dynamic_pointer_cast<ObjectBase::character>(other.lock()))
+		if(const auto ground = other.lock()->downcast_from_this<Object::Ground>())
 		{
-			if(!is_cooldown())
+			if (get_max_hit_count() > get_hit_count() &&
+				ground->safe_is_projectile_hit(collision_point, rigidBody::downcast_from_this<projectile>()))
 			{
-				const auto shared_this = std::dynamic_pointer_cast<projectile>(shared_from_this());
-				Debug::Log(L"Projectile hits the character");
-
-				// reverse the vector because the hit_vector is victim side.
-				const auto h_e_vec = translate_hit_vector(-hit_vector);
-				const auto h_vec = get_hit_point(h_e_vec);
-
-				character->hit(shared_this, h_vec);
-				up_hit_count();
-				play_hit_sound();
-				reset_cooldown();
-				explosion_near_ground(h_vec);
+				notify_ground_hit();
+				ground->safe_set_destroyed_global(collision_point, get_radius());
 			}
+		}
+
+		if(const auto ch  = other.lock()->downcast_from_this<character>())
+		{
+			notify_character_hit();
 		}
 	}
 
@@ -84,13 +44,14 @@ namespace Fortress::ObjectBase
 			Math::Vector2 pos{};
 			const auto camera_ptr = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
 
-			if(camera_ptr->get_locked_object().lock() == shared_from_this())
+			if(camera_ptr->get_locked_object().lock() == rigidBody::shared_from_this())
 			{
 				pos = camera_ptr->get_offset(m_hitbox);
 			}
 			else
 			{
-				pos = camera_ptr->get_relative_position(std::dynamic_pointer_cast<object>(shared_from_this()));	
+				pos = camera_ptr->get_relative_position(
+					std::dynamic_pointer_cast<object>(rigidBody::shared_from_this()));	
 			}
 
 			prerender();
@@ -100,9 +61,6 @@ namespace Fortress::ObjectBase
 				m_hitbox, 
 				{1, 1},
 				Math::to_degree(get_movement_pitch_radian()));
-
-			Debug::draw_rect(pos - m_hitbox / 2, m_hitbox);
-			Debug::draw_dot(pos);
 		}
 
 		rigidBody::render();
@@ -110,10 +68,8 @@ namespace Fortress::ObjectBase
 
 	void projectile::prerender()
 	{
-		const auto unit = (m_position - m_previous_position).normalized();
-		const float radian = atan2(unit.get_y(), unit.get_x());
-		set_movement_pitch_radian(get_velocity_offset() == Math::left ? Math::flip_radian(radian) : radian);
-		m_previous_position = m_position;
+		ProjectileController::prerender();
+		set_movement_pitch_radian(get_pitch());
 	}
 
 	const character* projectile::get_origin() const
@@ -121,32 +77,7 @@ namespace Fortress::ObjectBase
 		return m_shooter;
 	}
 
-	void projectile::up_hit_count()
-	{
-		m_curr_hit_count++;
-	}
-
-	int projectile::get_hit_count() const
-	{
-		return m_curr_hit_count;
-	}
-
-	int projectile::get_fire_count() const
-	{
-		return m_fire_count;
-	}
-
-	int projectile::get_max_hit_count() const
-	{
-		return m_max_hit_count;
-	}
-
-	const std::weak_ptr<GifWrapper>& projectile::get_current_sprite() const
-	{
-		return m_current_sprite;
-	}
-
-	int projectile::get_radius() const
+	float projectile::get_radius() const
 	{
 		return m_radius;
 	}
@@ -161,79 +92,108 @@ namespace Fortress::ObjectBase
 		return m_armor_penetration;
 	}
 
-	const Math::Vector2& projectile::get_fired_position() const
+	projectile::projectile(
+			const character* shooter,
+			const std::wstring& name,
+			const std::wstring& short_name,
+			const Math::Vector2& position,
+			const Math::Vector2& velocity,
+			const float mass,
+			const Math::Vector2& speed,
+			const Math::Vector2& acceleration,
+			const float damage,
+			const float radius,
+			const int hit_count,
+			const int fire_count,
+			const float armor_penetration) :
+			rigidBody(name, position, {30.0f, 30.0f}, velocity, mass, speed, acceleration, true),
+			ProjectileController(short_name, this, hit_count, fire_count),
+			m_damage(damage),
+			m_radius(radius),
+			m_armor_penetration(armor_penetration),
+			m_wind_acceleration(),
+			m_shooter(shooter)
 	{
-		return m_fired_position;
 	}
 
-	void projectile::explosion_near_ground(const Math::Vector2& hit_vector) const
+	void projectile::move()
 	{
-		if (const auto active_scene =
-			Scene::SceneManager::get_active_scene().lock())
+		rigidBody::move();
+	}
+
+	void projectile::fire()
+	{
+		reset_current_gravity_speed();
+		reset_current_speed();
+		set_enabled();
+	}
+
+	void projectile::flying()
+	{
+		modify_current_speed(m_wind_acceleration);
+	}
+
+	void projectile::hit()
+	{
+		if (const auto scene = Scene::SceneManager::get_active_scene().lock())
 		{
-			const auto h_e_vec = translate_hit_vector(hit_vector);
-			const auto hit_point = get_hit_point(h_e_vec);
+			const auto characters = scene->is_in_range_nearest<character>(
+				rigidBody::downcast_from_this<object>(), get_radius());
+			const auto grounds = scene->get_objects<Object::Ground>();
 
-			const auto grounds = active_scene->is_in_range<Object::Ground>(
-				hit_point,
-				get_radius());
-
-			for (const auto& ptr : grounds)
+			for(const auto& ptr : grounds)
 			{
 				if (const auto ground = ptr.lock())
 				{
-					// using origin collision point of projectile as explosion mid point.
-					ground->safe_set_destroyed_global(hit_point, get_radius());
+					ground->safe_set_destroyed_global(get_center(), get_radius());
+				}
+			}
+
+			for (const auto& [ptr, _] : characters)
+			{
+				if (const auto character = ptr.lock())
+				{
+					character->hit(
+						rigidBody::downcast_from_this<projectile>(), get_center());
 				}
 			}
 		}
 	}
 
-	void projectile::reset_cooldown()
+	void projectile::destroyed()
 	{
-		m_hit_cooldown = 0.0f;
-	}
-
-	bool projectile::is_cooldown() const
-	{
-		if(m_curr_hit_count == 0)
-		{
-			return false;
-		}
-
-		return (m_hit_cooldown < 0.5f);
-	}
-
-	bool projectile::is_exploded() const
-	{
-		return m_bExploded;
+		reset_current_gravity_speed();
+		reset_current_speed();
+		set_disabled();
 	}
 
 	Math::Vector2 projectile::projectile_speed_getter(const std::wstring& short_name, const std::wstring& type)
 	{
+		const Math::Vector2 default_projectile_speed = Math::Vector2{2000.0f, 1.0f};
+
 		if(short_name == L"cannon" && type == L"main")
 		{
-			return {100.0f, 1.0f};
+			return default_projectile_speed * 3;
 		}
 		if(short_name == L"cannon" && type == L"sub")
 		{
-			return {300.0f, 1.0f};
+			return default_projectile_speed * 5;
 		}
 		if(short_name == L"missile" && type == L"main")
 		{
-			return {200.0f, 1.0f};
+			return default_projectile_speed * 2;
 		}
 		if(short_name == L"missile" && type == L"sub")
 		{
-			return {200.0f, 1.0f};
+			return default_projectile_speed * 2;
 		}
 		if(short_name == L"secwind" && type == L"main")
 		{
-			return {200.0f, 1.0f};
+			return default_projectile_speed * 1.5;
 		}
 		if(short_name == L"secwind" && type == L"sub")
 		{
-			return {500.0f, 1.0f};
+			return default_projectile_speed * 5;
 		}
 
 		return {};
@@ -241,10 +201,8 @@ namespace Fortress::ObjectBase
 
 	void projectile::initialize()
 	{
-		m_current_sprite = m_texture.get_image(
-			L"projectile",
-			m_velocity * Math::Vector2{1, 0} == Math::left ? L"left" : L"right");
 		rigidBody::initialize();
+		ProjectileController::initialize();
 	}
 
 	void projectile::fire(
@@ -252,34 +210,17 @@ namespace Fortress::ObjectBase
 		const Math::Vector2& velocity,
 		const float charged)
 	{
-		const auto x_velocity = velocity * Math::Vector2{1, 0};
-
 		set_speed({charged, charged});
-
-		if(x_velocity.get_x() < 0)
-		{
-			m_current_sprite = m_texture.get_image(L"projectile", L"left");
-			m_position = position - Math::Vector2{m_hitbox.get_x(), 0};
-		}
-		else if (x_velocity.get_x() > 0)
-		{
-			m_current_sprite = m_texture.get_image(L"projectile", L"right");
-			m_position = position + Math::Vector2{m_hitbox.get_x(), 0};
-		}
+		m_position = position;
 
 		if(const auto battle_scene = 
 			std::dynamic_pointer_cast<Scene::BattleScene>(Scene::SceneManager::get_active_scene().lock()))
 		{
-			m_wind_acceleration = {battle_scene->get_round_status().lock()->get_wind_acceleration(), 0.0f};
+			m_wind_acceleration = {
+				battle_scene->get_round_status().lock()->get_wind_acceleration(),
+				0.0f};
 		}
 
-		m_bExploded = false;
-		m_current_sprite.lock()->play();
-		m_fired_position = m_position;
-		m_previous_position = m_fired_position;
 		m_velocity = velocity;
-		reset_current_gravity_speed();
-		reset_current_speed();
-		set_enabled();
 	}
 }

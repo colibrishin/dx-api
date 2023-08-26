@@ -4,7 +4,7 @@
 
 #include "character.hpp"
 #include "ImageWrapper.hpp"
-#include "sceneManager.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Scene
 {
@@ -13,6 +13,7 @@ namespace Fortress::Scene
 	public:
 		TitleScene() : scene(L"Title Scene")
 		{
+			initialize();
 		}
 
 		void initialize() override;

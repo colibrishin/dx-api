@@ -33,6 +33,9 @@ namespace Fortress
 		const Math::Vector2& get_hitbox() const;
 		virtual void flip();
 		void set_offset(const Math::Vector2& offset);
+		void set_rotation_offset(const Math::Vector2& offset);
+		void copy_to(HDC) const;
+		void tile_copy_to(const Math::Vector2& size, HDC) const;
 
 	protected:
 		virtual bool load() override;
@@ -40,6 +43,7 @@ namespace Fortress
 		std::unique_ptr<Graphics> m_gdi_handle;
 		Math::Vector2 m_size;
 		Math::Vector2 m_offset;
+		Math::Vector2 m_rotation_offset;
 	};
 
 	inline void ImageWrapper::flip()
@@ -50,6 +54,43 @@ namespace Fortress
 	inline void ImageWrapper::set_offset(const Math::Vector2& offset)
 	{
 		m_offset = offset;
+	}
+
+	/**
+	 * \brief A offset for rotation mid point
+	 * \param offset a offset to manipulate mid point
+	 */
+	inline void ImageWrapper::set_rotation_offset(const Math::Vector2& offset)
+	{
+		m_rotation_offset = offset;
+	}
+
+	inline void ImageWrapper::copy_to(HDC target) const
+	{
+		Graphics temp(target);
+
+		temp.DrawImage(m_image.get(), 0.0f, 0.0f, m_size.get_x(), m_size.get_y());
+	}
+
+	inline void ImageWrapper::tile_copy_to(const Math::Vector2& size, HDC target) const
+	{
+		Graphics temp(target);
+
+		float start_x = 0;
+		float start_y = 0;
+
+		for(; 
+			start_y < size.get_y(); 
+			start_y += m_size.get_y())
+		{
+			for(; 
+				start_x < size.get_x(); 
+				start_x += m_size.get_x())
+			{
+				temp.DrawImage(m_image.get(), start_x, start_y);
+			}
+		}
+
 	}
 
 	inline void ImageWrapper::render(
@@ -64,8 +105,9 @@ namespace Fortress
 			const Math::Vector2 hitbox_diff = hitbox - scaled_m_size;
 
 			const Math::Vector2 top_left = center_position + hitbox_diff + m_offset;
-			const Math::Vector2 image_mid = top_left + scaled_m_size / 2;
-			Debug::draw_dot(top_left);
+			const Math::Vector2 image_mid = (top_left + scaled_m_size / 2) + m_rotation_offset;
+
+			Debug::draw_rect(top_left, m_size, RGB(0, 0, 255));
 			Debug::draw_dot(image_mid);
 
 			if(rotate_degree != 0.0f)
@@ -113,8 +155,10 @@ namespace Fortress
 		m_image(nullptr),
 		m_gdi_handle(nullptr),
 		m_size{},
-		m_offset{}
+		m_offset{},
+		m_rotation_offset{}
 	{
+		ImageWrapper::load();
 	}
 
 	inline bool ImageWrapper::load()

@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="Windows">
@@ -55,6 +55,15 @@
     <Filter Include="Round">
       <UniqueIdentifier>{f4b210bc-87ac-4022-a08a-6986f8a21e86}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Controller">
+      <UniqueIdentifier>{4e554c30-0fd4-412f-830a-0a6f9c91fe77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Timer">
+      <UniqueIdentifier>{46efa7e6-0f81-43aa-8a84-7055dc81a8cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Engine\Manager">
+      <UniqueIdentifier>{8c129458-bb09-4bd5-8f0f-a49ffb9baa34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -81,9 +90,6 @@
     <ClInclude Include="titleScene.h">
       <Filter>Scene</Filter>
     </ClInclude>
-    <ClInclude Include="BattleScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="ground.hpp">
       <Filter>Object</Filter>
     </ClInclude>
@@ -92,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="debug.hpp">
       <Filter>Engine\Common</Filter>
+    </ClInclude>
+    <ClInclude Include="DoubleDamageItem.hpp">
+      <Filter>Item</Filter>
     </ClInclude>
     <ClInclude Include="rigidBody.hpp">
       <Filter>Engine\Abstracts</Filter>
@@ -129,16 +138,10 @@
     <ClInclude Include="resource.hpp">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
-    <ClInclude Include="LoadingScene.h">
-      <Filter>Scene</Filter>
-    </ClInclude>
     <ClInclude Include="GuidedMissileProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClInclude>
     <ClInclude Include="sound.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClInclude>
-    <ClInclude Include="SoundManager.hpp">
       <Filter>Engine\Resource</Filter>
     </ClInclude>
     <ClInclude Include="SoundPack.hpp">
@@ -152,9 +155,6 @@
     </ClInclude>
     <ClInclude Include="DesertMap.hpp">
       <Filter>Map</Filter>
-    </ClInclude>
-    <ClInclude Include="item.hpp">
-      <Filter>Engine\Abstracts</Filter>
     </ClInclude>
     <ClInclude Include="DoubleShotItem.hpp">
       <Filter>Item</Filter>
@@ -174,16 +174,10 @@
     <ClInclude Include="application.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Timer.hpp">
-      <Filter>Engine\Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Radar.hpp">
+    <ClInclude Include="Radar.h">
       <Filter>Round</Filter>
     </ClInclude>
     <ClInclude Include="Round.h">
-      <Filter>Round</Filter>
-    </ClInclude>
-    <ClInclude Include="NextPlayerTimer.hpp">
       <Filter>Round</Filter>
     </ClInclude>
     <ClInclude Include="SecwindCharacter.hpp">
@@ -195,8 +189,47 @@
     <ClInclude Include="SummaryScene.hpp">
       <Filter>Scene</Filter>
     </ClInclude>
+    <ClInclude Include="virtual_this.hpp">
+      <Filter>Windows\헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterController.hpp">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectileController.hpp">
+      <Filter>Controller</Filter>
+    </ClInclude>
+    <ClInclude Include="CloudGround.hpp">
+      <Filter>Object</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingScene.hpp">
+      <Filter>Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="SoundManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="TimerManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="NextPlayerTimer.hpp">
+      <Filter>Timer</Filter>
+    </ClInclude>
     <ClInclude Include="ProjectileTimer.hpp">
-      <Filter>Engine\Objects</Filter>
+      <Filter>Timer</Filter>
+    </ClInclude>
+    <ClInclude Include="sceneManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="stateController.hpp">
+      <Filter>Engine\Abstracts</Filter>
+    </ClInclude>
+    <ClInclude Include="BattleScene.h">
+      <Filter>Map</Filter>
+    </ClInclude>
+    <ClInclude Include="item.hpp">
+      <Filter>Item</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -205,12 +238,6 @@
     </ClCompile>
     <ClCompile Include="application.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="sceneManager.hpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="BattleScene.cpp">
-      <Filter>Scene</Filter>
     </ClCompile>
     <ClCompile Include="titleScene.cpp">
       <Filter>Scene</Filter>
@@ -233,13 +260,10 @@
     <ClCompile Include="MissileProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
-    <ClCompile Include="resourceManager.hpp">
-      <Filter>Engine\Resource</Filter>
-    </ClCompile>
     <ClCompile Include="MissileCharacter.hpp">
       <Filter>Characters</Filter>
     </ClCompile>
-    <ClCompile Include="GifWrapper.hpp">
+    <ClCompile Include="GifWrapper.h">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
     <ClCompile Include="BulletinBoardScene.cpp">
@@ -254,17 +278,8 @@
     <ClCompile Include="Texture.hpp">
       <Filter>Engine\Resource</Filter>
     </ClCompile>
-    <ClCompile Include="LoadingScene.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="rigidBody.cpp">
       <Filter>Engine\Abstracts</Filter>
-    </ClCompile>
-    <ClCompile Include="objectManager.hpp">
-      <Filter>Engine\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="cameraManager.hpp">
-      <Filter>Engine\Common</Filter>
     </ClCompile>
     <ClCompile Include="CannonCharacter.hpp">
       <Filter>Characters</Filter>
@@ -278,12 +293,6 @@
     <ClCompile Include="PrecisionCannonProjectile.hpp">
       <Filter>Projectiles</Filter>
     </ClCompile>
-    <ClCompile Include="characterAnim.cpp">
-      <Filter>Engine\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="characterState.cpp">
-      <Filter>Engine\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="characterCollision.cpp">
       <Filter>Engine\Objects</Filter>
     </ClCompile>
@@ -292,6 +301,51 @@
     </ClCompile>
     <ClCompile Include="Round.cpp">
       <Filter>Round</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectileController.cpp">
+      <Filter>Controller</Filter>
+    </ClCompile>
+    <ClCompile Include="EgyptGround.hpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="EgyptStairway.hpp">
+      <Filter>Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GifWrapper.cpp">
+      <Filter>Engine\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="cameraManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="objectManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="resourceManager.hpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="GifTimer.hpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="sceneManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="BattleScene.cpp">
+      <Filter>Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Radar.cpp">
+      <Filter>Round</Filter>
+    </ClCompile>
+    <ClCompile Include="TimerManager.cpp">
+      <Filter>Engine\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Timer</Filter>
+    </ClCompile>
+    <ClCompile Include="vector2.cpp">
+      <Filter>Engine\Math</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,7 @@
 #include "deltatime.hpp"
 #include "math.h"
 #include "sceneManager.hpp"
+#include "scene.hpp"
 
 namespace Fortress::Abstract
 {
@@ -25,7 +26,6 @@ namespace Fortress::Abstract
 
 	void rigidBody::initialize()
 	{
-		object::initialize();
 	}
 
 	void rigidBody::update()
@@ -57,11 +57,25 @@ namespace Fortress::Abstract
 
 			if(code != CollisionCode::None)
 			{
+				// @todo: verification is needed.
+				// sorts out small to big
+				const rigidBody* small_object = 
+					m_hitbox.magnitude() <= rb->m_hitbox.magnitude() ? this : rb.get();
+				const rigidBody* big_object = small_object == this ? rb.get() : this;
+
+				// gets the direction vector for position.
+				const DirVector dir = (small_object->get_center() - big_object->get_center()).normalized();
+
+				// if left object intersects with right from top left, then the direction will be
+				// top left from center. plus, hitbox needs to be considered for the nearest position.
+				// if the object collided, at least, two objects meet each other, in range of hitbox.
+				// for that, reverse the direction to get the hitbox included value, which is, in above
+				// example, bottom right.
+				const eDirVector eDir = Math::Vector2::to_dir_enum(-dir);
+				GlobalPosition collision_point = small_object->get_dir_point(eDir);
+
 				collided = true;
-				on_collision(
-					code,
-					to_hit_vector(get_center(), rb->get_center()),
-					rb);
+				on_collision(code, collision_point, rb);
 			}
 		}
 
@@ -76,6 +90,22 @@ namespace Fortress::Abstract
 		if(m_bGravity)
 		{
 			apply_gravity();
+		}
+	}
+
+	void rigidBody::render()
+	{
+		object::render();
+
+		const auto ptr = Scene::SceneManager::get_active_scene();
+
+		if(const auto scene = ptr.lock())
+		{
+			if(const auto camera = scene->get_camera().lock())
+			{
+				const auto position = camera->get_relative_position(downcast_from_this<object>());
+				Debug::draw_rect(position, m_hitbox, RGB(255, 0, 0));
+			}
 		}
 	}
 
@@ -173,9 +203,31 @@ namespace Fortress::Abstract
 		return m_user_pitch_radian;
 	}
 
-	Math::Vector2 rigidBody::get_offset() const
+	bool rigidBody::is_moving_toward(const rigidBody& other) const
+	{
+		const DirVector dir = (get_center() - other.get_center()).normalized();
+		return get_velocity_offset() != dir.x_dir();
+	}
+
+	bool rigidBody::is_facing_toward(const rigidBody& other) const
+	{
+		const DirVector dir = (get_center() - other.get_center()).normalized();
+		return get_offset() != dir.x_dir();
+	}
+
+	const Math::Vector2& rigidBody::get_velocity() const
+	{
+		return m_velocity;
+	}
+
+	const Math::Vector2& rigidBody::get_offset() const
 	{
 		return m_offset;
+	}
+
+	const Math::Vector2& rigidBody::get_backward_offset() const
+	{
+		return m_offset == Math::left ? Math::right : Math::left;
 	}
 
 	Math::Vector2 rigidBody::get_mixed_offset() const
@@ -198,11 +250,25 @@ namespace Fortress::Abstract
 		return get_offset() == Math::left ? get_left() : get_right();
 	}
 
+	Math::Vector2 rigidBody::get_offset_backward_position() const
+	{
+		return get_offset() == Math::left ? get_right() : get_left();
+	}
+
 	Math::Vector2 rigidBody::get_offset_bottom_forward_position() const
 	{
 		return get_offset() == Math::left ? get_bottom_left() : get_bottom_right();
 	}
 
+	Math::Vector2 rigidBody::get_offset_bottom_backward_position() const
+	{
+		return get_offset() == Math::left ? get_bottom_right() : get_bottom_left();
+	}
+
+	Math::Vector2 rigidBody::get_offset_top_forward_position() const
+	{
+		return get_offset() == Math::left ? get_top_left() : get_top_right();
+	}
 
 	Math::Vector2 rigidBody::get_velocity_forward_position() const
 	{
@@ -214,7 +280,7 @@ namespace Fortress::Abstract
 		m_offset = offset;
 	}
 
-	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other)
+	void rigidBody::on_collision(const CollisionCode& collision, const Math::Vector2& collision_point, const std::weak_ptr<rigidBody>& other)
 	{
 	}
 
@@ -293,6 +359,11 @@ namespace Fortress::Abstract
 		m_speed = speed;
 	}
 
+	void rigidBody::set_hitbox(const Math::Vector2& hitbox)
+	{
+		m_hitbox = hitbox;
+	}
+
 	void rigidBody::apply_gravity()
 	{
 		// free-falling
@@ -331,5 +402,19 @@ namespace Fortress::Abstract
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
 		*this += m_velocity * m_curr_speed * DeltaTime::get_deltaTime();
 		m_curr_speed += m_acceleration * DeltaTime::get_deltaTime() * 0.5f;
+	}
+
+	void rigidBody::modify_current_speed(const AccelVector& speed)
+	{
+		const DirVector dir = speed.x_dir();
+
+		if(get_velocity_offset() == dir)
+		{
+			m_curr_speed += speed.abs() * DeltaTime::get_deltaTime();
+		}
+		else
+		{
+			m_curr_speed -= speed.abs() * DeltaTime::get_deltaTime();
+		}
 	}
 }

@@ -24,10 +24,15 @@ namespace Fortress
 		void render();
 		static void cleanup();
 
+		static std::weak_ptr<Font> get_font();
+
 	private:
 		HWND m_hwnd;
 		HDC m_hdc;
 		HDC m_buffer_hdc;
+
+		inline static std::shared_ptr<Font> m_font;
+		std::unique_ptr<PrivateFontCollection> m_font_collection;
 	};
 }
 

@@ -20,7 +20,6 @@ namespace Fortress::Object
 			const Math::Vector2& orientation)
 			:
 			character(
-				player_id,
 				name,
 				L"secwind",
 				orientation,
@@ -35,6 +34,7 @@ namespace Fortress::Object
 		{
 			initialize();
 		}
+
 		SecwindCharacter& operator=(const SecwindCharacter& other) = default;
 		SecwindCharacter& operator=(SecwindCharacter&& other) = default;
 		SecwindCharacter(const SecwindCharacter& other) = default;
@@ -43,8 +43,18 @@ namespace Fortress::Object
 
 		void initialize() override
 		{
+			set_sprite_offset(L"fire", L"right", {45.0f, 0.0f});
+			set_sprite_offset(L"fire_sub", L"right", {45.0f, 0.0f});
+			set_sprite_offset(L"charging", L"right", {15.0f, 0.0f});
+			set_sprite_offset(L"idle", L"right", {30.0f, 0.0f});
+			set_sprite_offset(L"idle_low", L"right", {30.0f, 0.0f});
+
+			set_sprite_offset(L"projectile", L"left", {39.5f, 0.0f});
+			set_sprite_rotation_offset(L"projectile", L"left", {-39.5f, 0.0f});
+
 			character::initialize();
 		}
+
 	protected:
 		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
 		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;

@@ -3,8 +3,10 @@
 #define SUMMARYSCENE_H
 
 #include "ImageWrapper.hpp"
-#include "Round.hpp"
+#include "Round.h"
+#include "input.hpp"
 #include "sceneManager.hpp"
+#include "scene.hpp"
 #include "sound.hpp"
 
 namespace Fortress::Scene
@@ -14,6 +16,7 @@ namespace Fortress::Scene
 	public:
 		SummaryScene(std::shared_ptr<Round>& round) : scene(L"Summary Scene")
 		{
+			initialize();
 			m_round = std::move(round);
 		}
 

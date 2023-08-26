@@ -3,7 +3,27 @@
 
 namespace Fortress::ObjectBase
 {
-	void character::ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground)
+	bool character::check_angle(const GlobalPosition& position, const GroundPointer& ground_ptr) const
+	{
+		if(const auto ground = ground_ptr.lock())
+		{
+			const auto offset = get_velocity_offset();
+
+			const auto unit = (position - get_bottom()).normalized();
+			const auto radian = unit.unit_angle();
+			// if target position is behind of character, add +180.0d
+			const auto positional_radian = unit.get_x() < 0 ? Math::flip_radian_polarity(radian) : radian;
+			const auto reset_polarity = std::fabs(positional_radian);
+			const auto velocity_radian = offset == Math::left ? -reset_polarity : reset_polarity;
+			const auto degree = Math::to_degree(velocity_radian);
+
+			return degree <= 80.0f;
+		}
+
+		return false;
+	}
+
+	void character::ground_walk(const CollisionCode& collision, const GroundPointer& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
@@ -15,7 +35,19 @@ namespace Fortress::ObjectBase
 			{
 				if (get_state() == eCharacterState::Move) 
 				{
-					if (bottom_check == Object::GroundState::NotDestroyed)
+					const auto candidate = get_next_velocity(bottom_local_position, ground);
+
+					if (candidate == Math::Vector2{})
+					{
+						return;
+					}
+
+					if (candidate != Math::vector_inf)
+					{
+						m_velocity = candidate;
+					}
+
+					if (candidate != Math::vector_inf && bottom_check == Object::GroundState::NotDestroyed)
 					{
 						if (ground->safe_is_object_stuck_global(get_bottom()))
 						{
@@ -24,23 +56,19 @@ namespace Fortress::ObjectBase
 						}
 					}
 
-					const auto candidate = get_next_velocity(bottom_local_position, ground);
+					// check ground stiffness;
+					const auto mid_ground = get_forward_ground(ground, false);
 
-					if (candidate == Math::Vector2{})
+					if (is_moving_toward(*ground) && !check_angle(mid_ground, ground))
 					{
-						return;
-					}
-
-					if (m_bGrounded && candidate != Math::vector_inf)
-					{
-						m_velocity = candidate;
+						m_velocity = {};
 					}
 				}
 			}
 		}
 	}
 
-	void character::ground_gravity(const std::weak_ptr<Object::Ground>& ptr_ground)
+	void character::ground_gravity(const GroundPointer& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
@@ -69,7 +97,7 @@ namespace Fortress::ObjectBase
 		}
 	}
 
-	void character::ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground)
+	void character::ground_pitching(const GroundPointer& ptr_ground)
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
@@ -89,8 +117,7 @@ namespace Fortress::ObjectBase
 			for(int x = 0; x < m_hitbox.get_x(); ++x)
 			{
 				delta = ground->safe_orthogonal_surface_global(
-					next_surface + 
-					search_vector * x,
+					next_surface + search_vector * x,
 					m_hitbox.get_y() / 2);
 
 				if(delta != Math::vector_inf)
@@ -107,34 +134,82 @@ namespace Fortress::ObjectBase
 			}
 			next_surface += delta;
 
-			Debug::draw_dot(next_surface);
 			auto rotate_radian = next_surface.local_inner_angle(get_bottom());
 
 			set_movement_pitch_radian(rotate_radian);
 		}
 	}
 
-	Math::Vector2 character::get_next_velocity(
-		const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr) const
+	/**
+	 * \brief gets nearest ground in parallel, in depth of the half of hitbox of y-axis.
+	 * \param ground_ptr ground pointer
+	 * \param reverse if true, search starts from bottom
+	 * \return nearest ground vector, inf if it has found nothing.
+	 */
+	Math::Vector2 character::get_forward_ground(
+		const GroundPointer& ground_ptr,
+		const bool& reverse = false) const
 	{
-		bool angle_check = false;
-		bool climable = false;
-		Math::Vector2 candidate{};
+		if (const auto ground = ground_ptr.lock())
+		{
+			const bool uphilling = is_moving_toward(*ground);
+
+			// flipping is needed because hitbox is inside of the ground if character is moving forward to ground.
+			const auto ray_start_pos = uphilling ? get_offset_backward_position() : get_offset_forward_position();
+			// uphilling = shoots ray toward to moving position
+			// downhilling = shoots ray toward to backward position (wall is at the behind of character)
+			const auto offset = uphilling ? get_offset() : get_backward_offset();
+
+			return search_ground(ground_ptr, ray_start_pos, offset, reverse);
+		}
+
+		return Math::vector_inf;
+	}
+
+	GlobalPosition character::search_ground(
+		const GroundPointer& ground,
+		const GlobalPosition& start_position, 
+		const UnitVector& offset,
+		bool reverse = false) const
+	{
+		int start_y = reverse ? m_hitbox.get_y() / 2 : 0;
+		int end_y = reverse ? 0 : m_hitbox.get_y();
+
+		for(int y = start_y;
+			reverse ? (y >= end_y) : (y < end_y); 
+			reverse ? y-- : y++)
+		{
+			const auto current_position = start_position + Math::Vector2{0.0f, y};
+			const auto next_position = ground.lock()->safe_parallel_surface_global(
+				current_position, 
+				offset) + current_position;
+
+			const auto unit = (next_position - get_bottom()).normalized();
+			const auto radian = unit.unit_angle();
+
+			if(unit == Math::zero || std::isnan(radian))
+			{
+				continue;
+			}
+
+			return next_position;
+		}
+
+		return Math::vector_inf;
+	}
+
+	Math::Vector2 character::get_next_velocity(
+		const Math::Vector2& local_position_bottom, const GroundPointer& ground_ptr) const
+	{
+		Math::Vector2 candidate = Math::vector_inf;
 
 		if (const auto ground = ground_ptr.lock())
 		{
 			// check up-hilling condition
-			for(int x = 0; x < 10; x++)
+			for(int x = 1; x < 100; x++)
 			{
-				if (angle_check && climable) 
-				{
-					break;
-				}
-
-				angle_check = false;
-
 				// searching in reverse. we need to check whether how stiff the curve is.
-				for(int y = 99; y >= 0; --y)
+				for(int y = 99; y >= 1; --y)
 				{
 					Math::Vector2 local_new_pos = {
 						local_position_bottom.get_x() + 
@@ -152,38 +227,29 @@ namespace Fortress::ObjectBase
 						continue;
 					}
 
+					if(unit == Math::Vector2{})
+					{
+						continue;
+					}
+
 					if (ground_check == Object::GroundState::NotDestroyed)
 					{
-						if (!angle_check)
-						{
-							if (std::fabs(Math::to_degree(local_position_bottom.local_inner_angle(local_new_pos)))
-								>= 60.0f || ground->safe_is_object_stuck_local(local_new_pos)) 
-							{
-								// @todo: fixed animation
-								angle_check = false;
-								climable = false;
-								candidate = Math::vector_inf;
-							}
-							
-							climable = true;
-							angle_check = true;
-						}
-
 						candidate = unit;
+						return candidate;
 					}
 				}
 			}
 
-			if(climable)
+			if(candidate != Math::vector_inf)
 			{
 				return candidate;
 			}
 
-			candidate = {};
+			candidate = Math::vector_inf;
 
-			for(int i = 0; i < 10; i++)
+			for(int i = 1; i < 10; i++)
 			{
-				for(int j = 0; j < 100; ++j)
+				for(int j = 1; j < 100; ++j)
 				{
 					Math::Vector2 local_new_pos = {
 						local_position_bottom.get_x() + 
@@ -200,6 +266,12 @@ namespace Fortress::ObjectBase
 						continue;
 					}
 
+					if(unit == Math::Vector2{} || 
+						ground_check == Object::GroundState::OutOfBound)
+					{
+						continue;
+					}
+
 					if (ground_check == Object::GroundState::NotDestroyed)
 					{
 						candidate = unit;
@@ -209,15 +281,10 @@ namespace Fortress::ObjectBase
 			}
 		}
 
-		if (!angle_check || !climable) 
-		{
-			candidate = Math::vector_inf;
-		}
-
 		return candidate;
 	}
 
-	void character::on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other)
+	void character::on_collision(const CollisionCode& collision, const GlobalPosition& collision_point, const std::weak_ptr<Abstract::rigidBody>& other)
 	{
 		if(const auto ground = std::dynamic_pointer_cast<Object::Ground>(other.lock()))
 		{
@@ -233,6 +300,14 @@ namespace Fortress::ObjectBase
 			// This ground is orthogonal surface. it will be treated as "main" ground.
 			if(orthogonal_surface != Math::vector_inf)
 			{
+				if (get_state() == eCharacterState::TurnEnd)
+				{
+					if (ground->safe_is_object_stuck_global(get_bottom()))
+					{
+						m_position -= ground->safe_nearest_surface(get_bottom());
+					}
+				}
+
 				ground_walk(collision, ground);
 				ground_gravity(ground);
 				ground_pitching(ground);
@@ -242,22 +317,34 @@ namespace Fortress::ObjectBase
 				// If this ground is not orthogonal surface, probably this will exists in left or right, top side.
 				// not-main ground is low enough to pass, then move it to the not-main ground.
 				// remaining gravity or pitching control will be handled when the not-main becomes main.
-				const Math::Vector2 bottom_local_position = ground->to_top_left_local_position(get_bottom());
-				const auto possible_velocity = get_next_velocity(bottom_local_position, ground);
 
-				if(possible_velocity != Math::vector_inf)
-				{
-					m_velocity = possible_velocity;
-				}
-				else if((left_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::left) || 
-					(right_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::right))
+				if(get_state() == eCharacterState::Move &&
+					((left_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::left) || 
+					(right_check == Object::GroundState::NotDestroyed && get_velocity_offset() == Math::right)))
 				{
 					m_velocity = {};
+				}
+				else if (get_state() == eCharacterState::Move)
+				{
+					const auto bottom_local_position = ground->to_top_left_local_position(get_bottom());
+					const auto next_velocity = get_next_velocity(bottom_local_position, ground);
+					const auto is_toward = is_moving_toward(*ground);
+
+					Debug::Log(L"Ground : " + ground->get_name());
+					Debug::Log(L"Is Toward:" + std::to_wstring(is_toward));
+					Debug::Log(L"Velocity : " + std::to_wstring(next_velocity.get_x()) + L" , " + 
+						std::to_wstring(next_velocity.get_y()));
+					
+					// @todo : inconsistency, need to find out why this is not working
+					if(is_toward && next_velocity != Math::vector_inf)
+					{
+						m_velocity = next_velocity;
+					}
 				}
 			}
 		}
 
-		rigidBody::on_collision(collision, hit_vector, other);
+		rigidBody::on_collision(collision, collision_point, other);
 	}
 
 	void character::on_nocollison()

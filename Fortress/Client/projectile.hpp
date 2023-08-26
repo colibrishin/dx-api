@@ -3,13 +3,14 @@
 #define PROJECTILE_HPP
 
 #include "character.hpp"
+#include "ProjectileController.hpp"
 #include "rigidBody.hpp"
 
 namespace Fortress::ObjectBase
 {
 	constexpr float default_explosion_radius = 10.0f;
 
-	class projectile : public Abstract::rigidBody
+	class projectile : public Abstract::rigidBody, public Controller::ProjectileController
 	{
 	public:
 		projectile() = delete;
@@ -22,30 +23,23 @@ namespace Fortress::ObjectBase
 		static Math::Vector2 projectile_speed_getter(const std::wstring& short_name, const std::wstring& type);
 
 		void initialize() override;
-		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
-		virtual void update() override;
-		void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other) override;
-		virtual void render() override;
-		virtual void prerender();
+		void update() override;
+		void render() override;
+		void prerender() override;
+
 		const character* get_origin() const;
 
-		void explosion_near_ground(const Math::Vector2& hit_vector) const;
+		void on_collision(
+			const CollisionCode& collision, 
+			const GlobalPosition& collision_point,
+			const std::weak_ptr<rigidBody>& other) override;
 
-		void reset_cooldown();
-		bool is_cooldown() const;
-		bool is_exploded() const;
-		void up_hit_count();
-		int get_hit_count() const;
-		int get_fire_count() const;
-		int get_max_hit_count() const;
-		virtual void play_fire_sound() = 0;
-		virtual void play_hit_sound() = 0;
+		virtual void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged);
 
-		const std::weak_ptr<GifWrapper>& get_current_sprite() const;
-		int get_radius() const;
+		float get_radius() const;
 		float get_damage() const;
 		float get_penetration_rate() const;
-		const Math::Vector2& get_fired_position() const;
+
 	protected:
 		projectile(
 			const character* shooter,
@@ -60,48 +54,21 @@ namespace Fortress::ObjectBase
 			const float radius,
 			const int hit_count,
 			const int fire_count,
-			const float armor_penetration) :
-			rigidBody(name, position, {30.0f, 30.0f}, velocity, mass, speed, acceleration, true),
-			m_damage(damage),
-			m_radius(radius),
-			m_max_hit_count(hit_count),
-			m_curr_hit_count(0),
-			m_fire_count(fire_count),
-			m_hit_cooldown(0),
-			m_armor_penetration(armor_penetration),
-			m_bExploded(false),
-			m_wind_acceleration(),
-			m_shooter(shooter),
-			m_texture(short_name),
-			m_sound_pack(short_name)
-		{
-			projectile::initialize();
-		}
+			const float armor_penetration);
+
+		void move() override;
+		void fire() override;
+		void flying() override;
+		void hit() override;
+		void destroyed() override;
 
 	private:
 		float m_damage;
-		int m_radius;
-		const int m_max_hit_count;
-		int m_curr_hit_count;
-		int m_fire_count;
-
-		float m_hit_cooldown;
+		float m_radius;
 		float m_armor_penetration;
 
-		bool m_bExploded;
-
 		Math::Vector2 m_wind_acceleration;
-
-		const character* m_shooter;
-		Texture<GifWrapper> m_texture;
-		std::weak_ptr<GifWrapper> m_current_sprite;
-		Math::Vector2 m_fired_position;
-		Math::Vector2 m_previous_position;
-
-	protected:
-		virtual void post_hit();
-
-		SoundPack m_sound_pack;
+		const character* const m_shooter;
 	};
 }
 #endif // PROJECTILE_HPP

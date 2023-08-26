@@ -2,7 +2,7 @@
 #ifndef MISSILECHARACTER_HPP
 #define MISSILECHARACTER_HPP
 #include "character.hpp"
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "GuidedMissileProjectile.hpp"
 #include "math.h"
 #include "MissileProjectile.hpp"
@@ -21,7 +21,6 @@ namespace Fortress::Object
 			const Math::Vector2& orientation)
 			:
 			character(
-				player_id,
 				name,
 				L"missile",
 				orientation,
@@ -45,12 +44,14 @@ namespace Fortress::Object
 		void initialize() override
 		{
 			set_sprite_offset(L"fire", L"right", {0, 10.0f});
-			set_sprite_offset(L"fire", L"left", {0, 10.0f});
+			set_sprite_offset(L"fire", L"left", {45.0f, 10.0f});
 			set_sprite_offset(L"charging", L"right", {0, 10.0f});
-			set_sprite_offset(L"charging", L"left", {0, 10.0f});
+			set_sprite_offset(L"charging", L"left", {45.0f, 10.0f});
 			set_sprite_offset(L"idle", L"left", {15.0f, 0.0f});
-			// @todo: if renderer replaces the negative hitbox as abs, this might be not needed.
-			set_sprite_offset(L"projectile", L"left", {40.0f, 0.0f});
+
+			// half of image size
+			set_sprite_offset(L"projectile", L"left", {46.f, 10.0f});
+			set_sprite_rotation_offset(L"projectile", L"left", {-46.f, -10.0f});
 
 			character::initialize();
 		}

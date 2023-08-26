@@ -2,7 +2,7 @@
 #ifndef ENERGYBALLPROJECTILE_HPP
 #define ENERGYBALLPROJECTILE_HPP
 
-#include "GifWrapper.hpp"
+#include "GifWrapper.h"
 #include "projectile.hpp"
 #include "math.h"  // NOLINT(modernize-deprecated-headers)
 #include "resourceManager.hpp"
@@ -22,7 +22,7 @@ namespace Fortress::Object
 			5.0f,
 			projectile_speed_getter(L"secwind", L"main"), 
 			{}, 
-			10.0f,
+			30.0f,
 			30,
 			1,
 			1,

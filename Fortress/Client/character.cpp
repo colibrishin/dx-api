@@ -1,31 +1,47 @@
 #include "character.hpp"
 
-#include "deltatime.hpp"
-#include "DoubleShotItem.hpp"
 #include "ground.hpp"
 #include "input.hpp"
 #include "projectile.hpp"
-#include "TeleportItem.hpp"
+#include "ProjectileController.hpp"
 #include "NutshellProjectile.hpp"
-#include "RepairItem.hpp"
+#include "CharacterController.hpp"
 
 #undef max
 #undef min
 
 namespace Fortress::ObjectBase
 {
+	character::~character()
+	{
+		TimerManager::remove(m_multi_projectile_timer);
+	}
+
 	void character::initialize()
 	{
-		set_current_sprite(eCharacterAnim::Idle);
-		set_state(eCharacterState::Idle);
 		rigidBody::initialize();
-		m_available_items.emplace(1, std::make_shared<Item::DoubleShotItem>());
-		m_available_items.emplace(2, std::make_shared<Item::TeleportItem>());
-		m_available_items.emplace(3, std::make_shared<Item::RepairItem>());
+		CharacterController::initialize();
+		m_multi_projectile_timer = TimerManager::create<ProjectileTimer>(
+			&character::initialize_projectile, this);
+	}
+
+	void character::update()
+	{
+		rigidBody::update();
+		CharacterController::update();
+	}
+
+	void character::prerender()
+	{
+		rigidBody::prerender();
+		CharacterController::prerender();
 	}
 
 	float character::get_damage_pen_dist(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point) const
 	{
+		// most hit takes from boundary, this value is for compensation the error by hits from boundary.
+		const float proximate_close_hit_epsilon = p.lock()->m_hitbox.magnitude() / 3;
+
 		// base damage
 		const float damage = p.lock()->get_damage();
 		// armor penetration rate
@@ -37,7 +53,7 @@ namespace Fortress::ObjectBase
 		const Math::Vector2 near_point = get_nearest_point(hit_point);
 		const float distance = (hit_point - near_point).magnitude();
 		// explosion radius
-		const float radius = static_cast<float>(p.lock()->get_radius());
+		const float radius = p.lock()->get_radius();
 
 		// pen vs armor. armor gets bigger, value gets smaller.
 		const float pen_armor_rate = penetration_rate / armor;
@@ -51,28 +67,36 @@ namespace Fortress::ObjectBase
 		const float normalized_rate = std::min(1.0f, std::fabs(pen_armor_rate));
 		const float pen_damage = damage * normalized_rate;
 
+		// see proximate_close_hit_epsilon.
+		const float close_hit_compensation = std::fabs(distance - proximate_close_hit_epsilon);
 		// if hit point is further than radius, damage gets smaller.
-		const float dist_ratio = std::fabs((distance - radius) / radius);
+		const float dist_ratio = logf(close_hit_compensation) / logf(radius);
+		// dist_ratio can be negative value, if it is too close (log scale).
+		const float dist_ratio_flooring = std::max(dist_ratio, 0.0f);
+		const float far_dist_ratio = std::min(1.0f, dist_ratio_flooring);
 
-		const float dist_pen_damage = pen_damage * dist_ratio;
+		const float dist_pen_damage = pen_damage * (1.0f - far_dist_ratio);
 
-		return dist_pen_damage;
+		const int previous_hit_count = get_previous_hit_count();
+		const float consecutive_hit_bonus = dist_pen_damage * (static_cast<float>(previous_hit_count) * 0.25f);
+		float total_damage = dist_pen_damage + consecutive_hit_bonus;
+
+		if(p.lock()->get_origin()->is_double_damage())
+		{
+			total_damage += total_damage;
+		}
+
+		return total_damage;
 	}
 
 	void character::hit(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point)
 	{
-		m_hp -= get_damage_pen_dist(p, hit_point);
-		post_hit();
+		apply_damage(get_damage_pen_dist(p, hit_point));
 	}
 
-	void character::post_hit()
+	void character::fire()
 	{
-		set_state(eCharacterState::Hit);
-	}
-
-	void character::shoot()
-	{
-		m_multi_projectile_timer.reset();
+		m_multi_projectile_timer.lock()->reset();
 
 		float charged = get_charged_power();
 
@@ -93,45 +117,18 @@ namespace Fortress::ObjectBase
 		}
 
 		const std::weak_ptr<projectile> instantiated = initialize_projectile(angle, charged);
-		instantiated.lock()->play_fire_sound();
 
 		const int remaining = instantiated.lock()->get_fire_count() - 1;
 
 		if(remaining > 0)
 		{
-			m_multi_projectile_timer.set_count(remaining);
-			m_multi_projectile_timer.start([this, angle, charged](){initialize_projectile(angle, charged);});
-		}
-	}
-
-	float character::get_charged_power() const
-	{
-		return m_power;
-	}
-
-	float character::get_hp_percentage() const
-	{
-		if(m_hp <= 0.0f)
-		{
-			return 0.0f;
+			m_multi_projectile_timer.lock()->set_count(remaining);
+			m_multi_projectile_timer.lock()->set_angle(angle);
+			m_multi_projectile_timer.lock()->set_charged(charged);
+			m_multi_projectile_timer.lock()->toggle();
 		}
 
-		return m_hp / static_cast<float>(character_full_hp);
-	}
-
-	float character::get_mp_percentage() const
-	{
-		if(m_hp <= 0.0f)
-		{
-			return 0.0f;
-		}
-
-		return m_mp / static_cast<float>(character_full_mp);
-	}
-
-	float character::get_hp_raw() const
-	{
-		return m_hp;
+		CharacterController::fire();
 	}
 
 	float character::get_armor() const
@@ -184,23 +181,21 @@ namespace Fortress::ObjectBase
 		{
 			const auto camera_ptr = Scene::SceneManager::get_active_scene().lock()->get_camera().lock();
 
-			if(camera_ptr->get_locked_object().lock() == std::dynamic_pointer_cast<object>(shared_from_this()))
+			if(camera_ptr->get_locked_object().lock() == 
+				std::dynamic_pointer_cast<object>(rigidBody::shared_from_this()))
 			{
 				pos = camera_ptr->get_offset(m_hitbox);
 			}
 			else
 			{
 				pos = camera_ptr->get_relative_position(
-					std::dynamic_pointer_cast<object>(shared_from_this()));
+					std::dynamic_pointer_cast<object>(rigidBody::shared_from_this()));
 			}
 
 			prerender();
 			render_hp_bar(pos);
 			
 			m_current_sprite.lock()->render(pos, m_hitbox, {1, 1}, Math::to_degree(get_movement_pitch_radian()));
-			
-			Debug::draw_rect(pos, m_hitbox);
-			Debug::draw_dot(camera_ptr->get_offset(m_hitbox));
 
 			// c
 			Debug::draw_line(pos, camera_ptr->get_offset());
@@ -218,107 +213,20 @@ namespace Fortress::ObjectBase
 		rigidBody::render();
 	}
 
-	void character::firing()
-	{
-		if(get_charged_power() < character_max_charge)
-		{
-			m_power += 100.0f * DeltaTime::get_deltaTime();
-		}
-	}
-
-	void character::move()
-	{
-		if (m_mp < Math::epsilon)
-		{
-			return;
-		}
-
-		if (std::fabs(m_velocity.get_x()) > Math::epsilon)
-		{
-			m_mp -= 20.0f * DeltaTime::get_deltaTime();
-		}
-
-		rigidBody::move();
-	}
-
-	void character::change_projectile()
-	{
-		if(m_projectile_type == eProjectileType::Main)
-		{
-			m_projectile_type = eProjectileType::Sub;
-		}
-		else if(m_projectile_type == eProjectileType::Sub)
-		{
-			m_projectile_type = eProjectileType::Main;
-		}
-	}
-
-	void character::equip_nutshell()
-	{
-		m_tmp_projectile_type = m_projectile_type;
-		m_projectile_type = eProjectileType::Nutshell;
-	}
-
 	const std::wstring& character::get_short_name() const
 	{
-		return m_shot_name;
+		return m_short_name;
 	}
 
-	void character::set_hp(const float hp)
-	{
-		if(hp >= character_full_hp)
-		{
-			m_hp = character_full_hp;
-		}
-		else
-		{
-			m_hp = hp;
-		}
-	}
-
-	void character::set_unmovable()
-	{
-		m_bMovable = false;
-	}
-
-	void character::set_movable()
-	{
-		m_bMovable = true;
-	}
-
-	void character::unequip_nutshell()
-	{
-		if(m_tmp_projectile_type != eProjectileType::Nutshell && m_projectile_type == eProjectileType::Nutshell)
-		{
-			m_projectile_type = m_tmp_projectile_type;
-		}
-	}
-
-	void character::reset_mp()
-	{
-		m_mp = character_full_mp;
-	}
-
-	void character::set_sprite_offset(const std::wstring& name, const std::wstring& orientation,
-		const Math::Vector2& offset)
-	{
-		m_texture.get_image(name, orientation).lock()->set_offset(offset);
-	}
-
-	const std::wstring& character::get_current_sprite_name() const
-	{
-		return m_current_sprite.lock()->get_name();
-	}
-
-	std::weak_ptr<projectile> character::initialize_projectile(const Math::Vector2& angle, const float charged)
+	ProjectilePointer character::initialize_projectile(const Math::Vector2& angle, const float charged)
 	{
 		std::weak_ptr<projectile> instantiated;
 
-		if(m_projectile_type == eProjectileType::Main)
+		if(get_projectile_type() == eProjectileType::Main)
 		{
 			instantiated = get_main_projectile();
 		}
-		else if(m_projectile_type == eProjectileType::Sub)
+		else if(get_projectile_type() == eProjectileType::Sub)
 		{
 			instantiated = get_sub_projectile();
 		}
@@ -329,11 +237,13 @@ namespace Fortress::ObjectBase
 
 		const auto projectile = instantiated.lock();
 
-		const auto forward = Math::Vector2{get_offset().get_x(), -1} * projectile->m_hitbox.get_x();
+		// thinking as virtual circle which has an radius of projectile size + half of character hitbox,
+		// with an top left/right toward to.
+		const auto forward = Math::Vector2{get_offset().get_x(), -1} * (projectile->m_hitbox);
 		const auto forward_rotation = forward.rotate(get_movement_pitch_radian());
 
 		projectile->fire(
-			(get_offset() == Math::left ? get_top_left() : get_top_right()) + forward_rotation, 
+			get_offset_top_forward_position() + forward_rotation, 
 			angle, 
 			charged);
 
@@ -342,132 +252,65 @@ namespace Fortress::ObjectBase
 			scene->add_game_object(Abstract::LayerType::Projectile, projectile);
 		}
 
+		add_active_projectile(projectile);
+
 		return instantiated;
 	}
 
-	eProjectileType character::get_projectile_type() const
+	character::character(
+			const std::wstring& name,
+			const std::wstring& short_name,
+			const Math::Vector2& offset,
+			const Math::Vector2& position,
+			const Math::Vector2& velocity,
+			const float mass,
+			const Math::Vector2& speed,
+			const Math::Vector2& acceleration,
+			const int hp,
+			const int mp,
+			const float armor):
+			rigidBody(
+				name, 
+				position, 
+				{50.0f, 50.0f}, 
+				velocity,
+				mass, 
+				speed, 
+				acceleration, 
+				true),
+			CharacterController(
+				short_name, 
+				hp, 
+				mp,
+				this),
+			m_bGrounded(false),
+			m_short_name(short_name),
+			m_armor(armor)
+		{
+		}
+
+
+	void character::move()
 	{
-		return m_projectile_type;
-	}
-
-	bool character::is_projectile_fire_counted() const
-	{
-		const auto scene = Scene::SceneManager::get_active_scene().lock();
-		const auto projectile_list = scene->get_objects<projectile>();
-
-		if(projectile_list.empty())
-		{
-			return false;
-		}
-
-		int exploded = 0;
-		int fire_count = 0;
-
-		for(const auto& prj : projectile_list)
-		{
-			if(const auto projectile = prj.lock())
-			{
-				fire_count = std::max(fire_count, projectile->get_fire_count());
-
-				if(projectile->is_exploded() && projectile->get_origin() == this)
-				{
-					exploded++;
-				}
-			}
-		}
-
-		return fire_count == exploded;
-	}
-
-	bool character::is_projectile_active() const
-	{
-		const auto scene = Scene::SceneManager::get_active_scene().lock();
-		const auto projectile_list = scene->get_objects<projectile>();
-
-		if(projectile_list.empty())
-		{
-			return false;
-		}
-
-		int active_count = 0;
-
-		for(const auto& prj : projectile_list)
-		{
-			if(const auto projectile = prj.lock())
-			{
-				if(projectile->is_active() && projectile->get_origin() == this)
-				{
-					active_count++;
-				}
-			}
-		}
-
-		return active_count != 0;
-	}
-
-	std::weak_ptr<projectile> character::get_one_active_projectile() const
-	{
-		const auto scene = Scene::SceneManager::get_active_scene().lock();
-		const auto projectile_list = scene->get_objects<projectile>();
-
-		if(projectile_list.empty())
-		{
-			return {};
-		}
-
-		for(const auto& prj : projectile_list)
-		{
-			if(const auto projectile = prj.lock())
-			{
-				if(projectile->is_active() && projectile->get_origin() == this)
-				{
-					return prj;
-				}
-			}
-		}
-
-		return {};
-	}
-
-	std::vector<std::weak_ptr<projectile>> character::get_projectiles() const
-	{
-		const auto scene = Scene::SceneManager::get_active_scene().lock();
-		const auto projectile_list = scene->get_objects<projectile>();
-		std::vector<std::weak_ptr<projectile>> ret = {};
-
-		for(const auto& cand : projectile_list)
-		{
-			if(const auto prj = cand.lock())
-			{
-				if(prj->get_origin() == this)
-				{
-					ret.push_back(cand);
-				}
-			}
-		}
-
-		return ret;
+		rigidBody::move();
+		CharacterController::move();
 	}
 
 	void character::move_left()
 	{
 		rigidBody::move_left();
+		CharacterController::move_left();
 	}
 
 	void character::move_right()
 	{
 		rigidBody::move_right();
+		CharacterController::move_right();
 	}
 
 	void character::stop()
 	{
-		if(const auto move_sound = m_sound_pack.get_sound(L"move").lock())
-		{
-			if(move_sound->is_playing())
-			{
-				move_sound->stop(true);
-			}
-		}
 		rigidBody::stop();
+		CharacterController::stop();
 	}
 }
