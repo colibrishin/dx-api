@@ -167,7 +167,7 @@ namespace Fortress::Network::Server
 		LobbyInfoMsg li{{0, eMessageType::LobbyInfo, -1, -1},
 			0, {}, pos, {}};
 
-		std::wmemcpy(li.player_names[0], player_names[0], sizeof(player_names));
+		std::wmemcpy(li.player_names[0], player_names[0], 15 * 15);
 
 		auto reply = create_prewritten_network_message<LobbyInfoMsg>(li);
 		server_socket.send_message(&reply, client_info);
