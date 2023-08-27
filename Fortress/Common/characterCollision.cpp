@@ -103,7 +103,7 @@ namespace Fortress::ObjectBase
 	{
 		if(const auto ground = ptr_ground.lock())
 		{
-			const bool uphilling = is_facing_toward(*ground);
+			const bool uphilling = ground->safe_is_object_stuck_global(get_offset_bottom_forward_position());
 			Math::Vector2 delta{};
 
 			// calculate only downhilling from current position. if character is uphilling then calculate downhilling angle and reverse it.
