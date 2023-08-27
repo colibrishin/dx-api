@@ -32,7 +32,7 @@ namespace Fortress::Item
 		{
 			if (ch->get_projectile_type() == eProjectileType::Nutshell)
 			{
-				if(!ch->is_projectile_active())
+				if(ch->is_projectile_fire_counted() && !ch->is_projectile_active())
 				{
 					const auto prj = *ch->get_projectiles().begin();
 
