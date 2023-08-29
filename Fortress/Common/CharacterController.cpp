@@ -134,7 +134,10 @@ namespace Fortress::Controller
 	void CharacterController::set_unmovable()
 	{
 		m_bMovable = false;
-		stop();
+		if(get_state() == eCharacterState::Move)
+		{
+			stop();
+		}
 	}
 
 	void CharacterController::set_movable()

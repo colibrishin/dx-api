@@ -131,7 +131,10 @@ namespace Fortress::Network::Client::Object
 			{
 			case eCharacterState::Idle:
 			case eCharacterState::IdleLow:
-				send_stop();
+				if(m_previous_state_ != eCharacterState::TurnEnd)
+				{
+					send_stop();	
+				}
 				break;
 			case eCharacterState::Move:
 			case eCharacterState::MoveLow:
@@ -186,33 +189,33 @@ namespace Fortress::Network::Client::Object
 					move_right();
 				}
 			}
-			else if (EngineHandle::get_messenger()->get_stop_signal(get_player_id(), &stop_msg))
+			if (EngineHandle::get_messenger()->get_stop_signal(get_player_id(), &stop_msg))
 			{
 				m_position = stop_msg.position;
 				set_offset(stop_msg.offset);
 				set_state(eCharacterState::Idle);
 				stop();
 			}
-			else if (EngineHandle::get_messenger()->get_projectile_select_signal(get_player_id(), &projectile_msg))
+			if (EngineHandle::get_messenger()->get_projectile_select_signal(get_player_id(), &projectile_msg))
 			{
 				m_projectile_type = projectile_msg.prj_type;
 			}
-			else if(EngineHandle::get_messenger()->get_item_signal(get_player_id(), &item_msg))
+			if(EngineHandle::get_messenger()->get_item_signal(get_player_id(), &item_msg))
 			{
 				set_item_active(item_msg.index);
 			}
-			else if (EngineHandle::get_messenger()->get_firing_signal(get_player_id(), &firing_msg))
+			if (EngineHandle::get_messenger()->get_firing_signal(get_player_id(), &firing_msg))
 			{
 				set_offset(firing_msg.offset);
 				set_state(eCharacterState::Firing);
 			}
-			else if (EngineHandle::get_messenger()->get_fire_signal(get_player_id(), &fire_msg))
+			if (EngineHandle::get_messenger()->get_fire_signal(get_player_id(), &fire_msg))
 			{
 				m_power = fire_msg.charged;
 				set_state(eCharacterState::Fire);
 				fire();
 			}
-			else if (m_active_item.lock() && EngineHandle::get_messenger()->get_item_fire_signal(
+			if (m_active_item.lock() && EngineHandle::get_messenger()->get_item_fire_signal(
 				get_player_id(), m_active_item.lock()->get_item_type(), &item_fire_msg))
 			{
 				m_power = item_fire_msg.charged;
