@@ -325,10 +325,7 @@ namespace Fortress::Scene
 	{
 		constexpr float epsilon = 500.0f;
 
-		if(position.get_x() >= -m_map_size.get_x() - epsilon &&
-			position.get_x() <= m_map_size.get_x() + epsilon &&
-			position.get_y() <= m_map_size.get_y() + epsilon &&
-			position.get_y() >= -m_map_size.get_y() - epsilon)
+		if(position.get_y() <= m_map_size.get_y() + epsilon)
 		{
 			return true;
 		}

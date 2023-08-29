@@ -6,7 +6,7 @@ namespace Fortress::Object::Property
 {
 	inline Math::Vector2 projectile_speed_getter(const std::wstring& short_name, const std::wstring& type)
 	{
-		const Math::Vector2 default_projectile_speed = Math::Vector2{2000.0f, 1.0f};
+		const Math::Vector2 default_projectile_speed = Math::Vector2{2000.0f, 2000.0f};
 
 		if(short_name == L"cannon" && type == L"main")
 		{
