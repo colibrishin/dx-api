@@ -1,7 +1,10 @@
 #include "LobbyScene.h"
 
-#include "input.hpp"
-#include "resourceManager.hpp"
+#include "application.h"
+#include "../Common/input.hpp"
+#include "../Common/resourceManager.hpp"
+#include "../Common/debug.hpp"
+#include "../Common/deltatime.hpp"
 
 void Fortress::Scene::LobbyScene::initialize()
 {
@@ -21,6 +24,16 @@ void Fortress::Scene::LobbyScene::update()
 	{
 		SceneManager::SetActive(L"Room Scene");
 	}
+
+	static float lobby_update = 0.0f;
+
+	if(lobby_update >= 1.0f)
+	{
+		EngineHandle::get_messenger()->check_lobby_update(&m_lobby_info_);
+		lobby_update = 0.0f;
+	}
+
+	lobby_update += DeltaTime::get_deltaTime();
 }
 
 void Fortress::Scene::LobbyScene::render()
@@ -28,6 +41,14 @@ void Fortress::Scene::LobbyScene::render()
 	scene::render();
 
 	m_imBackground.lock()->render({0, -20.f}, m_imBackground.lock()->get_hitbox());
+
+	for(const auto& name : m_lobby_info_.player_names)
+	{
+		if(wcslen(name) != 0)
+		{
+			Debug::Log(name);
+		}
+	}
 }
 
 void Fortress::Scene::LobbyScene::deactivate()
@@ -38,6 +59,7 @@ void Fortress::Scene::LobbyScene::deactivate()
 
 void Fortress::Scene::LobbyScene::activate()
 {
+	EngineHandle::get_messenger()->join_lobby(&m_lobby_info_);
 	scene::activate();
 	m_bgm.lock()->play(true);
 }

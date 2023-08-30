@@ -2,25 +2,24 @@
 #ifndef NUTSHELLPROJECTILE_HPP
 #define NUTSHELLPROJECTILE_HPP
 
-#include "GifWrapper.h"
-#include "projectile.hpp"
-#include "math.h"  // NOLINT(modernize-deprecated-headers)
-#include "resourceManager.hpp"
-#include "Texture.hpp"
+#include "ClientProjectile.hpp"
+#include "CharacterProperties.hpp"
+#include "../Common/projectile.hpp"
 
 namespace Fortress::Object
 {
-	class NutShellProjectile final : public ObjectBase::projectile
+	class NutShellProjectile final : public Network::Client::Object::ClientProjectile
 	{
 	public:
-		NutShellProjectile(const ObjectBase::character* shooter) : projectile(
+		NutShellProjectile(const unsigned int id, const ObjectBase::character* shooter) : ClientProjectile(
+			id,
 			shooter,
 			L"Nutshell Projectile",
 			shooter->get_short_name(),
 			{}, 
 			Math::identity,
 			5.0f,
-			projectile_speed_getter(shooter->get_short_name(), L"main"), 
+			Property::projectile_speed_getter(shooter->get_short_name(), L"main"), 
 			{}, 
 			0.0f,
 			1.0f,
@@ -40,11 +39,12 @@ namespace Fortress::Object
 		void initialize() override;
 		virtual void play_hit_sound() override;
 		virtual void play_fire_sound() override;
+		eProjectileType get_type() const override;
 	};
 
 	inline void NutShellProjectile::initialize()
 	{
-		projectile::initialize();
+		ClientProjectile::initialize();
 	}
 
 	inline void NutShellProjectile::play_hit_sound()
@@ -55,6 +55,11 @@ namespace Fortress::Object
 	inline void NutShellProjectile::play_fire_sound()
 	{
 		m_sound_pack.get_sound(L"main-fire").lock()->play(false);
+	}
+
+	inline eProjectileType NutShellProjectile::get_type() const
+	{
+		return eProjectileType::Nutshell;
 	}
 }
 #endif // NUTSHELLPROJECTILE_HPP

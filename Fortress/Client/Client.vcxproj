@@ -105,10 +105,13 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)x64\Debug</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)x64\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <HeapReserveSize>100000000</HeapReserveSize>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -120,109 +123,60 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)x64\Release;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(SolutionDir)x64\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="application.h" />
     <ClInclude Include="BulletinBoardScene.h" />
-    <ClInclude Include="camera.hpp" />
-    <ClInclude Include="character.hpp" />
-    <ClInclude Include="BattleScene.h" />
-    <ClInclude Include="CharacterController.hpp" />
+    <ClInclude Include="CharacterProperties.hpp" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="ClientCharacter.hpp" />
+    <ClInclude Include="ClientProjectile.hpp" />
     <ClInclude Include="CloudGround.hpp" />
-    <ClInclude Include="common.h" />
-    <ClInclude Include="debug.hpp" />
     <ClInclude Include="DoubleShotItem.hpp" />
     <ClInclude Include="DoubleDamageItem.hpp" />
     <ClInclude Include="EnergyBallProjectile.hpp" />
     <ClInclude Include="flower.hpp" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="ground.hpp" />
     <ClInclude Include="GuidedMissileProjectile.hpp" />
-    <ClInclude Include="ImageWrapper.hpp" />
-    <ClInclude Include="input.hpp" />
-    <ClInclude Include="item.hpp" />
-    <ClInclude Include="layer.hpp" />
     <ClInclude Include="LoadingScene.hpp" />
     <ClInclude Include="LobbyScene.h" />
-    <ClInclude Include="math.h" />
-    <ClInclude Include="projectile.hpp" />
-    <ClInclude Include="ProjectileController.hpp" />
-    <ClInclude Include="ProjectileTimer.hpp" />
-    <ClInclude Include="Radar.h" />
+    <ClInclude Include="Map.hpp" />
+    <ClInclude Include="NutshellProjectile.hpp" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="resource.hpp" />
-    <ClInclude Include="rigidBody.hpp" />
     <ClInclude Include="RoomScene.h" />
-    <ClInclude Include="Round.h" />
-    <ClInclude Include="NextPlayerTimer.hpp" />
-    <ClInclude Include="scene.hpp" />
     <ClInclude Include="SecwindCharacter.hpp" />
     <ClInclude Include="SkyValleyMap.hpp" />
-    <ClInclude Include="sound.hpp" />
-    <ClInclude Include="SoundManager.hpp" />
-    <ClInclude Include="SoundPack.hpp" />
     <ClInclude Include="Stairway.hpp" />
-    <ClInclude Include="stateController.hpp" />
-    <ClInclude Include="SummaryScene.hpp" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="DesertMap.hpp" />
     <ClInclude Include="TeleportItem.hpp" />
     <ClInclude Include="RepairItem.hpp" />
-    <ClInclude Include="Timer.hpp" />
-    <ClInclude Include="TimerManager.hpp" />
     <ClInclude Include="titleScene.h" />
-    <ClInclude Include="vector2.hpp" />
-    <ClInclude Include="deltatime.hpp" />
-    <ClInclude Include="application.h" />
-    <ClInclude Include="sceneManager.hpp" />
-    <ClInclude Include="NutshellProjectile.hpp" />
-    <ClInclude Include="virtual_this.hpp" />
+    <ClInclude Include="winapihandles.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="application.cpp" />
     <ClCompile Include="BulletinBoardScene.cpp" />
-    <ClCompile Include="cameraManager.hpp" />
     <ClCompile Include="CannonCharacter.hpp" />
     <ClCompile Include="CannonProjectile.hpp" />
-    <ClCompile Include="characterCollision.cpp" />
-    <ClCompile Include="CharacterController.cpp" />
-    <ClCompile Include="deltatime.cpp" />
     <ClCompile Include="EgyptGround.hpp" />
     <ClCompile Include="EgyptStairway.hpp" />
-    <ClCompile Include="GifTimer.hpp" />
-    <ClCompile Include="GifWrapper.cpp" />
-    <ClCompile Include="GifWrapper.h" />
     <ClCompile Include="LobbyScene.cpp" />
     <ClCompile Include="MissileCharacter.hpp" />
-    <ClCompile Include="character.cpp" />
-    <ClCompile Include="BattleScene.cpp" />
     <ClCompile Include="MultiEnergyBallProjectile.hpp" />
-    <ClCompile Include="object.hpp" />
-    <ClCompile Include="entity.hpp" />
     <ClCompile Include="MissileProjectile.hpp" />
-    <ClCompile Include="objectManager.hpp" />
     <ClCompile Include="PrecisionCannonProjectile.hpp" />
-    <ClCompile Include="projectile.cpp" />
-    <ClCompile Include="ProjectileController.cpp" />
-    <ClCompile Include="Radar.cpp" />
-    <ClCompile Include="resourceManager.hpp" />
-    <ClCompile Include="rigidBody.cpp" />
     <ClCompile Include="RoomScene.cpp" />
-    <ClCompile Include="Round.cpp" />
-    <ClCompile Include="sceneManager.cpp" />
-    <ClCompile Include="Texture.hpp" />
-    <ClCompile Include="Timer.cpp" />
-    <ClCompile Include="TimerManager.cpp" />
     <ClCompile Include="titleScene.cpp" />
-    <ClCompile Include="vector2.cpp" />
-    <ClCompile Include="winapihandles.hpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>
   <ItemGroup>

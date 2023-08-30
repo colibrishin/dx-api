@@ -2,31 +2,30 @@
 #ifndef MULTIENERGYBALLPROJECTILE_HPP
 #define MULTIENERGYBALLPROJECTILE_HPP
 
-#include "GifWrapper.h"
-#include "projectile.hpp"
-#include "math.h"  // NOLINT(modernize-deprecated-headers)
-#include "resourceManager.hpp"
-#include "Texture.hpp"
+#include "ClientProjectile.hpp"
+#include "CharacterProperties.hpp"
+#include "../Common/projectile.hpp"
 
 namespace Fortress::Object
 {
-	class MultiEnergyBallProjectile final : public ObjectBase::projectile
+	class MultiEnergyBallProjectile final : public Network::Client::Object::ClientProjectile
 	{
 	public:
-		MultiEnergyBallProjectile(const ObjectBase::character* shooter) : projectile(
+		MultiEnergyBallProjectile(const unsigned int id, const ObjectBase::character* shooter) : ClientProjectile(
+			id,
 			shooter,
 			L"Multi Energy Ball Projectile",
 			L"secwind",
 			{}, 
 			Math::identity,
 			5.0f,
-			projectile_speed_getter(L"secwind", L"sub"), 
+			Property::projectile_speed_getter(L"secwind", L"sub"), 
 			{}, 
-			10.0f,
-			30,
+			Property::projectile_damage_getter(L"secwind", L"sub"),
+			Property::projectile_radius_getter(L"secwind", L"sub"),
 			1,
 			3,
-			0.5f)
+			Property::projectile_pen_rate_getter(L"secwind", L"sub"))
 		{
 			MultiEnergyBallProjectile::initialize();
 		}
@@ -40,11 +39,12 @@ namespace Fortress::Object
 		void initialize() override;
 		virtual void play_hit_sound() override;
 		virtual void play_fire_sound() override;
+		eProjectileType get_type() const override;
 	};
 
 	inline void MultiEnergyBallProjectile::initialize()
 	{
-		projectile::initialize();
+		ClientProjectile::initialize();
 	}
 
 	inline void MultiEnergyBallProjectile::play_hit_sound()
@@ -55,6 +55,11 @@ namespace Fortress::Object
 	inline void MultiEnergyBallProjectile::play_fire_sound()
 	{
 		m_sound_pack.get_sound(L"sub-fire").lock()->play(false);
+	}
+
+	inline eProjectileType MultiEnergyBallProjectile::get_type() const
+	{
+		return eProjectileType::Sub;
 	}
 }
 #endif // MULTIENERGYBALLPROJECTILE_HPP

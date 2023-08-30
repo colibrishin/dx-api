@@ -2,10 +2,10 @@
 #ifndef BULLETINBOARDSCENE_H
 #define BULLETINBOARDSCENE_H
 
-#include "ImageWrapper.hpp"
-#include "sceneManager.hpp"
-#include "sound.hpp"
-#include "scene.hpp"
+#include "../Common/ImageWrapper.hpp"
+#include "../Common/sceneManager.hpp"
+#include "../Common/sound.hpp"
+#include "../Common/scene.hpp"
 
 namespace Fortress::Scene
 {

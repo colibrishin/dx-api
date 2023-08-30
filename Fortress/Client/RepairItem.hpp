@@ -1,14 +1,14 @@
 #ifndef REPAIRITEM_HPP
 #define REPAIRITEM_HPP
-#include "item.hpp"
-#include "projectile.hpp"
+#include "../Common/item.hpp"
+#include "../Common/projectile.hpp"
 
 namespace Fortress::Item
 {
 	class RepairItem : public Object::item
 	{
 	public:
-		RepairItem() : item(L"Repair", true)
+		RepairItem() : item(L"Repair", Network::eItemType::Repair, true)
 		{
 			RepairItem::initialize();
 		}

@@ -1,61 +1,50 @@
 #ifndef WINAPIHANDLES_H
 #define WINAPIHANDLES_H
 #pragma once
+#include <filesystem>
 #include <windows.h>
 #include <objidl.h>
 #include <gdiplus.h>
 
-using namespace Gdiplus;
 #pragma comment (lib,"Gdiplus.lib")
 
 #include "framework.h"
 #include <memory>
+#include "../Common/EngineHandle.h"
 
 namespace Fortress
 {
-	class WinAPIHandles
+	using namespace Gdiplus;
+
+	class WinAPIHandles : public EngineHandle
 	{
 	public:
 		WinAPIHandles() = default;
-		~WinAPIHandles() = default;
+		~WinAPIHandles() override
+		{
+			DeleteObject(m_buffer_bitmap);
+			ReleaseDC(m_hwnd, m_buffer_hdc);
+			DeleteDC(m_buffer_hdc);
+		}
 
-		static void cleanup();
-		static void initialize(HWND hwnd, HDC hdc);
-		static int get_window_width();
-		static int get_window_height();
-		static HDC get_buffer_dc();
-		static HDC get_main_dc();
-		static std::weak_ptr<Graphics> get_buffer_gdi_handle();
-		static HWND get_hwnd();
-		static int get_actual_max_y();
-		static RECT& get_window_size();
-
-	private:
-		inline static GdiplusStartupInput input;
-		inline static ULONG_PTR token{};
-		inline static std::shared_ptr<Graphics> m_graphics_;
-		inline static RECT m_window_size = {0, 0, 800, 600};
-		inline static RECT m_native_size = {0, 0, 0, 0};
-		inline static HWND m_hwnd = nullptr;
-		inline static HDC m_hdc = nullptr;
-		inline static HDC m_buffer_hdc = nullptr;
-		inline static HBITMAP m_buffer_bitmap = nullptr;
+		void initialize(HWND hwnd, HDC hdc) override;
+		int get_window_width() override;
+		int get_window_height() override;
+		HDC get_buffer_dc() override;
+		HDC get_main_dc() override;
+		std::weak_ptr<Graphics> get_buffer_gdi_handle() override;
+		HWND get_hwnd() override;
+		int get_actual_max_y() override;
+		RECT& get_window_size() override;
+		std::weak_ptr<Font> get_font() override;
 	};
 }
 
 namespace Fortress
 {
-	inline void WinAPIHandles::cleanup()
-	{
-		DeleteObject(m_buffer_bitmap);
-		ReleaseDC(m_hwnd, m_buffer_hdc);
-		DeleteDC(m_buffer_hdc);
-		GdiplusShutdown(token);
-	}
-
 	__forceinline void WinAPIHandles::initialize(const HWND hwnd, const HDC hdc)
 	{
-		GdiplusStartup(&token, &input, NULL);
+		EngineHandle::initialize(hwnd, hdc);
 
 		m_hwnd = hwnd;
 		m_hdc = hdc;
@@ -76,7 +65,23 @@ namespace Fortress
 		// free the temporary handle.
 		DeleteObject(defaultBitmap);
 
-		m_graphics_ = std::make_unique<Graphics>(m_buffer_hdc);
+		m_graphics_.reset(Graphics::FromHDC(m_buffer_hdc));
+
+		m_font_collection = std::make_unique<PrivateFontCollection>();
+
+		const std::filesystem::path font_path = "./resources/font/ark-pixel-10px-monospaced-ko.ttf";
+
+		if(m_font_collection->AddFontFile(font_path.native().c_str()) != Ok)
+		{
+			throw std::exception("Unable to load font file.");
+		}
+
+		m_font = std::make_unique<Font>(
+					L"Ark Pixel 10px Monospaced ko",
+					50,
+					FontStyleRegular,
+					UnitPixel,
+					m_font_collection.get());
 	}
 
 	__forceinline int WinAPIHandles::get_window_width()
@@ -117,6 +122,11 @@ namespace Fortress
 	__forceinline RECT& WinAPIHandles::get_window_size()
 	{
 		return m_window_size;
+	}
+
+	inline std::weak_ptr<Font> WinAPIHandles::get_font()
+	{
+		return m_font;
 	}
 }
 

@@ -4,8 +4,6 @@
 #include "framework.h"
 #include "Client.h"
 #include "application.h"
-#include "GifWrapper.h"
-#include "Timer.hpp"
 
 static Fortress::Application application;
 

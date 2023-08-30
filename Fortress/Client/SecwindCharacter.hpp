@@ -1,16 +1,14 @@
 #pragma once
 #ifndef SECNWINDCHARACTER_HPP
 #define SECNWINDCHARACTER_HPP
-#include "character.hpp"
+#include "ClientCharacter.hpp"
+#include "../Common/character.hpp"
 #include "EnergyBallProjectile.hpp"
-#include "GuidedMissileProjectile.hpp"
-#include "math.h"
-#include "MissileProjectile.hpp"
 #include "MultiEnergyBallProjectile.hpp"
 
 namespace Fortress::Object
 {
-	class SecwindCharacter final : public ObjectBase::character
+	class SecwindCharacter final : public Network::Client::Object::ClientCharacter
 	{
 	public:
 		SecwindCharacter(
@@ -19,7 +17,8 @@ namespace Fortress::Object
 			const Math::Vector2& position, 
 			const Math::Vector2& orientation)
 			:
-			character(
+			ClientCharacter(
+				player_id,
 				name,
 				L"secwind",
 				orientation,
@@ -30,7 +29,7 @@ namespace Fortress::Object
 				{},
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp,
-				0.7f)
+				Property::character_armor_getter(L"secwind"))
 		{
 			initialize();
 		}
@@ -55,19 +54,26 @@ namespace Fortress::Object
 			character::initialize();
 		}
 
+		Network::eCharacterType get_type() const override;
+
 	protected:
-		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
-		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
+		std::weak_ptr<ObjectBase::projectile> get_main_projectile(const unsigned int id) override;
+		std::weak_ptr<ObjectBase::projectile> get_sub_projectile(const unsigned int id) override;
 	};
 
-	inline std::weak_ptr<ObjectBase::projectile> SecwindCharacter::get_main_projectile()
+	inline Network::eCharacterType SecwindCharacter::get_type() const
 	{
-		return ObjectBase::ObjectManager::create_object<EnergyBallProjectile>(this).lock();
+		return Network::eCharacterType::SecwindCharacter;
 	}
 
-	inline std::weak_ptr<ObjectBase::projectile> SecwindCharacter::get_sub_projectile()
+	inline std::weak_ptr<ObjectBase::projectile> SecwindCharacter::get_main_projectile(const unsigned int id)
 	{
-		return ObjectBase::ObjectManager::create_object<MultiEnergyBallProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<EnergyBallProjectile>(id, this).lock();
+	}
+
+	inline std::weak_ptr<ObjectBase::projectile> SecwindCharacter::get_sub_projectile(const unsigned int id)
+	{
+		return ObjectBase::ObjectManager::create_object<MultiEnergyBallProjectile>(id, this).lock();
 	}
 }
 #endif // SECNWINDCHARACTER_HPP

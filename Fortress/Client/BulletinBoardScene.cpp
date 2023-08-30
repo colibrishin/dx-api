@@ -1,7 +1,7 @@
 #include "BulletinBoardScene.h"
 
-#include "input.hpp"
-#include "resourceManager.hpp"
+#include "../Common/input.hpp"
+#include "../Common/resourceManager.hpp"
 
 void Fortress::Scene::BulletinBoardScene::initialize()
 {

@@ -2,14 +2,15 @@
 #ifndef CANNONCHARACTER_HPP
 #define CANNONCHARACTER_HPP
 #include "CannonProjectile.hpp"
-#include "character.hpp"
-#include "math.h"
-#include "objectManager.hpp"
+#include "CharacterProperties.hpp"
+#include "ClientCharacter.hpp"
+#include "../Common/character.hpp"
+#include "../Common/objectManager.hpp"
 #include "PrecisionCannonProjectile.hpp"
 
 namespace Fortress::Object
 {
-	class CannonCharacter final : public ObjectBase::character
+	class CannonCharacter final : public Network::Client::Object::ClientCharacter
 	{
 	public:
 		CannonCharacter(
@@ -17,7 +18,8 @@ namespace Fortress::Object
 			const std::wstring& name, 
 			const Math::Vector2& position, 
 			const Math::Vector2& orientation)
-			:character(
+			:ClientCharacter(
+				player_id,
 				name,
 				L"cannon",
 				orientation,
@@ -28,7 +30,7 @@ namespace Fortress::Object
 				{},
 				ObjectBase::character_full_hp,
 				ObjectBase::character_full_mp,
-				0.5f)
+				Property::character_armor_getter(L"cannon"))
 		{
 			initialize();
 		}
@@ -49,20 +51,26 @@ namespace Fortress::Object
 
 			character::initialize();
 		}
+		Network::eCharacterType get_type() const override;
 
 	protected:
-		std::weak_ptr<ObjectBase::projectile> get_main_projectile() override;
-		std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override;
+		std::weak_ptr<ObjectBase::projectile> get_main_projectile(const unsigned int id) override;
+		std::weak_ptr<ObjectBase::projectile> get_sub_projectile(const unsigned int id) override;
 	};
 
-	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_main_projectile()
+	inline Network::eCharacterType CannonCharacter::get_type() const
 	{
-		return ObjectBase::ObjectManager::create_object<CannonProjectile>(this).lock();
+		return Network::eCharacterType::CannonCharacter;
 	}
 
-	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_sub_projectile()
+	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_main_projectile(const unsigned int id)
 	{
-		return ObjectBase::ObjectManager::create_object<PrecisionCannonProjectile>(this).lock();
+		return ObjectBase::ObjectManager::create_object<CannonProjectile>(id, this).lock();
+	}
+
+	inline std::weak_ptr<ObjectBase::projectile> CannonCharacter::get_sub_projectile(const unsigned int id)
+	{
+		return ObjectBase::ObjectManager::create_object<PrecisionCannonProjectile>(id, this).lock();
 	}
 }
 

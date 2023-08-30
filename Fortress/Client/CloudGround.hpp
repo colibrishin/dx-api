@@ -1,6 +1,6 @@
 #ifndef CLOUD_HPP
 #define CLOUD_HPP
-#include "ground.hpp"
+#include "../Common/ground.hpp"
 
 namespace Fortress::Object
 {

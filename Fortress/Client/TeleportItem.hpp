@@ -1,7 +1,7 @@
 #ifndef TELEPORTITEM_HPP
 #define TELEPORTITEM_HPP
-#include "item.hpp"
-#include "projectile.hpp"
+#include "../Common/item.hpp"
+#include "../Common/projectile.hpp"
 #include "NutshellProjectile.hpp"
 
 namespace Fortress::Item
@@ -9,7 +9,7 @@ namespace Fortress::Item
 	class TeleportItem : public Object::item
 	{
 	public:
-		TeleportItem() : item(L"Teleport", false)
+		TeleportItem() : item(L"Teleport", Network::eItemType::Teleport, false)
 		{
 			TeleportItem::initialize();
 		}
@@ -32,7 +32,7 @@ namespace Fortress::Item
 		{
 			if (ch->get_projectile_type() == eProjectileType::Nutshell)
 			{
-				if(!ch->is_projectile_active())
+				if(ch->is_projectile_fire_counted() && !ch->is_projectile_active())
 				{
 					const auto prj = *ch->get_projectiles().begin();
 

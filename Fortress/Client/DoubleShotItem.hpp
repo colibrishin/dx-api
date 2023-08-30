@@ -1,14 +1,14 @@
 #ifndef DOUBLESHOTITEM_HPP
 #define DOUBLESHOTITEM_HPP
-#include "item.hpp"
-#include "projectile.hpp"
+#include "../Common/item.hpp"
+#include "../Common/projectile.hpp"
 
 namespace Fortress::Item
 {
 	class DoubleShotItem : public Object::item
 	{
 	public:
-		DoubleShotItem() : item(L"Double shot", false), m_fire_count(0)
+		DoubleShotItem() : item(L"Double shot", Network::eItemType::DoubleShot, false), m_fire_count(0)
 		{
 			DoubleShotItem::initialize();
 		}

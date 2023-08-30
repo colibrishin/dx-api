@@ -1,6 +1,6 @@
 #ifndef EGYPTSTAIRWAY_HPP
 #define EGYPTSTAIRWAY_HPP
-#include "ground.hpp"
+#include "../Common/ground.hpp"
 #include "Stairway.hpp"
 
 namespace Fortress::Object

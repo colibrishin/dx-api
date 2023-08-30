@@ -2,9 +2,9 @@
 #ifndef TITLESCENE_H
 #define TITLESCENE_H
 
-#include "character.hpp"
-#include "ImageWrapper.hpp"
-#include "scene.hpp"
+#include "../Common/character.hpp"
+#include "../Common/ImageWrapper.hpp"
+#include "../Common/scene.hpp"
 
 namespace Fortress::Scene
 {
