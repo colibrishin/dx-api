@@ -249,7 +249,7 @@ namespace Fortress::Network::Server
 				htons(listen),
 			};
 
-			if(const int ip_conversion_check = inet_pton(AF_INET, "127.0.0.1", &m_local_info.sin_addr); 
+			if(const int ip_conversion_check = inet_pton(AF_INET, "0.0.0.0", &m_local_info.sin_addr); 
 				ip_conversion_check != 1)
 			{
 				std::cout << WSAGetLastError() << std::endl;

@@ -14,7 +14,7 @@ namespace Fortress::Network
 			htons(51211)
 		};
 
-		inet_pton(PF_INET, "127.0.0.1", &m_server_info.sin_addr);
+		inet_pton(PF_INET, "192.168.0.174", &m_server_info.sin_addr);
 		m_receiver = std::thread(&Server::Socket::receiving_message, &m_soc);
 		m_receiver.detach();
 	}
