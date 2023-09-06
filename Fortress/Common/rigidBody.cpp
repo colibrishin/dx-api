@@ -361,6 +361,11 @@ namespace Fortress::Abstract
 		m_speed = speed;
 	}
 
+	Math::Vector2 rigidBody::get_speed()
+	{
+		return m_speed;
+	}
+
 	void rigidBody::set_hitbox(const Math::Vector2& hitbox)
 	{
 		m_hitbox = hitbox;
