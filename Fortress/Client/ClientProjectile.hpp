@@ -132,8 +132,8 @@ namespace Fortress::Network::Client::Object
 					return msg->prj_type == get_type() && msg->prj_id == get_id();
 			}))
 			{
-				m_position = fire.position;
-				set_offset(fire.offset);
+				m_position = flying.position;
+				set_offset(flying.offset);
 				set_state(eProjectileState::Flying);
 			}
 			if(EngineHandle::get_messenger()->pop_message<ProjectileHitMsg>(
@@ -142,8 +142,8 @@ namespace Fortress::Network::Client::Object
 					return msg->prj_type == get_type() && msg->prj_id == get_id() && msg->obj_type == eObjectType::Ground;
 			}))
 			{
-				m_position = fire.position;
-				set_offset(fire.offset);
+				m_position = m_hit_msg_.position;
+				set_offset(m_hit_msg_.offset);
 				notify_ground_hit();
 			}
 			if(EngineHandle::get_messenger()->pop_message<ProjectileHitMsg>(
@@ -152,8 +152,8 @@ namespace Fortress::Network::Client::Object
 					return msg->prj_type == get_type() && msg->prj_id == get_id() && msg->obj_type == eObjectType::Character;
 			}))
 			{
-				m_position = fire.position;
-				set_offset(fire.offset);
+				m_position = m_hit_msg_.position;
+				set_offset(m_hit_msg_.offset);
 				notify_character_hit();
 			}
 		}
