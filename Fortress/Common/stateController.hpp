@@ -21,7 +21,7 @@ namespace Fortress::Controller
 			m_anim_elapsed(0.0f)
 		{}
 
-		StateEnum get_state();
+		StateEnum get_state() const;
 
 		virtual void initialize();
 		virtual void update() = 0;
@@ -61,7 +61,7 @@ namespace Fortress::Controller
 	}
 
 	template <typename StateEnum>
-	StateEnum stateController<StateEnum>::get_state()
+	StateEnum stateController<StateEnum>::get_state() const
 	{
 		return m_state;
 	}
