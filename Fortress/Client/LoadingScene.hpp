@@ -63,7 +63,7 @@ namespace Fortress::Scene
 
 		if(!handshake_finished)
 		{
-			if(fixed_frame_wait < 20.0f)
+			if(fixed_frame_wait < 1.5f)
 			{
 				fixed_frame_wait += DeltaTime::get_deltaTime();
 				return;
