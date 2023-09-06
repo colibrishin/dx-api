@@ -143,7 +143,7 @@ namespace Fortress::Network::Server
 		client_list[{id, pid}] = {client_info, pid, time};
 	}
 
-	void reply_lobby_info(const SOCKADDR_IN& client_info)
+	void reply_lobby_info(const std::vector<Client>& clients, const SOCKADDR_IN& client_info)
 	{
 		wchar_t player_names[15][15]{};
 		int pos = 0;
@@ -151,16 +151,13 @@ namespace Fortress::Network::Server
 		{
 			std::lock_guard _(player_list_lock);
 
-			for(int i = 0; i < 15; ++i)
+			for(const auto& client : clients)
 			{
-				if(player_list[i])
-				{
-					std::wmemcpy(
-						player_names[pos], 
-						client_names.at(i).c_str(),
-						client_names.at(i).length());
-					pos++;
-				}
+				std::wmemcpy(
+					player_names[pos],
+					client_names.at(client.pid).c_str(),
+					client_names.at(client.pid).length());
+				pos++;
 			}
 		}
 
@@ -185,7 +182,7 @@ namespace Fortress::Network::Server
 		const auto clients = get_lobby_client();
 		for(const auto& client : clients)
 		{
-			reply_lobby_info(client.ip);
+			reply_lobby_info(clients, client.ip);
 		}
 	}
 
@@ -673,6 +670,7 @@ namespace Fortress::Network::Server
 				break;
 			case eMessageType::RoomJoin:
 				remove_client_from_lobby(message->player_id);
+				broadcast_lobby_info();
 				add_player_to_room(
 					message->room_id, 
 					message->player_id,
