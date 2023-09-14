@@ -174,7 +174,7 @@ namespace Fortress::ObjectBase
 		const Math::Vector2& velocity,
 		const float charged)
 	{
-		set_speed({charged, charged});
+		set_speed(get_speed() * charged);
 		m_position = position;
 
 		if(const auto battle_scene = 

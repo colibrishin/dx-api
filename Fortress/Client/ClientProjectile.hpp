@@ -90,22 +90,20 @@ namespace Fortress::Network::Client::Object
 
 	inline void ClientProjectile::update_local_player() const
 	{
-		if (get_origin()->is_localplayer() && has_state_changed())
+		if (get_origin()->is_localplayer())
 		{
-			switch (m_current_state_)
+			static float tick_counter = 0.0f;
+
+			if(get_state() == eProjectileState::Flying)
 			{
-			case eProjectileState::Flying:
-				send_flying();
-				break;
-			case eProjectileState::Fire:
-			case eProjectileState::CharacterHit:
-			case eProjectileState::GroundHit:
-				// Character hit and ground hit processed in one tick.
-				break;
-			case eProjectileState::Destroyed: 
-				break;
-			default: ;
+				if(tick_counter > tick_rate)
+				{
+					send_flying();
+					tick_counter = 0.0f;
+				}
 			}
+
+			tick_counter += DeltaTime::get_deltaTime();
 		}
 	}
 
@@ -132,8 +130,8 @@ namespace Fortress::Network::Client::Object
 					return msg->prj_type == get_type() && msg->prj_id == get_id();
 			}))
 			{
-				m_position = fire.position;
-				set_offset(fire.offset);
+				m_position = flying.position;
+				set_offset(flying.offset);
 				set_state(eProjectileState::Flying);
 			}
 			if(EngineHandle::get_messenger()->pop_message<ProjectileHitMsg>(
@@ -142,9 +140,9 @@ namespace Fortress::Network::Client::Object
 					return msg->prj_type == get_type() && msg->prj_id == get_id() && msg->obj_type == eObjectType::Ground;
 			}))
 			{
-				m_position = fire.position;
-				set_offset(fire.offset);
-				notify_ground_hit();
+				m_position = m_hit_msg_.position;
+				set_offset(m_hit_msg_.offset);
+				projectile::notify_ground_hit();
 			}
 			if(EngineHandle::get_messenger()->pop_message<ProjectileHitMsg>(
 				eMessageType::ProjectileHit, get_origin()->get_player_id(), &m_hit_msg_, [&](const ProjectileHitMsg* msg)
@@ -152,9 +150,9 @@ namespace Fortress::Network::Client::Object
 					return msg->prj_type == get_type() && msg->prj_id == get_id() && msg->obj_type == eObjectType::Character;
 			}))
 			{
-				m_position = fire.position;
-				set_offset(fire.offset);
-				notify_character_hit();
+				m_position = m_hit_msg_.position;
+				set_offset(m_hit_msg_.offset);
+				projectile::notify_character_hit();
 			}
 		}
 	}

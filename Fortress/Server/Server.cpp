@@ -143,7 +143,7 @@ namespace Fortress::Network::Server
 		client_list[{id, pid}] = {client_info, pid, time};
 	}
 
-	void reply_lobby_info(const SOCKADDR_IN& client_info)
+	void reply_lobby_info(const std::vector<Client>& clients, const SOCKADDR_IN& client_info)
 	{
 		wchar_t player_names[15][15]{};
 		int pos = 0;
@@ -151,16 +151,13 @@ namespace Fortress::Network::Server
 		{
 			std::lock_guard _(player_list_lock);
 
-			for(int i = 0; i < 15; ++i)
+			for(const auto& client : clients)
 			{
-				if(player_list[i])
-				{
-					std::wmemcpy(
-						player_names[pos], 
-						client_names.at(i).c_str(),
-						client_names.at(i).length());
-					pos++;
-				}
+				std::wmemcpy(
+					player_names[pos],
+					client_names.at(client.pid).c_str(),
+					client_names.at(client.pid).length());
+				pos++;
 			}
 		}
 
@@ -185,7 +182,7 @@ namespace Fortress::Network::Server
 		const auto clients = get_lobby_client();
 		for(const auto& client : clients)
 		{
-			reply_lobby_info(client.ip);
+			reply_lobby_info(clients, client.ip);
 		}
 	}
 
@@ -535,16 +532,22 @@ namespace Fortress::Network::Server
 	void calculate_damage_and_reply(Message* message, const sockaddr_in& client_info)
 	{
 		auto* casted = reinterpret_cast<DamageMsg*>(message);
+		auto& dd = double_damage_enabled[casted->room_id][casted->prj_owner_id];
 
 		const float damage = calculate_damage(
 			casted->shooter_type,
 			casted->victim_type, 
 			casted->prj_type, 
 			hit_count[message->room_id][message->player_id],
-			double_damage_enabled[casted->room_id][casted->prj_owner_id], // @todo: item check
+			dd,
 			Object::Property::projectile_hitbox_getter(),
 			casted->prj_position,
 			casted->ch_position);
+
+		if(dd)
+		{
+			dd = false;
+		}
 
 		casted->damage = damage;
 		const auto overwrite_message = create_prewritten_network_message<DamageMsg>(*casted);
@@ -553,6 +556,16 @@ namespace Fortress::Network::Server
 
 		server_socket.send_message<DamageMsg>(&overwrite_message, client_info);
 		broadcast<DamageMsg>(&overwrite_message);
+	}
+
+	void set_double_damage_flag(const Message* message)
+	{
+		auto* casted = reinterpret_cast<const ItemMsg*>(message);
+
+		if(casted->item_type == eItemType::DoubleDamage)
+		{
+			double_damage_enabled[casted->room_id][casted->player_id] = true;
+		}
 	}
 
 	[[noreturn]] void consume_message()
@@ -609,6 +622,7 @@ namespace Fortress::Network::Server
 				break;
 			case eMessageType::Item:
 				std::cout << "Message type: Item ";
+				set_double_damage_flag(message);
 				broadcast<ItemMsg>(message);
 				break;
 			case eMessageType::ItemFire:
@@ -656,6 +670,7 @@ namespace Fortress::Network::Server
 				break;
 			case eMessageType::RoomJoin:
 				remove_client_from_lobby(message->player_id);
+				broadcast_lobby_info();
 				add_player_to_room(
 					message->room_id, 
 					message->player_id,

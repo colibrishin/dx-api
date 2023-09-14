@@ -39,6 +39,7 @@ namespace Fortress::Abstract
 		static CollisionCode is_collision(const std::weak_ptr<object>& left, const std::weak_ptr<object>& right) noexcept;
 
 		void set_speed(const Math::Vector2& speed);
+		Math::Vector2 get_speed();
 		virtual void set_hitbox(const Math::Vector2& hitbox);
 
 		void move_down() override;

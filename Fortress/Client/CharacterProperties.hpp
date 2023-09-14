@@ -6,23 +6,23 @@ namespace Fortress::Object::Property
 {
 	inline Math::Vector2 projectile_speed_getter(const std::wstring& short_name, const std::wstring& type)
 	{
-		const Math::Vector2 default_projectile_speed = Math::Vector2{2000.0f, 2000.0f};
+		const Math::Vector2 default_projectile_speed = Math::Vector2{1.0f, 2.0f};
 
 		if(short_name == L"cannon" && type == L"main")
 		{
-			return default_projectile_speed * 3;
+			return default_projectile_speed;
 		}
 		if(short_name == L"cannon" && type == L"sub")
 		{
-			return default_projectile_speed * 5;
+			return default_projectile_speed * 2;
 		}
 		if(short_name == L"missile" && type == L"main")
 		{
-			return default_projectile_speed * 2;
+			return default_projectile_speed * 1.5;
 		}
 		if(short_name == L"missile" && type == L"sub")
 		{
-			return default_projectile_speed * 2;
+			return default_projectile_speed * 1.5;
 		}
 		if(short_name == L"secwind" && type == L"main")
 		{
@@ -30,7 +30,7 @@ namespace Fortress::Object::Property
 		}
 		if(short_name == L"secwind" && type == L"sub")
 		{
-			return default_projectile_speed * 5;
+			return default_projectile_speed * 2;
 		}
 
 		return {};
