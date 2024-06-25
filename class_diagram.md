@@ -71,8 +71,8 @@ classDiagram
 	SoundPack
 
 	class multi_inherit_this {
-		std::shared_ptr<T> shared_from_this()
-		std::shared_ptr<U> downcast_from_this()
+		std::shared_ptr< T > shared_from_this()
+		std::shared_ptr< U > downcast_from_this()
 	}
 
 	class Vector2 {
@@ -103,7 +103,7 @@ classDiagram
 		+static void initialize(HDC hdc)
 		+static void Log(const std::wstring& str)
 		+static void set_debug_flag()
-		+static void push(std::function<void()> func)
+		+static void push(std::function< void() > func)
 
 		+static void draw_line(const Math::Vector2 left, const Math::Vector2 right)
 		+static void draw_dot(const Math::Vector2 point)
@@ -117,7 +117,7 @@ classDiagram
 		-inline static int x = 100
 		-inline static int y = y_initial
 		-inline static HDC m_hdc
-		-inline static std::queue<std::function<void()>> m_render_queue
+		-inline static std::queue< std::function< void() > > m_render_queue
 	}
 
     class entity {
@@ -132,18 +132,18 @@ classDiagram
 		+virtual void deactivate()
 		+virtual void activate()
 
-		+std::vector<std::weak_ptr<T>> is_in_range(const Math::Vector2& mid_point, float radius)
+		+std::vector< std::weak_ptr< T > > is_in_range(const Math::Vector2& mid_point, float radius)
 
-		+void add_game_object(LayerType layer_type, const std::weak_ptr<object>& obj)
-		+void remove_game_object(LayerType layer_type, const std::weak_ptr<object>& obj)
+		+void add_game_object(LayerType layer_type, const std::weak_ptr< object >& obj)
+		+void remove_game_object(LayerType layer_type, const std::weak_ptr< object >& obj)
 
-		+std::vector<std::weak_ptr<T>> get_objects()
-		+std::weak_ptr<Camera> get_camera()
+		+std::vector< std::weak_ptr< T > > get_objects()
+		+std::weak_ptr< Camera > get_camera()
 
-		+std::vector<std::weak_ptr<object>> get_objects()
-		-std::weak_ptr<Camera> m_camera
-		-std::vector<std::weak_ptr<object>> m_objects
-		-std::vector<Layer> m_layers
+		+std::vector< std::weak_ptr< object > > get_objects()
+		-std::weak_ptr< Camera > m_camera
+		-std::vector< std::weak_ptr< object > > m_objects
+		-std::vector< Layer > m_layers
     }
 
     class Layer {
@@ -152,9 +152,9 @@ classDiagram
 		+void render() const
 		+void deactivate() const
 		+void activate() const
-		+void add_game_object(const std::weak_ptr<object>& object)
-		+void remove_game_object(const std::weak_ptr<object>& obj)
-        -std::vector<std::weak_ptr<object>> m_objects
+		+void add_game_object(const std::weak_ptr< object >& object)
+		+void remove_game_object(const std::weak_ptr< object >& obj)
+        -std::vector< std::weak_ptr< object > > m_objects
     }
 
     class Resource {
@@ -181,13 +181,13 @@ classDiagram
 	}
 
 	class SoundPack {
-		+std::weak_ptr<Resource::Sound> get_sound(const std::wstring& category)
-		-std::map<std::wstring, std::weak_ptr<Resource::Sound>> m_sounds
+		+std::weak_ptr< Resource::Sound > get_sound(const std::wstring& category)
+		-std::map< std::wstring, std::weak_ptr< Resource::Sound > > m_sounds
 	}
 
     class Texture {
         +std::weak_ptrT get_imageT(const std::wstring& category, const std::wstring& orientation)
-	    -std::map<std::wstring, std::weak_ptrT> m_images
+	    -std::map< std::wstring, std::weak_ptr< T >> m_images
     }
 
     class object {
@@ -234,11 +234,11 @@ classDiagram
         +void initialize() override
 		+void update() override
 		+virtual void prerender()
-		+static void block_window_frame(const std::weak_ptr<rigidBody>& target)
+		+static void block_window_frame(const std::weak_ptr< rigidbody >& target)
 
-		+virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other)
+		+virtual void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr< rigidbody >& other)
 		+virtual void on_nocollison()
-		+static CollisionCode is_collision(const std::weak_ptr<object>& left, const std::weak_ptr<object>& right) noexcept
+		+static CollisionCode is_collision(const std::weak_ptr< object >& left, const std::weak_ptr< object >& right) noexcept
 
 		+void set_speed(const Math::Vector2& speed)
 
@@ -295,7 +295,7 @@ classDiagram
 		-AnimFlag is_anim_finished() const
 		-void reset_anim_counter()
 
-		-Texture<GifWrapper> m_texture
+		-Texture< GifWrapper > m_texture
 		-SpritePointer m_current_sprite
 		-SoundPack m_sound_pack
 
@@ -319,9 +319,9 @@ classDiagram
 		+float get_mp_percentage() const
 		+float get_hp_raw() const
 
-		+const std::vector<std::weak_ptr<ObjectBase::projectile>>& get_projectiles() const
+		+const std::vector< std::weak_ptr< ObjectBase::projectile > >& get_projectiles() const
 		+const eProjectileType& get_projectile_type() const
-		+const std::weak_ptr<ObjectBase::projectile>& get_one_active_projectile()
+		+const std::weak_ptr< ObjectBase::projectile >& get_one_active_projectile()
 
 		-friend class Object::item
 
@@ -337,13 +337,13 @@ classDiagram
 		-void apply_damage(float damage)
 		-void set_hp(const float hp)
 
-		-void add_active_projectile(const std::weak_ptr<ObjectBase::projectile>& prj)
+		-void add_active_projectile(const std::weak_ptr< ObjectBase::projectile >& prj)
 
 		-void equip_nutshell()
 		-void unequip_nutshell()
 
-		-virtual std::weak_ptr<ObjectBase::projectile> get_main_projectile() = 0
-		-virtual std::weak_ptr<ObjectBase::projectile> get_sub_projectile() = 0
+		-virtual std::weak_ptr< ObjectBase::projectile > get_main_projectile() = 0
+		-virtual std::weak_ptr< ObjectBase::projectile > get_sub_projectile() = 0
 
 		static std::wstring anim_name_getter(const eCharacterState& state)
 		void set_current_sprite(const eCharacterState&) override
@@ -376,10 +376,10 @@ classDiagram
 		-eProjectileType m_projectile_type
 		-eProjectileType m_tmp_projectile_type
 
-		-std::map<int, std::shared_ptr<Object::item>> m_available_items
-		-std::weak_ptr<Object::item> m_active_item
+		-std::map< int, std::shared_ptr< Object::item > > m_available_items
+		-std::weak_ptr< Object::item > m_active_item
 
-		-std::vector<std::weak_ptr<ObjectBase::projectile>> m_active_projectiles
+		-std::vector< std::weak_ptr< ObjectBase::projectile > > m_active_projectiles
 	}
 
     class character {
@@ -388,11 +388,11 @@ classDiagram
 		+void render() override
 		+void prerender() override
 
-		+void hit(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point)
+		+void hit(const std::weak_ptr< projectile >& p, const Math::Vector2& hit_point)
 
 		+const std::wstring& get_short_name() const
 
-		+void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<Abstract::rigidBody>& other) override
+		+void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr< Abstract::rigidBody >& other) override
 		+void on_nocollison() override
 
 		+float get_armor() const
@@ -402,7 +402,7 @@ classDiagram
 		-const std::wstring m_short_name
 		-float m_armor
 
-		-float get_damage_pen_dist(const std::weak_ptr<projectile>& p, const Math::Vector2& hit_point) const
+		-float get_damage_pen_dist(const std::weak_ptr< projectile >& p, const Math::Vector2& hit_point) const
 
 		-void move() override
 		-void fire() override
@@ -412,13 +412,13 @@ classDiagram
 
 		-void render_hp_bar(const Math::Vector2& position)
 
-		-void ground_walk(const CollisionCode& collision, const std::weak_ptr<Object::Ground>& ptr_ground)
-		-void ground_gravity(const std::weak_ptr<Object::Ground>& ptr_ground)
-		-void ground_pitching(const std::weak_ptr<Object::Ground>& ptr_ground)
+		-void ground_walk(const CollisionCode& collision, const std::weak_ptr< Object::Ground >& ptr_ground)
+		-void ground_gravity(const std::weak_ptr< Object::Ground >& ptr_ground)
+		-void ground_pitching(const std::weak_ptr< Object::Ground >& ptr_ground)
 
-		-Math::Vector2 get_next_velocity(const Math::Vector2& local_position_bottom, const std::weak_ptr<Object::Ground>& ground_ptr) const
+		-Math::Vector2 get_next_velocity(const Math::Vector2& local_position_bottom, const std::weak_ptr< Object::Ground >& ground_ptr) const
 
-		-std::weak_ptr<projectile> initialize_projectile(const Math::Vector2& angle, const float charged)
+		-std::weak_ptr< projectile > initialize_projectile(const Math::Vector2& angle, const float charged)
 
 		-ProjectileTimer m_multi_projectile_timer
     }
@@ -429,7 +429,7 @@ classDiagram
 		+void initialize() override
 		+void fire(const Math::Vector2& position, const Math::Vector2& velocity, const float charged)
 		+void update() override
-		+void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr<rigidBody>& other) override
+		+void on_collision(const CollisionCode& collision, const Math::Vector2& hit_vector, const std::weak_ptr< rigidbody >& other) override
 		+void render() override
 		+void prerender() override
 		+const character* get_origin() const
@@ -446,7 +446,7 @@ classDiagram
 		+virtual void play_fire_sound() = 0
 		+virtual void play_hit_sound() = 0
 
-		+const std::weak_ptr<GifWrapper>& get_current_sprite() const
+		+const std::weak_ptr< GifWrapper >& get_current_sprite() const
 		+int get_radius() const
 		+float get_damage() const
 		+float get_penetration_rate() const
@@ -466,8 +466,8 @@ classDiagram
 		-Math::Vector2 m_wind_acceleration
 
 		-const character* m_shooter
-		-Texture<GifWrapper> m_texture
-		-std::weak_ptr<GifWrapper> m_current_sprite
+		-Texture< GifWrapper > m_texture
+		-std::weak_ptr< GifWrapper > m_current_sprite
 		-Math::Vector2 m_fired_position
 		-Math::Vector2 m_previous_position
 
@@ -478,26 +478,26 @@ classDiagram
 
     class MissileCharacter {
         +void initialize() override
-		-std::weak_ptr<ObjectBase::projectile> get_main_projectile() override
-		-std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override
+		-std::weak_ptr< ObjectBase::projectile > get_main_projectile() override
+		-std::weak_ptr< ObjectBase::projectile > get_sub_projectile() override
     }
 
     class CannonCharacter {
         +void initialize() override
-		-std::weak_ptr<ObjectBase::projectile> get_main_projectile() override
-		-std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override
+		-std::weak_ptr< ObjectBase::projectile > get_main_projectile() override
+		-std::weak_ptr< ObjectBase::projectile > get_sub_projectile() override
     }
 
 	class MissileCharacter {
         +void initialize() override
-		-std::weak_ptr<ObjectBase::projectile> get_main_projectile() override
-		-std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override
+		-std::weak_ptr< ObjectBase::projectile > get_main_projectile() override
+		-std::weak_ptr< ObjectBase::projectile > get_sub_projectile() override
     }
 
 	class SecwindCharacter {
         +void initialize() override
-		-std::weak_ptr<ObjectBase::projectile> get_main_projectile() override
-		-std::weak_ptr<ObjectBase::projectile> get_sub_projectile() override
+		-std::weak_ptr< ObjectBase::projectile > get_main_projectile() override
+		-std::weak_ptr< ObjectBase::projectile > get_sub_projectile() override
     }
 
     class MissileProjectile {
@@ -561,11 +561,11 @@ classDiagram
 		-Math::Vector2 safe_orthogonal_surface_local(const Math::Vector2& local_position, const int depth) const
 		-void unsafe_set_line_destroyed(const Math::Vector2& line, const int n)
 		-void unsafe_set_line_destroyed_reverse(const Math::Vector2& line, int n)
-		-bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr<ObjectBase::projectile>& projectile_ptr) const
+		-bool safe_is_projectile_hit(const Math::Vector2& hit_position, const std::weak_ptr< ObjectBase::projectile >& projectile_ptr) const
 		-void _debug_draw_destroyed_table() const
 
 		-friend Radar
-		-std::vector<std::vector<GroundState>> m_destroyed_table
+		-std::vector< std::vector< GroundState > > m_destroyed_table
 		-HDC m_ground_hdc
 		-HBITMAP m_ground_bitmap
     }
@@ -576,38 +576,38 @@ classDiagram
 	}
 
     class ObjectManager {
-        -static std::vector<std::shared_ptr<object>> m_objects
-        +static std::weak_ptr<T> create_object(Args ... args)
-		+static void remove_object(const std::weak_ptr<Abstract::object>& obj)
+        -static std::vector< std::shared_ptr< object > > m_objects
+        +static std::weak_ptr< T > create_object(Args ... args)
+		+static void remove_object(const std::weak_ptr< Abstract::object >& obj)
 		+static void cleanup()
     }
 
     class ResourceManager {
-		+static std::weak_ptr<T> load(const std::wstring& name, const std::filesystem::path& path)
-		+static std::weak_ptr<T> find(const std::wstring& name) noexcept
+		+static std::weak_ptr< T > load(const std::wstring& name, const std::filesystem::path& path)
+		+static std::weak_ptr< T > find(const std::wstring& name) noexcept
 		+static void cleanup()
-        -static std::shared_ptr<T> find_internally(const std::wstring& name) noexcept
-		-inline static std::map<std::wstring, std::shared_ptr<Abstract::Resource>> m_resources
+        -static std::shared_ptr< T > find_internally(const std::wstring& name) noexcept
+		-inline static std::map< std::wstring, std::shared_ptr< Abstract::Resource > > m_resources
     }
 
     class CameraManager {
         +static std::weak_ptr create_camera(Args... args)
 		+static void cleanup()
-        -static std::vector<std::shared_ptr<Camera>> m_cameras
+        -static std::vector< std::shared_ptr< Camera > > m_cameras
     }
 
     class Camera {
         +void update()
 		+void initialize()
-		+void set_object(const std::weak_ptr<Abstract::object>& obj)
-		+Math::Vector2 get_relative_position(const std::weak_ptr<Abstract::object>& obj) const
+		+void set_object(const std::weak_ptr< Abstract::object >& obj)
+		+Math::Vector2 get_relative_position(const std::weak_ptr< Abstract::object >& obj) const
 		+Math::Vector2 get_offset() const
 		+Math::Vector2 get_offset(const Math::Vector2& hitbox) const
-		std::weak_ptr<Abstract::object> get_locked_object() const
+		std::weak_ptr< Abstract::object > get_locked_object() const
 		Math::Vector2 m_target_center
 		Math::Vector2 m_window_size
 		Math::Vector2 m_center_position
-		std::weak_ptr<Abstract::object> m_lock_target
+		std::weak_ptr< Abstract::object > m_lock_target
     }
 
     class DeltaTime {
@@ -628,7 +628,7 @@ classDiagram
 		+static bool getKeyDown(eKeyCode)
 		+static bool getKeyUp(eKeyCode)
 		+static bool getKey(eKeyCode)
-        -static std::vector<Key> m_keys
+        -static std::vector< Key > m_keys
 		-static void checkKeyState()
     }
 
@@ -671,7 +671,7 @@ classDiagram
 		+virtual bool load() override
 		+virtual void initialize()
 
-		+void play(const std::function<void()>& on_end)
+		+void play(const std::function< void() >& on_end)
 		+void stop() const
 		+void OnTimer()
 		+virtual void flip() override
@@ -679,7 +679,7 @@ classDiagram
 		+void reset_transform()
 		+unsigned int get_total_play_time() const
 
-		+inline static std::map<UINT_PTR, GifWrapper*> registered_gifs
+		+inline static std::map< UINT_PTR, GifWrapper* > registered_gifs
         
         -UINT_PTR m_timer_id
 		-UINT m_dimension_count
@@ -687,8 +687,8 @@ classDiagram
 		-UINT m_total_buffer
 		-UINT m_current_frame
 		-WCHAR m_str_guid[39]
-		-std::vector<unsigned int> m_frame_delays
-		-std::function<void()> m_reserved_function
+		-std::vector< unsigned int > m_frame_delays
+		-std::function< void() > m_reserved_function
 		-inline static UINT used_timer_id = gif_timer_id
     }
 
@@ -700,8 +700,8 @@ classDiagram
 		+void set_offset(const Math::Vector2& offset)
 
         -virtual bool load() override
-		-std::shared_ptr<Image> m_image
-		-std::shared_ptr<Graphics> m_gdi_handle
+		-std::shared_ptr< Image > m_image
+		-std::shared_ptr< Graphics > m_gdi_handle
 		-Math::Vector2 m_size
 		-Math::Vector2 m_offset
     }
@@ -726,16 +726,16 @@ classDiagram
 
 	class item {
 		+virtual void initialize() = 0
-		+virtual void update(const std::weak_ptr<ObjectBase::character>& owner) = 0
+		+virtual void update(const std::weak_ptr< ObjectBase::character >& owner) = 0
 		+virtual bool is_effect_ended()
 		+bool is_instant() const
 		+virtual void reset()
 		+void set_ended()
 
-		-void set_hp(const std::weak_ptr<ObjectBase::character>& owner, float hp) const
-		-void equip_nutshell(const std::weak_ptr<ObjectBase::character>& owner)
-		-void unequip_nutshell(const std::weak_ptr<ObjectBase::character>& owner)
-		-void fire(const std::weak_ptr<ObjectBase::character>& owner) const
+		-void set_hp(const std::weak_ptr< ObjectBase::character >& owner, float hp) const
+		-void equip_nutshell(const std::weak_ptr< ObjectBase::character >& owner)
+		-void unequip_nutshell(const std::weak_ptr< ObjectBase::character >& owner)
+		-void fire(const std::weak_ptr< ObjectBase::character >& owner) const
 
 		-bool m_instant
 		-bool m_is_used
@@ -744,19 +744,19 @@ classDiagram
 
 	class DoubleShotItem {
 		+void initialize() override
-		+void update(const std::weak_ptr<ObjectBase::character>& owner) override
+		+void update(const std::weak_ptr< ObjectBase::character >& owner) override
 		+void reset() override
 		-int m_fire_count
 	}
 
 	class RepairItem {
 		+void initialize() override
-		+void update(const std::weak_ptr<ObjectBase::character>& owner) override
+		+void update(const std::weak_ptr< ObjectBase::character >& owner) override
 	}
 
 	class TeleportItem {
 		+void initialize() override
-		+void update(const std::weak_ptr<ObjectBase::character>& owner) override
+		+void update(const std::weak_ptr< ObjectBase::character >& owner) override
 	}
 
 	class Radar {
@@ -773,11 +773,11 @@ classDiagram
 	}
 
 	class Round {
-		+void initialize(const std::vector<std::weak_ptr<ObjectBase::character>>& players)
+		+void initialize(const std::vector< std::weak_ptr< ObjectBase::character > >& players)
 		+void update()
 		+float get_current_time() const
 		+float get_wind_acceleration() const
-		+const std::weak_ptr<ObjectBase::character>& get_current_player() const
+		+const std::weak_ptr< ObjectBase::character >& get_current_player() const
 		+const eRoundState& get_current_status() const
 
 		-void check_countdown()
@@ -794,13 +794,13 @@ classDiagram
 
 		-float m_wind_affect = 0.0f
 		-inline static std::default_random_engine e
-		-inline static std::uniform_real_distribution<float> dis
+		-inline static std::uniform_real_distribution< float > dis
 
 		-eRoundState m_state
-		-std::vector<std::weak_ptr<ObjectBase::character>> m_known_players
-		-std::vector<std::weak_ptr<ObjectBase::character>> m_all_players
-		-std::weak_ptr<ObjectBase::character> m_current_player
-		-std::weak_ptr<ObjectBase::character> m_winner
+		-std::vector< std::weak_ptr< ObjectBase::character > > m_known_players
+		-std::vector< std::weak_ptr< ObjectBase::character > > m_all_players
+		-std::weak_ptr< ObjectBase::character > m_current_player
+		-std::weak_ptr< ObjectBase::character > m_winner
 		-struct safe_weak_comparer
 	}
 
@@ -811,7 +811,7 @@ classDiagram
 		+void render() override
 		+void deactivate() override
 		+void activate() override
-		+std::weak_ptr<Round> get_round_status()
+		+std::weak_ptr< Round > get_round_status()
 		+const Math::Vector2& get_map_size() const
 
 		+virtual void set_bgm() = 0
@@ -821,13 +821,13 @@ classDiagram
 		+virtual void set_client_character() = 0
 
 		-Math::Vector2 m_map_size
-		-std::weak_ptr<ObjectBase::character> m_self
-		-std::vector<std::weak_ptr<ObjectBase::character>> m_characters
-		-std::vector<std::weak_ptr<Object::Ground>> m_grounds
-		-std::weak_ptr<Resource::Sound> m_bgm
-		-std::weak_ptr<ImageWrapper> m_hud
-		-std::weak_ptr<ImageWrapper> m_background
-		-std::shared_ptr<Round> m_round
+		-std::weak_ptr< ObjectBase::character > m_self
+		-std::vector< std::weak_ptr< ObjectBase::character > > m_characters
+		-std::vector< std::weak_ptr< Object::Ground > > m_grounds
+		-std::weak_ptr< Resource::Sound > m_bgm
+		-std::weak_ptr< ImageWrapper > m_hud
+		-std::weak_ptr< ImageWrapper > m_background
+		-std::shared_ptr< Round > m_round
 		-Radar m_radar
 	}
 
@@ -838,8 +838,8 @@ classDiagram
 		+void deactivate() override
 		+void activate() override
 
-		+std::weak_ptr<ImageWrapper> m_imBackground
-		+std::weak_ptr<Resource::Sound> m_sound_bgm
+		+std::weak_ptr< ImageWrapper > m_imBackground
+		+std::weak_ptr< Resource::Sound > m_sound_bgm
 	}
 
 	class LoadingScene {
@@ -849,7 +849,7 @@ classDiagram
 		+void deactivate() override
 		+void activate() override
 
-		+std::weak_ptr<ImageWrapper> m_imBackground
+		+std::weak_ptr< ImageWrapper > m_imBackground
 	}
 
 	class LobbyScene {
@@ -859,8 +859,8 @@ classDiagram
 		+void deactivate() override
 		+void activate() override
 
-		-std::weak_ptr<ImageWrapper> m_imBackground
-		-std::weak_ptr<Resource::Sound> m_bgm
+		-std::weak_ptr< ImageWrapper > m_imBackground
+		-std::weak_ptr< Resource::Sound > m_bgm
 	}
 
 	class RoomScene {
@@ -870,8 +870,8 @@ classDiagram
 		+void deactivate() override
 		+void activate() override
 
-		-std::weak_ptr<ImageWrapper> m_imBackground
-		-std::weak_ptr<Resource::Sound> m_bgm
+		-std::weak_ptr< ImageWrapper > m_imBackground
+		-std::weak_ptr< Resource::Sound > m_bgm
 	}
 
 	class SummaryScene {
@@ -881,9 +881,9 @@ classDiagram
 		+void deactivate() override
 		+void activate() override
 
-		-std::weak_ptr<ImageWrapper> m_imBackground
-		-std::weak_ptr<Resource::Sound> m_bgm
-		-std::shared_ptr<Round> m_round
+		-std::weak_ptr< ImageWrapper > m_imBackground
+		-std::weak_ptr< Resource::Sound > m_bgm
+		-std::shared_ptr< Round > m_round
 	}
 
 	class TitleScene {
@@ -893,18 +893,18 @@ classDiagram
 		+void deactivate() override
 		+void activate() override
 
-		+std::weak_ptr<ImageWrapper> m_imBackground
-		+std::shared_ptr<ObjectBase::character> m_object
+		+std::weak_ptr< ImageWrapper > m_imBackground
+		+std::shared_ptr< ObjectBase::character > m_object
 	}
 
 	class Timer {
 		+void initialize()
-		+void start(const std::function<void()>& on_end)
+		+void start(const std::function< void() >& on_end)
 		+bool is_started() const
 		+virtual void on_timer()
 		+virtual void reset()
 
-		+inline static std::map<UINT_PTR, Timer*> registered_timer
+		+inline static std::map< UINT_PTR, Timer* > registered_timer
 
 		-UINT_PTR m_timer_id
 		-UINT m_duration
@@ -923,3 +923,4 @@ classDiagram
 	class NextPlayerTimer {
 		+inline void on_timer() override
 	}
+```
